@@ -187,7 +187,45 @@
   margin-bottom: 1rem;
 }
 
+.missionSection,
+.rootsSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.missionSection h2,
+.rootsSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.missionSection p,
+.rootsSection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
 @media (max-width: 768px) {
+  .missionSection,
+  .rootsSection {
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .missionSection h2,
+  .rootsSection h2 {
+    font-size: 1.8rem;
+  }
+
+  .missionSection p,
+  .rootsSection p {
+    font-size: 1rem;
+  }
   .pronunciationCard {
     margin: 2rem 1rem;
     padding: 2rem;
