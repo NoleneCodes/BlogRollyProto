@@ -808,7 +808,7 @@
 
   .searchButton,
   .aiSearchButton {
-    width: 100%;
+    flex-shrink: 0;
   }
 
   .cta {
