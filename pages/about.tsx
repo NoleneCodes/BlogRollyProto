@@ -6,36 +6,45 @@ import styles from "../styles/Home.module.css";
 
 const GoogleTrendsChart = () => {
   useEffect(() => {
+    // Check if script is already loaded
+    if (document.querySelector('script[src*="trends_nrtr"]')) {
+      return;
+    }
+
     // Load the Google Trends script
     const script = document.createElement('script');
     script.src = 'https://ssl.gstatic.com/trends_nrtr/4116_RC01/embed_loader.js';
     script.async = true;
     script.onload = () => {
-      // @ts-ignore
-      if (window.trends) {
+      // Small delay to ensure the library is fully loaded
+      setTimeout(() => {
         // @ts-ignore
-        window.trends.embed.renderExploreWidget("TIMESERIES", {
-          "comparisonItem": [{"keyword": "blogroll", "geo": "GB", "time": "2004-01-01 2025-07-13"}],
-          "category": 0,
-          "property": ""
-        }, {
-          "exploreQuery": "date=all&geo=GB&q=blogroll&hl=en",
-          "guestPath": "https://trends.google.com:443/trends/embed/"
-        });
-      }
+        if (window.trends && window.trends.embed) {
+          // @ts-ignore
+          window.trends.embed.renderExploreWidget("TIMESERIES", {
+            "comparisonItem": [{"keyword": "blogroll", "geo": "GB", "time": "2004-01-01 2025-07-13"}],
+            "category": 0,
+            "property": ""
+          }, {
+            "exploreQuery": "date=all&geo=GB&q=blogroll&hl=en",
+            "guestPath": "https://trends.google.com:443/trends/embed/"
+          });
+        }
+      }, 500);
     };
     document.head.appendChild(script);
-
-    return () => {
-      // Cleanup
-      const existingScript = document.querySelector('script[src="https://ssl.gstatic.com/trends_nrtr/4116_RC01/embed_loader.js"]');
-      if (existingScript) {
-        document.head.removeChild(existingScript);
-      }
-    };
   }, []);
 
-  return <div style={{ minHeight: '400px' }} />;
+  return (
+    <div 
+      id="google-trends-widget" 
+      style={{ 
+        minHeight: '400px',
+        width: '100%',
+        position: 'relative'
+      }} 
+    />
+  );
 };
 
 const About: NextPage = () => {
@@ -94,7 +103,7 @@ const About: NextPage = () => {
       <div className={styles.trendsSection}>
         <h2>The Data Speaks:</h2>
         <p>Google Trends shows the decline and quiet disappearance of "blogroll" searches over the past two decades:</p>
-        <div className={styles.trendsChart} id="google-trends-chart">
+        <div className={styles.trendsChart}>
           <GoogleTrendsChart />
         </div>
       </div>
