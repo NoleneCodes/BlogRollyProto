@@ -15,21 +15,6 @@ const Auth: NextPage = () => {
       </div>
 
       <AuthForm />
-
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>💾 Save Favorites</h3>
-          <p>Bookmark your favorite blogs for easy access</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>📊 Personal Dashboard</h3>
-          <p>Track your reading habits and preferences</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🤝 Community Features</h3>
-          <p>Share recommendations and connect with others</p>
-        </div>
-      </div>
     </Layout>
   );
 };
