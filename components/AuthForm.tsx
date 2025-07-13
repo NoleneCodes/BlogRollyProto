@@ -43,6 +43,7 @@ interface BloggerFormData {
   blogPosts: string[];
   agreeToTerms: boolean;
   confirmOwnership: boolean;
+  agreeToSurvey: boolean;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
@@ -83,7 +84,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     monetizationMethods: [],
     blogPosts: ['', '', ''],
     agreeToTerms: false,
-    confirmOwnership: false
+    confirmOwnership: false,
+    agreeToSurvey: false
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -134,11 +136,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       const filledFields = requiredFields.filter(field => 
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
-      const checkboxes = bloggerForm.agreeToTerms && bloggerForm.confirmOwnership ? 2 : 0;
+      const checkboxes = (bloggerForm.agreeToTerms ? 1 : 0) + (bloggerForm.confirmOwnership ? 1 : 0) + (bloggerForm.agreeToSurvey ? 1 : 0);
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
       const blogsProgress = submittedBlogs.length > 0 ? 1 : 0;
 
-      const totalProgress = (filledFields.length + checkboxes + topicsProgress + blogsProgress) / 11 * 100;
+      const totalProgress = (filledFields.length + checkboxes + topicsProgress + blogsProgress) / 12 * 100;
       setProgress(totalProgress);
     }
   }, [bloggerForm, activeTab, submittedBlogs]);
@@ -257,6 +259,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
+    if (!bloggerForm.agreeToSurvey) newErrors.agreeToSurvey = 'You must agree to complete the mandatory survey';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -769,6 +772,23 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 </span>
               </label>
               {errors.confirmOwnership && <span className={styles.error}>{errors.confirmOwnership}</span>}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={bloggerForm.agreeToSurvey}
+                  onChange={(e) => setBloggerForm(prev => ({ ...prev, agreeToSurvey: e.target.checked }))}
+                  className={styles.checkbox}
+                  required
+                />
+                <span className={styles.checkboxText}>
+                  I agree to complete a mandatory survey to help us understand our blogger community *
+                </span>
+              </label>
+              {errors.agreeToSurvey && <span className={styles.error}>{errors.agreeToSurvey}</span>}
+              <small className={styles.hint}>This helps us improve our platform and better serve the blogging community.</small>
             </div>
 
             <button type="submit" className={styles.submitButton}>
