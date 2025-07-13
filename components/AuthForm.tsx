@@ -812,7 +812,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 ×
               </button>
             </div>
-            <BlogSubmissionForm onSubmit={handleBlogSubmission} />
+            <BlogSubmissionForm onSubmit={handleBlogSubmission} displayName={bloggerForm.displayName} />
           </div>
         </div>
       )}

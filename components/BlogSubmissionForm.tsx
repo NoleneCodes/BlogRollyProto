@@ -4,6 +4,7 @@ import styles from '../styles/BlogSubmissionForm.module.css';
 
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
+  displayName?: string;
 }
 
 interface FormData {
@@ -82,11 +83,11 @@ const TAGS = {
   ]
 };
 
-const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => {
+const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit, displayName }) => {
   const [formData, setFormData] = useState<FormData>({
     image: null,
     title: '',
-    author: 'Your Name', // This would be prefilled from auth
+    author: displayName || 'Your Name', // Autofilled from authenticated user
     description: '',
     category: '',
     tags: [],
@@ -111,7 +112,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
     const imageProgress = formData.image ? 1 : 0;
     const tagsProgress = formData.tags.length > 0 ? 1 : 0;
     
-    const totalProgress = (filledFields.length + imageProgress + tagsProgress) / 6 * 100;
+    const totalProgress = (filledFields.length + imageProgress + tagsProgress) / 5 * 100;
     setProgress(totalProgress);
   }, [formData]);
 
@@ -299,18 +300,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
           <small className={styles.hint}>{formData.title.length}/120 characters</small>
         </div>
 
-        {/* Step 3: Author (Prefilled) */}
-        <div className={styles.formGroup}>
-          <label className={styles.label}>Blogger / Author</label>
-          <input
-            type="text"
-            value={formData.author}
-            readOnly
-            className={`${styles.textInput} ${styles.readonly}`}
-          />
-        </div>
-
-        {/* Step 4: Description */}
+        {/* Step 3: Description */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Description / Excerpt *
@@ -327,7 +317,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
           <small className={styles.hint}>{formData.description.length}/500 characters</small>
         </div>
 
-        {/* Step 5: Main Category */}
+        {/* Step 4: Main Category */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Main Category *
@@ -345,7 +335,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
           {errors.category && <span className={styles.error}>{errors.category}</span>}
         </div>
 
-        {/* Step 6: Tags */}
+        {/* Step 5: Tags */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Tags
@@ -419,7 +409,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
           </div>
         </div>
 
-        {/* Step 8: Post URL */}
+        {/* Step 6: Post URL */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Blog Post URL *
@@ -437,7 +427,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
           </small>
         </div>
 
-        {/* Step 9: Adult Content Verification */}
+        {/* Step 7: Adult Content Verification */}
         <div className={styles.formGroup}>
           <label className={styles.checkboxLabel}>
             <input

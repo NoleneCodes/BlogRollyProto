@@ -49,7 +49,7 @@ const Submit: NextPage = () => {
       {!isAuthenticated ? (
         <AuthForm onAuthenticated={handleAuthenticated} />
       ) : (
-        <BlogSubmissionForm onSubmit={handleFormSubmit} />
+        <BlogSubmissionForm onSubmit={handleFormSubmit} displayName={userInfo?.name} />
       )}
     </Layout>
   );
