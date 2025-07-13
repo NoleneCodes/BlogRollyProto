@@ -56,35 +56,39 @@
 }
 
 .searchButton {
-  background: #0070f3;
+  background: #c42142;
   color: white;
   padding: 1rem 1.5rem;
-  border: none;
+  border: 2px solid white;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .searchButton:hover {
-  background: #0051a2;
+  background: white;
+  color: #c42142;
+  border-color: #c42142;
 }
 
 .aiSearchButton {
-  background: #7c3aed;
-  color: white;
+  background: white;
+  color: #c42142;
   padding: 1rem 1.5rem;
-  border: none;
+  border: 2px solid #c42142;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .aiSearchButton:hover {
-  background: #5b21b6;
+  background: #c42142;
+  color: white;
+  border-color: white;
 }
 
 .cta {
