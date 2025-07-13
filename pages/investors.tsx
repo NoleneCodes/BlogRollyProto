@@ -81,6 +81,26 @@ const Investors: NextPage = () => {
         </div>
       </div>
 
+      <div className={styles.downloadablesSection}>
+        <h2>Downloadables</h2>
+        
+        <div className={styles.downloadItem}>
+          <h3>One-Pager PDF</h3>
+          <p>A quick overview of BlogRolly's mission, product, and market thesis</p>
+          <div className={styles.downloadCta}>
+            <a href="#" className={styles.downloadButton}>Download Now</a>
+          </div>
+        </div>
+
+        <div className={styles.downloadItem}>
+          <h3>Market Deep Dive PDF</h3>
+          <p>A short report on the rising creator economy, SEO/content tool gaps, and "indie web" resurgence</p>
+          <div className={styles.downloadCta}>
+            <a href="#" className={styles.downloadButton}>Download Now</a>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.learnMoreSection}>
         <h2>Interested in Learning More?</h2>
         <div className={styles.calendlySection}>

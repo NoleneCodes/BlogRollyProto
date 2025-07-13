@@ -548,6 +548,70 @@
   text-decoration: underline;
 }
 
+.downloadablesSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.downloadablesSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.downloadItem {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border-left: 4px solid #c42142;
+  text-align: center;
+}
+
+.downloadItem h3 {
+  color: #c42142;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.downloadItem p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.downloadCta {
+  display: flex;
+  justify-content: center;
+}
+
+.downloadButton {
+  background: #c42142;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.downloadButton:hover {
+  background: #a01835;
+}
+
+.downloadButton::after {
+  content: '→';
+  font-size: 1.2rem;
+}
+
 @media (max-width: 768px) {
   .trendsSection {
     margin: 2rem auto;
@@ -674,6 +738,33 @@
 
   .investorRelationsSection p {
     font-size: 1rem;
+  }
+
+  .downloadablesSection {
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .downloadablesSection h2 {
+    font-size: 1.8rem;
+  }
+
+  .downloadItem {
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .downloadItem h3 {
+    font-size: 1.2rem;
+  }
+
+  .downloadItem p {
+    font-size: 1rem;
+  }
+
+  .downloadButton {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
   }
   .pronunciationCard {
     margin: 2rem 1rem;
