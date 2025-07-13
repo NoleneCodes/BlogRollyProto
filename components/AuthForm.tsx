@@ -14,7 +14,9 @@ interface UserInfo {
 
 interface ReaderFormData {
   email: string;
+  fullName: string;
   username: string;
+  dateOfBirth: string;
   topics: string[];
   otherTopic: string;
   agreeToTerms: boolean;
@@ -44,7 +46,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Reader form state
   const [readerForm, setReaderForm] = useState<ReaderFormData>({
     email: '',
+    fullName: '',
     username: '',
+    dateOfBirth: '',
     topics: [],
     otherTopic: '',
     agreeToTerms: false,
@@ -70,8 +74,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const [showOtherTopic, setShowOtherTopic] = useState(false);
 
   const topicOptions = [
-    'Culture', 'Travel', 'Health', 'Feminism', 'Tech', 'Homesteading',
-    'Books', 'Money', 'Spirituality', 'Crypto', 'Society & Politics', 'Other'
+    'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
+    'Homesteading', 'Books & Media', 'Money & Work', 'Spirituality', 
+    'Creativity', 'Relationships', 'Food', 'Learning', 'Society & Politics', 'Other'
   ];
 
   const monetizationOptions = [
@@ -125,6 +130,18 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     return urlRegex.test(url);
   };
 
+  const validateAge = (dateOfBirth: string) => {
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 >= 18;
+    }
+    return age >= 18;
+  };
+
   const handleReaderTopicChange = (topic: string, checked: boolean) => {
     if (topic === 'Other') {
       setShowOtherTopic(checked);
@@ -168,6 +185,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     const newErrors: Record<string, string> = {};
 
     if (!readerForm.email) newErrors.email = 'Email is required';
+    if (!readerForm.fullName) newErrors.fullName = 'Full name is required';
+    if (!readerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+    else if (!validateAge(readerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
+    if (readerForm.topics.length === 0) newErrors.topics = 'Please select at least one topic';
     if (!readerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
 
     if (Object.keys(newErrors).length > 0) {
@@ -265,7 +286,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Username / Display Name (optional)
+                Full Name *
+              </label>
+              <input
+                type="text"
+                value={readerForm.fullName}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, fullName: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.fullName && <span className={styles.error}>{errors.fullName}</span>}
+              <small className={styles.hint}>Your full name helps us personalise your experience.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Display Name / Username (optional)
               </label>
               <input
                 type="text"
@@ -278,7 +314,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.label}>Topics You're Into</label>
+              <label className={styles.label}>
+                Date of Birth *
+              </label>
+              <input
+                type="date"
+                value={readerForm.dateOfBirth}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
+              <small className={styles.hint}>We use your birthdate to filter out mature content.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Topics You're Into *</label>
               <div className={styles.checkboxGrid}>
                 {topicOptions.map(topic => (
                   <label key={topic} className={styles.checkboxLabel}>
@@ -292,6 +343,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   </label>
                 ))}
               </div>
+              {errors.topics && <span className={styles.error}>{errors.topics}</span>}
               {showOtherTopic && (
                 <textarea
                   value={readerForm.otherTopic}
