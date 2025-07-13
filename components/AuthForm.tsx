@@ -715,26 +715,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               ))}
             </div>
 
-            <div className={styles.sectionTitle}>Part 4: Monetization & Business</div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Blog Monetization Methods</label>
-              <div className={styles.checkboxGrid}>
-                {monetizationOptions.map(method => (
-                  <label key={method} className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={bloggerForm.monetizationMethods.includes(method)}
-                      onChange={(e) => handleMonetizationChange(method, e.target.checked)}
-                      className={styles.checkbox}
-                    />
-                    <span className={styles.checkboxText}>{method}</span>
-                  </label>
-                ))}
-              </div>
-              <small className={styles.hint}>Select all that apply to help readers understand your blog's business model.</small>
-            </div>
-
             <div className={styles.formGroup}>
               <label className={styles.checkboxLabel}>
                 <input
