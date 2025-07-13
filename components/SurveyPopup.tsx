@@ -15,8 +15,7 @@ interface SurveyData {
   discoveryMethods: string[];
   challengesFaced: string;
   platformsUsed: string[];
-  monetizationInterest: string;
-  currentMonetizationMethods?: string[];
+  currentMonetizationMethods: string[];
   communityInterest: string;
   additionalFeatures: string;
   feedback: string;
@@ -31,7 +30,6 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
     discoveryMethods: [],
     challengesFaced: '',
     platformsUsed: [],
-    monetizationInterest: '',
     currentMonetizationMethods: [],
     communityInterest: '',
     additionalFeatures: '',
@@ -60,9 +58,8 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
     if (!surveyData.contentFrequency) newErrors.contentFrequency = 'Please select your posting frequency';
     if (surveyData.discoveryMethods.length === 0) newErrors.discoveryMethods = 'Please select at least one discovery method';
     if (!surveyData.challengesFaced) newErrors.challengesFaced = 'Please describe your main challenge';
-    if (!surveyData.monetizationInterest) newErrors.monetizationInterest = 'Please select your monetization interest';
-    if (surveyData.monetizationInterest === 'already-monetizing' && (!surveyData.currentMonetizationMethods || surveyData.currentMonetizationMethods.length === 0)) {
-      newErrors.currentMonetizationMethods = 'Please select at least one monetization method';
+    if (!surveyData.currentMonetizationMethods || surveyData.currentMonetizationMethods.length === 0) {
+      newErrors.currentMonetizationMethods = 'Please select at least one option';
     }
     if (!surveyData.communityInterest) newErrors.communityInterest = 'Please select your community interest';
 
@@ -261,58 +258,38 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              Are you interested in monetizing your blog? *
+              How do you currently monetize your blog? * (Select all that apply)
             </label>
-            <select
-              value={surveyData.monetizationInterest}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, monetizationInterest: e.target.value }))}
-              className={styles.textInput}
-              required
-            >
-              <option value="">Select interest level</option>
-              <option value="very-interested">Very interested</option>
-              <option value="somewhat-interested">Somewhat interested</option>
-              <option value="not-sure">Not sure</option>
-              <option value="not-interested">Not interested</option>
-              <option value="already-monetizing">Already monetizing</option>
-            </select>
-            {errors.monetizationInterest && <span className={styles.error}>{errors.monetizationInterest}</span>}
-          </div>
-
-          {surveyData.monetizationInterest === 'already-monetizing' && (
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                How do you currently monetize your blog? * (Select all that apply)
-              </label>
-              <div className={styles.checkboxGrid}>
-                {[
-                  'Display advertising (Google AdSense, etc.)',
-                  'Affiliate marketing',
-                  'Sponsored posts/brand partnerships',
-                  'Digital products (courses, ebooks, etc.)',
-                  'Physical products',
-                  'Subscription/membership content',
-                  'Email newsletter monetization',
-                  'Consulting/coaching services',
-                  'Speaking engagements',
-                  'Freelance writing from blog exposure',
-                  'Donations/tips',
-                  'Other'
-                ].map(method => (
-                  <label key={method} className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={surveyData.currentMonetizationMethods?.includes(method) || false}
-                      onChange={(e) => handleCheckboxChange('currentMonetizationMethods', method, e.target.checked)}
-                      className={styles.checkbox}
-                    />
-                    <span className={styles.checkboxText}>{method}</span>
-                  </label>
-                ))}
-              </div>
-              {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
+            <div className={styles.checkboxGrid}>
+              {[
+                'Display advertising (Google AdSense, etc.)',
+                'Affiliate marketing',
+                'Sponsored posts/brand partnerships',
+                'Digital products (courses, ebooks, etc.)',
+                'Physical products',
+                'Subscription/membership content',
+                'Email newsletter monetization',
+                'Consulting/coaching services',
+                'Speaking engagements',
+                'Freelance writing from blog exposure',
+                'Donations/tips',
+                'Other monetization method',
+                'Not yet monetized',
+                'Not interested in monetizing'
+              ].map(method => (
+                <label key={method} className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={surveyData.currentMonetizationMethods?.includes(method) || false}
+                    onChange={(e) => handleCheckboxChange('currentMonetizationMethods', method, e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.checkboxText}>{method}</span>
+                </label>
+              ))}
             </div>
-          )}
+            {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
+          </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
