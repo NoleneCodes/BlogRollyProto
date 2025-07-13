@@ -37,6 +37,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [otherMonetizationMethod, setOtherMonetizationMethod] = useState('');
 
   const handleCheckboxChange = (field: 'discoveryMethods' | 'platformsUsed' | 'currentMonetizationMethods', value: string, checked: boolean) => {
     setSurveyData(prev => ({
@@ -289,6 +290,23 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
               ))}
             </div>
             {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
+            
+            {surveyData.currentMonetizationMethods.includes('Other monetization method') && (
+              <div style={{ marginTop: '1rem' }}>
+                <label className={styles.label}>
+                  Please specify your other monetization method:
+                </label>
+                <input
+                  type="text"
+                  value={otherMonetizationMethod}
+                  onChange={(e) => setOtherMonetizationMethod(e.target.value)}
+                  className={styles.textInput}
+                  placeholder="Describe your monetization method"
+                  maxLength={100}
+                />
+                <small className={styles.hint}>{otherMonetizationMethod.length}/100 characters</small>
+              </div>
+            )}
           </div>
 
           <div className={styles.formGroup}>
