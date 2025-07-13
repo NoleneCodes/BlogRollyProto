@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import styles from '../styles/AuthForm.module.css';
 
@@ -83,10 +82,10 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
       <div className={styles.popupContent} style={{ maxWidth: '800px', maxHeight: '90vh' }}>
         <div className={styles.popupHeader}>
           <h3>Blogger Community Survey</h3>
-          <button 
-            type="button" 
-            onClick={onClose}
+          <button
+            type="button"
             className={styles.closeButton}
+            onClick={onClose}
           >
             ×
           </button>
