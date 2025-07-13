@@ -72,6 +72,44 @@ const Submit: NextPage = () => {
         >
           Sign In to Submit
         </button>
+        
+        <div style={{
+          marginTop: '2rem',
+          textAlign: 'left',
+          maxWidth: '600px',
+          margin: '2rem auto 0 auto'
+        }}>
+          <h3 style={{
+            fontSize: '1.2rem',
+            marginBottom: '1rem',
+            color: '#374151',
+            textAlign: 'center'
+          }}>
+            Why do I need to sign in?
+          </h3>
+          <ul style={{
+            fontSize: '1rem',
+            color: '#6b7280',
+            lineHeight: '1.6',
+            paddingLeft: '1.5rem'
+          }}>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <strong>Quality control:</strong> We verify all submissions to maintain a high-quality directory
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <strong>Spam prevention:</strong> Account verification helps us keep the platform free from spam and low-quality content
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <strong>Manage your submissions:</strong> Track and edit your blog submissions from your dashboard
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <strong>Community features:</strong> Connect with other bloggers and readers in our community
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <strong>Ownership verification:</strong> We ensure only blog owners can submit their content
+            </li>
+          </ul>
+        </div>
       </div>
     </Layout>
   );
