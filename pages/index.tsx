@@ -22,11 +22,6 @@ const Home: NextPage = () => {
             <button className={styles.aiSearchButton}>Ask Rolly</button>
           </div>
         </div>
-
-        <div className={styles.cta}>
-          <a href="/blogs" className={styles.primaryButton}>Browse Blogs</a>
-          <a href="/add" className={styles.secondaryButton}>Add Your Blog</a>
-        </div>
       </div>
 
       <div className={styles.features}>
