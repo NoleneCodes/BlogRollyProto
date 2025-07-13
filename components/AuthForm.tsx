@@ -27,6 +27,7 @@ interface BloggerFormData {
   fullName: string;
   email: string;
   displayName: string;
+  profilePicture?: File | null;
   bio: string;
   blogUrl: string;
   blogName: string;
@@ -60,6 +61,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     fullName: '',
     email: '',
     displayName: '',
+    profilePicture: null,
     bio: '',
     blogUrl: '',
     blogName: '',
@@ -211,7 +213,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.fullName) newErrors.fullName = 'Full name is required';
     if (!bloggerForm.email) newErrors.email = 'Email is required';
     if (!bloggerForm.displayName) newErrors.displayName = 'Display name is required';
-    if (!bloggerForm.bio) newErrors.bio = 'Bio is required';
     if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
     else if (!validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
     if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
@@ -447,6 +448,36 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
+                Profile Picture
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                      setErrors(prev => ({ ...prev, profilePicture: 'Image must be less than 2MB' }));
+                      return;
+                    }
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                      setErrors(prev => ({ ...prev, profilePicture: 'Only JPG, PNG, and WebP files are allowed' }));
+                      return;
+                    }
+                    setBloggerForm(prev => ({ ...prev, profilePicture: file }));
+                    setErrors(prev => ({ ...prev, profilePicture: '' }));
+                  }
+                }}
+                className={styles.fileInput}
+              />
+              {errors.profilePicture && <span className={styles.error}>{errors.profilePicture}</span>}
+              <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
                 Display Name *
               </label>
               <input
@@ -462,7 +493,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Short Bio *
+                Short Bio
+                <span className={styles.optional}>(Optional)</span>
               </label>
               <textarea
                 value={bloggerForm.bio}
@@ -470,11 +502,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 className={styles.textarea}
                 maxLength={280}
                 rows={4}
-                placeholder="Tell us who you are in a sentence or two."
-                required
+                placeholder="Tell us who you are in a sentence or two. Can be added later."
               />
               {errors.bio && <span className={styles.error}>{errors.bio}</span>}
-              <small className={styles.hint}>{bloggerForm.bio.length}/280 characters</small>
+              <small className={styles.hint}>{bloggerForm.bio.length}/280 characters. Can be completed later.</small>
             </div>
 
             <div className={styles.formGroup}>
