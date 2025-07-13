@@ -1,4 +1,6 @@
-
+The code adds CSS styles for blog post submission sections.
+```
+```replit_final_file
 .container {
   max-width: 700px;
   margin: 2rem auto;
@@ -210,14 +212,27 @@
 }
 
 .submitButton:hover {
-  background: #a01835;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
+  background-color: #2563eb;
 }
 
-.submitButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
+.submitButton.disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.blogPostSubmission {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f9fafb;
+}
+
+.blogPostSubmission h4 {
+  margin: 0 0 1rem 0;
+  color: #374151;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .authButtonContainer {
@@ -312,7 +327,7 @@
     margin: 1rem auto;
     padding: 0 0.5rem;
   }
-  
+
   .authCard {
     padding: 1.5rem;
   }

@@ -128,15 +128,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Calculate progress for blogger form
   useEffect(() => {
     if (activeTab === 'blogger') {
-      const requiredFields = ['firstName', 'surname', 'email', 'dateOfBirth', 'displayName', 'bio', 'blogUrl', 'blogName'];
+      const requiredFields = ['firstName', 'surname', 'email', 'dateOfBirth', 'displayName', 'blogUrl', 'blogName'];
       const filledFields = requiredFields.filter(field => 
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
-      const checkboxes = bloggerForm.agreeToTerms && bloggerForm.confirmOwnership ? 1 : 0;
+      const checkboxes = bloggerForm.agreeToTerms && bloggerForm.confirmOwnership ? 2 : 0;
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
       const monetizationProgress = bloggerForm.monetizationMethods.length > 0 ? 1 : 0;
+      const firstBlogPostProgress = bloggerForm.blogPosts[0] !== '' ? 1 : 0;
       
-      const totalProgress = (filledFields.length + checkboxes + topicsProgress + monetizationProgress) / 10 * 100;
+      const totalProgress = (filledFields.length + checkboxes + topicsProgress + monetizationProgress + firstBlogPostProgress) / 12 * 100;
       setProgress(totalProgress);
     }
   }, [bloggerForm, activeTab]);
@@ -242,6 +243,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
     else if (!validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
     if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
+    if (!bloggerForm.blogPosts[0]) newErrors.blogPost1 = 'At least one blog post is required';
+    else if (!validateUrl(bloggerForm.blogPosts[0])) newErrors.blogPost1 = 'Please enter a valid blog post URL';
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
 
@@ -687,7 +690,33 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               </div>
             </div>
 
-            <div className={styles.sectionTitle}>Part 3: Publishing & Listing</div>
+            <div className={styles.sectionTitle}>Part 3: Submit Your Best Blog Posts</div>
+            
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Submit Up to 3 Blog Posts</label>
+              <small className={styles.hint}>Share your best blog posts that represent your work. These will be featured in your profile.</small>
+              
+              {bloggerForm.blogPosts.map((post, index) => (
+                <div key={index} className={styles.blogPostSubmission}>
+                  <h4>Blog Post {index + 1} {index === 0 ? '(Required)' : '(Optional)'}</h4>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Blog Post URL {index === 0 ? '*' : ''}</label>
+                    <input
+                      type="url"
+                      value={post}
+                      onChange={(e) => handleBlogPostChange(index, e.target.value)}
+                      className={styles.textInput}
+                      placeholder="https://yourblog.com/your-post-title"
+                      required={index === 0}
+                    />
+                    <small className={styles.hint}>Must start with https:// and include a path</small>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.sectionTitle}>Part 4: Monetization & Business</div>
 
             <div className={styles.formGroup}>
               <label className={styles.label}>Blog Monetization Methods</label>
@@ -704,21 +733,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   </label>
                 ))}
               </div>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>List 3 Blog Posts (optional)</label>
-              <small className={styles.hint}>Share up to 3 blog posts that best represent your work.</small>
-              {bloggerForm.blogPosts.map((post, index) => (
-                <input
-                  key={index}
-                  type="url"
-                  value={post}
-                  onChange={(e) => handleBlogPostChange(index, e.target.value)}
-                  className={styles.textInput}
-                  placeholder={`Blog Post ${index + 1} URL`}
-                />
-              ))}
+              <small className={styles.hint}>Select all that apply to help readers understand your blog's business model.</small>
             </div>
 
             <div className={styles.formGroup}>
