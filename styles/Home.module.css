@@ -617,52 +617,46 @@
   font-size: 1.2rem;
 }
 
-/* Medium screens - keep buttons side by side */
-@media (max-width: 768px) and (min-width: 481px) {
+/* Responsive layout for all screen sizes */
+@media (max-width: 768px) {
   .searchContainer {
     flex-direction: column;
     gap: 1rem;
+    align-items: center;
   }
 
   .searchInput {
     min-width: unset;
     width: 100%;
+    max-width: 400px;
   }
 
   .cta {
     flex-direction: row;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
   .searchButton,
   .aiSearchButton {
     flex-shrink: 0;
-    width: auto;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
   }
 }
 
-/* Very small screens - stack buttons vertically */
+/* Very small screens - adjust button size but keep side by side */
 @media (max-width: 480px) {
-  .searchContainer {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .searchInput {
-    min-width: unset;
-    width: 100%;
-  }
-
   .cta {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   .searchButton,
   .aiSearchButton {
-    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
   }
 }
 
