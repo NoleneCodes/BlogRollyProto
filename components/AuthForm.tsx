@@ -14,7 +14,8 @@ interface UserInfo {
 
 interface ReaderFormData {
   email: string;
-  fullName: string;
+  firstName: string;
+  surname: string;
   username: string;
   dateOfBirth: string;
   topics: string[];
@@ -24,7 +25,8 @@ interface ReaderFormData {
 }
 
 interface BloggerFormData {
-  fullName: string;
+  firstName: string;
+  surname: string;
   email: string;
   displayName: string;
   profilePicture?: File | null;
@@ -47,7 +49,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Reader form state
   const [readerForm, setReaderForm] = useState<ReaderFormData>({
     email: '',
-    fullName: '',
+    firstName: '',
+    surname: '',
     username: '',
     dateOfBirth: '',
     topics: [],
@@ -58,7 +61,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   // Blogger form state
   const [bloggerForm, setBloggerForm] = useState<BloggerFormData>({
-    fullName: '',
+    firstName: '',
+    surname: '',
     email: '',
     displayName: '',
     profilePicture: null,
@@ -114,7 +118,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Calculate progress for blogger form
   useEffect(() => {
     if (activeTab === 'blogger') {
-      const requiredFields = ['fullName', 'email', 'displayName', 'bio', 'blogUrl', 'blogName'];
+      const requiredFields = ['firstName', 'surname', 'email', 'displayName', 'bio', 'blogUrl', 'blogName'];
       const filledFields = requiredFields.filter(field => 
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
@@ -190,7 +194,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     const newErrors: Record<string, string> = {};
 
     if (!readerForm.email) newErrors.email = 'Email is required';
-    if (!readerForm.fullName) newErrors.fullName = 'Full name is required';
+    if (!readerForm.firstName) newErrors.firstName = 'First name is required';
+    if (!readerForm.surname) newErrors.surname = 'Surname is required';
     if (!readerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
     else if (!validateAge(readerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
     if (readerForm.topics.length === 0) newErrors.topics = 'Please select at least one topic';
@@ -210,7 +215,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    if (!bloggerForm.fullName) newErrors.fullName = 'Full name is required';
+    if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
+    if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
     if (!bloggerForm.email) newErrors.email = 'Email is required';
     if (!bloggerForm.displayName) newErrors.displayName = 'Display name is required';
     if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
@@ -290,17 +296,31 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Full Name *
+                First Name *
               </label>
               <input
                 type="text"
-                value={readerForm.fullName}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, fullName: e.target.value }))}
+                value={readerForm.firstName}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, firstName: e.target.value }))}
                 className={styles.textInput}
                 required
               />
-              {errors.fullName && <span className={styles.error}>{errors.fullName}</span>}
-              <small className={styles.hint}>Your full name helps us personalise your experience.</small>
+              {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Surname *
+              </label>
+              <input
+                type="text"
+                value={readerForm.surname}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, surname: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.surname && <span className={styles.error}>{errors.surname}</span>}
+              <small className={styles.hint}>Your name helps us personalise your experience.</small>
             </div>
 
             <div className={styles.formGroup}>
@@ -417,16 +437,30 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Full Name *
+                First Name *
               </label>
               <input
                 type="text"
-                value={bloggerForm.fullName}
-                onChange={(e) => setBloggerForm(prev => ({ ...prev, fullName: e.target.value }))}
+                value={bloggerForm.firstName}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, firstName: e.target.value }))}
                 className={styles.textInput}
                 required
               />
-              {errors.fullName && <span className={styles.error}>{errors.fullName}</span>}
+              {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Surname *
+              </label>
+              <input
+                type="text"
+                value={bloggerForm.surname}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, surname: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.surname && <span className={styles.error}>{errors.surname}</span>}
             </div>
 
             <div className={styles.formGroup}>
