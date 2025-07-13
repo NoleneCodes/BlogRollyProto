@@ -1,7 +1,42 @@
 
 import type { NextPage } from "next";
+import { useEffect } from "react";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
+
+const GoogleTrendsChart = () => {
+  useEffect(() => {
+    // Load the Google Trends script
+    const script = document.createElement('script');
+    script.src = 'https://ssl.gstatic.com/trends_nrtr/4116_RC01/embed_loader.js';
+    script.async = true;
+    script.onload = () => {
+      // @ts-ignore
+      if (window.trends) {
+        // @ts-ignore
+        window.trends.embed.renderExploreWidget("TIMESERIES", {
+          "comparisonItem": [{"keyword": "blogroll", "geo": "GB", "time": "2004-01-01 2025-07-13"}],
+          "category": 0,
+          "property": ""
+        }, {
+          "exploreQuery": "date=all&geo=GB&q=blogroll&hl=en",
+          "guestPath": "https://trends.google.com:443/trends/embed/"
+        });
+      }
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // Cleanup
+      const existingScript = document.querySelector('script[src="https://ssl.gstatic.com/trends_nrtr/4116_RC01/embed_loader.js"]');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
+    };
+  }, []);
+
+  return <div style={{ minHeight: '400px' }} />;
+};
 
 const About: NextPage = () => {
   return (
@@ -59,11 +94,8 @@ const About: NextPage = () => {
       <div className={styles.trendsSection}>
         <h2>The Data Speaks:</h2>
         <p>Google Trends shows the decline and quiet disappearance of "blogroll" searches over the past two decades:</p>
-        <div className={styles.trendsChart}>
-          <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4116_RC01/embed_loader.js"></script>
-          <script type="text/javascript">
-            {`trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"blogroll","geo":"GB","time":"2004-01-01 2025-07-13"}],"category":0,"property":""}, {"exploreQuery":"date=all&geo=GB&q=blogroll&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"});`}
-          </script>
+        <div className={styles.trendsChart} id="google-trends-chart">
+          <GoogleTrendsChart />
         </div>
       </div>
     </Layout>
