@@ -1,6 +1,4 @@
-The code adds CSS styles for blog post submission sections.
-```
-```replit_final_file
+
 .container {
   max-width: 700px;
   margin: 2rem auto;
@@ -111,6 +109,12 @@ The code adds CSS styles for blog post submission sections.
   font-size: 0.875rem;
 }
 
+.optional {
+  color: #6b7280;
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
 .textInput {
   padding: 0.75rem;
   border: 1px solid #d1d5db;
@@ -120,6 +124,20 @@ The code adds CSS styles for blog post submission sections.
 }
 
 .textInput:focus {
+  outline: none;
+  border-color: #c42142;
+  box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
+}
+
+.fileInput {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.fileInput:focus {
   outline: none;
   border-color: #c42142;
   box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);

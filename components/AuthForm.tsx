@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/AuthForm.module.css';
 
@@ -136,7 +135,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
       const monetizationProgress = bloggerForm.monetizationMethods.length > 0 ? 1 : 0;
       const firstBlogPostProgress = bloggerForm.blogPosts[0] !== '' ? 1 : 0;
-      
+
       const totalProgress = (filledFields.length + checkboxes + topicsProgress + monetizationProgress + firstBlogPostProgress) / 12 * 100;
       setProgress(totalProgress);
     }
@@ -149,16 +148,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const validateAge = (dateOfBirth: string) => {
     if (!dateOfBirth) return false;
-    
+
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       return age - 1 >= 18;
     }
-    
+
     return age >= 18;
   };
 
@@ -166,7 +165,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (topic === 'Other') {
       setShowOtherTopic(checked);
     }
-    
+
     setReaderForm(prev => ({
       ...prev,
       topics: checked 
@@ -300,7 +299,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
         <div className={styles.authCard}>
           <h2>Join as a Reader</h2>
           <p>Discover amazing blogs tailored to your interests</p>
-          
+
           <form onSubmit={handleReaderSubmit} className={styles.form}>
             <div className={styles.formGroup}>
               <label className={styles.label}>
@@ -473,7 +472,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
         <div className={styles.authCard}>
           <h2>Join as a Blogger</h2>
           <p>Get your blog discovered by the right readers</p>
-          
+
           {activeTab === 'blogger' && (
             <div className={styles.progressContainer}>
               <div className={styles.progressBar}>
@@ -488,7 +487,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
           <form onSubmit={handleBloggerSubmit} className={styles.form}>
             <div className={styles.sectionTitle}>Part 1: Account Setup</div>
-            
+
             <div className={styles.formGroup}>
               <label className={styles.label}>
                 First Name *
@@ -691,15 +690,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             </div>
 
             <div className={styles.sectionTitle}>Part 3: Submit Your Best Blog Posts</div>
-            
+
             <div className={styles.formGroup}>
               <label className={styles.label}>Submit Up to 3 Blog Posts</label>
               <small className={styles.hint}>Share your best blog posts that represent your work. These will be featured in your profile.</small>
-              
+
               {bloggerForm.blogPosts.map((post, index) => (
                 <div key={index} className={styles.blogPostSubmission}>
                   <h4>Blog Post {index + 1} {index === 0 ? '(Required)' : '(Optional)'}</h4>
-                  
+
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Blog Post URL {index === 0 ? '*' : ''}</label>
                     <input
