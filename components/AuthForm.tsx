@@ -141,7 +141,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     }
     return age >= 18;
   };
-  };
 
   const handleReaderTopicChange = (topic: string, checked: boolean) => {
     if (topic === 'Other') {
