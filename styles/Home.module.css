@@ -4,6 +4,7 @@
   width: 100vw;
   margin-left: calc(-50vw + 50%);
   background: #c42142;
+  margin-top: 0;
 }
 
 .title {
