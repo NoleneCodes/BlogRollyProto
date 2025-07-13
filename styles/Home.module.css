@@ -617,6 +617,42 @@
   font-size: 1.2rem;
 }
 
+/* Medium screens - keep buttons side by side */
+@media (max-width: 768px) and (min-width: 481px) {
+  .searchContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .searchInput {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .searchButton,
+  .aiSearchButton {
+    flex-shrink: 0;
+  }
+}
+
+/* Very small screens - stack buttons vertically */
+@media (max-width: 480px) {
+  .searchContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .searchInput {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .searchButton,
+  .aiSearchButton {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .trendsSection {
     margin: 2rem auto;
@@ -794,21 +830,6 @@
 
   .description {
     font-size: 1.1rem;
-  }
-
-  .searchContainer {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .searchInput {
-    min-width: unset;
-    width: 100%;
-  }
-
-  .searchButton,
-  .aiSearchButton {
-    flex-shrink: 0;
   }
 
   .cta {
