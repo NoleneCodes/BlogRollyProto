@@ -28,7 +28,7 @@
 
 .logo h2 {
   margin: 0;
-  color: #0070f3;
+  color: #c42142;
   font-size: 1.5rem;
   font-weight: bold;
 }
@@ -50,7 +50,7 @@
 }
 
 .navLink:hover {
-  color: #0070f3;
+  color: #c42142;
   background-color: rgba(196, 33, 66, 0.1);
 }
 
@@ -123,7 +123,7 @@
 }
 
 .footerSection a:hover {
-  color: #0070f3;
+  color: #c42142;
 }
 
 .footerBottom {
@@ -165,7 +165,7 @@
 
 .mobileNavLink:hover {
   background-color: #f8f9fa;
-  color: #0070f3;
+  color: #c42142;
 }
 
 .mobileNavLink:last-child {
