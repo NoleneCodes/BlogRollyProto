@@ -55,6 +55,17 @@ const About: NextPage = () => {
           There were blogrolls—organic, human-curated networks of voices that shaped internet culture.
         </p>
       </div>
+
+      <div className={styles.trendsSection}>
+        <h2>The Data Speaks:</h2>
+        <p>Google Trends shows the decline and quiet disappearance of "blogroll" searches over the past two decades:</p>
+        <div className={styles.trendsChart}>
+          <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4116_RC01/embed_loader.js"></script>
+          <script type="text/javascript">
+            {`trends.embed.renderExploreWidget("TIMESERIES", {"comparisonItem":[{"keyword":"blogroll","geo":"GB","time":"2004-01-01 2025-07-13"}],"category":0,"property":""}, {"exploreQuery":"date=all&geo=GB&q=blogroll&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"});`}
+          </script>
+        </div>
+      </div>
     </Layout>
   );
 };

@@ -210,7 +210,54 @@
   margin-bottom: 1.5rem;
 }
 
+.trendsSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.trendsSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.trendsSection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.trendsChart {
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  min-height: 400px;
+}
+
 @media (max-width: 768px) {
+  .trendsSection {
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .trendsSection h2 {
+    font-size: 1.8rem;
+  }
+
+  .trendsSection p {
+    font-size: 1rem;
+  }
+
+  .trendsChart {
+    padding: 1rem;
+    min-height: 300px;
+  }
+
   .missionSection,
   .rootsSection {
     margin: 2rem auto;
