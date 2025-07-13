@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/AuthForm.module.css';
+import BlogSubmissionForm from './BlogSubmissionForm';
 
 interface AuthFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -87,6 +88,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showOtherTopic, setShowOtherTopic] = useState(false);
+  const [showBlogSubmissionPopup, setShowBlogSubmissionPopup] = useState(false);
+  const [submittedBlogs, setSubmittedBlogs] = useState<any[]>([]);
 
   const topicOptions = [
     'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
@@ -199,6 +202,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     }));
   };
 
+  const handleBlogSubmission = (blogData: any) => {
+    if (submittedBlogs.length < 3) {
+      setSubmittedBlogs(prev => [...prev, blogData]);
+      setShowBlogSubmissionPopup(false);
+    }
+  };
+
+  const removeBlog = (index: number) => {
+    setSubmittedBlogs(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleReaderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
@@ -242,8 +256,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
     else if (!validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
     if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
-    if (!bloggerForm.blogPosts[0]) newErrors.blogPost1 = 'At least one blog post is required';
-    else if (!validateUrl(bloggerForm.blogPosts[0])) newErrors.blogPost1 = 'Please enter a valid blog post URL';
+    if (submittedBlogs.length === 0) newErrors.blogPost1 = 'At least one blog post is required';
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
 
@@ -689,30 +702,44 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               </div>
             </div>
 
-            <div className={styles.sectionTitle}>Part 3: Submit Your Best Blog Posts</div>
+            <div className={styles.sectionTitle}>Part 3: Listings</div>
 
             <div className={styles.formGroup}>
-              <label className={styles.label}>Submit Up to 3 Blog Posts</label>
-              <small className={styles.hint}>Share your best blog posts that represent your work. These will be featured in your profile.</small>
-
-              {bloggerForm.blogPosts.map((post, index) => (
-                <div key={index} className={styles.blogPostSubmission}>
-                  <h4>Blog Post {index + 1} {index === 0 ? '(Required)' : '(Optional)'}</h4>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Blog Post URL {index === 0 ? '*' : ''}</label>
-                    <input
-                      type="url"
-                      value={post}
-                      onChange={(e) => handleBlogPostChange(index, e.target.value)}
-                      className={styles.textInput}
-                      placeholder="https://yourblog.com/your-post-title"
-                      required={index === 0}
-                    />
-                    <small className={styles.hint}>Must start with https:// and include a path</small>
+              <label className={styles.label}>Submit Your Best Blog Posts</label>
+              <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile.</small>
+              
+              <div className={styles.blogListingsContainer}>
+                {submittedBlogs.map((blog, index) => (
+                  <div key={index} className={styles.submittedBlog}>
+                    <div className={styles.blogInfo}>
+                      <h4>{blog.title}</h4>
+                      <p>{blog.description}</p>
+                      <a href={blog.postUrl} target="_blank" rel="noopener noreferrer">{blog.postUrl}</a>
+                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => removeBlog(index)}
+                      className={styles.removeBlogButton}
+                    >
+                      Remove
+                    </button>
                   </div>
-                </div>
-              ))}
+                ))}
+                
+                {submittedBlogs.length < 3 && (
+                  <button 
+                    type="button" 
+                    onClick={() => setShowBlogSubmissionPopup(true)}
+                    className={styles.addBlogButton}
+                  >
+                    + Add Blog Post {submittedBlogs.length === 0 ? '(Required)' : '(Optional)'}
+                  </button>
+                )}
+              </div>
+              
+              {submittedBlogs.length === 0 && errors.blogPost1 && (
+                <span className={styles.error}>At least one blog post is required</span>
+              )}
             </div>
 
             <div className={styles.formGroup}>
@@ -751,6 +778,25 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               List My Blog
             </button>
           </form>
+        </div>
+      )}
+
+      {/* Blog Submission Popup */}
+      {showBlogSubmissionPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popupContent}>
+            <div className={styles.popupHeader}>
+              <h3>Add Blog Post</h3>
+              <button 
+                type="button" 
+                onClick={() => setShowBlogSubmissionPopup(false)}
+                className={styles.closeButton}
+              >
+                ×
+              </button>
+            </div>
+            <BlogSubmissionForm onSubmit={handleBlogSubmission} />
+          </div>
         </div>
       )}
     </div>
