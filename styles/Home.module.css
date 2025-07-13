@@ -247,6 +247,32 @@
   text-align: center;
 }
 
+.rebuildSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.rebuildSection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.featureList {
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+  list-style: none;
+}
+
+.featureList li {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 0.8rem;
+  padding-left: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .trendsSection {
     margin: 2rem auto;
@@ -267,7 +293,8 @@
   }
 
   .missionSection,
-  .rootsSection {
+  .rootsSection,
+  .rebuildSection {
     margin: 2rem auto;
     padding: 0 1rem;
   }
@@ -278,7 +305,12 @@
   }
 
   .missionSection p,
-  .rootsSection p {
+  .rootsSection p,
+  .rebuildSection p {
+    font-size: 1rem;
+  }
+
+  .featureList li {
     font-size: 1rem;
   }
   .pronunciationCard {

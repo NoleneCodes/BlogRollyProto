@@ -66,6 +66,26 @@ const About: NextPage = () => {
           </p>
         </div>
       </div>
+
+      <div className={styles.rebuildSection}>
+        <p>We're rebuilding that legacy.</p>
+        <p>For today's creators. For tomorrow's internet.</p>
+        <p>Not through popularity contests or viral dances, but through:</p>
+        <ul className={styles.featureList}>
+          <li>• Intentional discovery</li>
+          <li>• Authentic writing</li>
+          <li>• Genuine connections</li>
+        </ul>
+        <p>
+          BlogRolly is the next-generation blogroll—an elegant, searchable evolution of a once-loved system, reborn for independent creators building real businesses with their words.
+        </p>
+        <p>BlogRolly combines modern discovery tools with the timeless appeal of personal blogs, creating a space where:</p>
+        <ul className={styles.featureList}>
+          <li>• Readers explore thoughtful content</li>
+          <li>• Writers grow their brands</li>
+          <li>• The open web stays open</li>
+        </ul>
+      </div>
     </Layout>
   );
 };
