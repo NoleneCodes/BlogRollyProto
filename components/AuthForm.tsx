@@ -131,14 +131,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   };
 
   const validateAge = (dateOfBirth: string) => {
+    if (!dateOfBirth) return false;
+    
     const today = new Date();
     const [year, month] = dateOfBirth.split('-').map(Number);
-    const age = today.getFullYear() - year;
-    const monthDiff = today.getMonth() + 1 - month; // getMonth() is 0-indexed
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1; // getMonth() is 0-indexed
     
-    if (monthDiff < 0) {
-      return age - 1 >= 18;
+    const age = currentYear - year;
+    
+    // If current month is before birth month, subtract one year from age
+    if (currentMonth < month) {
+      return (age - 1) >= 18;
     }
+    
     return age >= 18;
   };
 
