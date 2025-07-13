@@ -27,10 +27,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
               <h2>Blogrolly</h2>
             </div>
             <div className={styles.navLinks}>
-              <a href="/" className={styles.navLink}>Home</a>
-              <a href="/blogs" className={styles.navLink}>Blogs</a>
-              <a href="/add" className={styles.navLink}>Add Blog</a>
+              <a href="/blogroll" className={styles.navLink}>The Blogroll</a>
               <a href="/about" className={styles.navLink}>About</a>
+              <a href="/investors" className={styles.navLink}>Investors</a>
+              <a href="/blog" className={styles.navLink}>Our Blog</a>
+              <a href="/submit" className={styles.navLink}>Submit a Blog</a>
+              <a href="/auth" className={styles.navLink}>Sign Up/In</a>
             </div>
             <div className={styles.mobileMenu}>
               <button className={styles.menuButton}>☰</button>
@@ -50,8 +52,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
             </div>
             <div className={styles.footerSection}>
               <h4>Links</h4>
-              <a href="/blogs">Browse Blogs</a>
-              <a href="/add">Add Blog</a>
+              <a href="/blogroll">The Blogroll</a>
+              <a href="/submit">Submit a Blog</a>
               <a href="/about">About</a>
             </div>
             <div className={styles.footerSection}>
