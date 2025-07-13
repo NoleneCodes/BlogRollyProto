@@ -1,4 +1,3 @@
-
 .container {
   min-height: 100vh;
   display: flex;
@@ -169,8 +168,8 @@
     display: none;
   }
 
-  .mobileMenu {
-    display: block;
+  .mobileMenuContainer {
+    display: flex;
   }
 
   .mobileMenuDropdown {
@@ -202,8 +201,8 @@
     display: none;
   }
 
-  .mobileMenu {
-    display: block;
+  .mobileMenuContainer {
+    display: flex;
   }
 }
 
@@ -218,7 +217,7 @@
     display: none;
   }
 
-  .mobileMenu {
-    display: block;
+  .mobileMenuContainer {
+    display: flex;
   }
 }
