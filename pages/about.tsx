@@ -13,18 +13,11 @@ const About: NextPage = () => {
         </p>
       </div>
 
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>🎯 Our Mission</h3>
-          <p>To create the best platform for discovering and organizing blogs</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>👥 Our Team</h3>
-          <p>Passionate developers and content enthusiasts</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🚀 Our Vision</h3>
-          <p>Making blog discovery accessible to everyone</p>
+      <div className={styles.pronunciationCard}>
+        <h3>Pronunciation: Blog-Roll-Lee</h3>
+        <div className={styles.definition}>
+          <strong>Definition:</strong><br />
+          Blogroll – A list of hyperlinks to blogs or websites.
         </div>
       </div>
     </Layout>

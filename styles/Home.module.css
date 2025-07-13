@@ -159,7 +159,52 @@
   line-height: 1.5;
 }
 
+.pronunciationCard {
+  background: #c42142;
+  color: white;
+  padding: 3rem;
+  border-radius: 20px;
+  text-align: center;
+  margin: 4rem auto;
+  max-width: 600px;
+  box-shadow: 0 8px 24px rgba(196, 33, 66, 0.2);
+}
+
+.pronunciationCard h3 {
+  margin: 0 0 2rem 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.definition {
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.definition strong {
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
+  .pronunciationCard {
+    margin: 2rem 1rem;
+    padding: 2rem;
+  }
+  
+  .pronunciationCard h3 {
+    font-size: 1.5rem;
+  }
+  
+  .definition {
+    font-size: 1.1rem;
+  }
+  
+  .definition strong {
+    font-size: 1.2rem;
+  }
+
   .title {
     font-size: 2.5rem;
   }
