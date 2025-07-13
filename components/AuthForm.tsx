@@ -14,6 +14,8 @@ interface UserInfo {
 
 interface ReaderFormData {
   email: string;
+  password: string;
+  confirmPassword: string;
   firstName: string;
   surname: string;
   username: string;
@@ -28,6 +30,8 @@ interface BloggerFormData {
   firstName: string;
   surname: string;
   email: string;
+  password: string;
+  confirmPassword: string;
   displayName: string;
   profilePicture?: File | null;
   bio: string;
@@ -49,6 +53,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Reader form state
   const [readerForm, setReaderForm] = useState<ReaderFormData>({
     email: '',
+    password: '',
+    confirmPassword: '',
     firstName: '',
     surname: '',
     username: '',
@@ -64,6 +70,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     firstName: '',
     surname: '',
     email: '',
+    password: '',
+    confirmPassword: '',
     displayName: '',
     profilePicture: null,
     bio: '',
@@ -194,6 +202,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     const newErrors: Record<string, string> = {};
 
     if (!readerForm.email) newErrors.email = 'Email is required';
+    if (!readerForm.password) newErrors.password = 'Password is required';
+    else if (readerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+    if (!readerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+    else if (readerForm.password !== readerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     if (!readerForm.firstName) newErrors.firstName = 'First name is required';
     if (!readerForm.surname) newErrors.surname = 'Surname is required';
     if (!readerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
@@ -206,9 +218,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       return;
     }
 
-    // TODO: Implement Supabase magic link authentication
+    // TODO: Implement Supabase authentication
     console.log('Reader form submitted:', readerForm);
-    alert('Thanks! We\'ll send you a secure sign-in link to your inbox.');
+    alert('Account created successfully! You can now sign in.');
   };
 
   const handleBloggerSubmit = async (e: React.FormEvent) => {
@@ -218,6 +230,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
     if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
     if (!bloggerForm.email) newErrors.email = 'Email is required';
+    if (!bloggerForm.password) newErrors.password = 'Password is required';
+    else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+    if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+    else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     if (!bloggerForm.displayName) newErrors.displayName = 'Display name is required';
     if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
     else if (!validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
@@ -232,7 +248,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
     // TODO: Implement Supabase integration
     console.log('Blogger form submitted:', bloggerForm);
-    alert('Thanks! We\'re reviewing your blog. You\'ll be notified when it\'s listed.');
+    alert('Account created successfully! We\'re reviewing your blog. You\'ll be notified when it\'s listed.');
   };
 
   if (isLoading) {
@@ -291,7 +307,38 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 required
               />
               {errors.email && <span className={styles.error}>{errors.email}</span>}
-              <small className={styles.hint}>We'll send you a secure sign-in link to your inbox.</small>
+              <small className={styles.hint}>This will be your login email address.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Password *
+              </label>
+              <input
+                type="password"
+                value={readerForm.password}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, password: e.target.value }))}
+                className={styles.textInput}
+                minLength={8}
+                required
+              />
+              {errors.password && <span className={styles.error}>{errors.password}</span>}
+              <small className={styles.hint}>Must be at least 8 characters long.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Confirm Password *
+              </label>
+              <input
+                type="password"
+                value={readerForm.confirmPassword}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
+              <small className={styles.hint}>Re-enter your password to confirm.</small>
             </div>
 
             <div className={styles.formGroup}>
@@ -475,7 +522,38 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 required
               />
               {errors.email && <span className={styles.error}>{errors.email}</span>}
-              <small className={styles.hint}>We'll send you a secure sign-in link to your inbox.</small>
+              <small className={styles.hint}>This will be your login email address.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Password *
+              </label>
+              <input
+                type="password"
+                value={bloggerForm.password}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, password: e.target.value }))}
+                className={styles.textInput}
+                minLength={8}
+                required
+              />
+              {errors.password && <span className={styles.error}>{errors.password}</span>}
+              <small className={styles.hint}>Must be at least 8 characters long.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Confirm Password *
+              </label>
+              <input
+                type="password"
+                value={bloggerForm.confirmPassword}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
+              <small className={styles.hint}>Re-enter your password to confirm.</small>
             </div>
 
             <div className={styles.sectionTitle}>Part 2: Profile Creation</div>
