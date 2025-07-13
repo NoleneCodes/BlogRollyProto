@@ -236,7 +236,15 @@
   border-radius: 12px;
   padding: 2rem;
   margin: 2rem 0;
-  min-height: 400px;
+  min-height: 450px;
+}
+
+.trendsCaption {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
@@ -277,15 +285,15 @@
     margin: 2rem 1rem;
     padding: 2rem;
   }
-  
+
   .pronunciationCard h3 {
     font-size: 1.5rem;
   }
-  
+
   .definition {
     font-size: 1.1rem;
   }
-  
+
   .definition strong {
     font-size: 1.2rem;
   }
