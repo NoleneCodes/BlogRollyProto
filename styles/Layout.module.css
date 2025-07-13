@@ -58,6 +58,18 @@
   display: none;
 }
 
+.mobileMenuContainer {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobileVisibleButtons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .menuButton {
   background: none;
   border: none;
@@ -200,8 +212,9 @@
     display: flex;
   }
 
-  .mobileVisibleButtons a:not([href="/submit"]):not([href="/auth"]) {
-    display: none;
+  .mobileVisibleButtons a[href="/submit"],
+  .mobileVisibleButtons a[href="/auth"] {
+    display: block;
   }
 }
 
@@ -215,7 +228,11 @@
     display: flex;
   }
 
-  .mobileVisibleButtons a:not([href="/auth"]) {
+  .mobileVisibleButtons a[href="/submit"] {
     display: none;
+  }
+
+  .mobileVisibleButtons a[href="/auth"] {
+    display: block;
   }
 }
