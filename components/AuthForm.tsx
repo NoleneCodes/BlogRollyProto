@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
@@ -27,12 +28,16 @@ interface ReaderFormData {
   subscribeToUpdates: boolean;
 }
 
-
+interface SignInFormData {
+  email: string;
+  password: string;
+}
 
 const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authMode, setAuthMode] = useState<'selection' | 'signin' | 'signup'>('selection');
   const [activeTab, setActiveTab] = useState<'reader' | 'blogger'>('reader');
 
   // Reader form state
@@ -48,6 +53,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     otherTopic: '',
     agreeToTerms: false,
     subscribeToUpdates: false
+  });
+
+  // Sign in form state
+  const [signInForm, setSignInForm] = useState<SignInFormData>({
+    email: '',
+    password: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -89,10 +100,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   useEffect(() => {
     if (router.query.tab === 'blogger') {
       setActiveTab('blogger');
+      setAuthMode('signup');
     }
   }, [router.query]);
-
-  
 
   const validateAge = (dateOfBirth: string) => {
     if (!dateOfBirth) return false;
@@ -122,7 +132,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     }));
   };
 
-  
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: Record<string, string> = {};
+
+    if (!signInForm.email) newErrors.email = 'Email is required';
+    if (!signInForm.password) newErrors.password = 'Password is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // TODO: Implement Supabase authentication
+    console.log('Sign in attempted:', signInForm);
+    alert('Sign in functionality will be implemented with Supabase integration.');
+  };
 
   const handleReaderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,8 +175,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     alert('Account created successfully! You can now sign in.');
   };
 
-  
-
   if (isLoading) {
     return (
       <div className={styles.container}>
@@ -173,6 +196,108 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     );
   }
 
+  // Mode selection screen
+  if (authMode === 'selection') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.authCard}>
+          <h2>Welcome to Blogrolly</h2>
+          <p>Join our community of readers and bloggers</p>
+          
+          <div className={styles.modeSelection}>
+            <button 
+              className={styles.modeButton}
+              onClick={() => setAuthMode('signup')}
+            >
+              <h3>Create Account</h3>
+              <p>New to Blogrolly? Sign up to start discovering amazing blogs or share your own.</p>
+            </button>
+            
+            <button 
+              className={styles.modeButton}
+              onClick={() => setAuthMode('signin')}
+            >
+              <h3>Sign In</h3>
+              <p>Already have an account? Sign in to access your dashboard and submissions.</p>
+            </button>
+          </div>
+          
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button 
+              className={styles.linkButton}
+              onClick={() => router.push('/')}
+            >
+              ← Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Sign in form
+  if (authMode === 'signin') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.authCard}>
+          <h2>Sign In</h2>
+          <p>Welcome back to Blogrolly</p>
+
+          <form onSubmit={handleSignIn} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Email Address *
+              </label>
+              <input
+                type="email"
+                value={signInForm.email}
+                onChange={(e) => setSignInForm(prev => ({ ...prev, email: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.email && <span className={styles.error}>{errors.email}</span>}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Password *
+              </label>
+              <input
+                type="password"
+                value={signInForm.password}
+                onChange={(e) => setSignInForm(prev => ({ ...prev, password: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.password && <span className={styles.error}>{errors.password}</span>}
+            </div>
+
+            <button type="submit" className={styles.submitButton}>
+              Sign In
+            </button>
+          </form>
+
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button 
+              className={styles.linkButton}
+              onClick={() => setAuthMode('selection')}
+            >
+              ← Back to options
+            </button>
+            <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
+            <button 
+              className={styles.linkButton}
+              onClick={() => setAuthMode('signup')}
+            >
+              Don't have an account? Sign up
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Sign up forms (existing functionality)
   return (
     <div className={styles.container}>
       <div className={styles.tabContainer}>
@@ -366,6 +491,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       ) : (
         <BloggerSignupForm onAuthenticated={onAuthenticated} />
       )}
+
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <button 
+          className={styles.linkButton}
+          onClick={() => setAuthMode('selection')}
+        >
+          ← Back to options
+        </button>
+        <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
+        <button 
+          className={styles.linkButton}
+          onClick={() => setAuthMode('signin')}
+        >
+          Already have an account? Sign in
+        </button>
+      </div>
     </div>
   );
 };

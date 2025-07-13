@@ -279,6 +279,59 @@
   box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
 }
 
+.modeSelection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.modeButton {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.modeButton:hover {
+  border-color: #c42142;
+  background: #fef7f7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.1);
+}
+
+.modeButton h3 {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modeButton p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #c42142;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.linkButton:hover {
+  color: #a01835;
+}
+
 .ctaButton:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
