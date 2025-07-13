@@ -1,0 +1,100 @@
+
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.authCard {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.authCard h2 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.authCard p {
+  color: #6b7280;
+  margin-bottom: 2rem;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.authButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.authInfo {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.authInfo h3 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.authInfo ul {
+  list-style: none;
+  padding: 0;
+}
+
+.authInfo li {
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.authInfo li::before {
+  content: '✓';
+  color: #10b981;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.welcomeMessage {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.welcomeMessage h2 {
+  color: #166534;
+  margin-bottom: 0.5rem;
+}
+
+.welcomeMessage p {
+  color: #15803d;
+  margin: 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem auto;
+    padding: 0 0.5rem;
+  }
+  
+  .authCard {
+    padding: 1.5rem;
+  }
+}

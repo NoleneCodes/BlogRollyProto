@@ -1,6 +1,7 @@
 
 import type { NextPage } from "next";
 import Layout from "../components/Layout";
+import AuthForm from "../components/AuthForm";
 import styles from "../styles/Home.module.css";
 
 const Auth: NextPage = () => {
@@ -12,6 +13,8 @@ const Auth: NextPage = () => {
           Join the Blogrolly community to save and organize your favorite blogs
         </p>
       </div>
+
+      <AuthForm />
 
       <div className={styles.features}>
         <div className={styles.feature}>
