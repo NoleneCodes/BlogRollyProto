@@ -313,7 +313,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
               </div>
               {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
             </div>
-          )}</div>
+          )}
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
