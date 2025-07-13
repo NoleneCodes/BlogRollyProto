@@ -76,6 +76,18 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
         <p>Please authenticate with your Replit account to submit a blog to our directory.</p>
         
         <div className={styles.authButtonContainer}>
+          <button 
+            className={styles.ctaButton}
+            onClick={() => {
+              const authScript = document.createElement('script');
+              authScript.src = 'https://auth.util.repl.co/script.js';
+              authScript.setAttribute('data-authed', "window.parent.postMessage('repl-auth-success', '*')");
+              document.body.appendChild(authScript);
+            }}
+          >
+            Sign In with Replit
+          </button>
+          
           <script
             dangerouslySetInnerHTML={{
               __html: `
@@ -87,7 +99,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               `
             }}
           />
-          <div id="repl-auth-button">
+          <div id="repl-auth-button" style={{ display: 'none' }}>
             <script
               src="https://auth.util.repl.co/script.js"
               data-authed="window.parent.postMessage('repl-auth-success', '*')"

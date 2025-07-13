@@ -32,6 +32,31 @@
   margin: 2rem 0;
 }
 
+.ctaButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
+  min-width: 200px;
+}
+
+.ctaButton:hover {
+  background: #a01835;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
+}
+
 .authInfo {
   margin-top: 2rem;
   padding-top: 2rem;
