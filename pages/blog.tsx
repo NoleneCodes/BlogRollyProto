@@ -11,21 +11,17 @@ const Blog: NextPage = () => {
         <p className={styles.description}>
           Insights, updates, and stories from the Blogrolly team
         </p>
+        
+        <div className={styles.cta}>
+          <a href="/auth" className={styles.primaryButton}>Join us</a>
+        </div>
       </div>
 
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>📝 Latest Posts</h3>
-          <p>Stay updated with our newest articles and insights</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🔍 Industry Trends</h3>
-          <p>Deep dives into content discovery and curation trends</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>💭 Behind the Scenes</h3>
-          <p>Stories from our development journey and team</p>
-        </div>
+      <div className={styles.missionSection}>
+        <p>Hey, welcome to the BlogRolly blog 👋</p>
+        <p>We're sharing our journey, the ups, the pivots, and everything in between as we build a space for independent bloggers to get seen, heard, and supported.</p>
+        <p>Think of this as our behind-the-scenes notebook, shared out loud.</p>
+        <p>Thanks for being here.</p>
       </div>
     </Layout>
   );
