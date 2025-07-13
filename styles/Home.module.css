@@ -451,6 +451,103 @@
   font-weight: 600;
 }
 
+.pitchDeckSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.pitchDeckSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.pitchDeckCarousel {
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 3rem;
+  margin: 2rem 0;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carouselPlaceholder {
+  text-align: center;
+  color: #666;
+}
+
+.carouselPlaceholder p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.learnMoreSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.learnMoreSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.calendlySection {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border-left: 4px solid #c42142;
+}
+
+.calendlySection h3 {
+  color: #c42142;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.calendlySection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.investorRelationsSection {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+}
+
+.investorRelationsSection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.investorRelationsSection a {
+  color: #c42142;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.investorRelationsSection a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .trendsSection {
     margin: 2rem auto;
@@ -536,6 +633,47 @@
 
   .roadmapPhase h3 {
     font-size: 1.2rem;
+  }
+
+  .pitchDeckSection,
+  .learnMoreSection {
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .pitchDeckSection h2,
+  .learnMoreSection h2 {
+    font-size: 1.8rem;
+  }
+
+  .pitchDeckCarousel {
+    padding: 2rem;
+    min-height: 250px;
+  }
+
+  .carouselPlaceholder p {
+    font-size: 1rem;
+  }
+
+  .calendlySection {
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .calendlySection h3 {
+    font-size: 1.2rem;
+  }
+
+  .calendlySection p {
+    font-size: 1rem;
+  }
+
+  .investorRelationsSection {
+    padding: 1rem;
+  }
+
+  .investorRelationsSection p {
+    font-size: 1rem;
   }
   .pronunciationCard {
     margin: 2rem 1rem;

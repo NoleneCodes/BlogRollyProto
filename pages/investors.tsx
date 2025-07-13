@@ -70,6 +70,47 @@ const Investors: NextPage = () => {
           </ul>
         </div>
       </div>
+
+      <div className={styles.pitchDeckSection}>
+        <h2>Interactive Pitch Deck</h2>
+        <div className={styles.pitchDeckCarousel}>
+          <div className={styles.carouselPlaceholder}>
+            <p>Pitch deck slides coming soon...</p>
+            <p>Stay tuned for our interactive presentation covering market opportunity, business model, and growth strategy.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.learnMoreSection}>
+        <h2>Interested in Learning More?</h2>
+        <div className={styles.calendlySection}>
+          <h3>Book a 15-Min Call</h3>
+          <p>Schedule via Calendly</p>
+          <p>Let's talk vision, strategy, or potential partnership.</p>
+          <div className={styles.cta}>
+            <a href="#" className={styles.primaryButton}>Schedule Call</a>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.contactSection}>
+        <h2>Contact</h2>
+        <div className={styles.contactInfo}>
+          <div className={styles.contactItem}>
+            <span className={styles.contactIcon}>📧</span>
+            <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
+          </div>
+          <div className={styles.contactItem}>
+            <span className={styles.contactIcon}>📱</span>
+            <span>Follow on Instagram, TikTok, and X: @BlogRolly</span>
+          </div>
+        </div>
+        
+        <div className={styles.investorRelationsSection}>
+          <p>Contact our investor relations team for detailed financials, growth metrics, and partnership opportunities.</p>
+          <p>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></p>
+        </div>
+      </div>
     </Layout>
   );
 };
