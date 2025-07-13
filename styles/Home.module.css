@@ -3,20 +3,22 @@
   padding: 4rem 0;
   max-width: 800px;
   margin: 0 auto;
+  background: #c42142;
+  border-radius: 12px;
 }
 
 .title {
   margin: 0 0 1rem 0;
   line-height: 1.15;
   font-size: 3.5rem;
-  color: #333;
+  color: white;
 }
 
 .description {
   margin: 0 0 3rem 0;
   line-height: 1.6;
   font-size: 1.25rem;
-  color: #666;
+  color: rgba(255, 255, 255, 0.9);
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
