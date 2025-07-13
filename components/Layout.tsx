@@ -40,14 +40,14 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
               <a href="/auth" className={styles.navLink}>Sign Up/In</a>
             </div>
             <div className={styles.mobileMenuContainer}>
+              <div className={styles.mobileVisibleButtons}>
+                <a href="/submit" className={styles.navLink}>Submit a Blog</a>
+                <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+              </div>
               <div className={styles.mobileMenu}>
                 <button className={styles.menuButton} onClick={toggleMobileMenu}>
                   {isMobileMenuOpen ? '✕' : '☰'}
                 </button>
-              </div>
-              <div className={styles.mobileVisibleButtons}>
-                <a href="/submit" className={styles.navLink}>Submit a Blog</a>
-                <a href="/auth" className={styles.navLink}>Sign Up/In</a>
               </div>
             </div>
           </div>
