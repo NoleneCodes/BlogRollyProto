@@ -1,0 +1,83 @@
+Reader Sign-Up Form — Final Spec (Revised)
+1. 📧 Email Address
+Type: input type="email"
+
+Required: ✅
+
+Authentication: Use Supabase Magic Link
+
+Microcopy: “We’ll send you a secure sign-in link to your inbox.”
+
+2. 🧑🏽 Full Name
+Type: input type="text"
+
+Required: ✅
+
+Microcopy: “Your full name helps us personalise your experience.”
+
+3. 🧑🏾‍💻 Display Name / Username (optional)
+Type: input type="text"
+
+Required: ❌
+
+Microcopy: “Pick a name readers can see (optional).”
+
+4. 🎂 Date of Birth
+Type: input type="date"
+
+Required: ✅
+
+Validation: Must be 18+ (for adult content filtering)
+
+Microcopy: “We use your birthdate to filter out mature content.”
+
+5. 🧠 Topics You’re Into
+Type: multi-select dropdown with searchable list
+
+Required: ✅
+
+Other Option: If “Other” is selected, show:
+
+textarea: “Tell us your niche.”
+
+🔖 Seed Topics List
+Category	Example Tags
+Culture & Society	Culture, Diaspora Life, Queer Voices, Race & Identity, Pop Culture
+Travel	Backpacking, Digital Nomad, Hidden Gems
+Health & Wellness	Mental Health, Gut Health, Fitness, Herbalism, Sexual Wellness
+Feminism	Feminist Thought, Girlhood, Intersectionality
+Tech	Coding, Developer Diaries, Indie Hacking, Web3
+Homesteading	Gardening, Permaculture, Animal Care, Self-Sufficiency
+Books & Media	Book Reviews, Reading Lists, Film & TV Commentary, Poetry
+Money & Work	Side Hustles, Freelancing, Investing, Burnout Recovery
+Spirituality	Meditation, Mysticism, Ancestral Practices, Energy Work
+Creativity	Journaling, Art, Storytelling, Design
+Relationships	Love & Dating, Inner Child Work, Family
+Food	Ancestral Recipes, Vegan Diaries, Food Justice
+Learning	Study Hacks, Self-Education, Course Reviews
+Society & Politics	Activism, Black British Voices, Commentary
+Other	[Triggers textarea for custom input]
+
+6. ✅ Agree to Terms and Conditions
+Type: checkbox
+
+Required: ✅
+
+Label: “I agree to the Terms and Conditions.”
+
+Link: /terms
+
+7. ✅ Subscribe to Blog Updates
+Type: checkbox
+
+Required: ❌
+
+Default: Unchecked
+
+Microcopy: “No spam. Just brilliant blogs you might love.”
+
+8. 🔘 Submit Button
+Label: "Start Exploring"
+
+Action: Triggers Supabase Magic Link auth, and stores all form data in readers table.
+
