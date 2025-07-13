@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
+import SurveyPopup from './SurveyPopup';
 
 interface BloggerSignupFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -66,6 +67,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showBlogSubmissionPopup, setShowBlogSubmissionPopup] = useState(false);
   const [submittedBlogs, setSubmittedBlogs] = useState<any[]>([]);
+  const [showSurveyPopup, setShowSurveyPopup] = useState(false);
+  const [surveyCompleted, setSurveyCompleted] = useState(false);
 
   const topicOptions = [
     'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
@@ -149,6 +152,13 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     setSubmittedBlogs(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleSurveyComplete = (surveyData: any) => {
+    setSurveyCompleted(true);
+    setBloggerForm(prev => ({ ...prev, agreeToSurvey: true }));
+    // TODO: Save survey data to backend
+    console.log('Survey completed:', surveyData);
+  };
+
   const handleBloggerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
@@ -168,7 +178,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
-    if (!bloggerForm.agreeToSurvey) newErrors.agreeToSurvey = 'You must agree to complete the mandatory survey';
+    if (!bloggerForm.agreeToSurvey || !surveyCompleted) newErrors.agreeToSurvey = 'You must complete the mandatory survey';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -477,12 +487,27 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             <input
               type="checkbox"
               checked={bloggerForm.agreeToSurvey}
-              onChange={(e) => setBloggerForm(prev => ({ ...prev, agreeToSurvey: e.target.checked }))}
+              onChange={(e) => {
+                if (e.target.checked && !surveyCompleted) {
+                  setShowSurveyPopup(true);
+                } else if (!e.target.checked) {
+                  setBloggerForm(prev => ({ ...prev, agreeToSurvey: false }));
+                  setSurveyCompleted(false);
+                }
+              }}
               className={styles.checkbox}
               required
             />
             <span className={styles.checkboxText}>
-              I agree to complete a mandatory survey to help us understand our blogger community *
+              I have completed the <button 
+                type="button" 
+                onClick={() => setShowSurveyPopup(true)}
+                className={styles.linkButton}
+                style={{ textDecoration: 'underline', padding: '0' }}
+              >
+                mandatory survey
+              </button> to help us understand our blogger community *
+              {surveyCompleted && <span style={{ color: '#10b981', marginLeft: '0.5rem' }}>✓ Completed</span>}
             </span>
           </label>
           {errors.agreeToSurvey && <span className={styles.error}>{errors.agreeToSurvey}</span>}
@@ -512,6 +537,13 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </div>
         </div>
       )}
+
+      {/* Survey Popup */}
+      <SurveyPopup
+        isOpen={showSurveyPopup}
+        onClose={() => setShowSurveyPopup(false)}
+        onComplete={handleSurveyComplete}
+      />
     </div>
   );
 };
