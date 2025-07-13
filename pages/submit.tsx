@@ -16,7 +16,7 @@ const Submit: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>Submit a Blog</h1>
         <p className={styles.description}>
-          Share your favorite blog with the Blogrolly community
+          Share your favourite blog with the Blogrolly community
         </p>
       </div>
 

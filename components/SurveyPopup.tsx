@@ -127,7 +127,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
               <option value="">Select primary goal</option>
               <option value="personal-expression">Personal expression/journaling</option>
               <option value="build-audience">Build an audience</option>
-              <option value="monetize">Monetize my content</option>
+              <option value="monetise">Monetise my content</option>
               <option value="business-marketing">Business/marketing</option>
               <option value="share-expertise">Share expertise/teach</option>
               <option value="creative-outlet">Creative outlet</option>
@@ -218,7 +218,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
               onChange={(e) => setSurveyData(prev => ({ ...prev, challengesFaced: e.target.value }))}
               className={styles.textarea}
               rows={3}
-              placeholder="e.g., finding readers, consistent posting, monetization, etc."
+              placeholder="e.g., finding readers, consistent posting, monetisation, etc."
               maxLength={500}
               required
             />
@@ -259,7 +259,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              How do you currently monetize your blog? * (Select all that apply)
+              How do you currently monetise your blog? * (Select all that apply)
             </label>
             <div className={styles.checkboxGrid}>
               {[
@@ -269,14 +269,14 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
                 'Digital products (courses, ebooks, etc.)',
                 'Physical products',
                 'Subscription/membership content',
-                'Email newsletter monetization',
+                'Email newsletter monetisation',
                 'Consulting/coaching services',
                 'Speaking engagements',
                 'Freelance writing from blog exposure',
                 'Donations/tips',
-                'Other monetization method',
-                'Not yet monetized',
-                'Not interested in monetizing'
+                'Other monetisation method',
+                'Not yet monetised',
+                'Not interested in monetising'
               ].map(method => (
                 <label key={method} className={styles.checkboxLabel}>
                   <input
@@ -291,17 +291,17 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
             </div>
             {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
             
-            {surveyData.currentMonetizationMethods.includes('Other monetization method') && (
+            {surveyData.currentMonetizationMethods.includes('Other monetisation method') && (
               <div style={{ marginTop: '1rem' }}>
                 <label className={styles.label}>
-                  Please specify your other monetization method:
+                  Please specify your other monetisation method:
                 </label>
                 <input
                   type="text"
                   value={otherMonetizationMethod}
                   onChange={(e) => setOtherMonetizationMethod(e.target.value)}
                   className={styles.textInput}
-                  placeholder="Describe your monetization method"
+                  placeholder="Describe your monetisation method"
                   maxLength={100}
                 />
                 <small className={styles.hint}>{otherMonetizationMethod.length}/100 characters</small>
@@ -339,7 +339,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
               onChange={(e) => setSurveyData(prev => ({ ...prev, additionalFeatures: e.target.value }))}
               className={styles.textarea}
               rows={3}
-              placeholder="e.g., analytics, collaboration tools, monetization support, etc."
+              placeholder="e.g., analytics, collaboration tools, monetisation support, etc."
               maxLength={500}
             />
             <small className={styles.hint}>{surveyData.additionalFeatures.length}/500 characters</small>
