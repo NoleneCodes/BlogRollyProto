@@ -8,7 +8,7 @@ const Submit: NextPage = () => {
   const router = useRouter();
 
   const handleSignInClick = () => {
-    router.push('/auth');
+    router.push('/auth?tab=blogger');
   };
 
   return (

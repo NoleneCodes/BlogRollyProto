@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
 
@@ -47,6 +48,7 @@ interface BloggerFormData {
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
+  const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'reader' | 'blogger'>('reader');
@@ -128,6 +130,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
     checkAuth();
   }, [onAuthenticated]);
+
+  // Handle tab parameter from URL
+  useEffect(() => {
+    if (router.query.tab === 'blogger') {
+      setActiveTab('blogger');
+    }
+  }, [router.query]);
 
   // Calculate progress for blogger form
   useEffect(() => {
