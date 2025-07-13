@@ -1,0 +1,337 @@
+MAIN BLOG CATEGORIES (Niches)
+These are the core content buckets to group blogs under.
+
+1. Lifestyle
+Minimalism
+
+Productivity
+
+Mindfulness
+
+Slow Living
+
+Digital Nomad Life
+
+Homemaking
+
+Personal Development
+
+Life Lessons
+
+Home Organization
+
+2. Health & Wellness
+Holistic Health
+
+Mental Health
+
+Nutrition
+
+Fitness
+
+Herbalism
+
+Women's Health
+
+Gut Health
+
+Sexual Wellness
+
+Self-Care
+
+3. Culture & Society
+Pop Culture Commentary
+
+Race & Identity
+
+Diaspora Diaries
+
+Subcultures
+
+Feminism
+
+Queer Life
+
+Religion & Spirituality
+
+Black British Voices
+
+Activism & Justice
+
+4. Tech & Digital Life
+Coding Diaries
+
+UX/UI Design
+
+AI & Ethics
+
+Indie Hacking
+
+Developer Logs
+
+Web3/Crypto
+
+Cybersecurity
+
+Tech for Good
+
+5. Creative Expression
+Personal Essays
+
+Poetry & Prose
+
+Journaling
+
+Short Fiction
+
+Zine Culture
+
+Visual Storytelling
+
+Photo Essays
+
+Spoken Word
+
+Creative Writing Prompts
+
+6. Work & Money
+Freelancing Life
+
+Solopreneurship
+
+Side Hustles
+
+Investing & Finance
+
+Career Stories
+
+Remote Work
+
+Ethical Business
+
+Productivity Hacks
+
+Burnout Recovery
+
+7. Education & Learning
+Study Hacks
+
+Self-Directed Learning
+
+Course Reviews
+
+Reading Lists
+
+Unschooling/Homeschool
+
+Learning in Public
+
+Student Life
+
+8. Relationships & Emotions
+Dating Diaries
+
+Family Dynamics
+
+Friendships
+
+Breakups & Healing
+
+Therapy Talks
+
+Inner Child Work
+
+Parenthood
+
+9. Art & Media
+Film/TV Reviews
+
+Book Blogs
+
+Music Discovery
+
+Game Culture
+
+Manga/Anime
+
+Theater
+
+Visual Arts
+
+Cultural Criticism
+
+10. Home & Garden
+DIY Projects
+
+Homesteading
+
+Houseplants
+
+Sustainable Living
+
+Tiny Homes
+
+Permaculture
+
+Interior Styling
+
+Gardening Logs
+
+11. Food & Drink
+Afro-Caribbean Recipes
+
+Vegan Diaries
+
+Foraging
+
+Fermentation
+
+Ancestral Foods
+
+Street Food Culture
+
+Intuitive Eating
+
+Food Justice
+
+12. Travel & Places
+Hidden Gems
+
+Black Travel Blogs
+
+City Guides
+
+Cultural Exchange
+
+Travel & Identity
+
+Digital Nomad Stories
+
+Backpacking
+
+Diaspora Travel
+
+🏷 THEMATIC TAGS
+These cut across categories to help surface deeper patterns, moods, and intentions.
+
+✨ Personal Vibe
+Vulnerable
+
+Funny
+
+Raw & Unfiltered
+
+Healing Journey
+
+Melancholic
+
+Playful
+
+Ranty
+
+Soft Life
+
+Hood Intellectual
+
+Feminine Energy
+
+Masculine Energy
+
+🌱 Ethos & Lens
+Intersectional
+
+Decolonial
+
+Afrofuturist
+
+Indigenous Wisdom
+
+Queer Lens
+
+Feminist Thought
+
+Working-Class Voice
+
+Neurodivergent
+
+🧠 Structure & Form
+Listicle
+
+Open Letter
+
+Manifesto
+
+Photo Journal
+
+Diary Entry
+
+Interview
+
+Tutorial
+
+Long-Form Deep Dive
+
+Microblog
+
+Resource Roundup
+
+🔥 Timeliness
+Trending
+
+Evergreen
+
+Monthly Feature
+
+Year in Review
+
+Seasonal
+
+Hot Take
+
+Response Piece
+
+Throwback
+
+🛠 Use Case Tags (for filters)
+Beginner Friendly
+
+For Creatives
+
+For Developers
+
+For Parents
+
+For Students
+
+For Burnout
+
+For Healing
+
+For Deep Thinkers
+
+For Introverts
+
+For the Culture
+
+💡 Mood/Intent
+Reflective
+
+Educational
+
+Provocative
+
+Comforting
+
+Motivational
+
+Meditative
+
+Angry
+
+Inspiring
+
+Chill Read
+
+Philosophical
+
+Spiritual
