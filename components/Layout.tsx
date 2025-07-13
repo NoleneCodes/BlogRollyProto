@@ -57,7 +57,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
               <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
             </div>
           )}
-          </div>
         </nav>
 
         <main className={styles.main}>
