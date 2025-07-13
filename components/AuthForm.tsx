@@ -136,13 +136,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       );
       const checkboxes = bloggerForm.agreeToTerms && bloggerForm.confirmOwnership ? 2 : 0;
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
-      const monetizationProgress = bloggerForm.monetizationMethods.length > 0 ? 1 : 0;
-      const firstBlogPostProgress = bloggerForm.blogPosts[0] !== '' ? 1 : 0;
+      const blogsProgress = submittedBlogs.length > 0 ? 1 : 0;
 
-      const totalProgress = (filledFields.length + checkboxes + topicsProgress + monetizationProgress + firstBlogPostProgress) / 12 * 100;
+      const totalProgress = (filledFields.length + checkboxes + topicsProgress + blogsProgress) / 11 * 100;
       setProgress(totalProgress);
     }
-  }, [bloggerForm, activeTab]);
+  }, [bloggerForm, activeTab, submittedBlogs]);
 
   const validateUrl = (url: string) => {
     const urlRegex = /^https:\/\/[a-zA-Z0-9\-\.]+\.[a-z]{2,}$/;
@@ -256,7 +255,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
     else if (!validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
     if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
-    if (submittedBlogs.length === 0) newErrors.blogPost1 = 'At least one blog post is required';
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
 
@@ -705,8 +703,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             <div className={styles.sectionTitle}>Part 3: Listings</div>
 
             <div className={styles.formGroup}>
-              <label className={styles.label}>Submit Your Best Blog Posts</label>
-              <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile.</small>
+              <label className={styles.label}>
+                Submit Your Best Blog Posts
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile. You can also add these later from your dashboard.</small>
               
               <div className={styles.blogListingsContainer}>
                 {submittedBlogs.map((blog, index) => (
@@ -732,14 +733,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                     onClick={() => setShowBlogSubmissionPopup(true)}
                     className={styles.addBlogButton}
                   >
-                    + Add Blog Post {submittedBlogs.length === 0 ? '(Required)' : '(Optional)'}
+                    + Add Blog Post (Optional)
                   </button>
                 )}
               </div>
-              
-              {submittedBlogs.length === 0 && errors.blogPost1 && (
-                <span className={styles.error}>At least one blog post is required</span>
-              )}
             </div>
 
             <div className={styles.formGroup}>
