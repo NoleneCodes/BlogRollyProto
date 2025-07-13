@@ -86,6 +86,85 @@ const About: NextPage = () => {
           <li>• The open web stays open</li>
         </ul>
       </div>
+
+      <div className={styles.whySection}>
+        <h2>Why BlogRolly Exists:</h2>
+        <p>Modern bloggers are underserved.</p>
+        <p>They care deeply about:</p>
+        <ul className={styles.featureList}>
+          <li>• Owning their content</li>
+          <li>• Attracting genuine readers</li>
+          <li>• Building domain authority and brand partnerships</li>
+          <li>• Monetising with ads, products, services, or affiliates</li>
+          <li>• Connecting with others without playing the algorithm game</li>
+        </ul>
+        <p>But most platforms today force them to:</p>
+        <ul className={styles.featureList}>
+          <li>• Surrender ownership of their creations</li>
+          <li>• Chase virality just to stay seen</li>
+          <li>• Or become invisible without technical SEO mastery</li>
+        </ul>
+        <p>BlogRolly is the platform that says:</p>
+        <p><strong>You don't need to go viral.</strong></p>
+        <p><strong>You don't need to create ten versions of the same "engaging content."</strong></p>
+        <p><strong>You don't need to chase followers.</strong></p>
+        <p><strong>You just need to write well, own your space, and be found by the right people.</strong></p>
+        
+        <div className={styles.submitCta}>
+          <a href="/submit" className={styles.submitButton}>Submit Your Blog</a>
+        </div>
+        
+        <p>
+          Whether you're a niche blogger, a personal brand, or a digital writer building your first audience—we're building this for you.
+        </p>
+        <p>BlogRolly is your amplifier, directory, and tribe—all in one.</p>
+      </div>
+
+      <div className={styles.valuesSection}>
+        <h2>Our Values</h2>
+        
+        <div className={styles.valueItem}>
+          <h3>Digital Sovereignty is Freedom</h3>
+          <p>You own your platform. We amplify it, not own it.</p>
+        </div>
+        
+        <div className={styles.valueItem}>
+          <h3>Craft Over Clout</h3>
+          <p>Your writing is your asset. We highlight quality, not hype.</p>
+        </div>
+        
+        <div className={styles.valueItem}>
+          <h3>Organic Growth, Authentically Earned</h3>
+          <p>No hacks, no trends. Just meaningful visibility to reach your people.</p>
+        </div>
+        
+        <div className={styles.valueItem}>
+          <h3>Your Blog is Your Legacy</h3>
+          <p>We're here to support your long-term creative journey—not just your trending moment.</p>
+        </div>
+        
+        <div className={styles.valueItem}>
+          <h3>Community is the New Network</h3>
+          <p>We help rebuild strong blog-to-blog and writer-to-reader connections.</p>
+        </div>
+      </div>
+
+      <div className={styles.contactSection}>
+        <h2>Get In Touch</h2>
+        <p>Have questions, suggestions, or just want to say hello?</p>
+        <p>We'd love to hear from you.</p>
+        
+        <div className={styles.contactInfo}>
+          <div className={styles.contactItem}>
+            <span className={styles.contactIcon}>📧</span>
+            <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
+          </div>
+          <div className={styles.contactItem}>
+            <span className={styles.contactIcon}>📱</span>
+            <span>Instagram, TikTok, and X: @BlogRolly</span>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 };

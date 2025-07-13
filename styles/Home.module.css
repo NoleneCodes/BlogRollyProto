@@ -273,6 +273,134 @@
   padding-left: 0.5rem;
 }
 
+.whySection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.whySection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.whySection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.submitCta {
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.submitButton {
+  background: #c42142;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.2s ease;
+  display: inline-block;
+}
+
+.submitButton:hover {
+  background: #a01835;
+}
+
+.valuesSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.valuesSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.valueItem {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+}
+
+.valueItem h3 {
+  color: #c42142;
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.valueItem p {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0;
+}
+
+.contactSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.contactSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.contactSection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.contactIcon {
+  font-size: 1.5rem;
+}
+
+.contactItem a {
+  color: #c42142;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.contactItem a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .trendsSection {
     margin: 2rem auto;
@@ -294,24 +422,56 @@
 
   .missionSection,
   .rootsSection,
-  .rebuildSection {
+  .rebuildSection,
+  .whySection,
+  .valuesSection,
+  .contactSection {
     margin: 2rem auto;
     padding: 0 1rem;
   }
 
   .missionSection h2,
-  .rootsSection h2 {
+  .rootsSection h2,
+  .whySection h2,
+  .valuesSection h2,
+  .contactSection h2 {
     font-size: 1.8rem;
   }
 
   .missionSection p,
   .rootsSection p,
-  .rebuildSection p {
+  .rebuildSection p,
+  .whySection p,
+  .contactSection p {
     font-size: 1rem;
   }
 
   .featureList li {
     font-size: 1rem;
+  }
+
+  .valueItem {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .valueItem h3 {
+    font-size: 1.1rem;
+  }
+
+  .valueItem p {
+    font-size: 0.95rem;
+  }
+
+  .contactInfo {
+    gap: 1rem;
+  }
+
+  .contactItem {
+    font-size: 1rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
   }
   .pronunciationCard {
     margin: 2rem 1rem;
