@@ -9,7 +9,7 @@ const About: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>About Blogrolly</h1>
         <p className={styles.description}>
-          Learn more about our mission to help you discover and organize your favorite blogs
+          Learn more about our mission to help you discover and organise your favourite blogs
         </p>
       </div>
 

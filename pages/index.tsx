@@ -8,7 +8,7 @@ const Home: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>Blogrolly</h1>
         <p className={styles.description}>
-          Discover and organize your favorite blogs in one place
+          Discover and organise your favourite blogs in one place
         </p>
         
         <div className={styles.searchSection}>
@@ -26,8 +26,8 @@ const Home: NextPage = () => {
 
       <div className={styles.features}>
         <div className={styles.feature}>
-          <h3>📚 Organize</h3>
-          <p>Keep all your favorite blogs organized in one place</p>
+          <h3>📚 Organise</h3>
+          <p>Keep all your favourite blogs organised in one place</p>
         </div>
         <div className={styles.feature}>
           <h3>🔍 Discover</h3>

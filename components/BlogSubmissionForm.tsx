@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/BlogSubmissionForm.module.css';
 
@@ -108,10 +107,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit, displ
       if (field === 'postUrl') return validateUrl(formData.postUrl);
       return formData[field as keyof FormData] !== '';
     });
-    
+
     const imageProgress = formData.image ? 1 : 0;
     const tagsProgress = formData.tags.length > 0 ? 1 : 0;
-    
+
     const totalProgress = (filledFields.length + imageProgress + tagsProgress) / 5 * 100;
     setProgress(totalProgress);
   }, [formData]);
@@ -211,10 +210,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit, displ
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (formData.title.length > 120) newErrors.title = 'Title must be 120 characters or less';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
@@ -341,7 +340,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit, displ
             Tags
             <span className={styles.optional}>(Up to 10 tags)</span>
           </label>
-          
+
           <div className={styles.tagsContainer}>
             {formData.tags.map(tag => (
               <span key={tag} className={styles.tag}>
@@ -367,7 +366,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit, displ
                 placeholder="Type to search tags..."
                 className={styles.textInput}
               />
-              
+
               {showTagDropdown && filteredTags.length > 0 && (
                 <div className={styles.tagDropdown}>
                   {filteredTags.slice(0, 10).map(tag => (

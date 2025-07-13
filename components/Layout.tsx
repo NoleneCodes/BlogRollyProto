@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Head from 'next/head';
 import styles from '../styles/Layout.module.css';
@@ -19,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
         <link rel="icon" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.json" />
       </Head>
-      
+
       <div className={styles.container}>
         <nav className={styles.navbar}>
           <div className={styles.navContent}>
