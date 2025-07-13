@@ -30,6 +30,7 @@ interface BloggerFormData {
   firstName: string;
   surname: string;
   email: string;
+  dateOfBirth: string;
   password: string;
   confirmPassword: string;
   displayName: string;
@@ -70,6 +71,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     firstName: '',
     surname: '',
     email: '',
+    dateOfBirth: '',
     password: '',
     confirmPassword: '',
     displayName: '',
@@ -126,7 +128,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Calculate progress for blogger form
   useEffect(() => {
     if (activeTab === 'blogger') {
-      const requiredFields = ['firstName', 'surname', 'email', 'displayName', 'bio', 'blogUrl', 'blogName'];
+      const requiredFields = ['firstName', 'surname', 'email', 'dateOfBirth', 'displayName', 'bio', 'blogUrl', 'blogName'];
       const filledFields = requiredFields.filter(field => 
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
@@ -134,7 +136,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
       const monetizationProgress = bloggerForm.monetizationMethods.length > 0 ? 1 : 0;
       
-      const totalProgress = (filledFields.length + checkboxes + topicsProgress + monetizationProgress) / 9 * 100;
+      const totalProgress = (filledFields.length + checkboxes + topicsProgress + monetizationProgress) / 10 * 100;
       setProgress(totalProgress);
     }
   }, [bloggerForm, activeTab]);
@@ -230,6 +232,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
     if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
     if (!bloggerForm.email) newErrors.email = 'Email is required';
+    if (!bloggerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+    else if (!validateAge(bloggerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
     if (!bloggerForm.password) newErrors.password = 'Password is required';
     else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
     if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
@@ -297,6 +301,35 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
           <form onSubmit={handleReaderSubmit} className={styles.form}>
             <div className={styles.formGroup}>
               <label className={styles.label}>
+                First Name *
+              </label>
+              <input
+                type="text"
+                value={readerForm.firstName}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, firstName: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Surname *
+              </label>
+              <input
+                type="text"
+                value={readerForm.surname}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, surname: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.surname && <span className={styles.error}>{errors.surname}</span>}
+              <small className={styles.hint}>Your name helps us personalise your experience.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
                 Email Address *
               </label>
               <input
@@ -308,6 +341,21 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               />
               {errors.email && <span className={styles.error}>{errors.email}</span>}
               <small className={styles.hint}>This will be your login email address.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Date of Birth *
+              </label>
+              <input
+                type="date"
+                value={readerForm.dateOfBirth}
+                onChange={(e) => setReaderForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
+              <small className={styles.hint}>We use your age to filter out mature content (must be 18+).</small>
             </div>
 
             <div className={styles.formGroup}>
@@ -343,35 +391,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                First Name *
-              </label>
-              <input
-                type="text"
-                value={readerForm.firstName}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, firstName: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Surname *
-              </label>
-              <input
-                type="text"
-                value={readerForm.surname}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, surname: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.surname && <span className={styles.error}>{errors.surname}</span>}
-              <small className={styles.hint}>Your name helps us personalise your experience.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
                 Display Name / Username (optional)
               </label>
               <input
@@ -382,21 +401,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 placeholder="Pick a name readers can see"
               />
               <small className={styles.hint}>Pick a name readers can see (optional).</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Date of Birth *
-              </label>
-              <input
-                type="date"
-                value={readerForm.dateOfBirth}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
-              <small className={styles.hint}>We use your age to filter out mature content (must be 18+).</small>
             </div>
 
             <div className={styles.formGroup}>
@@ -523,6 +527,21 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               />
               {errors.email && <span className={styles.error}>{errors.email}</span>}
               <small className={styles.hint}>This will be your login email address.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Date of Birth *
+              </label>
+              <input
+                type="date"
+                value={bloggerForm.dateOfBirth}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
+              <small className={styles.hint}>We use your age to filter out mature content (must be 18+).</small>
             </div>
 
             <div className={styles.formGroup}>
