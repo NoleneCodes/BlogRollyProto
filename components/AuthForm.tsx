@@ -331,7 +331,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 required
               />
               {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
-              <small className={styles.hint">We use your birth month and year to filter out mature content.</small>
+              <small className={styles.hint}>We use your birth month and year to filter out mature content.</small>
             </div>
 
             <div className={styles.formGroup}>
