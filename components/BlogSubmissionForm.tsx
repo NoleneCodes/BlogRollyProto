@@ -12,88 +12,75 @@ interface FormData {
   author: string;
   description: string;
   category: string;
-  subcategory: string;
-  thematicTags: string[];
+  tags: string[];
   postUrl: string;
   hasAdultContent: boolean;
 }
 
-const MAIN_CATEGORIES = {
-  'Lifestyle': [
-    'Minimalism', 'Productivity', 'Mindfulness', 'Slow Living', 'Digital Nomad Life',
-    'Homemaking', 'Personal Development', 'Life Lessons', 'Home Organization'
+const MAIN_CATEGORIES = [
+  'Lifestyle',
+  'Health & Wellness',
+  'Culture & Society',
+  'Tech & Digital Life',
+  'Creative Expression',
+  'Work & Money',
+  'Education & Learning',
+  'Relationships & Emotions',
+  'Art & Media',
+  'Home & Garden',
+  'Food & Drink',
+  'Travel & Places',
+  'Identity & Intersectionality',
+  'Spirituality & Inner Work',
+  'Opinion & Commentary',
+  'Other'
+];
+
+const TAGS = {
+  'Themes & Topics': [
+    'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
+    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
+    'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
+    'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
+    'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
+    'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
+    'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
+    'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
+    'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
+    'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
+    'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
+    'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
+    'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
+    'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
+    'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
+    'Addiction & Recovery', 'Chronic Illness', 'Other'
   ],
-  'Health & Wellness': [
-    'Holistic Health', 'Mental Health', 'Nutrition', 'Fitness', 'Herbalism',
-    'Women\'s Health', 'Gut Health', 'Sexual Wellness', 'Self-Care'
+  'Structure / Format': [
+    'Listicle', 'Longform Essay', 'Personal Diary', 'Photo Essay', 'Letter',
+    'Manifesto', 'Interview', 'Tutorial', 'Poem', 'Short Story', 'Q&A',
+    'Open Thread', 'Roundup', 'Resource Guide', 'Commentary', 'Thought Piece',
+    'Audio Journal', 'Microblog', 'Illustrated Piece', 'Visual Essay',
+    'Thread Dump', 'Journal Entry', 'Other'
   ],
-  'Culture & Society': [
-    'Pop Culture Commentary', 'Race & Identity', 'Diaspora Diaries', 'Subcultures',
-    'Feminism', 'Queer Life', 'Religion & Spirituality', 'Black British Voices', 'Activism & Justice'
+  'Vibe / Tone': [
+    'Vulnerable', 'Funny', 'Educational', 'Chill', 'Angry', 'Empowering',
+    'Comforting', 'Provocative', 'Uplifting', 'Raw & Unfiltered', 'Philosophical',
+    'Meditative', 'Sarcastic', 'Loving', 'Analytical', 'Dreamy', 'Manifesting',
+    'Deep Dive', 'Reflective', 'Activist', 'Spiritual', 'Poetic', 'Other'
   ],
-  'Tech & Digital Life': [
-    'Coding Diaries', 'UX/UI Design', 'AI & Ethics', 'Indie Hacking', 'Developer Logs',
-    'Web3/Crypto', 'Cybersecurity', 'Tech for Good'
+  'Intended Audience': [
+    'For Creatives', 'For Founders', 'For Parents', 'For Coders', 'For Students',
+    'For Readers', 'For Black Women', 'For the Diaspora', 'For Queer Folks',
+    'For Neurodivergents', 'For Healers', 'For Side Hustlers', 'For Burnt-Out People',
+    'For the Culture', 'For Survivors', 'For Book Lovers', 'For Poets',
+    'For Makers', 'For Beginners', 'For the Overwhelmed', 'Other'
   ],
-  'Creative Expression': [
-    'Personal Essays', 'Poetry & Prose', 'Journaling', 'Short Fiction', 'Zine Culture',
-    'Visual Storytelling', 'Photo Essays', 'Spoken Word', 'Creative Writing Prompts'
-  ],
-  'Work & Money': [
-    'Freelancing Life', 'Solopreneurship', 'Side Hustles', 'Investing & Finance',
-    'Career Stories', 'Remote Work', 'Ethical Business', 'Productivity Hacks', 'Burnout Recovery'
-  ],
-  'Education & Learning': [
-    'Study Hacks', 'Self-Directed Learning', 'Course Reviews', 'Reading Lists',
-    'Unschooling/Homeschool', 'Learning in Public', 'Student Life'
-  ],
-  'Relationships & Emotions': [
-    'Dating Diaries', 'Family Dynamics', 'Friendships', 'Breakups & Healing',
-    'Therapy Talks', 'Inner Child Work', 'Parenthood'
-  ],
-  'Art & Media': [
-    'Film/TV Reviews', 'Book Blogs', 'Music Discovery', 'Game Culture',
-    'Manga/Anime', 'Theater', 'Visual Arts', 'Cultural Criticism'
-  ],
-  'Home & Garden': [
-    'DIY Projects', 'Homesteading', 'Houseplants', 'Sustainable Living',
-    'Tiny Homes', 'Permaculture', 'Interior Styling', 'Gardening Logs'
-  ],
-  'Food & Drink': [
-    'Afro-Caribbean Recipes', 'Vegan Diaries', 'Foraging', 'Fermentation',
-    'Ancestral Foods', 'Street Food Culture', 'Intuitive Eating', 'Food Justice'
-  ],
-  'Travel & Places': [
-    'Hidden Gems', 'Black Travel Blogs', 'City Guides', 'Cultural Exchange',
-    'Travel & Identity', 'Digital Nomad Stories', 'Backpacking', 'Diaspora Travel'
+  'Content Filters': [
+    'Evergreen', 'Trending', 'Monthly Highlight', 'Seasonal', 'Archive Gem',
+    'Hot Take', 'Experimental', 'Series Part', 'Collaboration', 'Anonymous',
+    'Sponsored', 'Debut Blog', 'Staff Pick', 'Reader Pick', 'Other'
   ]
 };
-
-const THEMATIC_TAGS = [
-  // Personal Vibe
-  'Vulnerable', 'Funny', 'Raw & Unfiltered', 'Healing Journey', 'Melancholic', 
-  'Playful', 'Ranty', 'Soft Life', 'Hood Intellectual', 'Feminine Energy', 'Masculine Energy',
-  
-  // Ethos & Lens
-  'Intersectional', 'Decolonial', 'Afrofuturist', 'Indigenous Wisdom', 'Queer Lens',
-  'Feminist Thought', 'Working-Class Voice', 'Neurodivergent',
-  
-  // Structure & Form
-  'Listicle', 'Open Letter', 'Manifesto', 'Photo Journal', 'Diary Entry',
-  'Interview', 'Tutorial', 'Long-Form Deep Dive', 'Microblog', 'Resource Roundup',
-  
-  // Timeliness
-  'Trending', 'Evergreen', 'Monthly Feature', 'Year in Review', 'Seasonal',
-  'Hot Take', 'Response Piece', 'Throwback',
-  
-  // Use Case Tags
-  'Beginner Friendly', 'For Creatives', 'For Developers', 'For Parents', 'For Students',
-  'For Burnout', 'For Healing', 'For Deep Thinkers', 'For Introverts', 'For the Culture',
-  
-  // Mood/Intent
-  'Reflective', 'Educational', 'Provocative', 'Comforting', 'Motivational',
-  'Meditative', 'Angry', 'Inspiring', 'Chill Read', 'Philosophical', 'Spiritual'
-];
 
 const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<FormData>({
@@ -102,8 +89,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
     author: 'Your Name', // This would be prefilled from auth
     description: '',
     category: '',
-    subcategory: '',
-    thematicTags: [],
+    tags: [],
     postUrl: '',
     hasAdultContent: false
   });
@@ -123,9 +109,9 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
     });
     
     const imageProgress = formData.image ? 1 : 0;
-    const subcategoryProgress = formData.subcategory ? 1 : 0;
+    const tagsProgress = formData.tags.length > 0 ? 1 : 0;
     
-    const totalProgress = (filledFields.length + imageProgress + subcategoryProgress) / 6 * 100;
+    const totalProgress = (filledFields.length + imageProgress + tagsProgress) / 6 * 100;
     setProgress(totalProgress);
   }, [formData]);
 
@@ -136,8 +122,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
         title: formData.title,
         description: formData.description,
         category: formData.category,
-        subcategory: formData.subcategory,
-        thematicTags: formData.thematicTags,
+        tags: formData.tags,
         postUrl: formData.postUrl,
         hasAdultContent: formData.hasAdultContent
       }));
@@ -190,23 +175,22 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
     const category = e.target.value;
     setFormData(prev => ({ 
       ...prev, 
-      category,
-      subcategory: '' // Reset subcategory when main category changes
+      category
     }));
   };
 
-  const handleThematicTagAdd = (tag: string) => {
-    if (formData.thematicTags.length < 5 && !formData.thematicTags.includes(tag)) {
-      setFormData(prev => ({ ...prev, thematicTags: [...prev.thematicTags, tag] }));
+  const handleTagAdd = (tag: string) => {
+    if (formData.tags.length < 10 && !formData.tags.includes(tag)) {
+      setFormData(prev => ({ ...prev, tags: [...prev.tags, tag] }));
     }
     setTagInput('');
     setShowTagDropdown(false);
   };
 
-  const handleThematicTagRemove = (tagToRemove: string) => {
+  const handleTagRemove = (tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      thematicTags: prev.thematicTags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
 
@@ -254,12 +238,14 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
            Object.keys(errors).every(key => !errors[key]);
   };
 
-  const filteredThematicTags = THEMATIC_TAGS.filter(tag => 
-    tag.toLowerCase().includes(tagInput.toLowerCase()) && 
-    !formData.thematicTags.includes(tag)
-  );
+  const getAllTags = () => {
+    return Object.values(TAGS).flat();
+  };
 
-  const availableSubcategories = formData.category ? MAIN_CATEGORIES[formData.category as keyof typeof MAIN_CATEGORIES] || [] : [];
+  const filteredTags = getAllTags().filter(tag => 
+    tag.toLowerCase().includes(tagInput.toLowerCase()) && 
+    !formData.tags.includes(tag)
+  );
 
   return (
     <div className={styles.formContainer}>
@@ -352,47 +338,27 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
             className={styles.selectInput}
           >
             <option value="">Select a main category</option>
-            {Object.keys(MAIN_CATEGORIES).map(category => (
+            {MAIN_CATEGORIES.map(category => (
               <option key={category} value={category}>{category}</option>
             ))}
           </select>
           {errors.category && <span className={styles.error}>{errors.category}</span>}
         </div>
 
-        {/* Step 6: Subcategory */}
-        {formData.category && (
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Specific Category
-              <span className={styles.optional}>(Optional)</span>
-            </label>
-            <select
-              value={formData.subcategory}
-              onChange={(e) => setFormData(prev => ({ ...prev, subcategory: e.target.value }))}
-              className={styles.selectInput}
-            >
-              <option value="">Select a specific category</option>
-              {availableSubcategories.map(subcategory => (
-                <option key={subcategory} value={subcategory}>{subcategory}</option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {/* Step 7: Thematic Tags */}
+        {/* Step 6: Tags */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Thematic Tags
-            <span className={styles.optional}>(Up to 5 tags)</span>
+            Tags
+            <span className={styles.optional}>(Up to 10 tags)</span>
           </label>
           
           <div className={styles.tagsContainer}>
-            {formData.thematicTags.map(tag => (
+            {formData.tags.map(tag => (
               <span key={tag} className={styles.tag}>
                 {tag}
                 <button 
                   type="button" 
-                  onClick={() => handleThematicTagRemove(tag)}
+                  onClick={() => handleTagRemove(tag)}
                   className={styles.tagRemove}
                 >
                   ×
@@ -401,24 +367,24 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
             ))}
           </div>
 
-          {formData.thematicTags.length < 5 && (
+          {formData.tags.length < 10 && (
             <div className={styles.tagInputContainer}>
               <input
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onFocus={() => setShowTagDropdown(true)}
-                placeholder="Type to search thematic tags..."
+                placeholder="Type to search tags..."
                 className={styles.textInput}
               />
               
-              {showTagDropdown && filteredThematicTags.length > 0 && (
+              {showTagDropdown && filteredTags.length > 0 && (
                 <div className={styles.tagDropdown}>
-                  {filteredThematicTags.slice(0, 8).map(tag => (
+                  {filteredTags.slice(0, 10).map(tag => (
                     <button
                       key={tag}
                       type="button"
-                      onClick={() => handleThematicTagAdd(tag)}
+                      onClick={() => handleTagAdd(tag)}
                       className={styles.tagOption}
                     >
                       {tag}
@@ -428,6 +394,29 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit }) => 
               )}
             </div>
           )}
+
+          {/* Tag Categories */}
+          <div className={styles.tagCategories}>
+            <small className={styles.hint}>Browse by category:</small>
+            {Object.entries(TAGS).map(([categoryName, tags]) => (
+              <details key={categoryName} className={styles.tagCategory}>
+                <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
+                <div className={styles.tagCategoryTags}>
+                  {tags.map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => handleTagAdd(tag)}
+                      disabled={formData.tags.includes(tag) || formData.tags.length >= 10}
+                      className={`${styles.tagCategoryTag} ${formData.tags.includes(tag) ? styles.tagSelected : ''}`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
 
         {/* Step 8: Post URL */}
