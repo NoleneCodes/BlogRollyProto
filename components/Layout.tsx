@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Layout.module.css';
 
@@ -8,6 +8,12 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <>
       <Head>
@@ -34,8 +40,23 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
               <a href="/auth" className={styles.navLink}>Sign Up/In</a>
             </div>
             <div className={styles.mobileMenu}>
-              <button className={styles.menuButton}>☰</button>
+              <button className={styles.menuButton} onClick={toggleMobileMenu}>
+                {isMobileMenuOpen ? '✕' : '☰'}
+              </button>
             </div>
+          </div>
+          
+          {/* Mobile menu dropdown */}
+          {isMobileMenuOpen && (
+            <div className={styles.mobileMenuDropdown}>
+              <a href="/blogroll" className={styles.mobileNavLink} onClick={toggleMobileMenu}>The Blogroll</a>
+              <a href="/about" className={styles.mobileNavLink} onClick={toggleMobileMenu}>About</a>
+              <a href="/investors" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Investors</a>
+              <a href="/blog" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Our Blog</a>
+              <a href="/submit" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Submit a Blog</a>
+              <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
+            </div>
+          )}
           </div>
         </nav>
 
