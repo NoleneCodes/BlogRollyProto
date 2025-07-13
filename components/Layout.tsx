@@ -7,7 +7,7 @@ interface LayoutProps {
   title?: string;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
+const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -18,7 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="Blogrolly - Your personal blog directory" />
+        <meta name="description" content="BlogRolly - Your personal blog directory" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0070f3" />
         <link rel="icon" href="/favicon.ico" />
@@ -29,7 +29,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
         <nav className={styles.navbar}>
           <div className={styles.navContent}>
             <div className={styles.logo}>
-              <h2>Blogrolly</h2>
+              <h2>BlogRolly</h2>
             </div>
             <div className={styles.navLinks}>
               <a href="/blogroll" className={styles.navLink}>The Blogroll</a>
@@ -72,7 +72,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
         <footer className={styles.footer}>
           <div className={styles.footerContent}>
             <div className={styles.footerSection}>
-              <h4>Blogrolly</h4>
+              <h4>BlogRolly</h4>
               <p>Your personal blog directory</p>
             </div>
             <div className={styles.footerSection}>
@@ -89,7 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'Blogrolly' }) => {
             </div>
           </div>
           <div className={styles.footerBottom}>
-            <p>&copy; 2024 Blogrolly. Made with ❤️</p>
+            <p>&copy; 2024 BlogRolly. Made with ❤️</p>
           </div>
         </footer>
       </div>

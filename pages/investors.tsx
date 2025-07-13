@@ -5,7 +5,7 @@ import styles from "../styles/Home.module.css";
 
 const Investors: NextPage = () => {
   return (
-    <Layout title="Investors - Blogrolly">
+    <Layout title="Investors - BlogRolly">
       <div className={styles.hero}>
         <h1 className={styles.title}>Investors</h1>
         <p className={styles.description}>

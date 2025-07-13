@@ -5,9 +5,9 @@ import styles from "../styles/Home.module.css";
 
 const About: NextPage = () => {
   return (
-    <Layout title="About - Blogrolly">
+    <Layout title="About - BlogRolly">
       <div className={styles.hero}>
-        <h1 className={styles.title}>About Blogrolly</h1>
+        <h1 className={styles.title}>About BlogRolly</h1>
         <p className={styles.description}>
           Learn more about our mission to help you discover and organise your favourite blogs
         </p>
