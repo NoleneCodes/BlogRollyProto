@@ -132,11 +132,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const validateAge = (dateOfBirth: string) => {
     const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const [year, month] = dateOfBirth.split('-').map(Number);
+    const age = today.getFullYear() - year;
+    const monthDiff = today.getMonth() + 1 - month; // getMonth() is 0-indexed
     
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    if (monthDiff < 0) {
       return age - 1 >= 18;
     }
     return age >= 18;
@@ -315,17 +315,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Date of Birth *
+                Birth Month & Year *
               </label>
               <input
-                type="date"
+                type="month"
                 value={readerForm.dateOfBirth}
                 onChange={(e) => setReaderForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
                 className={styles.textInput}
                 required
               />
               {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
-              <small className={styles.hint}>We use your birthdate to filter out mature content.</small>
+              <small className={styles.hint">We use your birth month and year to filter out mature content.</small>
             </div>
 
             <div className={styles.formGroup}>
