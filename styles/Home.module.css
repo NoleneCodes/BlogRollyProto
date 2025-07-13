@@ -401,6 +401,56 @@
   text-decoration: underline;
 }
 
+.founderSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.founderSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.founderSection p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.roadmapSection {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  line-height: 1.8;
+}
+
+.roadmapSection h2 {
+  color: #c42142;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.roadmapPhase {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+}
+
+.roadmapPhase h3 {
+  color: #c42142;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   .trendsSection {
     margin: 2rem auto;
@@ -425,7 +475,9 @@
   .rebuildSection,
   .whySection,
   .valuesSection,
-  .contactSection {
+  .contactSection,
+  .founderSection,
+  .roadmapSection {
     margin: 2rem auto;
     padding: 0 1rem;
   }
@@ -434,7 +486,9 @@
   .rootsSection h2,
   .whySection h2,
   .valuesSection h2,
-  .contactSection h2 {
+  .contactSection h2,
+  .founderSection h2,
+  .roadmapSection h2 {
     font-size: 1.8rem;
   }
 
@@ -442,7 +496,8 @@
   .rootsSection p,
   .rebuildSection p,
   .whySection p,
-  .contactSection p {
+  .contactSection p,
+  .founderSection p {
     font-size: 1rem;
   }
 
@@ -472,6 +527,15 @@
     flex-direction: column;
     text-align: center;
     gap: 0.5rem;
+  }
+
+  .roadmapPhase {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .roadmapPhase h3 {
+    font-size: 1.2rem;
   }
   .pronunciationCard {
     margin: 2rem 1rem;
