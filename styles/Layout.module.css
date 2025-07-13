@@ -1,4 +1,3 @@
-
 .container {
   min-height: 100vh;
   display: flex;
@@ -194,31 +193,29 @@
 /* Medium screens - show Submit a Blog and Sign Up/In buttons */
 @media (max-width: 968px) and (min-width: 769px) {
   .navLinks {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .navLinks a:not([href="/submit"]):not([href="/auth"]) {
     display: none;
   }
 
-  .mobileMenu {
-    display: block;
+  .mobileMenuContainer {
+    display: flex;
+  }
+
+  .mobileVisibleButtons a:not([href="/submit"]):not([href="/auth"]) {
+    display: none;
   }
 }
 
 /* Small screens - only show Sign Up/In button */
 @media (max-width: 768px) {
   .navLinks {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .navLinks a:not([href="/auth"]) {
     display: none;
   }
 
-  .mobileMenu {
-    display: block;
+  .mobileMenuContainer {
+    display: flex;
+  }
+
+  .mobileVisibleButtons a:not([href="/auth"]) {
+    display: none;
   }
 }
