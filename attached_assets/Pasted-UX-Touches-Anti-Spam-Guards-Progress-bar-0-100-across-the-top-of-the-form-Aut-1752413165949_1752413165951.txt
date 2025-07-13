@@ -1,0 +1,33 @@
+UX Touches & Anti‑Spam Guards
+    • Progress bar (0 %→100 %) across the top of the form.
+    • Autosave draft to local storage every 5 seconds.
+    • Duplicate URL check in Supabase RPC: reject if the same URL is already in the table.
+    • Simple AI‑generated content flag (future): run post URL through GPT detector and flag for manual review.
+            ▪ Implementation Pointers
+    • Table schema (blog_posts)
+      sql
+      Copy code
+      id uuid PK | blogger_id FK | title text | slug text unique 
+      | description text | image_url text | tags text[]  
+      | post_url text unique | status enum('pending','live','rejected') 
+      | created_at timestamptz default now()
+    • Storage bucket: blog_images
+    • Supabase Row‑Level Security: only owner can insert; only admin can update status.
+    • 
+
+
+Step	Field	UI / Validation Details	Notes
+1	Blog Image	input type="file" → accept .jpg, .png, .webp• Max size: 2 MB• Live thumbnail preview• Auto‑crop to 16:9 (optional)	Store in Supabase Storage under /blog_images/{bloggerId}/
+2	Blog Title	input type="text" – required	120 char limit; slugified title stored for URL check‑ins
+3	Blogger / Author	Prefilled, read‑only field showing the logged‑in blogger’s Display Name with a link (/profile/{bloggerId})	Hide this entirely for non‑blogger roles
+4	Description / Excerpt	textarea maxlength="500" – required	1–2 sentences that tease the post; use helper “0 / 500” counter
+5	Category / Tags	Multi‑select chips with search (Tailwind UI Combobox)• Limit 1-5 tags• On hover in combobox dropdown, show #blogroll result count	In the database, tag slugs auto‑link to /search?tag=<tagSlug>
+6	Blog Post URL	input type="url" – required✅ Validate:  • Starts with https://  • NOT equal to blogger’s root domain  • Contains a path after the domain (/2025/07/… or /my‑post)	Regex idea: ^https:\/\/[^\/]+\/.+Duplicate‑check against existing submissions
+—	Submit Button	"Publish to BlogRolly"	Disabled until all required fields valid
+
+Post‑Submit Flow
+    1. Success toast: “Thanks! Your post is in review and will appear soon.”
+    2. Redirect to /dashboard/submissions with status Pending Review.
+    3. Admin review toggles Live status; once approved, the post card:
+        ◦ Displays tags as clickable pills → /search?tag=<tagSlug>
+        ◦ Shows Blogger Display Name; clicking opens the blogger’s profile.
