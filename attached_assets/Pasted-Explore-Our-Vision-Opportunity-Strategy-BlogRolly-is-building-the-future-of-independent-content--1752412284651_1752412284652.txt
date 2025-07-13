@@ -1,0 +1,33 @@
+Explore Our Vision, Opportunity & Strategy
+BlogRolly is building the future of independent content discovery—one that puts power back in the hands of creators.
+We believe the next wave of the creator economy won’t be algorithmic.
+It will be owned, authentic, and connected—just like the early web intended.
+We’re not just rebuilding a tool.
+We’re rebuilding a culture.
+BlogRolly is the next-generation blogroll our ‘Y’ is to become a platform that helps self-hosted bloggers grow, monetise, and build loyal readerships without relying on social feeds or SEO games.
+How we’ll win:
+    • By serving the overlooked: 30M+ independent bloggers building businesses from scratch
+    • By reviving lost discovery habits: organic linking, curated ecosystems, value-based visibility
+    • By supporting modern, monetisation-friendly infrastructure for indie writers
+
+Founder Bio – Why Me, Why Now
+Hi, I’m Nolene Dube, the founder of BlogRolly.
+As a researcher, and solo builder, I’ve lived the silence that fell over the open web. I’ve seen incredible creators publish great content—only for it to disappear into the void.
+I started BlogRolly because I believe in digital sovereignty and the power of long-form thought. I want to make the web feel interconnected again not just performative and feed-based.
+With a background in [briefly list highlights, e.g. regulatory systems, content strategy, tech upskilling], I’ve bootstrapped the MVP with no outside funding and designed a product informed by both cultural insight and user empathy.
+I’m building BlogRolly not to go viral but to last.
+
+Product Roadmap – Building in Public
+🚀 MVP Launch – Aug 2025
+    • Blogger directory submissions (curated, searchable)
+    • Reader onboarding + interest-based exploration
+    • Early engagement tools (save, follow, feedback)
+    • SEO-friendly profiles 
+    • Community waitlist + email capture
+📈 Phase 2 – Sept–Dec 2025
+    • Blogger analytics dashboard
+    • Value-based curated tagging and categories (Blog bundling)
+🧭 Vision – 2026 and beyond
+    • AI-assisted categorisation of indie blogs
+    • Monetisation layers for advocates (Affiliate Programs)
+    • Indie press tools (newsletter/blog bundling)
