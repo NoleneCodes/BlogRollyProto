@@ -20,21 +20,6 @@ const Submit: NextPage = () => {
         </p>
       </div>
 
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>📝 Share Your Blog</h3>
-          <p>Submit your blog to be featured in our community directory</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🌟 Get Discovered</h3>
-          <p>Connect with readers who are passionate about your content</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>📈 Grow Your Audience</h3>
-          <p>Reach new readers and expand your blog's influence</p>
-        </div>
-      </div>
-
       <div style={{ 
         textAlign: 'center', 
         padding: '3rem 1rem',
