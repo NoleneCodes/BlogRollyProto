@@ -20,21 +20,6 @@ const Submit: NextPage = () => {
         </p>
       </div>
 
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>📝 Easy Submission</h3>
-          <p>Quick form to add your blog recommendations</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>✅ Quality Review</h3>
-          <p>Our team reviews all submissions for quality</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🌟 Get Featured</h3>
-          <p>Great blogs get featured on our homepage</p>
-        </div>
-      </div>
-
       <BlogSubmissionForm onSubmit={handleFormSubmit} />
     </Layout>
   );
