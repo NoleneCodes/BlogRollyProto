@@ -23,21 +23,6 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-
-      <div className={styles.features}>
-        <div className={styles.feature}>
-          <h3>📚 Organise</h3>
-          <p>Keep all your favourite blogs organised in one place</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>🔍 Discover</h3>
-          <p>Find new blogs and content creators to follow</p>
-        </div>
-        <div className={styles.feature}>
-          <h3>📱 Mobile Ready</h3>
-          <p>Access your blog collection anywhere, anytime</p>
-        </div>
-      </div>
     </Layout>
   );
 };
