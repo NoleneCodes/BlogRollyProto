@@ -34,6 +34,17 @@ interface ReadingHistory {
   timeSpent?: number;
 }
 
+interface FollowedBlogger {
+  id: string;
+  displayName: string;
+  blogName: string;
+  blogUrl: string;
+  avatar?: string;
+  bio?: string;
+  followedDate: string;
+  category: string;
+}
+
 const ReaderProfile: React.FC = () => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -41,6 +52,7 @@ const ReaderProfile: React.FC = () => {
   const [activeSection, setActiveSection] = useState('overview');
   const [savedBlogs, setSavedBlogs] = useState<SavedBlog[]>([]);
   const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
+  const [followedBloggers, setFollowedBloggers] = useState<FollowedBlogger[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -100,6 +112,37 @@ const ReaderProfile: React.FC = () => {
                 timeSpent: 12
               }
             ]);
+
+            // Mock followed bloggers
+            setFollowedBloggers([
+              {
+                id: '1',
+                displayName: 'Jane Smith',
+                blogName: 'Tech Insights Daily',
+                blogUrl: 'https://techinsights.com',
+                bio: 'Frontend developer sharing the latest in web technology',
+                followedDate: '2024-01-15',
+                category: 'Tech'
+              },
+              {
+                id: '2',
+                displayName: 'Alex Johnson',
+                blogName: 'Mindful Moments',
+                blogUrl: 'https://mindfulmoments.blog',
+                bio: 'Wellness coach helping you live mindfully',
+                followedDate: '2024-01-10',
+                category: 'Health & Wellness'
+              },
+              {
+                id: '3',
+                displayName: 'Sarah Davis',
+                blogName: 'Book Lover\'s Corner',
+                blogUrl: 'https://bookloverscorner.com',
+                bio: 'Avid reader reviewing the latest fiction and non-fiction',
+                followedDate: '2024-01-08',
+                category: 'Books & Media'
+              }
+            ]);
           } else {
             router.push('/auth');
           }
@@ -124,6 +167,10 @@ const ReaderProfile: React.FC = () => {
 
   const removeSavedBlog = (blogId: string) => {
     setSavedBlogs(prev => prev.filter(blog => blog.id !== blogId));
+  };
+
+  const unfollowBlogger = (bloggerId: string) => {
+    setFollowedBloggers(prev => prev.filter(blogger => blogger.id !== bloggerId));
   };
 
   const getInitials = (name: string) => {
@@ -173,6 +220,10 @@ const ReaderProfile: React.FC = () => {
                 <span className={styles.statNumber}>{savedBlogs.length}</span>
               </div>
               <div className={styles.statCard}>
+                <h4>Following</h4>
+                <span className={styles.statNumber}>{followedBloggers.length}</span>
+              </div>
+              <div className={styles.statCard}>
                 <h4>Blogs Read</h4>
                 <span className={styles.statNumber}>{readingHistory.length}</span>
               </div>
@@ -207,6 +258,54 @@ const ReaderProfile: React.FC = () => {
                         className={styles.removeButton}
                       >
                         Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case 'following':
+        return (
+          <div className={styles.content}>
+            <h2>Following</h2>
+            {followedBloggers.length === 0 ? (
+              <p className={styles.emptyState}>You're not following any bloggers yet. Discover and follow bloggers you love!</p>
+            ) : (
+              <div className={styles.followingList}>
+                {followedBloggers.map(blogger => (
+                  <div key={blogger.id} className={styles.followingItem}>
+                    <div className={styles.bloggerInfo}>
+                      <div className={styles.bloggerAvatar}>
+                        {blogger.avatar ? (
+                          <img src={blogger.avatar} alt={blogger.displayName} />
+                        ) : (
+                          <div className={styles.bloggerInitials}>
+                            {getInitials(blogger.displayName)}
+                          </div>
+                        )}
+                      </div>
+                      <div className={styles.bloggerDetails}>
+                        <h4>{blogger.displayName}</h4>
+                        <p className={styles.blogName}>{blogger.blogName}</p>
+                        {blogger.bio && <p className={styles.bloggerBio}>{blogger.bio}</p>}
+                        <div className={styles.bloggerMeta}>
+                          <span className={styles.category}>{blogger.category}</span>
+                          <span className={styles.date}>Followed {new Date(blogger.followedDate).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.bloggerActions}>
+                      <a href={blogger.blogUrl} target="_blank" rel="noopener noreferrer" className={styles.visitButton}>
+                        Visit Blog
+                      </a>
+                      <button 
+                        onClick={() => unfollowBlogger(blogger.id)}
+                        className={styles.unfollowButton}
+                      >
+                        Unfollow
                       </button>
                     </div>
                   </div>
@@ -353,6 +452,12 @@ const ReaderProfile: React.FC = () => {
               onClick={() => setActiveSection('saved')}
             >
               📚 Saved Blogs
+            </button>
+            <button 
+              className={`${styles.navItem} ${activeSection === 'following' ? styles.active : ''}`}
+              onClick={() => setActiveSection('following')}
+            >
+              👥 Following
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'history' ? styles.active : ''}`}
