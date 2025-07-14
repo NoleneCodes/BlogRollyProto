@@ -178,8 +178,9 @@ const Blogroll: NextPage = () => {
                 <button 
                   onClick={() => toggleSave(blog.id)}
                   className={`${blogCardStyles.saveButton} ${blog.isSaved ? blogCardStyles.saved : ''}`}
+                  title={blog.isSaved ? 'Remove from saved' : 'Save blog'}
                 >
-                  {blog.isSaved ? 'Saved' : 'Save'}
+                  {blog.isSaved ? '❤️' : '🤍'}
                 </button>
               </div>
             </div>
