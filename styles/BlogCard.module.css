@@ -40,7 +40,7 @@
   box-shadow: 0 4px 12px rgba(196, 33, 66, 0.15);
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 500px;
+  height: 520px;
   display: flex;
   flex-direction: column;
 }
@@ -102,7 +102,8 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  height: calc(500px - 200px);
+  height: calc(520px - 200px);
+  overflow: hidden;
 }
 
 .blogTitle {
@@ -111,6 +112,8 @@
   font-weight: 700;
   margin: 0 0 0.75rem 0;
   line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .blogAuthor {
@@ -131,12 +134,12 @@
   font-size: 0.9rem;
   line-height: 1.4;
   margin: 0 0 1rem 0;
-  flex: 1;
+  height: 4.2rem;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 4.2rem;
+  text-overflow: ellipsis;
 }
 
 .tagsContainer {
@@ -144,7 +147,8 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
-  min-height: 1.5rem;
+  height: 2rem;
+  overflow: hidden;
 }
 
 .tag {
@@ -168,6 +172,7 @@
   display: flex;
   gap: 0.75rem;
   margin-top: auto;
+  flex-shrink: 0;
 }
 
 .readButton {
@@ -237,12 +242,11 @@
   }
   
   .blogCard {
-    height: auto;
-    min-height: 450px;
+    height: 480px;
   }
   
   .cardContent {
-    height: auto;
+    height: calc(480px - 180px);
   }
   
   .imageContainer {
@@ -254,7 +258,7 @@
   }
   
   .cardActions {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
   }
   
