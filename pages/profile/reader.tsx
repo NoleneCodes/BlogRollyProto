@@ -362,6 +362,9 @@ const ReaderProfile: React.FC = () => {
                 <button className={styles.frequencyButton}>
                   Monthly
                 </button>
+                <button className={styles.frequencyButton}>
+                  None
+                </button>
               </div>
             </div>
           </div>

@@ -377,18 +377,19 @@
 }
 
 .editButton {
-  background: #3b82f6;
-  color: white;
-  border: none;
+  background: transparent;
+  color: #c42142;
+  border: 2px solid #c42142;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .editButton:hover {
-  background: #2563eb;
+  background: #c42142;
+  color: white;
 }
 
 .checkboxLabel {
