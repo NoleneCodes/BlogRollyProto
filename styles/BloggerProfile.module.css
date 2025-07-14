@@ -1038,12 +1038,12 @@
 }
 
 .editButton {
-  background: #3b82f6;
+  background: #c42142;
   color: white;
 }
 
 .editButton:hover {
-  background: #2563eb;
+  background: #a01835;
 }
 
 .deactivateButton {
