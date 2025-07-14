@@ -101,17 +101,19 @@
 }
 
 .tierLimitation {
-  background: #c42142;
-  color: white;
+  background: rgba(196, 33, 66, 0.15);
+  border: 2px solid #c42142;
+  color: #c42142;
   padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 2rem;
 }
 
 .tierLimitation p {
-  color: #0369a1;
+  color: #c42142;
   margin: 0;
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .activeIndicator {
