@@ -563,9 +563,6 @@ const BloggerProfile: React.FC = () => {
                                     <span className={styles.inactiveIndicator}> • Inactive</span>
                                   )}
                                 </span>
-                                <span className={styles.date}>
-                                  {new Date(submission.submittedDate).toLocaleDateString()}
-                                </span>
                               </div>
                             </div>
                           </div>
