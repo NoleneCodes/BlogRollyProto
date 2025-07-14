@@ -1,4 +1,3 @@
-
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import Layout from "../components/Layout";

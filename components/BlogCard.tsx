@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styles from '../styles/BlogCard.module.css';
 
@@ -36,7 +35,13 @@ const BlogCard: React.FC<BlogCardProps> = ({
 }) => {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength).trim() + '...';
+    // Find the last space before the maxLength to avoid cutting words
+    const truncated = text.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    if (lastSpace > 0) {
+      return truncated.substring(0, lastSpace) + '...';
+    }
+    return truncated + '...';
   };
 
   const handleReadMore = () => {
@@ -72,12 +77,12 @@ const BlogCard: React.FC<BlogCardProps> = ({
           </div>
         )}
       </div>
-      
+
       <div className={styles.cardContent}>
         <h3 className={styles.blogTitle}>
           {blog.title}
         </h3>
-        
+
         {showAuthor && (
           <a 
             href={blog.authorProfile} 
@@ -86,9 +91,9 @@ const BlogCard: React.FC<BlogCardProps> = ({
             {blog.author}
           </a>
         )}
-        
+
         <p className={styles.blogDescription}>
-          {truncateText(blog.description, compact ? 80 : 120)}
+          {blog.description}
         </p>
 
         <div className={styles.tagsContainer}>
@@ -102,7 +107,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
             </a>
           ))}
         </div>
-        
+
         <div className={styles.cardActions}>
           <a 
             href={blog.postUrl}
@@ -113,7 +118,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
           >
             Read More
           </a>
-          
+
           {showSaveButton && onToggleSave && (
             <button 
               onClick={handleToggleSave}
