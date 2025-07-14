@@ -398,6 +398,41 @@
   color: #475569;
 }
 
+.sectionDescription {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+.frequencyButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.frequencyButton {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.frequencyButton:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.frequencyButton.active {
+  background: #c42142;
+  color: white;
+  border-color: #c42142;
+}
+
 .settingsForm {
   background: white;
   padding: 2rem;

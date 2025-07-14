@@ -353,11 +353,16 @@ const ReaderProfile: React.FC = () => {
               <button className={styles.editButton}>Edit Topics</button>
             </div>
             <div className={styles.preferencesSection}>
-              <h3>Reading Frequency</h3>
-              <label className={styles.checkboxLabel}>
-                <input type="checkbox" defaultChecked />
-                Weekly digest email
-              </label>
+              <h3>Newsletter Frequency</h3>
+              <p className={styles.sectionDescription}>Get a digest of popular and insightful blogs based on your topic interests</p>
+              <div className={styles.frequencyButtons}>
+                <button className={`${styles.frequencyButton} ${styles.active}`}>
+                  Weekly
+                </button>
+                <button className={styles.frequencyButton}>
+                  Monthly
+                </button>
+              </div>
             </div>
           </div>
         );
