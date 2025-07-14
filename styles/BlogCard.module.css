@@ -256,6 +256,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     padding: 1.5rem;
+    justify-items: center;
   }
 }
 
@@ -264,22 +265,21 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
     padding: 1rem;
+    justify-items: center;
   }
 
   .blogCard {
-    height: 480px;
+    height: 520px;
+    width: 100%;
+    max-width: 400px;
   }
 
   .cardContent {
-    height: calc(480px - 180px);
+    height: calc(520px - 200px);
   }
 
   .imageContainer {
-    height: 180px;
-  }
-
-  .blogTitle {
-    font-size: 1rem;
+    height: 200px;
   }
 
   .cardActions {
@@ -300,13 +300,21 @@
 
   .blogGrid {
     padding: 0.5rem;
+    justify-items: center;
+  }
+
+  .blogCard {
+    height: 520px;
+    width: 100%;
+    max-width: 400px;
   }
 
   .cardContent {
-    padding: 1rem;
+    height: calc(520px - 200px);
+    padding: 1.5rem;
   }
 
   .imageContainer {
-    height: 160px;
+    height: 200px;
   }
 }
