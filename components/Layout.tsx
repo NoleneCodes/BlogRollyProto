@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Layout.module.css';
 
@@ -7,12 +7,44 @@ interface LayoutProps {
   title?: string;
 }
 
+interface UserInfo {
+  id: string;
+  name: string;
+  roles: string[];
+}
+
 const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth-check');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authenticated) {
+            setUserInfo({
+              id: data.userId,
+              name: data.userName,
+              roles: data.userRoles ? data.userRoles.split(',') : []
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   return (
     <>
@@ -38,12 +70,24 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/about" className={styles.navLink}>About</a>
               <a href="/investors" className={styles.navLink}>Investors</a>
               <a href="/submit" className={styles.navLink}>Submit a Blog</a>
-              <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+              {!isLoading && (
+                userInfo ? (
+                  <a href="/profile/reader" className={styles.navLink}>Profile</a>
+                ) : (
+                  <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+                )
+              )}
             </div>
             <div className={styles.mobileMenuContainer}>
               <div className={styles.mobileVisibleButtons}>
                 <a href="/submit" className={styles.navLink}>Submit a Blog</a>
-                <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+                {!isLoading && (
+                  userInfo ? (
+                    <a href="/profile/reader" className={styles.navLink}>Profile</a>
+                  ) : (
+                    <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+                  )
+                )}
               </div>
               <div className={styles.mobileMenu}>
                 <button className={styles.menuButton} onClick={toggleMobileMenu}>
@@ -60,7 +104,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/about" className={styles.mobileNavLink} onClick={toggleMobileMenu}>About</a>
               <a href="/investors" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Investors</a>
               <a href="/submit" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Submit a Blog</a>
-              <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
+              {!isLoading && (
+                userInfo ? (
+                  <a href="/profile/reader" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Profile</a>
+                ) : (
+                  <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
+                )
+              )}
             </div>
           )}
         </nav>
