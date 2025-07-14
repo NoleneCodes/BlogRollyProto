@@ -2,6 +2,7 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
+import BlogCard from "../components/BlogCard";
 import styles from "../styles/Home.module.css";
 import blogCardStyles from "../styles/BlogCard.module.css";
 
@@ -82,11 +83,6 @@ const Blogroll: NextPage = () => {
     ));
   };
 
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength).trim() + '...';
-  };
-
   const filteredBlogs = filter === "all" ? blogs : blogs.filter(blog => blog.category === filter);
 
   return (
@@ -115,85 +111,14 @@ const Blogroll: NextPage = () => {
 
       <div className={blogCardStyles.blogGrid}>
         {filteredBlogs.map((blog) => (
-          <div key={blog.id} className={blogCardStyles.blogCard}>
-            <div className={blogCardStyles.imageContainer}>
-              {blog.image && (
-                <img 
-                  src={blog.image} 
-                  alt={blog.title}
-                  className={blogCardStyles.blogImage}
-                />
-              )}
-              <div className={blogCardStyles.categoryTag}>
-                <a href={`/blogroll?category=${encodeURIComponent(blog.category)}`}>
-                  {blog.category}
-                </a>
-              </div>
-              {blog.isRead && (
-                <div className={blogCardStyles.readBadge}>
-                  Read
-                </div>
-              )}
-            </div>
-            
-            <div className={blogCardStyles.cardContent}>
-              <h3 className={blogCardStyles.blogTitle}>
-                {blog.title}
-              </h3>
-              
-              <a 
-                href={blog.authorProfile} 
-                className={blogCardStyles.blogAuthor}
-              >
-                {blog.author}
-              </a>
-              
-              <p className={blogCardStyles.blogDescription}>
-                {truncateText(blog.description, 120)}
-              </p>
-
-              <div className={blogCardStyles.tagsContainer}>
-                {blog.tags.slice(0, 3).map((tag, index) => (
-                  <a 
-                    key={index}
-                    href={`/blogroll?tag=${encodeURIComponent(tag)}`}
-                    className={blogCardStyles.tag}
-                  >
-                    {tag}
-                  </a>
-                ))}
-              </div>
-              
-              <div className={blogCardStyles.cardActions}>
-                <a 
-                  href={blog.postUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={blogCardStyles.readButton}
-                  onClick={() => markAsRead(blog.id)}
-                >
-                  Read More
-                </a>
-                
-                <button 
-                  onClick={() => toggleSave(blog.id)}
-                  className={`${blogCardStyles.saveButton} ${blog.isSaved ? blogCardStyles.saved : ''}`}
-                  title={blog.isSaved ? 'Remove from saved' : 'Save blog'}
-                >
-                  <svg 
-                    width="18" 
-                    height="18" 
-                    viewBox="0 0 24 24" 
-                    fill={blog.isSaved ? "currentColor" : "none"}
-                    stroke="currentColor" 
-                    strokeWidth="2"
-                  >
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+          <BlogCard
+            key={blog.id}
+            blog={blog}
+            onToggleSave={toggleSave}
+            onMarkAsRead={markAsRead}
+            showAuthor={true}
+            showSaveButton={true}
+          />
         ))}
       </div>
     </Layout>

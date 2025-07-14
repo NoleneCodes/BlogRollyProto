@@ -226,6 +226,29 @@
   color: #c42142;
 }
 
+/* Compact variant for profile pages */
+.blogCard.compact {
+  height: 400px;
+}
+
+.blogCard.compact .imageContainer {
+  height: 150px;
+}
+
+.blogCard.compact .cardContent {
+  height: calc(400px - 150px);
+  padding: 1rem;
+}
+
+.blogCard.compact .blogTitle {
+  font-size: 1rem;
+}
+
+.blogCard.compact .blogDescription {
+  height: 3rem;
+  -webkit-line-clamp: 2;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .blogGrid {
