@@ -28,6 +28,7 @@ interface BlogSubmission {
   submittedDate: string;
   views?: number;
   clicks?: number;
+  isActive?: boolean; // Only matters for approved posts
 }
 
 interface BlogStats {
@@ -78,7 +79,8 @@ const BloggerProfile: React.FC = () => {
             status: 'approved',
             submittedDate: '2024-01-15',
             views: 1250,
-            clicks: 89
+            clicks: 89,
+            isActive: true
           },
           {
             id: '2',
@@ -88,10 +90,33 @@ const BloggerProfile: React.FC = () => {
             status: 'approved',
             submittedDate: '2024-01-20',
             views: 890,
-            clicks: 67
+            clicks: 67,
+            isActive: true
           },
           {
             id: '3',
+            title: 'Mastering Work-Life Balance',
+            url: 'https://techlifeinsights.com/work-life-balance',
+            category: 'Lifestyle',
+            status: 'approved',
+            submittedDate: '2024-01-18',
+            views: 650,
+            clicks: 45,
+            isActive: true
+          },
+          {
+            id: '4',
+            title: 'Advanced JavaScript Techniques',
+            url: 'https://techlifeinsights.com/advanced-js',
+            category: 'Tech',
+            status: 'approved',
+            submittedDate: '2024-01-22',
+            views: 0,
+            clicks: 0,
+            isActive: false
+          },
+          {
+            id: '5',
             title: 'AI in Content Creation',
             url: 'https://techlifeinsights.com/ai-content',
             category: 'Tech',
@@ -101,7 +126,7 @@ const BloggerProfile: React.FC = () => {
             clicks: 0
           },
           {
-            id: '4',
+            id: '6',
             title: 'Productivity Hacks for Developers',
             url: '',
             category: 'Tech',
@@ -137,6 +162,26 @@ const BloggerProfile: React.FC = () => {
 
   const handleSwitchToReader = () => {
     router.push('/profile/reader');
+  };
+
+  const togglePostActivation = (postId: string) => {
+    setBlogSubmissions(prev => prev.map(post => {
+      if (post.id === postId && post.status === 'approved') {
+        const newActiveStatus = !post.isActive;
+        
+        // Check if we're trying to activate a post
+        if (newActiveStatus) {
+          const currentActivePosts = prev.filter(p => p.status === 'approved' && p.isActive).length;
+          if (currentActivePosts >= 3) {
+            alert('You can only have 3 active posts on the free tier. Deactivate another post first.');
+            return post;
+          }
+        }
+        
+        return { ...post, isActive: newActiveStatus };
+      }
+      return post;
+    }));
   };
 
   const getInitials = (name: string) => {
@@ -250,8 +295,8 @@ const BloggerProfile: React.FC = () => {
                   <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
                 </div>
                 <div className={styles.statCard}>
-                  <h4>Approved Blogs</h4>
-                  <span className={styles.statNumber}>{blogStats.approvedSubmissions}/{blogStats.totalSubmissions}</span>
+                  <h4>Active Blogs</h4>
+                  <span className={styles.statNumber}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}/3</span>
                 </div>
               </div>
             )}
@@ -296,40 +341,62 @@ const BloggerProfile: React.FC = () => {
             {blogSubmissions.length === 0 ? (
               <p className={styles.emptyState}>No blog submissions yet. Submit your first blog post!</p>
             ) : (
-              <div className={styles.submissionsList}>
-                {blogSubmissions.map(submission => (
-                  <div key={submission.id} className={styles.submissionItem}>
-                    <div className={styles.submissionDetails}>
-                      <h4>{submission.title}</h4>
-                      <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
-                      <div className={styles.submissionMeta}>
-                        <span className={styles.category}>{submission.category}</span>
-                        <span 
-                          className={styles.status}
-                          style={{ backgroundColor: getStatusColor(submission.status) }}
-                        >
-                          {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-                        </span>
-                        <span className={styles.date}>
-                          {new Date(submission.submittedDate).toLocaleDateString()}
-                        </span>
+              <>
+                <div className={styles.tierLimitation}>
+                  <p><strong>Free Tier:</strong> You can have up to 3 active blog posts. 
+                  {blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}/3 active posts</p>
+                </div>
+                <div className={styles.submissionsList}>
+                  {blogSubmissions.map(submission => (
+                    <div key={submission.id} className={styles.submissionItem}>
+                      <div className={styles.submissionDetails}>
+                        <h4>{submission.title}</h4>
+                        <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+                        <div className={styles.submissionMeta}>
+                          <span className={styles.category}>{submission.category}</span>
+                          <span 
+                            className={styles.status}
+                            style={{ backgroundColor: getStatusColor(submission.status) }}
+                          >
+                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                            {submission.status === 'approved' && submission.isActive && (
+                              <span className={styles.activeIndicator}> • Live</span>
+                            )}
+                            {submission.status === 'approved' && !submission.isActive && (
+                              <span className={styles.inactiveIndicator}> • Inactive</span>
+                            )}
+                          </span>
+                          <span className={styles.date}>
+                            {new Date(submission.submittedDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.submissionActions}>
+                        {submission.status === 'approved' && (
+                          <button 
+                            className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
+                            onClick={() => togglePostActivation(submission.id)}
+                          >
+                            {submission.isActive ? 'Deactivate' : 'Activate'}
+                          </button>
+                        )}
+                        {submission.status === 'approved' && submission.isActive && (
+                          <div className={styles.submissionStats}>
+                            <div className={styles.statItem}>
+                              <span className={styles.statLabel}>Views</span>
+                              <span className={styles.statValue}>{submission.views}</span>
+                            </div>
+                            <div className={styles.statItem}>
+                              <span className={styles.statLabel}>Clicks</span>
+                              <span className={styles.statValue}>{submission.clicks}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    {submission.status === 'approved' && (
-                      <div className={styles.submissionStats}>
-                        <div className={styles.statItem}>
-                          <span className={styles.statLabel}>Views</span>
-                          <span className={styles.statValue}>{submission.views}</span>
-                        </div>
-                        <div className={styles.statItem}>
-                          <span className={styles.statLabel}>Clicks</span>
-                          <span className={styles.statValue}>{submission.clicks}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         );
@@ -571,10 +638,11 @@ const BloggerProfile: React.FC = () => {
               My Blogroll
             </button>
             <button 
-              className={`${styles.navItem} ${activeSection === 'stats' ? styles.active : ''}`}
-              onClick={() => setActiveSection('stats')}
+              className={`${styles.navItem} ${styles.disabled}`}
+              title="Stats are available in Pro tier"
+              disabled
             >
-              Stats
+              Stats (Pro)
             </button>
             <button 
               className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
