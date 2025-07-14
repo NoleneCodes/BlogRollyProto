@@ -1,0 +1,275 @@
+
+.filterSection {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.filterSelect {
+  padding: 0.75rem 1rem;
+  border: 2px solid #c42142;
+  border-radius: 8px;
+  background: white;
+  color: #c42142;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.filterSelect:hover {
+  background: #c42142;
+  color: white;
+}
+
+.blogGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.blogCard {
+  background: white;
+  border: 2px solid #c42142;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.15);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.blogCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(196, 33, 66, 0.25);
+}
+
+.imageContainer {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.blogImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.categoryTag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #f8f9fa;
+  color: #c42142;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #e5e5e5;
+}
+
+.categoryTag a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.categoryTag:hover {
+  background: #c42142;
+  color: white;
+}
+
+.readBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #c42142;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: calc(500px - 200px);
+}
+
+.blogTitle {
+  color: #c42142;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6rem;
+}
+
+.blogAuthor {
+  color: #c42142;
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.blogAuthor:hover {
+  color: #a01835;
+}
+
+.blogDescription {
+  color: #4a5568;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0 0 1rem 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 4.2rem;
+}
+
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 1.5rem;
+}
+
+.tag {
+  background: #f8f9fa;
+  color: #c42142;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid #e5e5e5;
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background: #c42142;
+  color: white;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.readButton {
+  background: #c42142;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.readButton:hover {
+  background: #a01835;
+  transform: translateY(-1px);
+}
+
+.saveButton {
+  background: transparent;
+  color: #c42142;
+  border: 2px solid #c42142;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.saveButton:hover {
+  background: #c42142;
+  color: white;
+}
+
+.saveButton.saved {
+  background: #c42142;
+  color: white;
+}
+
+.saveButton.saved:hover {
+  background: #a01835;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .blogGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .blogCard {
+    height: auto;
+    min-height: 450px;
+  }
+  
+  .cardContent {
+    height: auto;
+  }
+  
+  .imageContainer {
+    height: 180px;
+  }
+  
+  .blogTitle {
+    font-size: 1rem;
+  }
+  
+  .cardActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .readButton,
+  .saveButton {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .filterSection {
+    padding: 0 1rem;
+  }
+  
+  .blogGrid {
+    padding: 0.5rem;
+  }
+  
+  .cardContent {
+    padding: 1rem;
+  }
+  
+  .imageContainer {
+    height: 160px;
+  }
+}
