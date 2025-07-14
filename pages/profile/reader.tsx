@@ -406,22 +406,22 @@ const ReaderProfile: React.FC = () => {
             <h2>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
-                <h3>📋 FAQ</h3>
+                <h3>FAQ</h3>
                 <p>Find answers to commonly asked questions</p>
                 <button className={styles.helpButton}>View FAQ</button>
               </div>
               <div className={styles.helpItem}>
-                <h3>📧 Contact Support</h3>
+                <h3>Contact Support</h3>
                 <p>Get help from our support team</p>
                 <button className={styles.helpButton}>Contact Us</button>
               </div>
               <div className={styles.helpItem}>
-                <h3>💬 Send Feedback</h3>
+                <h3>Send Feedback</h3>
                 <p>Help us improve BlogRolly</p>
                 <button className={styles.helpButton}>Give Feedback</button>
               </div>
               <div className={styles.helpItem}>
-                <h3>🐛 Report a Bug</h3>
+                <h3>Report a Bug</h3>
                 <p>Found an issue? Let us know so we can fix it</p>
                 <button className={styles.helpButton}>Report Bug</button>
               </div>
