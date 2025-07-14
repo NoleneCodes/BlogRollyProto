@@ -35,9 +35,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             </div>
             <div className={styles.navLinks}>
               <a href="/blogroll" className={styles.navLink}>The Blogroll</a>
-              <a href="/submit" className={styles.navLink}>Submit a Blog</a>
               <a href="/about" className={styles.navLink}>About</a>
               <a href="/investors" className={styles.navLink}>Investors</a>
+              <a href="/submit" className={styles.navLink}>Submit a Blog</a>
               <a href="/auth" className={styles.navLink}>Sign Up/In</a>
             </div>
             <div className={styles.mobileMenuContainer}>
@@ -59,7 +59,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/blogroll" className={styles.mobileNavLink} onClick={toggleMobileMenu}>The Blogroll</a>
               <a href="/about" className={styles.mobileNavLink} onClick={toggleMobileMenu}>About</a>
               <a href="/investors" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Investors</a>
-              <a href="/blog" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Our Blog</a>
               <a href="/submit" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Submit a Blog</a>
               <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
             </div>
