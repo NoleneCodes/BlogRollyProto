@@ -778,6 +778,13 @@
     gap: 1rem;
   }
 
+  .submissionActions {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
   .submissionStats {
     margin-left: 0;
     width: 100%;
