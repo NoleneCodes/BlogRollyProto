@@ -58,16 +58,25 @@
   color: white;
 }
 
+.navItem.submitBlog {
+  color: #c42142;
+}
+
+.navItem.submitBlog:hover {
+  background: #fef2f2;
+  color: #a01835;
+}
+
 .navItem.switch {
   margin-top: 1rem;
-  color: #3b82f6;
+  color: #c42142;
   border-top: 1px solid #e2e8f0;
   padding-top: 1rem;
 }
 
 .navItem.switch:hover {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #fef2f2;
+  color: #a01835;
 }
 
 .navItem.logout {

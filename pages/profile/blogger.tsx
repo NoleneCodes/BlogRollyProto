@@ -577,7 +577,7 @@ const BloggerProfile: React.FC = () => {
               Stats
             </button>
             <button 
-              className={`${styles.navItem} ${activeSection === 'submit' ? styles.active : ''}`}
+              className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
               onClick={() => setShowBlogSubmissionForm(true)}
             >
               Submit a Blog
