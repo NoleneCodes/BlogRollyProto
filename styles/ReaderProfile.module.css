@@ -453,6 +453,71 @@
   font-weight: 500;
 }
 
+.profilePictureSection {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+.currentPicture {
+  position: relative;
+}
+
+.previewImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e2e8f0;
+}
+
+.previewPlaceholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #c42142;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: 600;
+  border: 3px solid #e2e8f0;
+}
+
+.pictureUpload {
+  flex: 1;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadButton {
+  background: #c42142;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+  display: inline-block;
+  border: none;
+}
+
+.uploadButton:hover {
+  background: #a01835;
+}
+
+.uploadHint {
+  display: block;
+  color: #64748b;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
 .input, .textarea {
   width: 100%;
   padding: 0.75rem;

@@ -54,6 +54,8 @@ const ReaderProfile: React.FC = () => {
   const [followedBloggers, setFollowedBloggers] = useState<FollowedBlogger[]>([]);
   const [showTopicEditPopup, setShowTopicEditPopup] = useState(false);
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
 
   // Categories and tags from blog submission form
   const MAIN_CATEGORIES = [
@@ -239,6 +241,38 @@ const ReaderProfile: React.FC = () => {
 
   const handleCancelTopicEdit = () => {
     setShowTopicEditPopup(false);
+  };
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image must be less than 2MB');
+        return;
+      }
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        alert('Only JPG, PNG, and WebP files are allowed');
+        return;
+      }
+      setProfilePictureFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfilePicturePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveSettings = () => {
+    // TODO: Implement actual save functionality with Supabase
+    if (profilePictureFile) {
+      // Update user avatar in userInfo for immediate UI update
+      setUserInfo(prev => prev ? { ...prev, avatar: profilePicturePreview } : null);
+    }
+    alert('Settings saved successfully!');
   };
 
   if (isLoading) {
@@ -441,6 +475,39 @@ const ReaderProfile: React.FC = () => {
             <h2>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
+                <label>Profile Picture</label>
+                <div className={styles.profilePictureSection}>
+                  <div className={styles.currentPicture}>
+                    {profilePicturePreview || userInfo.avatar ? (
+                      <img 
+                        src={profilePicturePreview || userInfo.avatar} 
+                        alt="Profile" 
+                        className={styles.previewImage}
+                      />
+                    ) : (
+                      <div className={styles.previewPlaceholder}>
+                        {getInitials(userInfo.displayName || userInfo.name)}
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.pictureUpload}>
+                    <input
+                      type="file"
+                      id="profilePicture"
+                      accept=".jpg,.jpeg,.png,.webp"
+                      onChange={handleProfilePictureChange}
+                      className={styles.fileInput}
+                    />
+                    <label htmlFor="profilePicture" className={styles.uploadButton}>
+                      Choose New Picture
+                    </label>
+                    <small className={styles.uploadHint}>
+                      Max size: 2MB. Formats: JPG, PNG, WebP
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.formGroup}>
                 <label>Display Name</label>
                 <input 
                   type="text" 
@@ -464,7 +531,9 @@ const ReaderProfile: React.FC = () => {
                   rows={3}
                 />
               </div>
-              <button className={styles.saveButton}>Save Changes</button>
+              <button className={styles.saveButton} onClick={handleSaveSettings}>
+                Save Changes
+              </button>
             </div>
             <div className={styles.dangerZone}>
               <h3>Danger Zone</h3>
