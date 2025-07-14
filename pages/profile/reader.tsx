@@ -208,7 +208,6 @@ const ReaderProfile: React.FC = () => {
               </div>
               <div className={styles.profileInfo}>
                 <h3>{userInfo.displayName || userInfo.name}</h3>
-                <p className={styles.email}>{userInfo.email}</p>
                 <p className={styles.bio}>{userInfo.bio}</p>
                 <p className={styles.joinDate}>Joined {new Date(userInfo.joinedDate).toLocaleDateString()}</p>
               </div>
@@ -292,7 +291,6 @@ const ReaderProfile: React.FC = () => {
                         {blogger.bio && <p className={styles.bloggerBio}>{blogger.bio}</p>}
                         <div className={styles.bloggerMeta}>
                           <span className={styles.category}>{blogger.category}</span>
-                          <span className={styles.date}>Followed {new Date(blogger.followedDate).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
@@ -327,7 +325,6 @@ const ReaderProfile: React.FC = () => {
                     <div className={styles.historyDetails}>
                       <h4>{item.title}</h4>
                       <p>by {item.author}</p>
-                      <span className={styles.date}>Read {new Date(item.readDate).toLocaleDateString()}</span>
                       {item.timeSpent && (
                         <span className={styles.timeSpent}>{item.timeSpent} min read</span>
                       )}
@@ -444,49 +441,49 @@ const ReaderProfile: React.FC = () => {
               className={`${styles.navItem} ${activeSection === 'overview' ? styles.active : ''}`}
               onClick={() => setActiveSection('overview')}
             >
-              🏠 Profile Overview
+              Profile Overview
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'saved' ? styles.active : ''}`}
               onClick={() => setActiveSection('saved')}
             >
-              📚 Saved Blogs
+              Saved Blogs
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'following' ? styles.active : ''}`}
               onClick={() => setActiveSection('following')}
             >
-              👥 Following
+              Following
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'history' ? styles.active : ''}`}
               onClick={() => setActiveSection('history')}
             >
-              🕒 Reading History
+              Reading History
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'preferences' ? styles.active : ''}`}
               onClick={() => setActiveSection('preferences')}
             >
-              🛠️ Preferences
+              Preferences
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'settings' ? styles.active : ''}`}
               onClick={() => setActiveSection('settings')}
             >
-              ⚙️ Account Settings
+              Account Settings
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'help' ? styles.active : ''}`}
               onClick={() => setActiveSection('help')}
             >
-              ❓ Help
+              Help
             </button>
             <button 
               className={`${styles.navItem} ${styles.logout}`}
               onClick={handleLogout}
             >
-              🚪 Log Out
+              Log Out
             </button>
           </nav>
         </aside>
