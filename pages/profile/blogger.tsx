@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -66,6 +65,11 @@ const BloggerProfile: React.FC = () => {
     image: null,
     imagePreview: null
   });
+    const [editingSubmission, setEditingSubmission] = useState<string | null>(null);
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editedTitle, setEditedTitle] = useState<string>('');
+  const [editedDescription, setEditedDescription] = useState<string>('');
+  const [editedImage, setEditedImage] = useState<string>('');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -196,7 +200,7 @@ const BloggerProfile: React.FC = () => {
     setBlogSubmissions(prev => prev.map(post => {
       if (post.id === postId && post.status === 'approved') {
         const newActiveStatus = !post.isActive;
-        
+
         // Check if we're trying to activate a post
         if (newActiveStatus) {
           const currentActivePosts = prev.filter(p => p.status === 'approved' && p.isActive).length;
@@ -205,7 +209,7 @@ const BloggerProfile: React.FC = () => {
             return post;
           }
         }
-        
+
         return { ...post, isActive: newActiveStatus };
       }
       return post;
@@ -239,7 +243,7 @@ const BloggerProfile: React.FC = () => {
         return;
       }
       setProfilePictureFile(file);
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setProfilePicturePreview(e.target?.result as string);
@@ -308,7 +312,7 @@ const BloggerProfile: React.FC = () => {
         return;
       }
       setEditForm(prev => ({ ...prev, image: file }));
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setEditForm(prev => ({ ...prev, imagePreview: e.target?.result as string }));
@@ -322,7 +326,7 @@ const BloggerProfile: React.FC = () => {
     if (!originalBlog) return;
 
     const urlChanged = originalBlog.url !== editForm.url;
-    
+
     if (urlChanged && originalBlog.status === 'approved') {
       const confirmEdit = window.confirm(
         'Warning: Changing the URL will deactivate this blog post and it will need to go through review again. Do you want to continue?'
@@ -358,6 +362,39 @@ const BloggerProfile: React.FC = () => {
       alert('Blog post has been deactivated and submitted for review due to URL change.');
     }
   };
+
+  const handleEditField = (submissionId: string, field: string, value: string) => {
+    setEditingSubmission(submissionId);
+    setEditingField(field);
+    switch (field) {
+      case 'title':
+        setEditedTitle(value);
+        break;
+      case 'description':
+        setEditedDescription(value);
+        break;
+      case 'image':
+        setEditedImage(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSaveEdit = (submissionId: string, field: string, value: string) => {
+    setBlogSubmissions(prev => prev.map(submission => {
+      if (submission.id === submissionId) {
+        return {
+          ...submission,
+          [field]: value
+        };
+      }
+      return submission;
+    }));
+    setEditingSubmission(null);
+    setEditingField(null);
+  };
+
 
   if (isLoading) {
     return (
@@ -431,7 +468,7 @@ const BloggerProfile: React.FC = () => {
                 Submit New Blog
               </button>
             </div>
-            
+
             {showBlogSubmissionForm && (
               <div className={styles.formOverlay}>
                 <div className={styles.formContainer}>
@@ -536,19 +573,85 @@ const BloggerProfile: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <>
-                          <div className={styles.submissionContent}>
-                            {submission.image && (
-                              <div className={styles.submissionImage}>
-                                <img src={submission.image} alt={submission.title} />
+                        
+                      
+                    
+                    <div key={submission.id} className={styles.submissionCard}>
+                          <div className={styles.submissionImageContainer}>
+                            {editingSubmission === submission.id && editingField === 'image' ? (
+                              <input
+                                type="url"
+                                value={editedImage}
+                                onChange={(e) => setEditedImage(e.target.value)}
+                                className={styles.editInput}
+                                placeholder="Image URL"
+                                onBlur={() => handleSaveEdit(submission.id, 'image', editedImage)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit(submission.id, 'image', editedImage)}
+                                autoFocus
+                              />
+                            ) : submission.image ? (
+                              <img 
+                                src={submission.image} 
+                                alt={submission.title}
+                                className={styles.submissionImage}
+                                onClick={() => handleEditField(submission.id, 'image', submission.image)}
+                              />
+                            ) : (
+                              <div 
+                                className={styles.submissionImagePlaceholder}
+                                onClick={() => handleEditField(submission.id, 'image', '')}
+                              >
+                                Click to add image
                               </div>
                             )}
-                            <div className={styles.submissionDetails}>
-                              <h4>{submission.title}</h4>
-                              {submission.description && (
-                                <p className={styles.submissionDescription}>{submission.description}</p>
-                              )}
-                              <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+                          </div>
+
+                          <div className={styles.submissionContent}>
+                            <div className={styles.submissionHeader}>
+                              <div className={styles.submissionDetails}>
+                                <h4 className={styles.submissionTitle}>
+                                  {editingSubmission === submission.id && editingField === 'title' ? (
+                                    <input
+                                      type="text"
+                                      value={editedTitle}
+                                      onChange={(e) => setEditedTitle(e.target.value)}
+                                      className={styles.editInput}
+                                      onBlur={() => handleSaveEdit(submission.id, 'title', editedTitle)}
+                                      onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit(submission.id, 'title', editedTitle)}
+                                      autoFocus
+                                    />
+                                  ) : (
+                                    <span onClick={() => handleEditField(submission.id, 'title', submission.title)}>
+                                      {submission.title}
+                                      {submission.status === 'approved' && !submission.isActive && (
+                                        <span className={styles.inactiveIndicator}> • Inactive</span>
+                                      )}
+                                    </span>
+                                  )}
+                                </h4>
+
+                                <p className={styles.submissionDescription}>
+                                  {editingSubmission === submission.id && editingField === 'description' ? (
+                                    <textarea
+                                      value={editedDescription}
+                                      onChange={(e) => setEditedDescription(e.target.value)}
+                                      className={styles.editTextarea}
+                                      onBlur={() => handleSaveEdit(submission.id, 'description', editedDescription)}
+                                      autoFocus
+                                      rows={2}
+                                    />
+                                  ) : (
+                                    <span onClick={() => handleEditField(submission.id, 'description', submission.description)}>
+                                      {submission.description}
+                                    </span>
+                                  )}
+                                </p>
+                                
+                              </div>
+                            </div>
+                            
+                            
+                            <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
                               <div className={styles.submissionMeta}>
                                 <span className={styles.category}>{submission.category}</span>
                                 <span 
@@ -564,7 +667,6 @@ const BloggerProfile: React.FC = () => {
                                   )}
                                 </span>
                               </div>
-                            </div>
                           </div>
                           <div className={styles.submissionActions}>
                             <button 
@@ -594,7 +696,12 @@ const BloggerProfile: React.FC = () => {
                               </div>
                             )}
                           </div>
-                        </>
+                        </div>
+                      
+                      
+                      
+                      
+                      
                       )}
                     </div>
                   ))}
