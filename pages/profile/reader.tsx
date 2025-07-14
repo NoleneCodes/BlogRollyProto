@@ -56,20 +56,21 @@ const ReaderProfile: React.FC = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth-check');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.authenticated) {
-            // Mock user data - replace with actual data from your backend
+        // Temporarily bypass auth check for design review
+        // const response = await fetch('/api/auth-check');
+        // if (response.ok) {
+        //   const data = await response.json();
+        //   if (data.authenticated) {
+            // Mock user data for design review
             setUserInfo({
-              id: data.userId,
-              name: data.userName,
-              email: 'user@example.com', // This would come from your database
-              displayName: data.userName,
+              id: 'demo-user-123',
+              name: 'Demo User',
+              email: 'demo@example.com',
+              displayName: 'Demo User',
               bio: 'Passionate reader exploring diverse topics',
               joinedDate: '2024-01-15',
               topics: ['Tech', 'Health & Wellness', 'Books & Media'],
-              roles: data.userRoles ? data.userRoles.split(',') : []
+              roles: ['reader']
             });
 
             // Mock saved blogs data
@@ -141,15 +142,15 @@ const ReaderProfile: React.FC = () => {
                 category: 'Books & Media'
               }
             ]);
-          } else {
-            router.push('/auth');
-          }
-        } else {
-          router.push('/auth');
-        }
+          // } else {
+          //   router.push('/auth');
+          // }
+        // } else {
+        //   router.push('/auth');
+        // }
       } catch (error) {
         console.error('Auth check failed:', error);
-        router.push('/auth');
+        // router.push('/auth');
       } finally {
         setIsLoading(false);
       }
