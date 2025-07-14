@@ -34,12 +34,12 @@
 
 .logoLink {
   text-decoration: none;
-  color: inherit;
+  color: #c42142;
 }
 
 .logoLink:hover {
   text-decoration: none;
-  color: #0070f3;
+  color: #c42142;
 }
 
 .navLinks {
