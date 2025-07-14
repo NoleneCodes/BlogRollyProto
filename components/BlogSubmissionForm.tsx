@@ -4,12 +4,16 @@ import styles from '../styles/BlogSubmissionForm.module.css';
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
   displayName?: string;
+  bloggerId?: string;
+  isBlogger?: boolean;
 }
 
 interface FormData {
   image: File | null;
   title: string;
-  author: string;
+  author: string; // Will be set to blogger's display name
+  bloggerId: string;
+  bloggerDisplayName: string;
   description: string;
   category: string;
   tags: string[];
@@ -82,17 +86,59 @@ const TAGS = {
   ]
 };
 
-const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ onSubmit, displayName }) => {
+const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ 
+  onSubmit, 
+  displayName, 
+  bloggerId, 
+  isBlogger 
+}) => {
   const [formData, setFormData] = useState<FormData>({
     image: null,
     title: '',
-    author: displayName || 'Your Name', // Autofilled from authenticated user
+    author: displayName || '', // Blogger's display name
+    bloggerId: bloggerId || '',
+    bloggerDisplayName: displayName || '',
     description: '',
     category: '',
     tags: [],
     postUrl: '',
     hasAdultContent: false
   });
+
+  // Check if user is authenticated as a blogger
+  if (!isBlogger) {
+    return (
+      <div className={styles.formContainer}>
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem',
+          backgroundColor: '#fef2f2',
+          borderRadius: '8px',
+          border: '1px solid #fecaca'
+        }}>
+          <h3 style={{ color: '#dc2626', marginBottom: '1rem' }}>
+            Blogger Account Required
+          </h3>
+          <p style={{ color: '#7f1d1d', marginBottom: '1.5rem' }}>
+            Only registered bloggers can submit blog posts. Please sign up as a blogger first.
+          </p>
+          <a 
+            href="/auth?tab=blogger"
+            style={{
+              background: '#c42142',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              textDecoration: 'none',
+              display: 'inline-block'
+            }}
+          >
+            Sign Up as Blogger
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const [progress, setProgress] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(null);

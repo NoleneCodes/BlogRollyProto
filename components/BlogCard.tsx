@@ -3,16 +3,19 @@ import styles from '../styles/BlogCard.module.css';
 
 interface BlogPost {
   id: string;
-  image?: string;
   title: string;
-  author: string;
-  authorProfile: string;
+  author: string; // This will be the blogger's display name
+  authorProfile?: string;
+  bloggerId: string; // ID of the blogger who submitted this
+  bloggerDisplayName: string; // Display name from blogger's profile
   description: string;
   category: string;
   tags: string[];
   postUrl: string;
-  dateAdded: string;
-  isRead?: boolean;
+  imageUrl?: string;
+  hasAdultContent?: boolean;
+  readTime?: string;
+  publishDate?: string;
   isSaved?: boolean;
 }
 
@@ -87,8 +90,10 @@ const BlogCard: React.FC<BlogCardProps> = ({
           <a 
             href={blog.authorProfile} 
             className={styles.blogAuthor}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            {blog.author}
+            {blog.bloggerDisplayName || blog.author}
           </a>
         )}
 

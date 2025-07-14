@@ -23,7 +23,7 @@ interface BlogPost {
 // Mock data - replace with actual API call
 const mockBlogs: BlogPost[] = [
   {
-    id: "1",
+    id: '1',
     image: "https://picsum.photos/300/200?random=1",
     title: "The Complete Guide to Building a Sustainable Morning Routine That Actually Works",
     author: "Sarah Johnson",
@@ -37,7 +37,7 @@ const mockBlogs: BlogPost[] = [
     isSaved: false
   },
   {
-    id: "2",
+    id: '2',
     image: "https://picsum.photos/300/200?random=2",
     title: "Mental Health in Tech",
     author: "Alex Chen",
@@ -51,7 +51,7 @@ const mockBlogs: BlogPost[] = [
     isSaved: true
   },
   {
-    id: "3",
+    id: '3',
     image: "https://picsum.photos/300/200?random=3",
     title: "Cooking Adventures: Simple Recipes for Busy Lives",
     author: "Maria Rodriguez",

@@ -1,15 +1,100 @@
 
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
+import BlogSubmissionForm from "../components/BlogSubmissionForm";
 import styles from "../styles/Home.module.css";
+
+interface UserInfo {
+  id: string;
+  name: string;
+  roles: string[];
+  displayName?: string;
+}
 
 const Submit: NextPage = () => {
   const router = useRouter();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth-check');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authenticated) {
+            const user = {
+              id: data.userId,
+              name: data.userName,
+              roles: data.userRoles ? data.userRoles.split(',') : [],
+              displayName: data.userName // This would come from user profile in real implementation
+            };
+            setUserInfo(user);
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const handleSignInClick = () => {
     router.push('/auth?tab=blogger');
   };
+
+  const handleBlogSubmit = (formData: any) => {
+    // TODO: Submit to backend with blogger information
+    console.log('Blog submitted by blogger:', {
+      ...formData,
+      bloggerId: userInfo?.id,
+      bloggerDisplayName: userInfo?.displayName || userInfo?.name
+    });
+    alert('Blog submitted successfully! It will be reviewed before being published.');
+  };
+
+  if (isLoading) {
+    return (
+      <Layout title="Submit a Blog - Blogrolly">
+        <div className={styles.hero}>
+          <h1 className={styles.title}>Loading...</h1>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Check if user is authenticated and is a blogger
+  const isBlogger = userInfo && (
+    userInfo.roles.includes('blogger') || 
+    userInfo.roles.includes('admin') ||
+    // For demo purposes, consider all authenticated users as potential bloggers
+    userInfo.id
+  );
+
+  if (userInfo && isBlogger) {
+    return (
+      <Layout title="Submit a Blog - Blogrolly">
+        <div className={styles.hero}>
+          <h1 className={styles.title}>Submit a Blog</h1>
+          <p className={styles.description}>
+            Share your blog post with the Blogrolly community
+          </p>
+        </div>
+
+        <BlogSubmissionForm 
+          onSubmit={handleBlogSubmit}
+          displayName={userInfo.displayName || userInfo.name}
+          bloggerId={userInfo.id}
+          isBlogger={true}
+        />
+      </Layout>
+    );
+  }
 
   return (
     <Layout title="Submit a Blog - Blogrolly">
@@ -32,7 +117,7 @@ const Submit: NextPage = () => {
           marginBottom: '1rem',
           color: '#374151'
         }}>
-          Ready to Submit Your Blog?
+          Blogger Account Required
         </h2>
         <p style={{ 
           fontSize: '1.1rem', 
@@ -41,8 +126,8 @@ const Submit: NextPage = () => {
           maxWidth: '600px',
           margin: '0 auto 2rem auto'
         }}>
-          To submit your blog to Blogrolly, you'll need to sign in or create an account. 
-          This helps us maintain a quality community and allows you to manage your submissions.
+          To submit a blog post to Blogrolly, you need to sign up as a blogger. 
+          This ensures quality content and allows you to manage your submissions.
         </p>
         <button 
           onClick={handleSignInClick}
@@ -70,7 +155,7 @@ const Submit: NextPage = () => {
             e.currentTarget.style.boxShadow = '0 2px 4px rgba(196, 33, 66, 0.2)';
           }}
         >
-          Sign In to Submit
+          Sign Up as Blogger
         </button>
         
         <div style={{
@@ -85,7 +170,7 @@ const Submit: NextPage = () => {
             color: '#374151',
             textAlign: 'center'
           }}>
-            Why do I need to sign in?
+            Why blogger accounts only?
           </h3>
           <ul style={{
             fontSize: '1rem',
@@ -94,19 +179,16 @@ const Submit: NextPage = () => {
             paddingLeft: '1.5rem'
           }}>
             <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Quality control:</strong> We verify all submissions to maintain a high-quality directory
+              <strong>Content ownership:</strong> Only blog owners can submit their own content
             </li>
             <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Spam prevention:</strong> Account verification helps us keep the platform free from spam and low-quality content
+              <strong>Quality assurance:</strong> Verified bloggers help maintain high content standards
             </li>
             <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Manage your submissions:</strong> Track and edit your blog submissions from your dashboard
+              <strong>Author attribution:</strong> Proper credit and links back to the original blogger
             </li>
             <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Community features:</strong> Connect with other bloggers and readers in our community
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <strong>Ownership verification:</strong> We ensure only blog owners can submit their content
+              <strong>Community building:</strong> Connect with other bloggers and build your audience
             </li>
           </ul>
         </div>

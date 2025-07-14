@@ -143,7 +143,13 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
   const handleBlogSubmission = (blogData: any) => {
     if (submittedBlogs.length < 3) {
-      setSubmittedBlogs(prev => [...prev, blogData]);
+      const blogWithBloggerInfo = {
+        ...blogData,
+        bloggerId: 'temp_' + Date.now(), // In real app, this would be the authenticated user ID
+        bloggerDisplayName: bloggerForm.displayName,
+        author: bloggerForm.displayName
+      };
+      setSubmittedBlogs(prev => [...prev, blogWithBloggerInfo]);
       setShowBlogSubmissionPopup(false);
     }
   };
