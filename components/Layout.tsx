@@ -29,7 +29,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
         <nav className={styles.navbar}>
           <div className={styles.navContent}>
             <div className={styles.logo}>
-              <h2>BlogRolly</h2>
+              <a href="/" className={styles.logoLink}>
+                <h2>BlogRolly</h2>
+              </a>
             </div>
             <div className={styles.navLinks}>
               <a href="/blogroll" className={styles.navLink}>The Blogroll</a>
