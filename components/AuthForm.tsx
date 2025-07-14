@@ -146,7 +146,18 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
     // TODO: Implement Supabase authentication
     console.log('Sign in attempted:', signInForm);
-    alert('Sign in functionality will be implemented with Supabase integration.');
+    
+    // Mock successful authentication - replace with actual Supabase logic
+    // For now, assume all users are readers unless they have blogger role
+    const userRoles = ['reader']; // This would come from your database
+    
+    if (userRoles.includes('blogger')) {
+      router.push('/profile/blogger');
+    } else {
+      router.push('/profile/reader');
+    }
+    
+    alert('Sign in successful! Welcome back!');
   };
 
   const handleReaderSubmit = async (e: React.FormEvent) => {
@@ -172,7 +183,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
     // TODO: Implement Supabase authentication
     console.log('Reader form submitted:', readerForm);
-    alert('Account created successfully! You can now sign in.');
+    alert('Account created successfully! Welcome to BlogRolly!');
+    
+    // Redirect to reader profile
+    router.push('/profile/reader');
   };
 
   if (isLoading) {

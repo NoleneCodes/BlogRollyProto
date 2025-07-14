@@ -35,10 +35,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             </div>
             <div className={styles.navLinks}>
               <a href="/blogroll" className={styles.navLink}>The Blogroll</a>
-              <a href="/about" className={styles.navLink}>About</a>
-              <a href="/investors" className={styles.navLink}>Investors</a>
-              <a href="/blog" className={styles.navLink}>Our Blog</a>
               <a href="/submit" className={styles.navLink}>Submit a Blog</a>
+              <a href="/profile/reader" className={styles.navLink}>Profile</a>
               <a href="/auth" className={styles.navLink}>Sign Up/In</a>
             </div>
             <div className={styles.mobileMenuContainer}>
