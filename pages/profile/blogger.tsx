@@ -29,6 +29,8 @@ interface BlogSubmission {
   views?: number;
   clicks?: number;
   isActive?: boolean; // Only matters for approved posts
+  description?: string;
+  image?: string;
 }
 
 interface BlogStats {
@@ -50,6 +52,20 @@ const BloggerProfile: React.FC = () => {
   const [showBlogSubmissionForm, setShowBlogSubmissionForm] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+  const [editingBlog, setEditingBlog] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<{
+    title: string;
+    description: string;
+    url: string;
+    image: File | null;
+    imagePreview: string | null;
+  }>({
+    title: '',
+    description: '',
+    url: '',
+    image: null,
+    imagePreview: null
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -80,7 +96,9 @@ const BloggerProfile: React.FC = () => {
             submittedDate: '2024-01-15',
             views: 1250,
             clicks: 89,
-            isActive: true
+            isActive: true,
+            description: 'Exploring how remote work is reshaping the modern workplace and what it means for the future.',
+            image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=200&fit=crop'
           },
           {
             id: '2',
@@ -91,7 +109,9 @@ const BloggerProfile: React.FC = () => {
             submittedDate: '2024-01-20',
             views: 890,
             clicks: 67,
-            isActive: true
+            isActive: true,
+            description: 'Simple strategies to create morning routines that set you up for success throughout the day.',
+            image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop'
           },
           {
             id: '3',
@@ -102,7 +122,9 @@ const BloggerProfile: React.FC = () => {
             submittedDate: '2024-01-18',
             views: 650,
             clicks: 45,
-            isActive: true
+            isActive: true,
+            description: 'Practical tips for maintaining healthy boundaries between your professional and personal life.',
+            image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=200&fit=crop'
           },
           {
             id: '4',
@@ -113,7 +135,9 @@ const BloggerProfile: React.FC = () => {
             submittedDate: '2024-01-22',
             views: 0,
             clicks: 0,
-            isActive: false
+            isActive: false,
+            description: 'Deep dive into advanced JavaScript concepts and patterns that every developer should know.',
+            image: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400&h=200&fit=crop'
           },
           {
             id: '5',
@@ -123,7 +147,9 @@ const BloggerProfile: React.FC = () => {
             status: 'pending',
             submittedDate: '2024-01-25',
             views: 0,
-            clicks: 0
+            clicks: 0,
+            description: 'How artificial intelligence is transforming the way we create and consume content online.',
+            image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop'
           },
           {
             id: '6',
@@ -133,7 +159,9 @@ const BloggerProfile: React.FC = () => {
             status: 'draft',
             submittedDate: '2024-01-28',
             views: 0,
-            clicks: 0
+            clicks: 0,
+            description: 'Boost your coding productivity with these proven techniques and tools.',
+            image: null
           }
         ]);
 
@@ -236,11 +264,99 @@ const BloggerProfile: React.FC = () => {
       status: 'pending',
       submittedDate: new Date().toISOString().split('T')[0],
       views: 0,
-      clicks: 0
+      clicks: 0,
+      description: formData.description,
+      image: formData.image ? URL.createObjectURL(formData.image) : null
     };
     setBlogSubmissions(prev => [newSubmission, ...prev]);
     setShowBlogSubmissionForm(false);
     setActiveSection('blogroll');
+  };
+
+  const startEditingBlog = (blog: BlogSubmission) => {
+    setEditingBlog(blog.id);
+    setEditForm({
+      title: blog.title,
+      description: blog.description || '',
+      url: blog.url,
+      image: null,
+      imagePreview: blog.image || null
+    });
+  };
+
+  const cancelEditingBlog = () => {
+    setEditingBlog(null);
+    setEditForm({
+      title: '',
+      description: '',
+      url: '',
+      image: null,
+      imagePreview: null
+    });
+  };
+
+  const handleEditImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image must be less than 2MB');
+        return;
+      }
+      const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        alert('Only JPG, PNG, and WebP files are allowed');
+        return;
+      }
+      setEditForm(prev => ({ ...prev, image: file }));
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setEditForm(prev => ({ ...prev, imagePreview: e.target?.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const saveEditedBlog = (blogId: string) => {
+    const originalBlog = blogSubmissions.find(b => b.id === blogId);
+    if (!originalBlog) return;
+
+    const urlChanged = originalBlog.url !== editForm.url;
+    
+    if (urlChanged && originalBlog.status === 'approved') {
+      const confirmEdit = window.confirm(
+        'Warning: Changing the URL will deactivate this blog post and it will need to go through review again. Do you want to continue?'
+      );
+      if (!confirmEdit) return;
+    }
+
+    setBlogSubmissions(prev => prev.map(blog => {
+      if (blog.id === blogId) {
+        return {
+          ...blog,
+          title: editForm.title,
+          description: editForm.description,
+          url: editForm.url,
+          image: editForm.image ? URL.createObjectURL(editForm.image) : editForm.imagePreview,
+          status: urlChanged && blog.status === 'approved' ? 'pending' : blog.status,
+          isActive: urlChanged && blog.status === 'approved' ? false : blog.isActive
+        };
+      }
+      return blog;
+    }));
+
+    setEditingBlog(null);
+    setEditForm({
+      title: '',
+      description: '',
+      url: '',
+      image: null,
+      imagePreview: null
+    });
+
+    if (urlChanged && originalBlog.status === 'approved') {
+      alert('Blog post has been deactivated and submitted for review due to URL change.');
+    }
   };
 
   if (isLoading) {
@@ -349,50 +465,140 @@ const BloggerProfile: React.FC = () => {
                 <div className={styles.submissionsList}>
                   {blogSubmissions.map(submission => (
                     <div key={submission.id} className={styles.submissionItem}>
-                      <div className={styles.submissionDetails}>
-                        <h4>{submission.title}</h4>
-                        <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
-                        <div className={styles.submissionMeta}>
-                          <span className={styles.category}>{submission.category}</span>
-                          <span 
-                            className={styles.status}
-                            style={{ backgroundColor: getStatusColor(submission.status) }}
-                          >
-                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-                            {submission.status === 'approved' && submission.isActive && (
-                              <span className={styles.activeIndicator}> • Live</span>
+                      {editingBlog === submission.id ? (
+                        <div className={styles.editBlogForm}>
+                          <div className={styles.editImageSection}>
+                            {editForm.imagePreview && (
+                              <div className={styles.editImagePreview}>
+                                <img src={editForm.imagePreview} alt="Blog preview" />
+                              </div>
                             )}
-                            {submission.status === 'approved' && !submission.isActive && (
-                              <span className={styles.inactiveIndicator}> • Inactive</span>
-                            )}
-                          </span>
-                          <span className={styles.date}>
-                            {new Date(submission.submittedDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                      <div className={styles.submissionActions}>
-                        {submission.status === 'approved' && (
-                          <button 
-                            className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
-                            onClick={() => togglePostActivation(submission.id)}
-                          >
-                            {submission.isActive ? 'Deactivate' : 'Activate'}
-                          </button>
-                        )}
-                        {submission.status === 'approved' && submission.isActive && (
-                          <div className={styles.submissionStats}>
-                            <div className={styles.statItem}>
-                              <span className={styles.statLabel}>Views</span>
-                              <span className={styles.statValue}>{submission.views}</span>
-                            </div>
-                            <div className={styles.statItem}>
-                              <span className={styles.statLabel}>Clicks</span>
-                              <span className={styles.statValue}>{submission.clicks}</span>
+                            <div className={styles.editImageUpload}>
+                              <input
+                                type="file"
+                                id={`editImage-${submission.id}`}
+                                accept=".jpg,.jpeg,.png,.webp"
+                                onChange={handleEditImageChange}
+                                className={styles.fileInput}
+                              />
+                              <label htmlFor={`editImage-${submission.id}`} className={styles.uploadButton}>
+                                {editForm.imagePreview ? 'Change Image' : 'Add Image'}
+                              </label>
                             </div>
                           </div>
-                        )}
-                      </div>
+                          <div className={styles.editFormFields}>
+                            <div className={styles.editField}>
+                              <label>Title</label>
+                              <input
+                                type="text"
+                                value={editForm.title}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                                className={styles.editInput}
+                              />
+                            </div>
+                            <div className={styles.editField}>
+                              <label>Description</label>
+                              <textarea
+                                value={editForm.description}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                                className={styles.editTextarea}
+                                rows={3}
+                              />
+                            </div>
+                            <div className={styles.editField}>
+                              <label>URL</label>
+                              <input
+                                type="url"
+                                value={editForm.url}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
+                                className={styles.editInput}
+                              />
+                              {submission.url !== editForm.url && submission.status === 'approved' && (
+                                <small className={styles.urlWarning}>
+                                  ⚠️ Changing the URL will deactivate this post and require review
+                                </small>
+                              )}
+                            </div>
+                          </div>
+                          <div className={styles.editActions}>
+                            <button 
+                              className={styles.saveButton}
+                              onClick={() => saveEditedBlog(submission.id)}
+                            >
+                              Save Changes
+                            </button>
+                            <button 
+                              className={styles.cancelButton}
+                              onClick={cancelEditingBlog}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className={styles.submissionContent}>
+                            {submission.image && (
+                              <div className={styles.submissionImage}>
+                                <img src={submission.image} alt={submission.title} />
+                              </div>
+                            )}
+                            <div className={styles.submissionDetails}>
+                              <h4>{submission.title}</h4>
+                              {submission.description && (
+                                <p className={styles.submissionDescription}>{submission.description}</p>
+                              )}
+                              <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+                              <div className={styles.submissionMeta}>
+                                <span className={styles.category}>{submission.category}</span>
+                                <span 
+                                  className={styles.status}
+                                  style={{ backgroundColor: getStatusColor(submission.status) }}
+                                >
+                                  {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                                  {submission.status === 'approved' && submission.isActive && (
+                                    <span className={styles.activeIndicator}> • Live</span>
+                                  )}
+                                  {submission.status === 'approved' && !submission.isActive && (
+                                    <span className={styles.inactiveIndicator}> • Inactive</span>
+                                  )}
+                                </span>
+                                <span className={styles.date}>
+                                  {new Date(submission.submittedDate).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={styles.submissionActions}>
+                            <button 
+                              className={styles.editButton}
+                              onClick={() => startEditingBlog(submission)}
+                            >
+                              Edit
+                            </button>
+                            {submission.status === 'approved' && (
+                              <button 
+                                className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
+                                onClick={() => togglePostActivation(submission.id)}
+                              >
+                                {submission.isActive ? 'Deactivate' : 'Activate'}
+                              </button>
+                            )}
+                            {submission.status === 'approved' && submission.isActive && (
+                              <div className={styles.submissionStats}>
+                                <div className={styles.statItem}>
+                                  <span className={styles.statLabel}>Views</span>
+                                  <span className={styles.statValue}>{submission.views}</span>
+                                </div>
+                                <div className={styles.statItem}>
+                                  <span className={styles.statLabel}>Clicks</span>
+                                  <span className={styles.statValue}>{submission.clicks}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>

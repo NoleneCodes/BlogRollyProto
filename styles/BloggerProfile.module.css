@@ -815,3 +815,19 @@
     font-size: 1.25rem;
   }
 }
+.editButton {
+  background: transparent;
+  color: #c42142;
+  border: 2px solid #c42142;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover {
+  background: #c42142;
+  color: white;
+}
