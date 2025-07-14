@@ -1063,27 +1063,3 @@
 .activateButton:hover {
   background: #059669;
 }
-.tierBanner {
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border: 2px solid #c42142;
-  border-radius: 12px;
-  color: #333;
-  padding: 1.5rem;
-  text-align: center;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.15);
-}
-
-.tierBanner .tierText {
-  color: #666;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.tierBanner .postCount {
-  color: #c42142;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-top: 0.5rem;
-}
