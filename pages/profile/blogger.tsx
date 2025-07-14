@@ -496,8 +496,10 @@ const BloggerProfile: React.FC = () => {
             ) : (
               <>
                 <div className={styles.tierLimitation}>
-                  <p><strong>Free Tier:</strong> You can have up to 3 active blog posts. 
-                  {blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}/3 active posts</p>
+                 <div className={styles.tierBanner}>
+                  <div className={styles.tierText}>Free Tier: You can have up to 3 active blog posts</div>
+                  <div className={styles.postCount}>You currently have <span className={styles.currentCount}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>/3 active posts</div>
+                 </div>
                 </div>
                 <div className={styles.submissionsList}>
                   {blogSubmissions.map(submission => (
@@ -573,9 +575,9 @@ const BloggerProfile: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        
-                      
-                    
+
+
+
                     <div key={submission.id} className={styles.submissionCard}>
                           <div className={styles.submissionImageContainer}>
                             {editingSubmission === submission.id && editingField === 'image' ? (
@@ -646,11 +648,11 @@ const BloggerProfile: React.FC = () => {
                                     </span>
                                   )}
                                 </p>
-                                
+
                               </div>
                             </div>
-                            
-                            
+
+
                             <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
                               <div className={styles.submissionMeta}>
                                 <span className={styles.category}>{submission.category}</span>
@@ -697,11 +699,11 @@ const BloggerProfile: React.FC = () => {
                             )}
                           </div>
                         </div>
-                      
-                      
-                      
-                      
-                      
+
+
+
+
+
                       )}
                     </div>
                   ))}
@@ -940,8 +942,7 @@ const BloggerProfile: React.FC = () => {
               onClick={() => setActiveSection('overview')}
             >
               Profile Overview
-            </button>
-            <button 
+            </button>            <button 
               className={`${styles.navItem} ${activeSection === 'blogroll' ? styles.active : ''}`}
               onClick={() => setActiveSection('blogroll')}
             >
