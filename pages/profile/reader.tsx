@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -113,7 +112,6 @@ const ReaderProfile: React.FC = () => {
               }
             ]);
 
-            // Mock followed bloggers
             setFollowedBloggers([
               {
                 id: '1',

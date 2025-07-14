@@ -1,4 +1,3 @@
-
 .profileContainer {
   display: flex;
   min-height: calc(100vh - 80px);
@@ -455,7 +454,7 @@
 
 .dangerZone h3 {
   color: #dc2626;
-  margin: 0 0 1rem 0;
+  margin-bottom: 1rem;
 }
 
 .deleteButton {
@@ -471,6 +470,123 @@
 
 .deleteButton:hover {
   background: #b91c1c;
+}
+
+/* Following Section Styles */
+.followingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.bloggerCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.bloggerCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.bloggerHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bloggerAvatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bloggerAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bloggerInfo {
+  flex: 1;
+}
+
+.bloggerInfo h3 {
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.bloggerCategory {
+  color: #c42142;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+
+.bloggerBio {
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.bloggerStats {
+  display: flex;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.bloggerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.viewProfileButton {
+  flex: 1;
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.viewProfileButton:hover {
+  background: #a91d3a;
+}
+
+.unfollowButton {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.unfollowButton:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
 }
 
 .helpSection {
