@@ -52,6 +52,47 @@ const ReaderProfile: React.FC = () => {
   const [savedBlogs, setSavedBlogs] = useState<SavedBlog[]>([]);
   const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
   const [followedBloggers, setFollowedBloggers] = useState<FollowedBlogger[]>([]);
+  const [showTopicEditPopup, setShowTopicEditPopup] = useState(false);
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+
+  // Categories and tags from blog submission form
+  const MAIN_CATEGORIES = [
+    'Lifestyle',
+    'Health & Wellness',
+    'Culture & Society',
+    'Tech & Digital Life',
+    'Creative Expression',
+    'Work & Money',
+    'Education & Learning',
+    'Relationships & Emotions',
+    'Art & Media',
+    'Home & Garden',
+    'Food & Drink',
+    'Travel & Places',
+    'Identity & Intersectionality',
+    'Spirituality & Inner Work',
+    'Opinion & Commentary',
+    'Other'
+  ];
+
+  const TOPIC_TAGS = [
+    'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
+    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
+    'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
+    'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
+    'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
+    'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
+    'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
+    'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
+    'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
+    'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
+    'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
+    'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
+    'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
+    'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
+    'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
+    'Addiction & Recovery', 'Chronic Illness'
+  ];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -174,6 +215,30 @@ const ReaderProfile: React.FC = () => {
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const handleEditTopics = () => {
+    setSelectedTopics([...userInfo!.topics]);
+    setShowTopicEditPopup(true);
+  };
+
+  const handleTopicToggle = (topic: string) => {
+    setSelectedTopics(prev => 
+      prev.includes(topic) 
+        ? prev.filter(t => t !== topic)
+        : [...prev, topic]
+    );
+  };
+
+  const handleSaveTopics = () => {
+    if (userInfo) {
+      setUserInfo(prev => prev ? { ...prev, topics: selectedTopics } : null);
+    }
+    setShowTopicEditPopup(false);
+  };
+
+  const handleCancelTopicEdit = () => {
+    setShowTopicEditPopup(false);
   };
 
   if (isLoading) {
@@ -350,7 +415,7 @@ const ReaderProfile: React.FC = () => {
                   <span key={topic} className={styles.topicTag}>{topic}</span>
                 ))}
               </div>
-              <button className={styles.editButton}>Edit Topics</button>
+              <button className={styles.editButton} onClick={handleEditTopics}>Edit Topics</button>
             </div>
             <div className={styles.preferencesSection}>
               <h3>Newsletter Frequency</h3>
@@ -445,6 +510,77 @@ const ReaderProfile: React.FC = () => {
   return (
     <Layout title="Reader Profile - Blogrolly">
       <div className={styles.profileContainer}>
+        {/* Topic Edit Popup */}
+        {showTopicEditPopup && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popupContent}>
+              <div className={styles.popupHeader}>
+                <h3>Edit Your Topics</h3>
+                <button 
+                  className={styles.closeButton}
+                  onClick={handleCancelTopicEdit}
+                >
+                  ×
+                </button>
+              </div>
+              <div className={styles.popupBody}>
+                <p className={styles.popupDescription}>
+                  Select the topics you're interested in. This helps us personalize your blog recommendations.
+                </p>
+                
+                <div className={styles.topicSection}>
+                  <h4>Main Categories</h4>
+                  <div className={styles.topicGrid}>
+                    {MAIN_CATEGORIES.map(category => (
+                      <label key={category} className={styles.topicLabel}>
+                        <input
+                          type="checkbox"
+                          checked={selectedTopics.includes(category)}
+                          onChange={() => handleTopicToggle(category)}
+                          className={styles.topicCheckbox}
+                        />
+                        <span className={styles.topicText}>{category}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.topicSection}>
+                  <h4>Specific Topics & Tags</h4>
+                  <div className={styles.topicGrid}>
+                    {TOPIC_TAGS.map(tag => (
+                      <label key={tag} className={styles.topicLabel}>
+                        <input
+                          type="checkbox"
+                          checked={selectedTopics.includes(tag)}
+                          onChange={() => handleTopicToggle(tag)}
+                          className={styles.topicCheckbox}
+                        />
+                        <span className={styles.topicText}>{tag}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.popupActions}>
+                  <button 
+                    className={styles.cancelButton}
+                    onClick={handleCancelTopicEdit}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    className={styles.saveButton}
+                    onClick={handleSaveTopics}
+                  >
+                    Save Topics ({selectedTopics.length})
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h3>Reader Dashboard</h3>

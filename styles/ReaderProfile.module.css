@@ -683,6 +683,163 @@
   color: #64748b;
 }
 
+/* Topic Edit Popup Styles */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.popupContent {
+  background: white;
+  border-radius: 16px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.popupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.popupHeader h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #64748b;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.popupBody {
+  padding: 2rem;
+}
+
+.popupDescription {
+  color: #64748b;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.topicSection {
+  margin-bottom: 2rem;
+}
+
+.topicSection h4 {
+  margin: 0 0 1rem 0;
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.topicGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.topicLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.topicLabel:hover {
+  background: #f8fafc;
+  border-color: #c42142;
+}
+
+.topicCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #c42142;
+}
+
+.topicText {
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.popupActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cancelButton {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.cancelButton:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.saveButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.saveButton:hover {
+  background: #a01835;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .profileContainer {
@@ -733,6 +890,39 @@
   }
 
   .bloggerInfo {
+    width: 100%;
+  }
+
+  .popupOverlay {
+    padding: 0.5rem;
+  }
+
+  .popupContent {
+    max-height: 95vh;
+  }
+
+  .popupHeader {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+
+  .popupHeader h3 {
+    font-size: 1.25rem;
+  }
+
+  .popupBody {
+    padding: 1.5rem;
+  }
+
+  .topicGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .popupActions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cancelButton, .saveButton {
     width: 100%;
   }
 }
