@@ -198,9 +198,8 @@
   color: #c42142;
   border: 2px solid #c42142;
   padding: 0.75rem;
-  border-radius: 50%;
+  border-radius: 8px;
   font-weight: 600;
-  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 45px;
