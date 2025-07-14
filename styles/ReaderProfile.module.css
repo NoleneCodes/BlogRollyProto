@@ -615,7 +615,7 @@
 }
 
 .helpButton {
-  background: #6366f1;
+  background: #c42142;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -626,7 +626,7 @@
 }
 
 .helpButton:hover {
-  background: #5048e5;
+  background: #a01835;
 }
 
 .emptyState {

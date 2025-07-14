@@ -420,6 +420,11 @@ const ReaderProfile: React.FC = () => {
                 <p>Help us improve BlogRolly</p>
                 <button className={styles.helpButton}>Give Feedback</button>
               </div>
+              <div className={styles.helpItem}>
+                <h3>🐛 Report a Bug</h3>
+                <p>Found an issue? Let us know so we can fix it</p>
+                <button className={styles.helpButton}>Report Bug</button>
+              </div>
             </div>
           </div>
         );
