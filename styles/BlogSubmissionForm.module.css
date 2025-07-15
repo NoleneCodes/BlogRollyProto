@@ -9,14 +9,14 @@
 
 .guidelinesSection {
   margin-bottom: 2rem;
-  text-align: center;
+  text-align: left;
 }
 
 .guidelinesSection p {
   color: #64748b;
   margin: 0;
   line-height: 1.5;
-  font-size: 1.1rem;
+  font-size: 0.875rem;
 }
 
 .guidelinesLink {
