@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
+import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import styles from '../../styles/BloggerProfile.module.css';
 
 interface UserInfo {
@@ -71,6 +72,7 @@ const BloggerProfile: React.FC = () => {
   const [editedDescription, setEditedDescription] = useState<string>('');
   const [editedImage, setEditedImage] = useState<string>('');
   const [showHowItWorksPopup, setShowHowItWorksPopup] = useState<boolean>(false);
+  const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -909,7 +911,12 @@ const BloggerProfile: React.FC = () => {
               <div className={styles.helpItem}>
                 <h3>Submission Guidelines</h3>
                 <p>Learn about our content guidelines and best practices for blog submissions</p>
-                <button className={styles.helpButton}>View Guidelines</button>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowSubmissionGuidelinesPopup(true)}
+                >
+                  View Guidelines
+                </button>
               </div>
               <div className={styles.helpItem}>
                 <h3>How It Works</h3>
@@ -1093,6 +1100,12 @@ const BloggerProfile: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Submission Guidelines Popup */}
+      <SubmissionGuidelinesPopup
+        isOpen={showSubmissionGuidelinesPopup}
+        onClose={() => setShowSubmissionGuidelinesPopup(false)}
+      />
     </Layout>
   );
 };
