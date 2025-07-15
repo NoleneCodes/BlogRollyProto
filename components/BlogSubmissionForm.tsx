@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../styles/BlogSubmissionForm.module.css';
+import SubmissionGuidelinesPopup from './SubmissionGuidelinesPopup';
 
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
@@ -145,6 +146,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [tagInput, setTagInput] = useState('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState(false);
 
   // Calculate progress based on filled fields
   useEffect(() => {
@@ -295,6 +297,19 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
 
   return (
     <div className={styles.formContainer}>
+      {/* Submission Guidelines Section */}
+      <div className={styles.guidelinesSection}>
+        <h3>Before You Submit</h3>
+        <p>Make sure your blog post meets our guidelines to ensure a smooth review process.</p>
+        <button 
+          type="button"
+          onClick={() => setShowSubmissionGuidelinesPopup(true)}
+          className={styles.guidelinesButton}
+        >
+          View Submission Guidelines
+        </button>
+      </div>
+
       {/* Progress Bar */}
       <div className={styles.progressContainer}>
         <div className={styles.progressBar}>
@@ -499,6 +514,12 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           Publish to BlogRolly
         </button>
       </form>
+
+      {/* Submission Guidelines Popup */}
+      <SubmissionGuidelinesPopup
+        isOpen={showSubmissionGuidelinesPopup}
+        onClose={() => setShowSubmissionGuidelinesPopup(false)}
+      />
     </div>
   );
 };
