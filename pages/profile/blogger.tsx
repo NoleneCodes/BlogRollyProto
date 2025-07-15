@@ -473,9 +473,9 @@ const BloggerProfile: React.FC = () => {
             </div>
 
             {showBlogSubmissionForm && (
-              <div className={styles.formOverlay}>
-                <div className={styles.formContainer}>
-                  <div className={styles.formHeader}>
+              <div className={styles.blogSubmissionOverlay}>
+                <div className={styles.blogSubmissionContainer}>
+                  <div className={styles.blogSubmissionHeader}>
                     <h3>Submit a New Blog Post</h3>
                     <button 
                       className={styles.closeButton}
@@ -484,12 +484,15 @@ const BloggerProfile: React.FC = () => {
                       ×
                     </button>
                   </div>
-                  <BlogSubmissionForm 
-                    onSubmit={handleBlogSubmit}
-                    displayName={userInfo.displayName}
-                    bloggerId={userInfo.id}
-                    isBlogger={true}
-                  />
+                  <div className={styles.blogSubmissionContent}>
+                    <BlogSubmissionForm 
+                      onSubmit={handleBlogSubmit}
+                      displayName={userInfo.displayName}
+                      bloggerId={userInfo.id}
+                      isBlogger={true}
+                      hideGuidelines={true}
+                    />
+                  </div>
                 </div>
               </div>
             )}

@@ -7,6 +7,7 @@ interface BlogSubmissionFormProps {
   displayName?: string;
   bloggerId?: string;
   isBlogger?: boolean;
+  hideGuidelines?: boolean;
 }
 
 interface FormData {
@@ -91,7 +92,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   onSubmit, 
   displayName, 
   bloggerId, 
-  isBlogger 
+  isBlogger = false,
+  hideGuidelines = false
 }) => {
   const [formData, setFormData] = useState<FormData>({
     image: null,
@@ -298,17 +300,19 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   return (
     <div className={styles.formContainer}>
       {/* Submission Guidelines Section */}
-      <div className={styles.guidelinesSection}>
-        <h3>Before You Submit</h3>
-        <p>Make sure your blog post meets our guidelines to ensure a smooth review process.</p>
-        <button 
-          type="button"
-          onClick={() => setShowSubmissionGuidelinesPopup(true)}
-          className={styles.guidelinesButton}
-        >
-          View Submission Guidelines
-        </button>
-      </div>
+      {!hideGuidelines && (
+        <div className={styles.guidelinesSection}>
+          <h3>Before You Submit</h3>
+          <p>Make sure your blog post meets our guidelines to ensure a smooth review process.</p>
+          <button 
+            type="button"
+            onClick={() => setShowSubmissionGuidelinesPopup(true)}
+            className={styles.guidelinesButton}
+          >
+            View Submission Guidelines
+          </button>
+        </div>
+      )}
 
       {/* Progress Bar */}
       <div className={styles.progressContainer}>
