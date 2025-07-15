@@ -302,15 +302,16 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       {/* Submission Guidelines Section */}
       {!hideGuidelines && (
         <div className={styles.guidelinesSection}>
-          <h3>Before You Submit</h3>
-          <p>Make sure your blog post meets our guidelines to ensure a smooth review process.</p>
-          <button 
-            type="button"
-            onClick={() => setShowSubmissionGuidelinesPopup(true)}
-            className={styles.guidelinesButton}
-          >
-            View Submission Guidelines
-          </button>
+          <p>
+            See{' '}
+            <button 
+              type="button"
+              onClick={() => setShowSubmissionGuidelinesPopup(true)}
+              className={styles.guidelinesLink}
+            >
+              submission guidelines
+            </button>
+          </p>
         </div>
       )}
 
