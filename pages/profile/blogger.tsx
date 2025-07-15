@@ -490,7 +490,6 @@ const BloggerProfile: React.FC = () => {
                       displayName={userInfo.displayName}
                       bloggerId={userInfo.id}
                       isBlogger={true}
-                      hideGuidelines={true}
                     />
                   </div>
                 </div>
