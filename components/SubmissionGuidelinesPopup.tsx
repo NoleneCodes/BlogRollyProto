@@ -12,8 +12,8 @@ const SubmissionGuidelinesPopup: React.FC<SubmissionGuidelinesPopupProps> = ({ i
 
   return (
     <div className={styles.popupOverlay}>
-      <div className={styles.popupContent} style={{ maxWidth: '800px', maxHeight: '90vh' }}>
-        <div className={styles.popupHeader}>
+      <div className={styles.popupContent} style={{ maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+        <div className={styles.popupHeader} style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 10, borderBottom: '1px solid #e5e7eb' }}>
           <h3>Submission Guidelines</h3>
           <button 
             className={styles.closeButton}
@@ -23,7 +23,7 @@ const SubmissionGuidelinesPopup: React.FC<SubmissionGuidelinesPopupProps> = ({ i
           </button>
         </div>
         
-        <div style={{ padding: '2rem' }}>
+        <div style={{ padding: '2rem', overflow: 'auto', flex: 1 }}>
           <p style={{ 
             color: '#6b7280', 
             marginBottom: '2rem', 
