@@ -133,9 +133,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             </div>
             <div className={styles.footerSection}>
               <h4>Connect</h4>
-              <a href="#">Twitter</a>
-              <a href="#">GitHub</a>
-              <a href="#">RSS</a>
+              <a href="#">Twitter/X</a>
+              <a href="#">Facebook</a>
+              <a href="#">TikTok</a>
+              <a href="#">Instagram</a>
             </div>
           </div>
           <div className={styles.footerBottom}>
