@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -423,7 +422,7 @@ const BloggerProfilePremium: React.FC = () => {
                         </div>
 
                         <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
-                        
+
                         <div className={styles.submissionMeta}>
                           <span className={styles.category}>{submission.category}</span>
                           <span 
@@ -438,6 +437,7 @@ const BloggerProfilePremium: React.FC = () => {
                         </div>
 
                         {submission.status === 'approved' && submission.isActive && (
+                          
                           <div className={styles.premiumMetrics}>
                             <div className={styles.metricItem}>
                               <span className={styles.metricValue}>{submission.views}</span>
@@ -451,14 +451,7 @@ const BloggerProfilePremium: React.FC = () => {
                               <span className={styles.metricValue}>{submission.ctr}%</span>
                               <span className={styles.metricLabel}>CTR</span>
                             </div>
-                            <div className={styles.metricItem}>
-                              <span className={styles.metricValue}>{submission.avgTimeOnPage}m</span>
-                              <span className={styles.metricLabel}>Avg Time</span>
-                            </div>
-                            <div className={styles.metricItem}>
-                              <span className={styles.metricValue}>{submission.bounceRate}%</span>
-                              <span className={styles.metricLabel}>Bounce</span>
-                            </div>
+                           
                           </div>
                         )}
                       </div>
@@ -500,7 +493,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <option value="1y">Last year</option>
               </select>
             </div>
-            
+
             {blogStats && (
               <>
                 <div className={styles.analyticsGrid}>
