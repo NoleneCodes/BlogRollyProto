@@ -716,11 +716,6 @@ const BloggerProfile: React.FC = () => {
                     <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
                     <p className={styles.statDescription}>Percentage of views that resulted in clicks</p>
                   </div>
-                  <div className={styles.statCard}>
-                    <h4>Avg. Time on Site</h4>
-                    <span className={styles.statNumber}>{blogStats.averageTimeOnSite} min</span>
-                    <p className={styles.statDescription}>Average time readers spend on your blog</p>
-                  </div>
                 </div>
                 <div className={styles.performanceSection}>
                   <h3>Blog Performance</h3>

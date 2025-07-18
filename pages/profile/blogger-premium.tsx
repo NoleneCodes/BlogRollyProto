@@ -552,10 +552,6 @@ const BloggerProfilePremium: React.FC = () => {
                         <span className={styles.insightValue}>{blogStats.topPerformingCategory}</span>
                       </div>
                       <div className={styles.insightItem}>
-                        <span className={styles.insightLabel}>Avg Session Duration</span>
-                        <span className={styles.insightValue}>{blogStats.averageTimeOnSite}m</span>
-                      </div>
-                      <div className={styles.insightItem}>
                         <span className={styles.insightLabel}>Monthly Growth</span>
                         <span className={styles.insightValue}>+{blogStats.monthlyGrowth}%</span>
                       </div>
