@@ -86,12 +86,18 @@ const Submit: NextPage = () => {
           </p>
         </div>
 
-        <BlogSubmissionForm 
-          onSubmit={handleBlogSubmit}
-          displayName={userInfo.displayName || userInfo.name}
-          bloggerId={userInfo.id}
-          isBlogger={true}
-        />
+        <div style={{ 
+          maxWidth: '800px', 
+          margin: '0 auto', 
+          padding: '0 1rem' 
+        }}>
+          <BlogSubmissionForm 
+            onSubmit={handleBlogSubmit}
+            displayName={userInfo.displayName || userInfo.name}
+            bloggerId={userInfo.id}
+            isBlogger={true}
+          />
+        </div>
       </Layout>
     );
   }
