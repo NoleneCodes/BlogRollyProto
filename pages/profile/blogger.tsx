@@ -472,30 +472,6 @@ const BloggerProfile: React.FC = () => {
               </button>
             </div>
 
-            {showBlogSubmissionForm && (
-              <div className={styles.blogSubmissionOverlay}>
-                <div className={styles.blogSubmissionContainer}>
-                  <div className={styles.blogSubmissionHeader}>
-                    <h3>Submit a New Blog Post</h3>
-                    <button 
-                      className={styles.closeButton}
-                      onClick={() => setShowBlogSubmissionForm(false)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                  <div className={styles.blogSubmissionContent}>
-                    <BlogSubmissionForm 
-                      onSubmit={handleBlogSubmit}
-                      displayName={userInfo.displayName}
-                      bloggerId={userInfo.id}
-                      isBlogger={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
             {blogSubmissions.length === 0 ? (
               <p className={styles.emptyState}>No blog submissions yet. Submit your first blog post!</p>
             ) : (
@@ -1011,6 +987,31 @@ const BloggerProfile: React.FC = () => {
         <main className={styles.main}>
           {renderContent()}
         </main>
+
+        {/* Blog Submission Popup - Available from any section */}
+        {showBlogSubmissionForm && (
+          <div className={styles.blogSubmissionOverlay}>
+            <div className={styles.blogSubmissionContainer}>
+              <div className={styles.blogSubmissionHeader}>
+                <h3>Submit a New Blog Post</h3>
+                <button 
+                  className={styles.closeButton}
+                  onClick={() => setShowBlogSubmissionForm(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className={styles.blogSubmissionContent}>
+                <BlogSubmissionForm 
+                  onSubmit={handleBlogSubmit}
+                  displayName={userInfo.displayName}
+                  bloggerId={userInfo.id}
+                  isBlogger={true}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* How It Works Popup */}
