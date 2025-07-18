@@ -33,7 +33,6 @@ interface BlogSubmission {
   isActive?: boolean;
   description?: string;
   image?: string;
-  revenue?: number;
   ctr?: number;
   avgTimeOnPage?: number;
   bounceRate?: number;
@@ -46,7 +45,6 @@ interface BlogStats {
   approvedSubmissions: number;
   clickThroughRate: number;
   averageTimeOnSite: number;
-  totalRevenue: number;
   monthlyGrowth: number;
   topPerformingCategory: string;
   readerRetention: number;
@@ -117,7 +115,6 @@ const BloggerProfilePremium: React.FC = () => {
             isActive: true,
             description: 'Comprehensive analysis of how AI is transforming enterprise software development.',
             image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=200&fit=crop',
-            revenue: 156.75,
             ctr: 8.2,
             avgTimeOnPage: 4.5,
             bounceRate: 24.8
@@ -134,7 +131,6 @@ const BloggerProfilePremium: React.FC = () => {
             isActive: true,
             description: 'Deep dive into architectural patterns for building scalable SaaS applications.',
             image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop',
-            revenue: 124.30,
             ctr: 8.0,
             avgTimeOnPage: 6.2,
             bounceRate: 18.5
@@ -151,7 +147,6 @@ const BloggerProfilePremium: React.FC = () => {
             isActive: true,
             description: 'Essential strategies for leading and managing distributed teams effectively.',
             image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop',
-            revenue: 89.45,
             ctr: 7.5,
             avgTimeOnPage: 5.1,
             bounceRate: 28.3
@@ -168,7 +163,6 @@ const BloggerProfilePremium: React.FC = () => {
             isActive: true,
             description: 'How product managers can leverage ML to build better products.',
             image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=200&fit=crop',
-            revenue: 145.60,
             ctr: 8.9,
             avgTimeOnPage: 7.3,
             bounceRate: 15.2
@@ -185,7 +179,6 @@ const BloggerProfilePremium: React.FC = () => {
             isActive: true,
             description: 'Proven growth strategies that helped startups scale from 0 to millions.',
             image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
-            revenue: 67.85,
             ctr: 7.6,
             avgTimeOnPage: 4.8,
             bounceRate: 32.1
@@ -201,7 +194,6 @@ const BloggerProfilePremium: React.FC = () => {
             clicks: 0,
             description: 'How DevOps culture is evolving and what it means for engineering teams.',
             image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=200&fit=crop',
-            revenue: 0,
             ctr: 0,
             avgTimeOnPage: 0,
             bounceRate: 0
@@ -216,7 +208,6 @@ const BloggerProfilePremium: React.FC = () => {
           approvedSubmissions: 12,
           clickThroughRate: 8.1,
           averageTimeOnSite: 5.4,
-          totalRevenue: 583.95,
           monthlyGrowth: 23.7,
           topPerformingCategory: 'Tech',
           readerRetention: 68.3
@@ -366,10 +357,6 @@ const BloggerProfilePremium: React.FC = () => {
                   <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
                 </div>
                 <div className={styles.statCard}>
-                  <h4>Revenue</h4>
-                  <span className={styles.statNumber}>${blogStats.totalRevenue}</span>
-                </div>
-                <div className={styles.statCard}>
                   <h4>Active Blogs</h4>
                   <span className={styles.statNumber}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>
                   <span className={styles.statDescription}>Unlimited</span>
@@ -489,10 +476,6 @@ const BloggerProfilePremium: React.FC = () => {
                               <span className={styles.metricLabel}>CTR</span>
                             </div>
                             <div className={styles.metricItem}>
-                              <span className={styles.metricValue}>${submission.revenue}</span>
-                              <span className={styles.metricLabel}>Revenue</span>
-                            </div>
-                            <div className={styles.metricItem}>
                               <span className={styles.metricValue}>{submission.avgTimeOnPage}m</span>
                               <span className={styles.metricLabel}>Avg Time</span>
                             </div>
@@ -549,11 +532,6 @@ const BloggerProfilePremium: React.FC = () => {
                     <h4>Performance Overview</h4>
                     <div className={styles.performanceMetrics}>
                       <div className={styles.performanceItem}>
-                        <span className={styles.performanceLabel}>Total Revenue</span>
-                        <span className={styles.performanceValue}>${blogStats.totalRevenue}</span>
-                        <span className={styles.performanceGrowth}>+12.3% vs last period</span>
-                      </div>
-                      <div className={styles.performanceItem}>
                         <span className={styles.performanceLabel}>Avg. CTR</span>
                         <span className={styles.performanceValue}>{blogStats.clickThroughRate}%</span>
                         <span className={styles.performanceGrowth}>+0.8% vs last period</span>
@@ -562,6 +540,11 @@ const BloggerProfilePremium: React.FC = () => {
                         <span className={styles.performanceLabel}>Reader Retention</span>
                         <span className={styles.performanceValue}>{blogStats.readerRetention}%</span>
                         <span className={styles.performanceGrowth}>+5.2% vs last period</span>
+                      </div>
+                      <div className={styles.performanceItem}>
+                        <span className={styles.performanceLabel}>Monthly Growth</span>
+                        <span className={styles.performanceValue}>+{blogStats.monthlyGrowth}%</span>
+                        <span className={styles.performanceGrowth}>Traffic growth rate</span>
                       </div>
                     </div>
                   </div>
@@ -578,7 +561,7 @@ const BloggerProfilePremium: React.FC = () => {
                             <div className={styles.contentTitle}>{submission.title}</div>
                             <div className={styles.contentStats}>
                               <span>{submission.views} views</span>
-                              <span>${submission.revenue} revenue</span>
+                              <span>{submission.clicks} clicks</span>
                             </div>
                           </div>
                         ))}
@@ -733,7 +716,7 @@ const BloggerProfilePremium: React.FC = () => {
                     <li>✅ Unlimited blog submissions</li>
                     <li>✅ Advanced analytics and insights</li>
                     <li>✅ Priority review for submissions</li>
-                    <li>✅ Revenue sharing program</li>
+                    <li>✅ Traffic optimization insights</li>
                     <li>✅ Custom blog categories</li>
                     <li>✅ Priority support</li>
                     <li>✅ Export analytics data</li>
@@ -770,9 +753,9 @@ const BloggerProfilePremium: React.FC = () => {
                 <button className={styles.helpButton}>View Premium Guide</button>
               </div>
               <div className={styles.helpItem}>
-                <h3>Revenue Optimization</h3>
-                <p>Tips and strategies to maximize your blog's revenue potential</p>
-                <button className={styles.helpButton}>Revenue Guide</button>
+                <h3>Traffic Optimization</h3>
+                <p>Tips and strategies to maximize your blog's traffic potential</p>
+                <button className={styles.helpButton}>Traffic Guide</button>
               </div>
               <div className={styles.helpItem}>
                 <h3>Submission Guidelines</h3>
