@@ -569,28 +569,6 @@ const BloggerProfilePremium: React.FC = () => {
                   </div>
 
                   <div className={styles.analyticsCard}>
-                    <h4>Traffic Sources</h4>
-                    <div className={styles.trafficSources}>
-                      <div className={styles.sourceItem}>
-                        <span className={styles.sourceName}>BlogRolly Direct</span>
-                        <span className={styles.sourcePercentage}>45%</span>
-                      </div>
-                      <div className={styles.sourceItem}>
-                        <span className={styles.sourceName}>Social Media</span>
-                        <span className={styles.sourcePercentage}>28%</span>
-                      </div>
-                      <div className={styles.sourceItem}>
-                        <span className={styles.sourceName}>Search Engines</span>
-                        <span className={styles.sourcePercentage}>22%</span>
-                      </div>
-                      <div className={styles.sourceItem}>
-                        <span className={styles.sourceName}>Other</span>
-                        <span className={styles.sourcePercentage}>5%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.analyticsCard}>
                     <h4>Audience Insights</h4>
                     <div className={styles.audienceInsights}>
                       <div className={styles.insightItem}>
