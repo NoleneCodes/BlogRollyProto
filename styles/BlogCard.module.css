@@ -126,6 +126,30 @@
   color: #a01835;
 }
 
+.blogMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.blogMeta .blogAuthor {
+  color: #c42142;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 0;
+}
+
+.blogDate {
+  color: #6b7280;
+}
+
+.readTime {
+  color: #6b7280;
+}
+
 .blogDescription {
   color: #6b7280;
   font-size: 0.875rem;

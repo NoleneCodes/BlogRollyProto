@@ -1,8 +1,19 @@
 import type { NextPage } from "next";
+import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
+import InternalBlogCard from "../components/InternalBlogCard";
+import { getInternalBlogPosts, InternalBlogPost } from "../lib/internalBlogData";
 import styles from "../styles/Home.module.css";
+import blogCardStyles from "../styles/BlogCard.module.css";
 
 const Blog: NextPage = () => {
+  const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
+
+  useEffect(() => {
+    const posts = getInternalBlogPosts();
+    setBlogPosts(posts);
+  }, []);
+
   return (
     <Layout title="Our Blog - BlogRolly">
       <div className={styles.hero}>
@@ -22,6 +33,22 @@ const Blog: NextPage = () => {
         <p>Think of this as our behind-the-scenes notebook, shared out loud.</p>
         <p>Thanks for being here.</p>
       </div>
+
+      {blogPosts.length > 0 && (
+        <div className={styles.container}>
+          <div className={blogCardStyles.blogGrid}>
+            {blogPosts.map((post) => (
+              <InternalBlogCard
+                key={post.id}
+                blog={post}
+                showAuthor={true}
+                showSaveButton={false}
+                compact={false}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

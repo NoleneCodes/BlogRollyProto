@@ -1,0 +1,171 @@
+
+.blogPost {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.blogPostHeader {
+  margin-bottom: 2rem;
+}
+
+.breadcrumb {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.breadcrumbLink {
+  color: #c42142;
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  margin: 0 0.5rem;
+}
+
+.breadcrumbCurrent {
+  color: #6b7280;
+}
+
+.blogPostTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.blogPostMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.blogPostAuthor {
+  font-weight: 600;
+  color: #c42142;
+}
+
+.blogPostDate {
+  color: #6b7280;
+}
+
+.blogPostReadTime {
+  color: #6b7280;
+}
+
+.blogPostTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.blogPostTag {
+  background: #f8f9fa;
+  color: #c42142;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #e5e5e5;
+}
+
+.blogPostImage {
+  margin-bottom: 2rem;
+}
+
+.blogPostImage img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.blogPostContent {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #374151;
+  margin-bottom: 2rem;
+}
+
+.blogPostContent p {
+  margin-bottom: 1.5rem;
+}
+
+.blogPostContent h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 2rem 0 1rem 0;
+}
+
+.blogPostContent h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 1.5rem 0 1rem 0;
+}
+
+.blogPostFooter {
+  border-top: 1px solid #e5e5e5;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.blogPostCategory {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.blogPostCategory span {
+  color: #c42142;
+  font-weight: 600;
+}
+
+.backToBlogButton {
+  background: #c42142;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.backToBlogButton:hover {
+  background: #a01835;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .blogPost {
+    padding: 1rem;
+  }
+
+  .blogPostTitle {
+    font-size: 2rem;
+  }
+
+  .blogPostMeta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .blogPostFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
