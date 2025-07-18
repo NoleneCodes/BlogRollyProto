@@ -18,6 +18,9 @@ export default function handler(
   const userId = req.headers['x-replit-user-id'] as string;
   const userName = req.headers['x-replit-user-name'] as string;
   const userRoles = req.headers['x-replit-user-roles'] as string;
+  
+  // Temporary logging to see your username - remove after adding to authorized list
+  console.log('Username attempting access:', userName);
 
   if (!userId || !userName) {
     return res.status(200).json({
@@ -29,10 +32,9 @@ export default function handler(
 
   // Define authorized users (BlogRolly team members)
   const authorizedUsers = [
-    'BlogRollyTeam', 
-    'admin', 
-    'blogrolly-admin',
-    // Add specific Replit usernames of team members here
+    // Add your specific Replit username here
+    // To find your username, check the console when you're logged in
+    // or temporarily add console.log(userName) below to see it
   ];
 
   const roles = userRoles ? userRoles.split(',') : [];
