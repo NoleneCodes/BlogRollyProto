@@ -332,10 +332,6 @@ const BloggerProfilePremium: React.FC = () => {
       case 'overview':
         return (
           <div className={styles.content}>
-            <div className={styles.premiumBadge}>
-              <span className={styles.premiumIcon}>👑</span>
-              Premium Account
-            </div>
             <h2>Profile Overview</h2>
             <div className={styles.profileHeader}>
               <div className={styles.avatar}>
@@ -803,7 +799,6 @@ const BloggerProfilePremium: React.FC = () => {
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h3>Premium Dashboard</h3>
-            <span className={styles.premiumBadgeSmall}>👑</span>
           </div>
           <nav className={styles.sidebarNav}>
             <button 
