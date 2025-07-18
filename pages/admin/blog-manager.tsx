@@ -1,19 +1,58 @@
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogPostManager from '../../components/BlogPostManager';
 import { getAllInternalBlogPosts, deleteInternalBlogPost, InternalBlogPost } from '../../lib/internalBlogData';
 import styles from '../../styles/Home.module.css';
 
+interface UserInfo {
+  id: string;
+  name: string;
+  roles: string[];
+}
+
 const BlogManagerPage: React.FC = () => {
+  const router = useRouter();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
   const [showManager, setShowManager] = useState(false);
   const [editingPost, setEditingPost] = useState<InternalBlogPost | undefined>();
   const [mode, setMode] = useState<'add' | 'edit'>('add');
 
   useEffect(() => {
-    loadBlogPosts();
+    checkAuthAndAuthorization();
   }, []);
+
+  const checkAuthAndAuthorization = async () => {
+    try {
+      const response = await fetch('/api/admin-auth-check');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.authenticated) {
+          const user = {
+            id: data.userId,
+            name: data.userName,
+            roles: data.userRoles ? data.userRoles.split(',') : []
+          };
+          setUserInfo(user);
+          
+          if (data.authorized) {
+            setIsAuthorized(true);
+            loadBlogPosts();
+          } else {
+            setIsAuthorized(false);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const loadBlogPosts = () => {
     const posts = getAllInternalBlogPosts();
@@ -45,13 +84,83 @@ const BlogManagerPage: React.FC = () => {
     loadBlogPosts();
   };
 
+  if (isLoading) {
+    return (
+      <Layout title="Blog Manager - BlogRolly Admin">
+        <div className={styles.container}>
+          <div className={styles.hero}>
+            <h1 className={styles.title}>Loading...</h1>
+            <p className={styles.description}>
+              Checking authentication...
+            </p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!userInfo) {
+    return (
+      <Layout title="Blog Manager - BlogRolly Admin">
+        <div className={styles.container}>
+          <div className={styles.hero}>
+            <h1 className={styles.title}>Authentication Required</h1>
+            <p className={styles.description}>
+              Please sign in with your Replit account to access the admin panel.
+            </p>
+            <div className={styles.cta}>
+              <div>
+                <script
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                      (function() {
+                        const script = document.createElement('script');
+                        script.src = 'https://auth.util.repl.co/script.js';
+                        script.setAttribute('authed', 'location.reload()');
+                        document.currentScript.parentNode.appendChild(script);
+                      })();
+                    `
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isAuthorized) {
+    return (
+      <Layout title="Access Denied - BlogRolly Admin">
+        <div className={styles.container}>
+          <div className={styles.hero}>
+            <h1 className={styles.title}>Access Denied</h1>
+            <p className={styles.description}>
+              Sorry {userInfo.name}, you don't have permission to access the admin panel. 
+              Only BlogRolly team members can manage blog posts.
+            </p>
+            <div className={styles.cta}>
+              <button 
+                onClick={() => router.push('/')}
+                className={styles.primaryButton}
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout title="Blog Manager - BlogRolly Admin">
       <div className={styles.container}>
         <div className={styles.hero}>
           <h1 className={styles.title}>Blog Manager</h1>
           <p className={styles.description}>
-            Manage your internal blog posts
+            Welcome {userInfo.name}! Manage your internal blog posts below.
           </p>
           <div className={styles.cta}>
             <button 
