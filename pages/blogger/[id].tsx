@@ -253,7 +253,10 @@ const PublicBloggerProfile: React.FC = () => {
           
           <div className={styles.profileInfo}>
             <h1 className={styles.displayName}>{blogger.displayName}</h1>
-            <h2 className={styles.blogName}>{blogger.blogName}</h2>
+            <div className={styles.blogInfo}>
+              <span className={styles.blogLabel}>Blog:</span>
+              <h2 className={styles.blogName}>{blogger.blogName}</h2>
+            </div>
             
             {blogger.bio && (
               <p className={styles.bio}>{blogger.bio}</p>
