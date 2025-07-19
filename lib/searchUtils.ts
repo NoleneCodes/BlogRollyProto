@@ -147,16 +147,51 @@ export function getSearchSuggestions(query: string): string[] {
     'fitness routines',
     'book recommendations',
     'career advice',
-    'personal finance'
+    'personal finance',
+    'apartment decorating',
+    'art tutorials',
+    'baking tips',
+    'budget planning',
+    'creative writing',
+    'digital marketing',
+    'exercise routines',
+    'fashion trends',
+    'gardening tips',
+    'healthy eating',
+    'investment advice',
+    'javascript tutorials',
+    'kitchen organization',
+    'lifestyle changes',
+    'meditation practices',
+    'nutrition facts',
+    'outdoor activities',
+    'photography tips',
+    'quick meals',
+    'remote work',
+    'self improvement',
+    'time management',
+    'urban gardening',
+    'video editing',
+    'work life balance',
+    'yoga practices'
   ];
 
   if (!query.trim()) return suggestions.slice(0, 5);
 
-  return suggestions
-    .filter(suggestion => 
-      suggestion.toLowerCase().includes(query.toLowerCase())
-    )
-    .slice(0, 5);
+  const searchTerm = query.toLowerCase().trim();
+  
+  // Filter suggestions that start with the search term first, then ones that contain it
+  const startsWithMatches = suggestions.filter(suggestion => 
+    suggestion.toLowerCase().startsWith(searchTerm)
+  );
+  
+  const containsMatches = suggestions.filter(suggestion => 
+    suggestion.toLowerCase().includes(searchTerm) && 
+    !suggestion.toLowerCase().startsWith(searchTerm)
+  );
+  
+  // Combine and limit to 5 suggestions
+  return [...startsWithMatches, ...containsMatches].slice(0, 5);
 }
 
 // Save search history for users
