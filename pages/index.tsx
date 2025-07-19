@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Layout from "../components/Layout";
 import SearchBar from "../components/SearchBar";
+import PersonalizedBlogroll from "../components/PersonalizedBlogroll";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
@@ -20,6 +21,9 @@ const Home: NextPage = () => {
           />
         </div>
       </div>
+
+      {/* Personalized Blog Recommendations */}
+      <PersonalizedBlogroll maxItems={6} showHeader={true} />
     </Layout>
   );
 };
