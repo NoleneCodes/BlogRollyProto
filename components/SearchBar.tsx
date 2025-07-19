@@ -138,6 +138,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Search Suggestions Dropdown */}
       {showSuggestions && (
+        (searchHistory.length > 0 && !query.trim()) || 
+        (suggestions.length > 0 && query.trim())
+      ) && (
         <div className={styles.suggestionsDropdown}>
           {/* Recent Searches */}
           {searchHistory.length > 0 && !query.trim() && (
