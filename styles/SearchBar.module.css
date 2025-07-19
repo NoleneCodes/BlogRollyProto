@@ -129,12 +129,6 @@
   padding: 12px 0;
 }
 
-.suggestionSection:not(:last-child) {
-  border-bottom: 2px solid #e5e7eb;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-}
-
 .suggestionSection h4 {
   margin: 0 0 8px 0;
   padding: 0 16px;
