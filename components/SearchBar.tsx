@@ -149,10 +149,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onClick={() => handleSuggestionClick(item.query)}
                   className={styles.suggestionItem}
                 >
-                  <span className={styles.suggestionIcon}>🕒</span>
                   <span>{item.query}</span>
                   <span className={styles.searchType}>
-                    {item.searchType === 'ai' ? '🤖' : '🔍'}
+                    {item.searchType === 'ai' ? 'AI' : 'Search'}
                   </span>
                 </div>
               ))}
@@ -169,7 +168,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   onClick={() => handleSuggestionClick(suggestion)}
                   className={styles.suggestionItem}
                 >
-                  <span className={styles.suggestionIcon}>💡</span>
                   <span>{suggestion}</span>
                 </div>
               ))}
