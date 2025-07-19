@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import BlogCard from './BlogCard';
@@ -67,7 +66,7 @@ const mockBlogs: BlogPost[] = [
   {
     id: '3',
     image: "https://picsum.photos/300/200?random=3",
-    title: "Quick Healthy Meals for Busy Lives",
+    title: "Cooking Adventures: Simple Recipes",
     author: "Maria Rodriguez",
     authorProfile: "/blogger/maria-rodriguez",
     bloggerId: "blogger_3",
@@ -130,19 +129,19 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
   const loadUserPreferences = () => {
     // Check for authentication first
     const userId = getUserId(); // You'll need to implement this based on your auth system
-    
+
     if (userId) {
       // Try to load from localStorage (in production, fetch from Supabase)
       const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
       const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
-      
+
       if (storedPreferences) {
         const preferences = JSON.parse(storedPreferences);
         const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
           categoryClicks: {},
           tagClicks: {}
         };
-        
+
         setUserPreferences({
           categories: preferences.categories || [],
           tags: preferences.tags || [],
@@ -170,28 +169,28 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
 
   const calculateRelevanceScore = (blog: BlogPost, preferences: UserPreferences): number => {
     let score = 0;
-    
+
     // Score based on user's selected categories
     if (preferences.categories.includes(blog.category)) {
       score += 10;
     }
-    
+
     // Score based on user's selected tags
     blog.tags.forEach(tag => {
       if (preferences.tags.includes(tag)) {
         score += 8;
       }
     });
-    
+
     // Score based on engagement history
     const categoryEngagement = preferences.engagementHistory.categoryClicks[blog.category] || 0;
     score += Math.min(categoryEngagement * 2, 10); // Cap at 10 points
-    
+
     blog.tags.forEach(tag => {
       const tagEngagement = preferences.engagementHistory.tagClicks[tag] || 0;
       score += Math.min(tagEngagement * 1.5, 8); // Cap at 8 points per tag
     });
-    
+
     return score;
   };
 
@@ -203,7 +202,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     const userId = getUserId();
     if (userId) {
       const currentEngagement = JSON.parse(localStorage.getItem(`user_engagement_${userId}`) || '{"categoryClicks": {}, "tagClicks": {}}');
-      
+
       if (action === 'click') {
         currentEngagement.categoryClicks[blog.category] = (currentEngagement.categoryClicks[blog.category] || 0) + 1;
         blog.tags.forEach(tag => {
@@ -263,7 +262,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
           </button>
         </div>
       )}
-      
+
       <div className={styles.blogGrid}>
         {personalizedBlogs.map((blog) => (
           <div key={blog.id} onClick={() => handleBlogInteraction(blog.id, 'click')}>

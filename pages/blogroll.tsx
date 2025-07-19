@@ -71,10 +71,11 @@ const mockBlogs: BlogPost[] = [
 
 const Blogroll: NextPage = () => {
   const router = useRouter();
-  const { q, type } = router.query;
+  const { q, type, tag, category } = router.query;
   
   const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
   const [filter, setFilter] = useState<string>("all");
+  const [tagFilter, setTagFilter] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchType, setSearchType] = useState<'keyword' | 'ai'>('keyword');
   const [searchResults, setSearchResults] = useState<SearchResult[] | AISearchResult[]>([]);
@@ -90,7 +91,21 @@ const Blogroll: NextPage = () => {
       setIsSearchActive(false);
       setSearchResults([]);
     }
-  }, [q, type]);
+
+    // Handle tag filtering
+    if (tag && typeof tag === 'string') {
+      setTagFilter(tag);
+      setFilter("all"); // Reset category filter when filtering by tag
+    } else {
+      setTagFilter("");
+    }
+
+    // Handle category filtering
+    if (category && typeof category === 'string') {
+      setFilter(category);
+      setTagFilter(""); // Reset tag filter when filtering by category
+    }
+  }, [q, type, tag, category]);
 
   const performSearch = async (query: string, searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
@@ -126,6 +141,10 @@ const Blogroll: NextPage = () => {
     router.push('/blogroll');
   };
 
+  const clearFilters = () => {
+    router.push('/blogroll');
+  };
+
   const toggleSave = (blogId: string) => {
     if (isSearchActive) {
       setSearchResults(prev => prev.map(blog => 
@@ -150,7 +169,20 @@ const Blogroll: NextPage = () => {
     }
   };
 
-  const filteredBlogs = filter === "all" ? blogs : blogs.filter(blog => blog.category === filter);
+  let filteredBlogs = blogs;
+  
+  // Apply category filter
+  if (filter !== "all") {
+    filteredBlogs = filteredBlogs.filter(blog => blog.category === filter);
+  }
+  
+  // Apply tag filter
+  if (tagFilter) {
+    filteredBlogs = filteredBlogs.filter(blog => 
+      blog.tags.some(blogTag => blogTag.toLowerCase() === tagFilter.toLowerCase())
+    );
+  }
+  
   const displayBlogs = isSearchActive ? searchResults : filteredBlogs;
 
   return (
@@ -207,12 +239,48 @@ const Blogroll: NextPage = () => {
         </div>
       )}
 
+      {/* Filter Results Info */}
+      {!isSearchActive && (tagFilter || filter !== "all") && (
+        <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+          <div className={styles.searchInfo}>
+            <p>
+              {tagFilter 
+                ? `Showing blogs tagged with "${tagFilter}" (${filteredBlogs.length} result${filteredBlogs.length !== 1 ? 's' : ''})`
+                : `Showing blogs in "${filter}" (${filteredBlogs.length} result${filteredBlogs.length !== 1 ? 's' : ''})`
+              }
+            </p>
+            <button 
+              onClick={clearFilters}
+              style={{
+                background: 'transparent',
+                color: '#c42142',
+                border: '1px solid #c42142',
+                borderRadius: '4px',
+                padding: '4px 8px',
+                fontSize: '12px',
+                cursor: 'pointer',
+                marginLeft: '10px'
+              }}
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Filters - Only show when not searching */}
       {!isSearchActive && (
         <div className={blogCardStyles.filterSection}>
           <select 
             value={filter} 
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(e) => {
+              setFilter(e.target.value);
+              const newParams = new URLSearchParams();
+              if (e.target.value !== "all") {
+                newParams.set('category', e.target.value);
+              }
+              router.push(`/blogroll${newParams.toString() ? '?' + newParams.toString() : ''}`);
+            }}
             className={blogCardStyles.filterSelect}
           >
             <option value="all">All Categories</option>
