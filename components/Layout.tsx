@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { initGA, trackPageView } from '../lib/analytics';
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -14,6 +16,7 @@ interface UserInfo {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +26,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   };
 
   useEffect(() => {
+    // Initialize Google Analytics
+    initGA();
+    
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth-check');
@@ -45,6 +51,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
 
     checkAuth();
   }, []);
+
+  // Track page views on route changes
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      trackPageView(url);
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <>
