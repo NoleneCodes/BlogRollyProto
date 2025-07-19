@@ -145,7 +145,21 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {/* Recent Searches */}
           {searchHistory.length > 0 && !query.trim() && (
             <div className={styles.suggestionSection}>
-              <h4>Recent Searches</h4>
+              <div className={styles.sectionHeader}>
+                <h4>Recent Searches</h4>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    localStorage.removeItem('blogrolly_search_history');
+                    setSearchHistory([]);
+                    setShowSuggestions(false);
+                  }}
+                  className={styles.clearButton}
+                  title="Clear recent searches"
+                >
+                  Clear
+                </button>
+              </div>
               {searchHistory.slice(0, 3).map((item) => (
                 <div
                   key={item.id}
