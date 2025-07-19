@@ -42,7 +42,7 @@
 }
 
 .searchButton {
-  background: #3b82f6;
+  background: #c42142;
   color: white;
   border: none;
   border-radius: 8px;
@@ -51,21 +51,24 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
 }
 
 .searchButton:hover:not(:disabled) {
-  background: #2563eb;
+  background: #a01835;
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
 }
 
 .searchButton:disabled {
   background: #d1d5db;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .aiSearchButton {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  background: linear-gradient(135deg, #c42142 0%, #a01835 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -75,22 +78,20 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
 }
 
 .aiSearchButton:hover:not(:disabled) {
-  background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+  background: linear-gradient(135deg, #a01835 0%, #7d1529 100%);
   transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
 }
 
 .aiSearchButton:disabled {
   background: #d1d5db;
   cursor: not-allowed;
   transform: none;
-}
-
-.aiSearchButton::before {
-  content: "🤖";
-  margin-right: 6px;
+  box-shadow: none;
 }
 
 .filtersToggle {
