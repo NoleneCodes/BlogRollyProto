@@ -186,16 +186,6 @@ const PublicBloggerProfile: React.FC = () => {
             
             <div className={styles.profileMeta}>
               <div className={styles.metaItem}>
-                <span className={styles.metaLabel}>Writing since:</span>
-                <span className={styles.metaValue}>
-                  {new Date(blogger.joinedDate).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long' 
-                  })}
-                </span>
-              </div>
-              
-              <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Topics:</span>
                 <div className={styles.topicTags}>
                   {blogger.topics.map((topic, index) => (
