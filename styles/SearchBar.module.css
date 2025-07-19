@@ -42,26 +42,28 @@
 }
 
 .searchButton {
-  background: #c42142;
-  color: white;
-  border: none;
+  background: transparent;
+  color: #c42142;
+  border: 2px solid #c42142;
   border-radius: 8px;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
 }
 
 .searchButton:hover:not(:disabled) {
-  background: #a01835;
+  background: #c42142;
+  color: white;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
 }
 
 .searchButton:disabled {
-  background: #d1d5db;
+  background: transparent;
+  color: #d1d5db;
+  border-color: #d1d5db;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
