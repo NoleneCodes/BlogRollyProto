@@ -10,6 +10,8 @@ interface BlogPost {
   title: string;
   author: string;
   authorProfile: string;
+  bloggerId: string;
+  bloggerDisplayName: string;
   description: string;
   category: string;
   tags: string[];
@@ -36,6 +38,8 @@ const mockBlogs: BlogPost[] = [
     title: "The Complete Guide to Building a Sustainable Morning Routine That Actually Works",
     author: "Sarah Johnson",
     authorProfile: "/blogger/sarah-johnson",
+    bloggerId: "blogger_1",
+    bloggerDisplayName: "Sarah Johnson",
     description: "Discover the science-backed strategies for creating a morning routine that sticks.",
     category: "Lifestyle",
     tags: ["Morning Routine", "Productivity", "Self-Care"],
@@ -50,6 +54,8 @@ const mockBlogs: BlogPost[] = [
     title: "Mental Health in Tech: Finding Balance",
     author: "Alex Chen",
     authorProfile: "/blogger/alex-chen",
+    bloggerId: "blogger_2",
+    bloggerDisplayName: "Alex Chen",
     description: "An honest look at burnout, stress, and finding balance in the fast-paced world of technology.",
     category: "Health & Wellness",
     tags: ["Mental Health", "Tech", "Burnout Recovery"],
@@ -64,6 +70,8 @@ const mockBlogs: BlogPost[] = [
     title: "Quick Healthy Meals for Busy Lives",
     author: "Maria Rodriguez",
     authorProfile: "/blogger/maria-rodriguez",
+    bloggerId: "blogger_3",
+    bloggerDisplayName: "Maria Rodriguez",
     description: "Quick and delicious meals that don't compromise on flavor or nutrition.",
     category: "Food & Drink",
     tags: ["Cooking", "Quick Meals", "Healthy Eating"],
@@ -78,6 +86,8 @@ const mockBlogs: BlogPost[] = [
     title: "Remote Work Productivity Tips",
     author: "David Kim",
     authorProfile: "/blogger/david-kim",
+    bloggerId: "blogger_4",
+    bloggerDisplayName: "David Kim",
     description: "Essential strategies for staying productive while working from home.",
     category: "Tech & Digital Life",
     tags: ["Remote Work", "Productivity", "Work Life Balance"],

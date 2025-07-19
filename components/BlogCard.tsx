@@ -88,10 +88,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
 
         {showAuthor && (
           <a 
-            href={blog.authorProfile} 
+            href={`/blogger/${blog.bloggerId}`}
             className={styles.blogAuthor}
-            target="_blank"
-            rel="noopener noreferrer"
           >
             {blog.bloggerDisplayName || blog.author}
           </a>
