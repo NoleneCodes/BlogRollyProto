@@ -52,69 +52,144 @@ const PublicBloggerProfile: React.FC = () => {
       // Mock data - in production this would fetch from your API/Supabase
       // This would query your database for the blogger and their approved, active posts
       
-      // Mock blogger profile
-      const mockBlogger: BloggerProfile = {
-        id: bloggerId,
-        displayName: 'Sarah Johnson',
-        bio: 'Passionate writer sharing insights on productivity, wellness, and personal growth. I believe small daily habits create extraordinary transformations.',
-        avatar: 'https://picsum.photos/150/150?random=1',
-        blogName: 'Mindful Productivity',
-        blogUrl: 'https://mindfulproductivity.com',
-        joinedDate: '2024-01-15',
-        topics: ['Productivity', 'Wellness', 'Personal Growth']
+      // Create different mock profiles based on blogger ID
+      const mockProfiles: { [key: string]: BloggerProfile } = {
+        'blogger_1': {
+          id: bloggerId,
+          displayName: 'Sarah Johnson',
+          bio: 'Passionate writer sharing insights on productivity, wellness, and personal growth. I believe small daily habits create extraordinary transformations.',
+          avatar: 'https://picsum.photos/150/150?random=1',
+          blogName: 'Mindful Productivity',
+          blogUrl: 'https://mindfulproductivity.com',
+          joinedDate: '2024-01-15',
+          topics: ['Productivity', 'Wellness', 'Personal Growth']
+        },
+        'blogger_2': {
+          id: bloggerId,
+          displayName: 'Alex Chen',
+          bio: 'Tech professional writing about mental health, work-life balance, and building sustainable careers in technology.',
+          avatar: 'https://picsum.photos/150/150?random=2',
+          blogName: 'Tech & Balance',
+          blogUrl: 'https://techandbalance.com',
+          joinedDate: '2024-02-10',
+          topics: ['Tech', 'Mental Health', 'Career']
+        },
+        'blogger_3': {
+          id: bloggerId,
+          displayName: 'Maria Garcia',
+          bio: 'Food enthusiast and nutritionist sharing healthy recipes and sustainable eating habits for busy professionals.',
+          avatar: 'https://picsum.photos/150/150?random=3',
+          blogName: 'Nourish Daily',
+          blogUrl: 'https://nourishdaily.com',
+          joinedDate: '2024-01-28',
+          topics: ['Food', 'Health', 'Nutrition']
+        }
       };
 
-      // Mock approved and active blog posts
-      const mockBlogPosts: BlogPost[] = [
-        {
-          id: '1',
-          title: 'The Complete Guide to Building a Sustainable Morning Routine',
-          author: 'Sarah Johnson',
-          authorProfile: `/blogger/${bloggerId}`,
-          bloggerId: bloggerId,
-          bloggerDisplayName: 'Sarah Johnson',
-          description: 'Discover the science-backed strategies for creating a morning routine that actually sticks, without overwhelming yourself.',
-          category: 'Lifestyle',
-          tags: ['Morning Routine', 'Productivity', 'Habits'],
-          postUrl: 'https://mindfulproductivity.com/morning-routine-guide',
-          imageUrl: 'https://picsum.photos/400/250?random=1',
-          dateAdded: '2024-01-20',
-          views: 1250,
-          clicks: 89
-        },
-        {
-          id: '2',
-          title: 'Why I Stopped Multitasking and How It Changed Everything',
-          author: 'Sarah Johnson',
-          authorProfile: `/blogger/${bloggerId}`,
-          bloggerId: bloggerId,
-          bloggerDisplayName: 'Sarah Johnson',
-          description: 'The surprising benefits of single-tasking and practical strategies to break the multitasking habit.',
-          category: 'Productivity',
-          tags: ['Focus', 'Productivity', 'Deep Work'],
-          postUrl: 'https://mindfulproductivity.com/stop-multitasking',
-          imageUrl: 'https://picsum.photos/400/250?random=2',
-          dateAdded: '2024-01-18',
-          views: 890,
-          clicks: 67
-        },
-        {
-          id: '3',
-          title: 'The 5-Minute Evening Reflection That Changed My Life',
-          author: 'Sarah Johnson',
-          authorProfile: `/blogger/${bloggerId}`,
-          bloggerId: bloggerId,
-          bloggerDisplayName: 'Sarah Johnson',
-          description: 'A simple evening practice that brings clarity, gratitude, and intentionality to your daily life.',
-          category: 'Wellness',
-          tags: ['Reflection', 'Mindfulness', 'Self-Care'],
-          postUrl: 'https://mindfulproductivity.com/evening-reflection',
-          imageUrl: 'https://picsum.photos/400/250?random=3',
-          dateAdded: '2024-01-16',
-          views: 650,
-          clicks: 45
-        }
-      ];
+      // Get the profile or use a default one
+      const mockBlogger = mockProfiles[bloggerId] || {
+        id: bloggerId,
+        displayName: 'Blogger User',
+        bio: 'Welcome to my blog! I share insights and stories about my passions.',
+        avatar: `https://picsum.photos/150/150?random=${Math.floor(Math.random() * 10)}`,
+        blogName: 'My Blog',
+        blogUrl: 'https://example.com',
+        joinedDate: '2024-01-01',
+        topics: ['General', 'Writing']
+      };
+
+      // Create different mock blog posts based on blogger ID
+      const mockBlogPostsData: { [key: string]: BlogPost[] } = {
+        'blogger_1': [
+          {
+            id: '1',
+            title: 'The Complete Guide to Building a Sustainable Morning Routine',
+            author: 'Sarah Johnson',
+            authorProfile: `/blogger/${bloggerId}`,
+            bloggerId: bloggerId,
+            bloggerDisplayName: 'Sarah Johnson',
+            description: 'Discover the science-backed strategies for creating a morning routine that actually sticks, without overwhelming yourself.',
+            category: 'Lifestyle',
+            tags: ['Morning Routine', 'Productivity', 'Habits'],
+            postUrl: 'https://mindfulproductivity.com/morning-routine-guide',
+            imageUrl: 'https://picsum.photos/400/250?random=1',
+            dateAdded: '2024-01-20',
+            views: 1250,
+            clicks: 89
+          },
+          {
+            id: '2',
+            title: 'Why I Stopped Multitasking and How It Changed Everything',
+            author: 'Sarah Johnson',
+            authorProfile: `/blogger/${bloggerId}`,
+            bloggerId: bloggerId,
+            bloggerDisplayName: 'Sarah Johnson',
+            description: 'The surprising benefits of single-tasking and practical strategies to break the multitasking habit.',
+            category: 'Productivity',
+            tags: ['Focus', 'Productivity', 'Deep Work'],
+            postUrl: 'https://mindfulproductivity.com/stop-multitasking',
+            imageUrl: 'https://picsum.photos/400/250?random=2',
+            dateAdded: '2024-01-18',
+            views: 890,
+            clicks: 67
+          }
+        ],
+        'blogger_2': [
+          {
+            id: '3',
+            title: 'Mental Health in Tech: Finding Balance',
+            author: 'Alex Chen',
+            authorProfile: `/blogger/${bloggerId}`,
+            bloggerId: bloggerId,
+            bloggerDisplayName: 'Alex Chen',
+            description: 'How to maintain mental wellness while working in the fast-paced tech industry.',
+            category: 'Tech',
+            tags: ['Mental Health', 'Tech', 'Balance'],
+            postUrl: 'https://techandbalance.com/mental-health-tech',
+            imageUrl: 'https://picsum.photos/400/250?random=4',
+            dateAdded: '2024-02-15',
+            views: 1050,
+            clicks: 78
+          },
+          {
+            id: '4',
+            title: 'Remote Work: Setting Boundaries That Actually Work',
+            author: 'Alex Chen',
+            authorProfile: `/blogger/${bloggerId}`,
+            bloggerId: bloggerId,
+            bloggerDisplayName: 'Alex Chen',
+            description: 'Practical strategies for maintaining work-life balance in remote work environments.',
+            category: 'Career',
+            tags: ['Remote Work', 'Boundaries', 'Work-Life Balance'],
+            postUrl: 'https://techandbalance.com/remote-boundaries',
+            imageUrl: 'https://picsum.photos/400/250?random=5',
+            dateAdded: '2024-02-12',
+            views: 820,
+            clicks: 65
+          }
+        ],
+        'blogger_3': [
+          {
+            id: '5',
+            title: '15-Minute Healthy Meals for Busy Professionals',
+            author: 'Maria Garcia',
+            authorProfile: `/blogger/${bloggerId}`,
+            bloggerId: bloggerId,
+            bloggerDisplayName: 'Maria Garcia',
+            description: 'Quick, nutritious recipes that fit into your hectic schedule without compromising health.',
+            category: 'Food',
+            tags: ['Healthy Eating', 'Quick Meals', 'Nutrition'],
+            postUrl: 'https://nourishdaily.com/15-minute-meals',
+            imageUrl: 'https://picsum.photos/400/250?random=6',
+            dateAdded: '2024-02-01',
+            views: 950,
+            clicks: 72
+          }
+        ]
+      };
+
+      // Get the blog posts or use default empty array
+      const mockBlogPosts = mockBlogPostsData[bloggerId] || [];
 
       setBlogger(mockBlogger);
       setBlogPosts(mockBlogPosts);

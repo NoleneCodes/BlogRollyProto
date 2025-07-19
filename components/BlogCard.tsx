@@ -91,7 +91,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
             href={`/blogger/${blog.bloggerId}`}
             className={styles.blogAuthor}
           >
-            {blog.bloggerDisplayName || blog.author}
+            {blog.bloggerDisplayName}
           </a>
         )}
 
