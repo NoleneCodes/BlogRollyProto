@@ -1,9 +1,12 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import BlogCard from "../components/BlogCard";
+import SearchBar from "../components/SearchBar";
 import styles from "../styles/Home.module.css";
 import blogCardStyles from "../styles/BlogCard.module.css";
+import { performKeywordSearch, performAISearch, SearchResult, AISearchResult } from "../lib/searchUtils";
 
 interface BlogPost {
   id: string;
@@ -67,25 +70,91 @@ const mockBlogs: BlogPost[] = [
 ];
 
 const Blogroll: NextPage = () => {
+  const router = useRouter();
+  const { q, type } = router.query;
+  
   const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
   const [filter, setFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchType, setSearchType] = useState<'keyword' | 'ai'>('keyword');
+  const [searchResults, setSearchResults] = useState<SearchResult[] | AISearchResult[]>([]);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    if (q && typeof q === 'string') {
+      setSearchQuery(q);
+      setSearchType((type as 'keyword' | 'ai') || 'keyword');
+      performSearch(q, (type as 'keyword' | 'ai') || 'keyword');
+    } else {
+      setIsSearchActive(false);
+      setSearchResults([]);
+    }
+  }, [q, type]);
+
+  const performSearch = async (query: string, searchType: 'keyword' | 'ai') => {
+    if (!query.trim()) return;
+    
+    setIsSearching(true);
+    setIsSearchActive(true);
+    
+    try {
+      let results: SearchResult[] | AISearchResult[];
+      
+      if (searchType === 'ai') {
+        results = await performAISearch(query, mockBlogs);
+      } else {
+        results = performKeywordSearch(query, mockBlogs);
+      }
+      
+      setSearchResults(results);
+      
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleNewSearch = (query: string, searchType: 'keyword' | 'ai') => {
+    const searchParams = new URLSearchParams({ q: query, type: searchType });
+    router.push(`/blogroll?${searchParams.toString()}`);
+  };
+
+  const clearSearch = () => {
+    router.push('/blogroll');
+  };
 
   const toggleSave = (blogId: string) => {
-    setBlogs(prev => prev.map(blog => 
-      blog.id === blogId ? { ...blog, isSaved: !blog.isSaved } : blog
-    ));
+    if (isSearchActive) {
+      setSearchResults(prev => prev.map(blog => 
+        blog.id === blogId ? { ...blog, isSaved: !blog.isSaved } : blog
+      ));
+    } else {
+      setBlogs(prev => prev.map(blog => 
+        blog.id === blogId ? { ...blog, isSaved: !blog.isSaved } : blog
+      ));
+    }
   };
 
   const markAsRead = (blogId: string) => {
-    setBlogs(prev => prev.map(blog => 
-      blog.id === blogId ? { ...blog, isRead: true } : blog
-    ));
+    if (isSearchActive) {
+      setSearchResults(prev => prev.map(blog => 
+        blog.id === blogId ? { ...blog, isRead: true } : blog
+      ));
+    } else {
+      setBlogs(prev => prev.map(blog => 
+        blog.id === blogId ? { ...blog, isRead: true } : blog
+      ));
+    }
   };
 
   const filteredBlogs = filter === "all" ? blogs : blogs.filter(blog => blog.category === filter);
+  const displayBlogs = isSearchActive ? searchResults : filteredBlogs;
 
   return (
-    <Layout title="The Blogroll - Blogrolly">
+    <Layout title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}>
       <div className={styles.hero}>
         <h1 className={styles.title}>The Blogroll</h1>
         <p className={styles.description}>
@@ -93,33 +162,112 @@ const Blogroll: NextPage = () => {
         </p>
       </div>
 
-      <div className={blogCardStyles.filterSection}>
-        <select 
-          value={filter} 
-          onChange={(e) => setFilter(e.target.value)}
-          className={blogCardStyles.filterSelect}
-        >
-          <option value="all">All Categories</option>
-          <option value="Lifestyle">Lifestyle</option>
-          <option value="Health & Wellness">Health & Wellness</option>
-          <option value="Food & Drink">Food & Drink</option>
-          <option value="Tech & Digital Life">Tech & Digital Life</option>
-          <option value="Creative Expression">Creative Expression</option>
-        </select>
+      {/* Search Bar */}
+      <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center' }}>
+        <SearchBar
+          onSearch={handleNewSearch}
+          placeholder="Search blogs, topics, or authors..."
+          showAdvancedFilters={true}
+        />
       </div>
 
+      {/* Search Results Info */}
+      {isSearchActive && (
+        <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+          <div className={styles.searchInfo}>
+            {isSearching ? (
+              <p>Searching for "{searchQuery}"...</p>
+            ) : (
+              <>
+                <p>
+                  {searchResults.length > 0 
+                    ? `Found ${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for "${searchQuery}"` 
+                    : `No results found for "${searchQuery}"`
+                  }
+                  {searchType === 'ai' && ' (AI Search)'}
+                </p>
+                <button 
+                  onClick={clearSearch}
+                  style={{
+                    background: 'transparent',
+                    color: '#c42142',
+                    border: '1px solid #c42142',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    marginLeft: '10px'
+                  }}
+                >
+                  Clear Search
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Filters - Only show when not searching */}
+      {!isSearchActive && (
+        <div className={blogCardStyles.filterSection}>
+          <select 
+            value={filter} 
+            onChange={(e) => setFilter(e.target.value)}
+            className={blogCardStyles.filterSelect}
+          >
+            <option value="all">All Categories</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Health & Wellness">Health & Wellness</option>
+            <option value="Food & Drink">Food & Drink</option>
+            <option value="Tech & Digital Life">Tech & Digital Life</option>
+            <option value="Creative Expression">Creative Expression</option>
+          </select>
+        </div>
+      )}
+
+      {/* Blog Grid */}
       <div className={blogCardStyles.blogGrid}>
-        {filteredBlogs.map((blog) => (
-          <BlogCard
-            key={blog.id}
-            blog={blog}
-            onToggleSave={toggleSave}
-            onMarkAsRead={markAsRead}
-            showAuthor={true}
-            showSaveButton={true}
-          />
+        {displayBlogs.map((blog) => (
+          <div key={blog.id}>
+            <BlogCard
+              blog={blog}
+              onToggleSave={toggleSave}
+              onMarkAsRead={markAsRead}
+              showAuthor={true}
+              showSaveButton={true}
+            />
+            
+            {/* AI Search Additional Info */}
+            {isSearchActive && searchType === 'ai' && 'aiRelevanceReason' in blog && (
+              <div style={{
+                marginTop: '10px',
+                padding: '10px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px',
+                border: '1px solid #e9ecef'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+                  <span style={{ marginRight: '5px', fontSize: '14px' }}>🤖</span>
+                  <span style={{ fontWeight: '600', fontSize: '14px' }}>Why Rolly recommends this</span>
+                </div>
+                <p style={{ margin: '0', fontSize: '13px', color: '#666' }}>
+                  {blog.aiRelevanceReason}
+                </p>
+                <div style={{ fontSize: '12px', color: '#888', marginTop: '5px' }}>
+                  Relevance: {Math.round(blog.aiConfidenceScore * 100)}%
+                </div>
+              </div>
+            )}
+          </div>
         ))}
       </div>
+
+      {/* No results message */}
+      {isSearchActive && !isSearching && searchResults.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+          <p>No blogs found matching your search. Try different keywords or browse all blogs below.</p>
+        </div>
+      )}
     </Layout>
   );
 };

@@ -69,13 +69,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
     if (onSearch) {
       onSearch(query, searchType);
     } else {
-      // Navigate to search results page
+      // Navigate to blogroll page with search parameters
       const searchParams = new URLSearchParams({
         q: query,
         type: searchType,
         ...filters
       });
-      router.push(`/search?${searchParams.toString()}`);
+      router.push(`/blogroll?${searchParams.toString()}`);
     }
     
     setShowSuggestions(false);
