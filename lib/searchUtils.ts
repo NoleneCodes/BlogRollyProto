@@ -24,7 +24,7 @@ export interface SearchFilters {
   dateRange?: {
     start: string;
     end: string;
-  };
+  } | string;
   author?: string;
 }
 
@@ -91,13 +91,33 @@ export function performKeywordSearch(
     // Apply filters
     if (filters) {
       if (filters.category && blog.category !== filters.category) return;
-      if (filters.author && blog.author !== filters.author) return;
-      if (filters.tags && !filters.tags.some(tag => blog.tags.includes(tag))) return;
-      if (filters.dateRange) {
+      if (filters.author && !blog.author.toLowerCase().includes(filters.author.toLowerCase())) return;
+      if (filters.tags && filters.tags.length > 0 && !filters.tags.some(tag => blog.tags.some((blogTag: string) => blogTag.toLowerCase().includes(tag.toLowerCase())))) return;
+      if (filters.dateRange && typeof filters.dateRange === 'object') {
         const blogDate = new Date(blog.dateAdded);
         const startDate = new Date(filters.dateRange.start);
         const endDate = new Date(filters.dateRange.end);
         if (blogDate < startDate || blogDate > endDate) return;
+      } else if (filters.dateRange && typeof filters.dateRange === 'string') {
+        const blogDate = new Date(blog.dateAdded);
+        const now = new Date();
+        let cutoffDate = new Date();
+        
+        switch (filters.dateRange) {
+          case 'week':
+            cutoffDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            cutoffDate.setMonth(now.getMonth() - 1);
+            break;
+          case 'year':
+            cutoffDate.setFullYear(now.getFullYear() - 1);
+            break;
+          default:
+            cutoffDate = new Date(0); // Beginning of time
+        }
+        
+        if (blogDate < cutoffDate) return;
       }
     }
 

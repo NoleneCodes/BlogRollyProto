@@ -4,6 +4,16 @@ import { useRouter } from 'next/router';
 import styles from '../styles/SearchBar.module.css';
 import { getSearchSuggestions, saveSearchToHistory, getSearchHistory } from '../lib/searchUtils';
 
+// Popular tags/themes for filtering
+const POPULAR_TAGS = [
+  'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Personal Finance',
+  'Tech for Good', 'Entrepreneurship', 'Creative Writing', 'Minimalist Living',
+  'Sustainable Living', 'Digital Marketing', 'Fitness', 'Cooking', 'Travel',
+  'Book Reviews', 'Photography', 'Gardening', 'Fashion', 'Beauty & Skincare',
+  'Parenting', 'Relationships', 'Career Advice', 'Home Projects', 'Art',
+  'Music', 'Film Criticism', 'Health & Wellness', 'Spiritual Practices'
+];
+
 interface SearchBarProps {
   onSearch?: (query: string, searchType: 'keyword' | 'ai') => void;
   placeholder?: string;
@@ -25,7 +35,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [filters, setFilters] = useState({
     category: '',
     dateRange: '',
-    author: ''
+    author: '',
+    tags: [] as string[]
   });
   
   const router = useRouter();
@@ -73,12 +84,31 @@ const SearchBar: React.FC<SearchBarProps> = ({
       const searchParams = new URLSearchParams({
         q: query,
         type: searchType,
-        ...filters
+        category: filters.category,
+        dateRange: filters.dateRange,
+        author: filters.author,
+        tags: filters.tags.join(',')
       });
       router.push(`/blogroll?${searchParams.toString()}`);
     }
     
     setShowSuggestions(false);
+  };
+
+  const handleTagAdd = (tag: string) => {
+    if (!filters.tags.includes(tag)) {
+      setFilters({
+        ...filters,
+        tags: [...filters.tags, tag]
+      });
+    }
+  };
+
+  const handleTagRemove = (tag: string) => {
+    setFilters({
+      ...filters,
+      tags: filters.tags.filter(t => t !== tag)
+    });
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -228,6 +258,48 @@ const SearchBar: React.FC<SearchBarProps> = ({
               onChange={(e) => setFilters({...filters, author: e.target.value})}
               className={styles.filterInput}
             />
+          </div>
+          
+          {/* Tags Filter Section */}
+          <div className={styles.tagsFilterSection}>
+            <label className={styles.filterLabel}>Filter by Tags/Themes:</label>
+            
+            {/* Selected Tags */}
+            {filters.tags.length > 0 && (
+              <div className={styles.selectedTags}>
+                {filters.tags.map(tag => (
+                  <span key={tag} className={styles.selectedTag}>
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleTagRemove(tag)}
+                      className={styles.tagRemoveButton}
+                      title={`Remove ${tag} filter`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            {/* Popular Tags Selection */}
+            <div className={styles.popularTags}>
+              <p className={styles.tagsSubLabel}>Popular tags:</p>
+              <div className={styles.tagsGrid}>
+                {POPULAR_TAGS.slice(0, 15).map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => handleTagAdd(tag)}
+                    className={`${styles.tagButton} ${filters.tags.includes(tag) ? styles.tagButtonSelected : ''}`}
+                    disabled={filters.tags.includes(tag)}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
