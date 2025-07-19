@@ -130,18 +130,9 @@
 }
 
 .suggestionSection:not(:last-child) {
-  border-bottom: 1px solid #e2e8f0;
-  position: relative;
-}
-
-.suggestionSection:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 16px;
-  right: 16px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%);
+  border-bottom: 1px solid #d1d5db;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
 }
 
 .suggestionSection h4 {
