@@ -264,9 +264,13 @@ const PublicBloggerProfile: React.FC = () => {
                 <span className={styles.metaLabel}>Topics:</span>
                 <div className={styles.topicTags}>
                   {blogger.topics.map((topic, index) => (
-                    <span key={index} className={styles.topicTag}>
+                    <a 
+                      key={index} 
+                      href={`/blogroll?tag=${encodeURIComponent(topic)}`}
+                      className={styles.topicTag}
+                    >
                       {topic}
-                    </span>
+                    </a>
                   ))}
                 </div>
               </div>
