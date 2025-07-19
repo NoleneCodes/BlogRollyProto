@@ -14,11 +14,15 @@ interface BlogPost {
   title: string;
   author: string;
   authorProfile: string;
+  bloggerId: string;
+  bloggerDisplayName: string;
   description: string;
   category: string;
   tags: string[];
   postUrl: string;
   dateAdded: string;
+  readTime?: string;
+  publishDate?: string;
   isRead?: boolean;
   isSaved?: boolean;
 }
@@ -31,11 +35,15 @@ const mockBlogs: BlogPost[] = [
     title: "The Complete Guide to Building a Sustainable Morning Routine That Actually Works",
     author: "Sarah Johnson",
     authorProfile: "/blogger/sarah-johnson",
+    bloggerId: "sarah-johnson",
+    bloggerDisplayName: "Sarah Johnson",
     description: "Discover the science-backed strategies for creating a morning routine that sticks. From optimizing your sleep schedule to choosing the right activities, this comprehensive guide covers everything you need to know about starting your day right and maintaining consistency over time.",
     category: "Lifestyle",
     tags: ["Morning Routine", "Productivity", "Self-Care"],
     postUrl: "https://example.com/morning-routine-guide",
     dateAdded: "2024-01-15",
+    readTime: "8 min read",
+    publishDate: "2024-01-15",
     isRead: false,
     isSaved: false
   },
@@ -45,11 +53,15 @@ const mockBlogs: BlogPost[] = [
     title: "Mental Health in Tech",
     author: "Alex Chen",
     authorProfile: "/blogger/alex-chen",
+    bloggerId: "alex-chen",
+    bloggerDisplayName: "Alex Chen",
     description: "An honest look at burnout, stress, and finding balance in the fast-paced world of technology.",
     category: "Health & Wellness",
     tags: ["Mental Health", "Tech", "Burnout Recovery"],
     postUrl: "https://example.com/mental-health-tech",
     dateAdded: "2024-01-14",
+    readTime: "6 min read",
+    publishDate: "2024-01-14",
     isRead: true,
     isSaved: true
   },
@@ -59,11 +71,15 @@ const mockBlogs: BlogPost[] = [
     title: "Cooking Adventures: Simple Recipes for Busy Lives",
     author: "Maria Rodriguez",
     authorProfile: "/blogger/maria-rodriguez",
+    bloggerId: "maria-rodriguez",
+    bloggerDisplayName: "Maria Rodriguez",
     description: "Quick and delicious meals that don't compromise on flavor or nutrition.",
     category: "Food & Drink",
     tags: ["Cooking", "Quick Meals", "Healthy Eating"],
     postUrl: "https://example.com/cooking-adventures",
     dateAdded: "2024-01-13",
+    readTime: "5 min read",
+    publishDate: "2024-01-13",
     isRead: false,
     isSaved: false
   }
