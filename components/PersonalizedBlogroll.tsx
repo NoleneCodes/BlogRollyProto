@@ -248,8 +248,6 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     <section className={styles.personalizedSection}>
       {showHeader && (
         <div className={styles.sectionHeader}>
-          <h2>Recommended for You</h2>
-          <p>Based on your interests and reading history</p>
           <button onClick={handleViewAll} className={styles.viewAllButton}>
             View All Blogs →
           </button>
