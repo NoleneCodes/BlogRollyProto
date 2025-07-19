@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Layout from "../components/Layout";
+import SearchBar from "../components/SearchBar";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
@@ -12,15 +13,11 @@ const Home: NextPage = () => {
         </p>
         
         <div className={styles.searchSection}>
-          <div className={styles.searchContainer}>
-            <input 
-              type="text" 
-              placeholder="Search blogs, topics, or authors..." 
-              className={styles.searchInput}
-            />
-            <button className={styles.searchButton}>Search</button>
-            <button className={styles.aiSearchButton}>Ask Rolly</button>
-          </div>
+          <SearchBar 
+            placeholder="Search blogs, topics, or authors..."
+            showAdvancedFilters={false}
+            className={styles.heroSearchBar}
+          />
         </div>
       </div>
     </Layout>
