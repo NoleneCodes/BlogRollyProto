@@ -117,11 +117,9 @@ const Investors: NextPage = () => {
         <h2>Contact</h2>
         <div className={styles.contactInfo}>
           <div className={styles.contactItem}>
-            <span className={styles.contactIcon}>📧</span>
             <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
           </div>
           <div className={styles.contactItem}>
-            <span className={styles.contactIcon}>📱</span>
             <span>Follow on Instagram, TikTok, and X: @BlogRolly</span>
           </div>
         </div>
