@@ -8,7 +8,7 @@ const Home: NextPage = () => {
   return (
     <Layout title="Blogrolly - Your Personal Blog Directory">
       <div className={styles.hero}>
-        <h1 className={styles.title}>Blogrolly</h1>
+        <h1 className={styles.title}>BlogRolly</h1>
         <p className={styles.description}>
           Discover and organise your favourite blogs in one place
         </p>
