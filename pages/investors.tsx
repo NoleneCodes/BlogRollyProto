@@ -43,7 +43,7 @@ const Investors: NextPage = () => {
         <h2>Product Roadmap – Building in Public</h2>
         
         <div className={styles.roadmapPhase}>
-          <h3>🚀 MVP Launch – Aug 2025</h3>
+          <h3>MVP Launch – Aug 2025</h3>
           <ul className={styles.featureList}>
             <li>• Blogger directory submissions (curated, searchable)</li>
             <li>• Reader onboarding + interest-based exploration</li>
@@ -54,7 +54,7 @@ const Investors: NextPage = () => {
         </div>
 
         <div className={styles.roadmapPhase}>
-          <h3>📈 Phase 2 – Sept–Dec 2025</h3>
+          <h3>Phase 2 – Sept–Dec 2025</h3>
           <ul className={styles.featureList}>
             <li>• Blogger analytics dashboard</li>
             <li>• Value-based curated tagging and categories (Blog bundling)</li>
@@ -62,7 +62,7 @@ const Investors: NextPage = () => {
         </div>
 
         <div className={styles.roadmapPhase}>
-          <h3>🧭 Vision – 2026 and beyond</h3>
+          <h3>Vision – 2026 and beyond</h3>
           <ul className={styles.featureList}>
             <li>• AI-assisted categorisation of indie blogs</li>
             <li>• Monetisation layers for advocates (Affiliate Programs)</li>

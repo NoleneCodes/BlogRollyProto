@@ -631,12 +631,6 @@
   border: 2px solid #e5e7eb;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.comingSoonText::before {
-  content: '⏳';
-  font-size: 1.1rem;
 }
 
 /* Responsive layout for all screen sizes */
