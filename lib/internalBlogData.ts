@@ -131,7 +131,7 @@ let internalBlogPosts: InternalBlogPost[] = [
       <ul>
         <li>Create professional-quality content</li>
         <li>Reach global audiences</li>
-        <li>Monetize their expertise</li>
+        <li>Monetise their expertise</li>
         <li>Build sustainable businesses</li>
       </ul>
 
@@ -140,7 +140,7 @@ let internalBlogPosts: InternalBlogPost[] = [
       <ul>
         <li>Enhanced discovery mechanisms</li>
         <li>Community building tools</li>
-        <li>Monetization support</li>
+        <li>Monetisation support</li>
         <li>Analytics and growth insights</li>
       </ul>
 

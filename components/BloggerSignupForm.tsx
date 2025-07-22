@@ -29,7 +29,7 @@ interface BloggerFormData {
   blogUrl: string;
   blogName: string;
   topics: string[];
-  monetizationMethods: string[];
+  monetisationMethods: string[];
   blogPosts: string[];
   agreeToTerms: boolean;
   confirmOwnership: boolean;
