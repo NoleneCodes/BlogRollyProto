@@ -1,4 +1,3 @@
-
 import type { NextPage } from "next";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
@@ -21,7 +20,7 @@ const Investors: NextPage = () => {
         <p>We're not just rebuilding a tool.</p>
         <p><strong>We're rebuilding a culture.</strong></p>
         <p>BlogRolly is the next-generation blogroll our 'Y' is to become a platform that helps self-hosted bloggers grow, monetise, and build loyal readerships without relying on social feeds or SEO games.</p>
-        
+
         <h3>How we'll win:</h3>
         <ul className={styles.featureList}>
           <li>• By serving the overlooked: 30M+ independent bloggers building businesses from scratch</li>
@@ -41,7 +40,7 @@ const Investors: NextPage = () => {
 
       <div className={styles.roadmapSection}>
         <h2>Product Roadmap – Building in Public</h2>
-        
+
         <div className={styles.roadmapPhase}>
           <h3>MVP Launch – Aug 2025</h3>
           <ul className={styles.featureList}>
@@ -83,7 +82,7 @@ const Investors: NextPage = () => {
 
       <div className={styles.downloadablesSection}>
         <h2>Downloadables</h2>
-        
+
         <div className={styles.downloadItem}>
           <h3>One-Pager PDF</h3>
           <p>A quick overview of BlogRolly's mission, product, and market thesis</p>
@@ -115,19 +114,34 @@ const Investors: NextPage = () => {
 
       <div className={styles.contactSection}>
         <h2>Contact</h2>
-        <div className={styles.contactInfo}>
-          <div className={styles.contactItem}>
-            <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
-          </div>
-          <div className={styles.contactItem}>
-            <span>Follow on Instagram, TikTok, and X: <span className={styles.brandHandle}>@BlogRolly</span></span>
-          </div>
+        <p>Ready to join the BlogRolly journey?</p>
+
+        <div className={styles.contactItem}>
+          <span className={styles.contactIcon}>📧</span>
+          <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
         </div>
-        
-        <div className={styles.investorRelationsSection}>
-          <p>Contact our investor relations team for detailed financials, growth metrics, and partnership opportunities.</p>
-          <p>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></p>
+
+        <div className={styles.contactItem}>
+          <span>Follow us:</span>
         </div>
+
+        <div className={styles.contactItem}>
+          <span>Twitter/X: <a href="https://x.com/BlogRolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@BlogRolly</a></span>
+        </div>
+
+        <div className={styles.contactItem}>
+          <span>Instagram: <a href="https://www.instagram.com/blogrolly/" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
+        </div>
+
+        <div className={styles.contactItem}>
+          <span>Facebook: <a href="https://www.facebook.com/blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
+        </div>
+
+        <div className={styles.contactItem}>
+          <span>TikTok: <a href="https://www.tiktok.com/@blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
+        </div>
+
+        <p>Let's reshape how the world discovers thoughtful, independent voices.</p>
       </div>
     </Layout>
   );

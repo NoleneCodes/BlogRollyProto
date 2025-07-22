@@ -161,10 +161,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             </div>
             <div className={styles.footerSection}>
               <h4>Connect</h4>
-              <a href="#">Twitter/X</a>
-              <a href="#">Facebook</a>
-              <a href="#">TikTok</a>
-              <a href="#">Instagram</a>
+              <a href="https://x.com/BlogRolly" target="_blank" rel="noopener noreferrer">Twitter/X</a>
+              <a href="https://www.facebook.com/blogrolly" target="_blank" rel="noopener noreferrer">Facebook</a>
+              <a href="https://www.tiktok.com/@blogrolly" target="_blank" rel="noopener noreferrer">TikTok</a>
+              <a href="https://www.instagram.com/blogrolly/" target="_blank" rel="noopener noreferrer">Instagram</a>
             </div>
           </div>
           <div className={styles.footerBottom}>
