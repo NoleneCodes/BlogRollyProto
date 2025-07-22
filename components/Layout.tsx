@@ -168,7 +168,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             </div>
           </div>
           <div className={styles.footerBottom}>
-            <p>™ 2024 BlogRolly. Made with ❤️</p>
+            <p>™ 2025 BlogRolly. Made with ❤️</p>
           </div>
         </footer>
       </div>
