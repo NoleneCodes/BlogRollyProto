@@ -108,7 +108,7 @@ const Investors: NextPage = () => {
           <p>Schedule via Calendly</p>
           <p>Let's talk vision, strategy, or potential partnership.</p>
           <div className={styles.cta}>
-            <a href="#" className={styles.primaryButton}>Schedule Call</a>
+            <a href="#" className={styles.submitButton}>Schedule Call</a>
           </div>
         </div>
       </div>
