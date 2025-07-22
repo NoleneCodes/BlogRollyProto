@@ -617,6 +617,23 @@
   font-size: 1.2rem;
 }
 
+.comingSoonText {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid #e5e7eb;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comingSoonText::before {
+  content: '⏳';
+  font-size: 1.1rem;
+}
+
 /* Responsive layout for all screen sizes */
 @media (max-width: 768px) {
   .searchContainer {

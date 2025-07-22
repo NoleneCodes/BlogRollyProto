@@ -88,7 +88,7 @@ const Investors: NextPage = () => {
           <h3>One-Pager PDF</h3>
           <p>A quick overview of BlogRolly's mission, product, and market thesis</p>
           <div className={styles.downloadCta}>
-            <a href="#" className={styles.downloadButton}>Download Now</a>
+            <span className={styles.comingSoonText}>Coming Soon</span>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ const Investors: NextPage = () => {
           <h3>Market Deep Dive PDF</h3>
           <p>A short report on the rising creator economy, SEO/content tool gaps, and "indie web" resurgence</p>
           <div className={styles.downloadCta}>
-            <a href="#" className={styles.downloadButton}>Download Now</a>
+            <span className={styles.comingSoonText}>Coming Soon</span>
           </div>
         </div>
       </div>
