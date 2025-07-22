@@ -406,6 +406,11 @@
   text-decoration: underline;
 }
 
+.brandHandle {
+  color: #c42142;
+  font-weight: 600;
+}
+
 .founderSection {
   max-width: 800px;
   margin: 4rem auto;

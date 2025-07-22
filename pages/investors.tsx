@@ -120,7 +120,7 @@ const Investors: NextPage = () => {
             <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
           </div>
           <div className={styles.contactItem}>
-            <span>Follow on Instagram, TikTok, and X: @BlogRolly</span>
+            <span>Follow on Instagram, TikTok, and X: <span className={styles.brandHandle}>@BlogRolly</span></span>
           </div>
         </div>
         
