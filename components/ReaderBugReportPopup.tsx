@@ -302,7 +302,7 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
               id="bug-report-images"
             />
             <label htmlFor="bug-report-images" className={styles.uploadButton}>
-              📁 Upload Screenshots
+              Upload Screenshots
             </label>
             <small className={styles.hint}>
               Upload up to 3 images (max 5MB each). Supported: PNG, JPG, GIF, WebP
