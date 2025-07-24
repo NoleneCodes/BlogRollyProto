@@ -94,7 +94,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/submit" className={styles.navLink}>Submit a Blog</a>
               {!isLoading && (
                 userInfo ? (
-                  <a href="/profile/reader" className={styles.navLink}>Profile</a>
+                  <>
+                    <a href="/profile/reader" className={styles.navLink}>Profile</a>
+                    {(userInfo.name === 'Nolene-AA' || userInfo.roles.includes('admin')) && (
+                      <a href="/admin/blog-submissions" className={styles.navLink} style={{color: '#c42142', fontWeight: '600'}}>Admin Dashboard</a>
+                    )}
+                  </>
                 ) : (
                   <a href="/auth" className={styles.navLink}>Sign Up/In</a>
                 )
@@ -129,7 +134,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/submit" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Submit a Blog</a>
               {!isLoading && (
                 userInfo ? (
-                  <a href="/profile/reader" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Profile</a>
+                  <>
+                    <a href="/profile/reader" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Profile</a>
+                    {(userInfo.name === 'Nolene-AA' || userInfo.roles.includes('admin')) && (
+                      <a href="/admin/blog-submissions" className={styles.mobileNavLink} onClick={toggleMobileMenu} style={{color: '#c42142', fontWeight: '600'}}>Admin Dashboard</a>
+                    )}
+                  </>
                 ) : (
                   <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
                 )
