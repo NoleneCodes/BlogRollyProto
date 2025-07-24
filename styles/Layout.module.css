@@ -40,6 +40,7 @@
 .logoText {
   height: 40px;
   width: auto;
+  max-width: 200px;
 }
 
 .logoLink {

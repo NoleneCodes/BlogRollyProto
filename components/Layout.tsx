@@ -28,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   useEffect(() => {
     // Initialize Google Analytics
     initGA();
-    
+
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth-check');
@@ -71,8 +71,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
         <meta name="description" content="BlogRolly - Your personal blog directory" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0070f3" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/BRDigital.svg" />
+        <link rel="apple-touch-icon" href="/BRDigital.svg" />
       </Head>
 
       <div className={styles.container}>
