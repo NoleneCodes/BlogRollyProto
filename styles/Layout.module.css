@@ -38,15 +38,8 @@
 }
 
 .logoText {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.logo h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
+  height: 40px;
+  width: auto;
 }
 
 .logoLink {
