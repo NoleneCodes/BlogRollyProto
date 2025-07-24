@@ -394,8 +394,8 @@ const ReaderProfile: React.FC = () => {
                       </div>
                     </div>
                     <div className={styles.bloggerActions}>
-                      <a href={blogger.blogUrl} target="_blank" rel="noopener noreferrer" className={styles.visitButton}>
-                        Visit Blog
+                      <a href={`/blogger/${blogger.id}`} className={styles.visitButton}>
+                        View Profile
                       </a>
                       <button 
                         onClick={() => unfollowBlogger(blogger.id)}
