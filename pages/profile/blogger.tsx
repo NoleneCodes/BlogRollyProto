@@ -4,6 +4,7 @@ import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
+import BugReportPopup from '../../components/BugReportPopup';
 import styles from '../../styles/BloggerProfile.module.css';
 
 interface UserInfo {
@@ -75,6 +76,7 @@ const BloggerProfile: React.FC = () => {
   const [showHowItWorksPopup, setShowHowItWorksPopup] = useState<boolean>(false);
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
+  const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -879,9 +881,14 @@ const BloggerProfile: React.FC = () => {
             <h2>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
-                <h3>Blogger FAQ</h3>
-                <p>Find answers to commonly asked questions about being a blogger on BlogRolly</p>
-                <button className={styles.helpButton}>View Blogger FAQ</button>
+                <h3>Report a Bug</h3>
+                <p>Help us improve BlogRolly by reporting any bugs or issues you encounter</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowBugReportPopup(true)}
+                >
+                  Report a Bug
+                </button>
               </div>
               <div className={styles.helpItem}>
                 <h3>Submission Guidelines</h3>
@@ -1116,6 +1123,12 @@ const BloggerProfile: React.FC = () => {
       <ContactSupportPopup
         isOpen={showContactSupportPopup}
         onClose={() => setShowContactSupportPopup(false)}
+      />
+
+      {/* Bug Report Popup */}
+      <BugReportPopup
+        isOpen={showBugReportPopup}
+        onClose={() => setShowBugReportPopup(false)}
       />
     </Layout>
   );
