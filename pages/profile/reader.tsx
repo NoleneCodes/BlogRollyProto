@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
-import ReaderBugReportPopup from '../../components/ReaderBugReportPopup';
+import BugReportPopup from '../../components/BugReportPopup';
 import styles from '../../styles/ReaderProfile.module.css';
 
 interface UserInfo {
@@ -658,7 +658,7 @@ const ReaderProfile: React.FC = () => {
         )}
 
         {/* Bug Report Popup */}
-        <ReaderBugReportPopup
+        <BugReportPopup
           isOpen={showBugReportPopup}
           onClose={() => setShowBugReportPopup(false)}
         />
