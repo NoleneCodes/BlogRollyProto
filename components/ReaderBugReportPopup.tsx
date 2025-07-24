@@ -20,6 +20,8 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const bugTypes = [
     'Profile not loading correctly',
@@ -41,6 +43,36 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
     }));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.startsWith('image/');
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB limit
+      return isValidType && isValidSize;
+    });
+
+    if (validFiles.length + uploadedImages.length > 3) {
+      alert('Maximum 3 images allowed');
+      return;
+    }
+
+    setUploadedImages(prev => [...prev, ...validFiles]);
+
+    // Create previews
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreviews(prev => [...prev, e.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -52,6 +84,23 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
     setIsSubmitting(true);
 
     try {
+      // Convert images to base64 for storage
+      const imageData = await Promise.all(
+        uploadedImages.map(async (file) => {
+          return new Promise<{name: string, data: string, type: string}>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              resolve({
+                name: file.name,
+                data: reader.result as string,
+                type: file.type
+              });
+            };
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+
       const response = await fetch('/api/submit-bug-report', {
         method: 'POST',
         headers: {
@@ -62,7 +111,8 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
           reportedBy: 'reader', // Specify this is from reader profile
           userAgent: navigator.userAgent,
           timestamp: new Date().toISOString(),
-          url: window.location.href
+          url: window.location.href,
+          attachments: imageData
         }),
       });
 
@@ -80,6 +130,8 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
             browserInfo: '',
             additionalInfo: ''
           });
+          setUploadedImages([]);
+          setImagePreviews([]);
         }, 2000);
       } else {
         alert('Failed to submit bug report. Please try again.');
@@ -231,10 +283,47 @@ const ReaderBugReportPopup: React.FC<ReaderBugReportPopupProps> = ({ isOpen, onC
               onChange={(e) => handleInputChange('additionalInfo', e.target.value)}
               className={styles.textarea}
               rows={2}
-              placeholder="Any screenshots, error messages, or other helpful details..."
+              placeholder="Any error messages or other helpful details..."
               maxLength={500}
             />
             <small className={styles.hint}>{formData.additionalInfo.length}/500 characters</small>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Screenshots & Images
+            </label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageUpload}
+              className={styles.fileInput}
+              id="bug-report-images"
+            />
+            <label htmlFor="bug-report-images" className={styles.uploadButton}>
+              📁 Upload Screenshots
+            </label>
+            <small className={styles.hint}>
+              Upload up to 3 images (max 5MB each). Supported: PNG, JPG, GIF, WebP
+            </small>
+            
+            {imagePreviews.length > 0 && (
+              <div className={styles.imagePreviewContainer}>
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className={styles.imagePreview}>
+                    <img src={preview} alt={`Screenshot ${index + 1}`} />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className={styles.removeImageButton}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
