@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
+import ContactSupportPopup from '../../components/ContactSupportPopup';
 import styles from '../../styles/BloggerProfile.module.css';
 
 interface UserInfo {
@@ -73,6 +74,7 @@ const BloggerProfile: React.FC = () => {
   const [editedImage, setEditedImage] = useState<string>('');
   const [showHowItWorksPopup, setShowHowItWorksPopup] = useState<boolean>(false);
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
+  const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -904,7 +906,12 @@ const BloggerProfile: React.FC = () => {
               <div className={styles.helpItem}>
                 <h3>Contact Support</h3>
                 <p>Get help from our support team</p>
-                <button className={styles.helpButton}>Contact Us</button>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowContactSupportPopup(true)}
+                >
+                  Contact Us
+                </button>
               </div>
             </div>
           </div>
@@ -1103,6 +1110,12 @@ const BloggerProfile: React.FC = () => {
       <SubmissionGuidelinesPopup
         isOpen={showSubmissionGuidelinesPopup}
         onClose={() => setShowSubmissionGuidelinesPopup(false)}
+      />
+
+      {/* Contact Support Popup */}
+      <ContactSupportPopup
+        isOpen={showContactSupportPopup}
+        onClose={() => setShowContactSupportPopup(false)}
       />
     </Layout>
   );
