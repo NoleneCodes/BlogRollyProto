@@ -159,6 +159,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <h4>Legal</h4>
               <a href="/terms">Terms & Conditions</a>
               <a href="/privacy">Privacy Policy</a>
+              <a href="/cookies">Cookie Policy</a>
             </div>
             <div className={styles.footerSection}>
               <h4>Investors</h4>
