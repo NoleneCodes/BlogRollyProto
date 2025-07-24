@@ -1,4 +1,3 @@
-
 // Supabase configuration and client setup
 // TODO: Install @supabase/supabase-js when ready to integrate
 // TODO: Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to environment variables
@@ -97,14 +96,14 @@ export interface BlogSubmission {
   status: BlogStatus;
   has_adult_content: boolean; // 18+ flag
   is_live: boolean; // Whether the post is currently live (for tier limits)
-  
+
   // Analytics
   views: number;
   clicks: number;
   ctr?: number;
   avg_time_on_page?: number;
   bounce_rate?: number;
-  
+
   // Timestamps
   submitted_at?: string;
   reviewed_at?: string;
@@ -189,7 +188,7 @@ export const supabaseDB = {
     console.log('TODO: Implement user insertion', userData);
     return { data: null, error: null };
   },
-  
+
   insertUserProfile: async (profileData: UserProfile) => {
     console.log('TODO: Implement user profile insertion', profileData);
     return { data: null, error: null };
@@ -291,6 +290,26 @@ export const supabaseDB = {
   }
 };
 
+// Bug Report Types
+export type BugReportStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
+export type BugSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type BugCategory = 'ui' | 'functionality' | 'performance' | 'security' | 'other';
+
+export interface BugReport {
+  id: string;
+  title: string;
+  description: string;
+  user_email?: string;
+  page?: string;
+  severity: BugSeverity;
+  category: BugCategory;
+  status: BugReportStatus;
+  admin_notes?: string;
+  created_at: string;
+  updated_at: string;
+  resolved_at?: string;
+}
+
 // Helper Functions for Blog Status Management
 export const BlogStatusHelpers = {
   canTransitionTo: (currentStatus: BlogStatus, newStatus: BlogStatus): boolean => {
@@ -303,7 +322,7 @@ export const BlogStatusHelpers = {
       'live': ['inactive'],
       'inactive': ['live']
     };
-    
+
     return allowedTransitions[currentStatus]?.includes(newStatus) || false;
   },
 
@@ -317,7 +336,7 @@ export const BlogStatusHelpers = {
       'live': 'Live',
       'inactive': 'Inactive'
     };
-    
+
     return labels[status];
   },
 
@@ -333,8 +352,41 @@ export const BlogStatusHelpers = {
       'ai_generated_low_quality': 'AI-Generated / Low Quality',
       'copyright_violation': 'Copyright Violation'
     };
-    
+
     return labels[reason];
+  }
+};
+
+// Helper functions for bug reports
+export const BugReportHelpers = {
+  getStatusColor: (status: BugReportStatus): string => {
+    switch (status) {
+      case 'open': return '#ef4444';
+      case 'in_progress': return '#f59e0b';
+      case 'resolved': return '#10b981';
+      case 'closed': return '#6b7280';
+      default: return '#6b7280';
+    }
+  },
+
+  getSeverityColor: (severity: BugSeverity): string => {
+    switch (severity) {
+      case 'low': return '#10b981';
+      case 'medium': return '#f59e0b';
+      case 'high': return '#f97316';
+      case 'critical': return '#ef4444';
+      default: return '#6b7280';
+    }
+  },
+
+  getStatusLabel: (status: BugReportStatus): string => {
+    switch (status) {
+      case 'open': return 'Open';
+      case 'in_progress': return 'In Progress';
+      case 'resolved': return 'Resolved';
+      case 'closed': return 'Closed';
+      default: return 'Unknown';
+    }
   }
 };
 
@@ -346,7 +398,7 @@ export interface EmailTemplateData {
     blogUrl: string;
     dateApproved: string;
   };
-  
+
   blogRejected: {
     userName: string;
     blogTitle: string;
