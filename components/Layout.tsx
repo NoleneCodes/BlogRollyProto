@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { initGA, trackPageView } from '../lib/analytics';
+import BugReportPopup from './BugReportPopup';
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -20,6 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showBugReportPopup, setShowBugReportPopup] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -164,7 +166,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/blogroll">The Blogroll</a>
               <a href="/blog">Our Blog</a>
               <a href="#">Contact Us</a>
-              <a href="/profile/reader#report-bug">Report a Bug</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); setShowBugReportPopup(true); }}>Report a Bug</a>
             </div>
             <div className={styles.footerSection}>
               <h4>Legal</h4>
@@ -188,6 +190,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             <p>™ 2025 BlogRolly. Made with ❤️</p>
           </div>
         </footer>
+
+        {/* Bug Report Popup */}
+        <BugReportPopup
+          isOpen={showBugReportPopup}
+          onClose={() => setShowBugReportPopup(false)}
+        />
       </div>
     </>
   );
