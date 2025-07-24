@@ -1,3 +1,4 @@
+
 .adminDashboard {
   max-width: 1200px;
   margin: 0 auto;
@@ -132,21 +133,12 @@
 }
 
 .statusBadge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-
-  .severityBadge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-left: 0.5rem;
-  }
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
 
 .statusBadge.pending {
   background: #fef3cd;
@@ -420,58 +412,29 @@
   .adminDashboard {
     padding: 1rem;
   }
-
+  
   .header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-
+  
   .controls {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-
+  
   .stats {
     align-self: stretch;
     justify-content: space-around;
   }
-
+  
   .actionButtons {
     flex-direction: column;
   }
-
+  
   .modalActions {
     flex-direction: column;
   }
 }
-
-.adminHeader h1 {
-    margin: 0 0 0.5rem 0;
-    color: #1f2937;
-  }
-
-  .adminNav {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .adminNavLink {
-    padding: 0.75rem 1rem;
-    text-decoration: none;
-    color: #6b7280;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
-  }
-
-  .adminNavLink:hover {
-    color: #374151;
-  }
-
-  .adminNavLink.active {
-    color: #c42142;
-    border-bottom-color: #c42142;
-  }

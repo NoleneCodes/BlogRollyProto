@@ -317,7 +317,7 @@
 }
 
 .visitButton {
-  background: #c42142;
+  background: #3b82f6;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -328,7 +328,7 @@
 }
 
 .visitButton:hover {
-  background: #a01835;
+  background: #2563eb;
 }
 
 .unfollowButton {

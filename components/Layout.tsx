@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { initGA, trackPageView } from '../lib/analytics';
-import BugReportPopup from './BugReportPopup';
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -21,7 +20,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showBugReportPopup, setShowBugReportPopup] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -153,21 +151,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
         <main className={styles.main}>
           {children}
         </main>
-
-        {/* Bug Report Button */}
-        <button
-          onClick={() => setShowBugReportPopup(true)}
-          className={styles.bugReportButton}
-          title="Report a Bug"
-        >
-          🐛
-        </button>
-
-        {/* Bug Report Popup */}
-        <BugReportPopup
-          isOpen={showBugReportPopup}
-          onClose={() => setShowBugReportPopup(false)}
-        />
 
         <footer className={styles.footer}>
           <div className={styles.footerContent}>

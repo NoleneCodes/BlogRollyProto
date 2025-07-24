@@ -189,49 +189,12 @@
 }
 
 .mobileNavLink:hover {
-    background-color: #f3f4f6;
-  }
+  background-color: #f8f9fa;
+  color: #c42142;
 }
 
-/* Bug Report Button */
-.bugReportButton {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #c42142;
-  color: white;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.3);
-  transition: all 0.3s ease;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bugReportButton:hover {
-  background-color: #a01835;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(196, 33, 66, 0.4);
-}
-
-.bugReportButton:active {
-  transform: translateY(0);
-}
-
-@media (max-width: 768px) {
-  .bugReportButton {
-    width: 50px;
-    height: 50px;
-    bottom: 1rem;
-    right: 1rem;
-    font-size: 1.25rem;
-  }
+.mobileNavLink:last-child {
+  border-bottom: none;
 }
 
 /* Hide text logo earlier */

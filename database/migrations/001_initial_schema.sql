@@ -1,3 +1,4 @@
+
 -- BlogRolly Database Schema
 -- Migration 001: Initial Schema Setup
 
@@ -93,14 +94,14 @@ CREATE TABLE blog_submissions (
   status blog_status DEFAULT 'draft',
   has_adult_content BOOLEAN DEFAULT FALSE,
   is_live BOOLEAN DEFAULT FALSE,
-
+  
   -- Analytics
   views INTEGER DEFAULT 0,
   clicks INTEGER DEFAULT 0,
   ctr DECIMAL(5,4) DEFAULT 0,
   avg_time_on_page INTEGER DEFAULT 0,
   bounce_rate DECIMAL(5,4) DEFAULT 0,
-
+  
   -- Timestamps
   submitted_at TIMESTAMP WITH TIME ZONE,
   reviewed_at TIMESTAMP WITH TIME ZONE,
@@ -154,27 +155,6 @@ CREATE TABLE email_queue (
   error_message TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
--- Bug Reports Table
-CREATE TABLE bug_reports (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    user_email TEXT,
-    page TEXT,
-    severity TEXT CHECK (severity IN ('low', 'medium', 'high', 'critical')) DEFAULT 'medium',
-    category TEXT CHECK (category IN ('ui', 'functionality', 'performance', 'security', 'other')) DEFAULT 'functionality',
-    status TEXT CHECK (status IN ('open', 'in_progress', 'resolved', 'closed')) DEFAULT 'open',
-    admin_notes TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    resolved_at TIMESTAMPTZ
-);
-
--- Enable Row Level Security
-ALTER TABLE blog_submissions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE bug_reports ENABLE ROW LEVEL SECURITY;
 
 -- Indexes for performance
 CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
@@ -248,21 +228,21 @@ BEGIN
         SET current_live_posts = current_live_posts + 1
         WHERE user_id = NEW.user_id;
     END IF;
-
+    
     -- If status changed from live, decrement count
     IF NEW.is_live = FALSE AND OLD.is_live = TRUE THEN
         UPDATE user_tier_limits 
         SET current_live_posts = current_live_posts - 1
         WHERE user_id = NEW.user_id;
     END IF;
-
+    
     -- If status changed to approved, increment total approved
     IF NEW.status = 'approved' AND OLD.status != 'approved' THEN
         UPDATE user_tier_limits 
         SET total_approved_posts = total_approved_posts + 1
         WHERE user_id = NEW.user_id;
     END IF;
-
+    
     RETURN NEW;
 END;
 $$ language 'plpgsql';

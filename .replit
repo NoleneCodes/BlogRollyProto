@@ -17,19 +17,3 @@ deploymentTarget = "cloudrun"
 [[ports]]
 localPort = 3000
 externalPort = 80
-
-[workflows]
-runButton = "Start App"
-
-[[workflows.workflow]]
-name = "Start App"
-author = 18210602
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "pkill -f \"next dev\" || true"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"

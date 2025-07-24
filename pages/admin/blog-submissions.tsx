@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -69,7 +70,7 @@ const AdminBlogSubmissions: React.FC = () => {
     try {
       // TODO: Replace with actual API call
       console.log('Loading submissions for filter:', filter);
-
+      
       // Mock data for development
       const mockSubmissions: BlogSubmissionWithReview[] = [
         {
@@ -118,7 +119,7 @@ const AdminBlogSubmissions: React.FC = () => {
       const filteredSubmissions = filter === 'all' 
         ? mockSubmissions 
         : mockSubmissions.filter(sub => sub.status === filter);
-
+      
       setSubmissions(filteredSubmissions);
     } catch (error) {
       console.error('Failed to load submissions:', error);
@@ -147,7 +148,7 @@ const AdminBlogSubmissions: React.FC = () => {
       };
 
       console.log('Submitting review:', reviewData);
-
+      
       // TODO: Replace with actual API call
       // const response = await fetch('/api/admin/review-submission', {
       //   method: 'POST',
@@ -157,14 +158,14 @@ const AdminBlogSubmissions: React.FC = () => {
 
       // Mock success for development
       await new Promise(resolve => setTimeout(resolve, 1000));
-
+      
       alert(`Blog submission ${reviewAction}d successfully! Email notification sent to blogger.`);
-
+      
       setShowReviewModal(false);
       setSelectedSubmission(null);
       setReviewAction(null);
       loadSubmissions(); // Refresh the list
-
+      
     } catch (error) {
       console.error('Failed to submit review:', error);
       alert('Failed to process review. Please try again.');
@@ -236,7 +237,7 @@ const AdminBlogSubmissions: React.FC = () => {
               <option value="inactive">Inactive</option>
             </select>
           </div>
-
+          
           <div className={styles.stats}>
             <div className={styles.statItem}>
               <span className={styles.statNumber}>{submissions.length}</span>
@@ -271,24 +272,24 @@ const AdminBlogSubmissions: React.FC = () => {
                     )}
                   </div>
                 </div>
-
+                
                 <div className={styles.submissionMeta}>
                   <p><strong>Blogger:</strong> {submission.blogger_name} ({submission.blogger_email})</p>
                   <p><strong>Category:</strong> {submission.category}</p>
                   <p><strong>URL:</strong> <a href={submission.url} target="_blank" rel="noopener noreferrer">{submission.url}</a></p>
                   <p><strong>Submitted:</strong> {new Date(submission.submitted_at || submission.created_at).toLocaleDateString()}</p>
                 </div>
-
+                
                 <div className={styles.submissionDescription}>
                   <p>{submission.description}</p>
                 </div>
-
+                
                 <div className={styles.submissionTags}>
                   {submission.tags.map((tag, index) => (
                     <span key={index} className={styles.tag}>{tag}</span>
                   ))}
                 </div>
-
+                
                 {submission.status === 'pending' && (
                   <div className={styles.actionButtons}>
                     <button 
@@ -317,7 +318,7 @@ const AdminBlogSubmissions: React.FC = () => {
               <h3>
                 {reviewAction === 'approve' ? 'Approve' : 'Reject'} Blog Submission
               </h3>
-
+              
               <div className={styles.modalSubmissionInfo}>
                 <h4>{selectedSubmission.title}</h4>
                 <p>by {selectedSubmission.blogger_name}</p>
@@ -354,7 +355,7 @@ const AdminBlogSubmissions: React.FC = () => {
                       </option>
                     ))}
                   </select>
-
+                  
                   <label htmlFor="rejection-note">Additional Note (Optional)</label>
                   <textarea
                     id="rejection-note"
@@ -364,7 +365,7 @@ const AdminBlogSubmissions: React.FC = () => {
                     placeholder="Add any specific feedback or instructions..."
                     rows={3}
                   />
-
+                  
                   <p className={styles.rejectionInfo}>
                     The blogger will receive an email with the rejection reason and can resubmit after making changes.
                   </p>
