@@ -554,11 +554,6 @@ const ReaderProfile: React.FC = () => {
             <h2>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
-                <h3>FAQ</h3>
-                <p>Find answers to commonly asked questions</p>
-                <button className={styles.helpButton}>View FAQ</button>
-              </div>
-              <div className={styles.helpItem}>
                 <h3>Contact Support</h3>
                 <p>Get help from our support team</p>
                 <button 
