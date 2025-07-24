@@ -146,10 +146,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           <div className={styles.footerContent}>
             <div className={styles.footerSection}>
               <h4>BlogRolly</h4>
-              <p>Your personal blog directory</p>
+              <p>Blogging, The Human Way</p>
             </div>
             <div className={styles.footerSection}>
-              <h4>Links</h4>
+              <h4>Web Nav</h4>
               <a href="/about">About Us</a>
               <a href="/blogroll">The Blogroll</a>
               <a href="/blog">Our Blog</a>
