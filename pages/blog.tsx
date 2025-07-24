@@ -23,7 +23,7 @@ const Blog: NextPage = () => {
         </p>
 
         <div className={styles.cta}>
-          <a href="/auth" className={styles.primaryButton}>Join us</a>
+          <a href="/auth" className={styles.brandButton}>Join The Movement</a>
         </div>
       </div>
 
