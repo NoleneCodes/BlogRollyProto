@@ -16,20 +16,20 @@ const Privacy: NextPage = () => {
 
         <h2>TABLE OF CONTENTS</h2>
         <ol>
-          <li>INFORMATION WE COLLECT</li>
-          <li>HOW WE USE YOUR INFORMATION</li>
-          <li>HOW WE SHARE YOUR INFORMATION</li>
-          <li>COOKIES AND TRACKING TECHNOLOGIES</li>
-          <li>DATA RETENTION</li>
-          <li>DATA SECURITY</li>
-          <li>YOUR PRIVACY RIGHTS</li>
-          <li>CHILDREN'S PRIVACY</li>
-          <li>INTERNATIONAL DATA TRANSFERS</li>
-          <li>UPDATES TO THIS POLICY</li>
-          <li>CONTACT INFORMATION</li>
+          <li><a href="#information-collect">INFORMATION WE COLLECT</a></li>
+          <li><a href="#how-use-information">HOW WE USE YOUR INFORMATION</a></li>
+          <li><a href="#how-share-information">HOW WE SHARE YOUR INFORMATION</a></li>
+          <li><a href="#cookies-tracking">COOKIES AND TRACKING TECHNOLOGIES</a></li>
+          <li><a href="#data-retention">DATA RETENTION</a></li>
+          <li><a href="#data-security">DATA SECURITY</a></li>
+          <li><a href="#privacy-rights">YOUR PRIVACY RIGHTS</a></li>
+          <li><a href="#childrens-privacy">CHILDREN'S PRIVACY</a></li>
+          <li><a href="#international-transfers">INTERNATIONAL DATA TRANSFERS</a></li>
+          <li><a href="#policy-updates">UPDATES TO THIS POLICY</a></li>
+          <li><a href="#contact-information">CONTACT INFORMATION</a></li>
         </ol>
 
-        <h2>1. INFORMATION WE COLLECT</h2>
+        <h2 id="information-collect">1. INFORMATION WE COLLECT</h2>
         <h3>Information You Provide to Us</h3>
         <p>We collect information you provide directly to us, including:</p>
         <ul>
@@ -47,7 +47,7 @@ const Privacy: NextPage = () => {
           <li><strong>Analytics Data:</strong> We use analytics services (Google Analytics, Umami) to understand how our Services are used.</li>
         </ul>
 
-        <h2>2. HOW WE USE YOUR INFORMATION</h2>
+        <h2 id="how-use-information">2. HOW WE USE YOUR INFORMATION</h2>
         <p>We use the information we collect to:</p>
         <ul>
           <li>Provide, maintain, and improve our Services</li>
@@ -61,7 +61,7 @@ const Privacy: NextPage = () => {
           <li>Comply with legal obligations</li>
         </ul>
 
-        <h2>3. HOW WE SHARE YOUR INFORMATION</h2>
+        <h2 id="how-share-information">3. HOW WE SHARE YOUR INFORMATION</h2>
         <p>We may share your information in the following circumstances:</p>
         <ul>
           <li><strong>Public Directory:</strong> Blog information you submit (title, description, URL, category) is displayed publicly in our blog directory.</li>
@@ -79,7 +79,7 @@ const Privacy: NextPage = () => {
           <li><strong>Consent:</strong> We may share information with your explicit consent.</li>
         </ul>
 
-        <h2>4. COOKIES AND TRACKING TECHNOLOGIES</h2>
+        <h2 id="cookies-tracking">4. COOKIES AND TRACKING TECHNOLOGIES</h2>
         <p>We use cookies and similar tracking technologies to:</p>
         <ul>
           <li>Remember your preferences and settings</li>
@@ -89,7 +89,7 @@ const Privacy: NextPage = () => {
         </ul>
         <p>You can control cookies through your browser settings, but some features of our Services may not function properly if you disable cookies.</p>
 
-        <h2>5. DATA RETENTION</h2>
+        <h2 id="data-retention">5. DATA RETENTION</h2>
         <p>We retain your personal information for as long as necessary to:</p>
         <ul>
           <li>Provide our Services to you</li>
@@ -104,10 +104,10 @@ const Privacy: NextPage = () => {
           <li>Communication records are retained for 3 years for customer service purposes</li>
         </ul>
 
-        <h2>6. DATA SECURITY</h2>
+        <h2 id="data-security">6. DATA SECURITY</h2>
         <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
 
-        <h2>7. YOUR PRIVACY RIGHTS</h2>
+        <h2 id="privacy-rights">7. YOUR PRIVACY RIGHTS</h2>
         <p>Depending on your location, you may have certain rights regarding your personal information:</p>
 
         <h3>For EU/UK Residents (GDPR/UK GDPR)</h3>
@@ -132,14 +132,14 @@ const Privacy: NextPage = () => {
         <h3>Exercising Your Rights</h3>
         <p>To exercise these rights, please contact us at hello@blogrolly.com. We will respond to your request within the timeframes required by applicable law.</p>
 
-        <h2>8. CHILDREN'S PRIVACY</h2>
+        <h2 id="childrens-privacy">8. CHILDREN'S PRIVACY</h2>
         <p>Our Services are not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that we have collected personal information from a child under 13, we will take steps to delete such information.</p>
 
-        <h2>9. INTERNATIONAL DATA TRANSFERS</h2>
+        <h2 id="international-transfers">9. INTERNATIONAL DATA TRANSFERS</h2>
         <p>BlogRolly Ltd is based in the United Kingdom. If you are accessing our Services from outside the UK, please be aware that your information may be transferred to, stored, and processed in the UK and other countries where our service providers operate.</p>
         <p>For EU residents, we ensure that any international transfers comply with GDPR requirements through appropriate safeguards such as Standard Contractual Clauses or adequacy decisions.</p>
 
-        <h2>10. UPDATES TO THIS POLICY</h2>
+        <h2 id="policy-updates">10. UPDATES TO THIS POLICY</h2>
         <p>We may update this Privacy Policy from time to time. When we make changes, we will:</p>
         <ul>
           <li>Update the "Last updated" date at the top of this policy</li>
@@ -148,7 +148,7 @@ const Privacy: NextPage = () => {
         </ul>
         <p>Your continued use of our Services after any changes indicates your acceptance of the updated Privacy Policy.</p>
 
-        <h2>11. CONTACT INFORMATION</h2>
+        <h2 id="contact-information">11. CONTACT INFORMATION</h2>
         <p>If you have any questions about this Privacy Policy or our privacy practices, please contact us:</p>
         <p>
           <strong>BlogRolly Ltd</strong><br />
@@ -169,7 +169,7 @@ const Privacy: NextPage = () => {
           <li><strong>EU:</strong> Contact your local Data Protection Authority</li>
         </ul>
 
-        <h2>LEGAL BASIS FOR PROCESSING (EU/UK RESIDENTS)</h2>
+        <h2 id="legal-basis">LEGAL BASIS FOR PROCESSING (EU/UK RESIDENTS)</h2>
         <p>We process your personal information based on the following legal bases:</p>
         <ul>
           <li><strong>Contract:</strong> To provide our Services and fulfill our contractual obligations</li>
@@ -178,7 +178,7 @@ const Privacy: NextPage = () => {
           <li><strong>Legal Obligation:</strong> To comply with applicable laws and regulations</li>
         </ul>
 
-        <h2>THIRD-PARTY SERVICES</h2>
+        <h2 id="third-party-services">THIRD-PARTY SERVICES</h2>
         <p>Our Services integrate with third-party services that have their own privacy policies:</p>
         <ul>
           <li><strong>Supabase:</strong> https://supabase.com/privacy</li>
