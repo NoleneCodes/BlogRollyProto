@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BugReportPopup from '../../components/BugReportPopup';
 import FeedbackPopup from '../../components/FeedbackPopup';
+import ContactSupportPopup from '../../components/ContactSupportPopup';
 import styles from '../../styles/ReaderProfile.module.css';
 
 interface UserInfo {
@@ -60,6 +61,7 @@ const ReaderProfile: React.FC = () => {
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
   const [showBugReportPopup, setShowBugReportPopup] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [showContactSupportPopup, setShowContactSupportPopup] = useState(false);
 
   // Categories and tags from blog submission form
   const MAIN_CATEGORIES = [
@@ -559,7 +561,12 @@ const ReaderProfile: React.FC = () => {
               <div className={styles.helpItem}>
                 <h3>Contact Support</h3>
                 <p>Get help from our support team</p>
-                <button className={styles.helpButton}>Contact Us</button>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowContactSupportPopup(true)}
+                >
+                  Contact Us
+                </button>
               </div>
               <div className={styles.helpItem}>
                 <h3>Send Feedback</h3>
@@ -674,6 +681,12 @@ const ReaderProfile: React.FC = () => {
         <FeedbackPopup
           isOpen={showFeedbackPopup}
           onClose={() => setShowFeedbackPopup(false)}
+        />
+
+        {/* Contact Support Popup */}
+        <ContactSupportPopup
+          isOpen={showContactSupportPopup}
+          onClose={() => setShowContactSupportPopup(false)}
         />
 
         <aside className={styles.sidebar}>
