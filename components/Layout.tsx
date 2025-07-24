@@ -164,6 +164,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <a href="/blogroll">The Blogroll</a>
               <a href="/blog">Our Blog</a>
               <a href="#">Contact Us</a>
+              <a href="/profile/reader#report-bug">Report a Bug</a>
             </div>
             <div className={styles.footerSection}>
               <h4>Legal</h4>
