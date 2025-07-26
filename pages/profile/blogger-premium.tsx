@@ -360,10 +360,6 @@ const BloggerProfilePremium: React.FC = () => {
                   <span className={styles.statNumber}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>
                   <span className={styles.statDescription}>Unlimited</span>
                 </div>
-                <div className={styles.statCard}>
-                  <h4>Reader Retention</h4>
-                  <span className={styles.statNumber}>{blogStats.readerRetention}%</span>
-                </div>
               </div>
             )}
           </div>
@@ -505,11 +501,7 @@ const BloggerProfilePremium: React.FC = () => {
                         <span className={styles.performanceValue}>{blogStats.clickThroughRate}%</span>
                         <span className={styles.performanceGrowth}>+0.8% vs last period</span>
                       </div>
-                      <div className={styles.performanceItem}>
-                        <span className={styles.performanceLabel}>Reader Retention</span>
-                        <span className={styles.performanceValue}>{blogStats.readerRetention}%</span>
-                        <span className={styles.performanceGrowth}>+5.2% vs last period</span>
-                      </div>
+                      
                       <div className={styles.performanceItem}>
                         <span className={styles.performanceLabel}>Monthly Growth</span>
                         <span className={styles.performanceValue}>+{blogStats.monthlyGrowth}%</span>
