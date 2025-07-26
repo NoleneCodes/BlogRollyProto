@@ -41,6 +41,7 @@ interface BlogStats {
   totalViews: number;
   monthlyViews: number;
   totalClicks: number;
+  monthlyClicks: number;
   totalSubmissions: number;
   approvedSubmissions: number;
   clickThroughRate: number;
@@ -83,6 +84,7 @@ const BloggerProfilePremium: React.FC = () => {
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('30d');
   const [viewsToggle, setViewsToggle] = useState<'total' | 'monthly'>('total');
+  const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -206,6 +208,7 @@ const BloggerProfilePremium: React.FC = () => {
           totalViews: 17800,
           monthlyViews: 4250,
           totalClicks: 1450,
+          monthlyClicks: 312,
           totalSubmissions: 15,
           approvedSubmissions: 12,
           clickThroughRate: 8.1,
@@ -365,9 +368,25 @@ const BloggerProfilePremium: React.FC = () => {
                     }
                   </span>
                 </div>
-                <div className={styles.statCard}>
-                  <h4>Total Clicks</h4>
-                  <span className={styles.statNumber}>{blogStats.totalClicks}</span>
+                <div className={styles.statCard} onClick={() => setClicksToggle(clicksToggle === 'total' ? 'monthly' : 'total')}>
+                  <div className={styles.statCardHeader}>
+                    <h4>{clicksToggle === 'total' ? 'Total Clicks' : 'Clicks This Month'}</h4>
+                    <button className={styles.toggleButton}>
+                      {clicksToggle === 'total' ? 'Monthly' : 'Total'}
+                    </button>
+                  </div>
+                  <span className={styles.statNumber}>
+                    {clicksToggle === 'total' 
+                      ? blogStats.totalClicks.toLocaleString() 
+                      : blogStats.monthlyClicks.toLocaleString()
+                    }
+                  </span>
+                  <span className={styles.statGrowth}>
+                    {clicksToggle === 'total' 
+                      ? 'All-time performance' 
+                      : 'Current month performance'
+                    }
+                  </span>
                 </div>
                 <div className={styles.statCard}>
                   <h4>Click Rate</h4>
