@@ -39,6 +39,7 @@ interface BlogSubmission {
 
 interface BlogStats {
   totalViews: number;
+  monthlyViews: number;
   totalClicks: number;
   totalSubmissions: number;
   approvedSubmissions: number;
@@ -81,6 +82,7 @@ const BloggerProfilePremium: React.FC = () => {
   const [showHowItWorksPopup, setShowHowItWorksPopup] = useState<boolean>(false);
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('30d');
+  const [viewsToggle, setViewsToggle] = useState<'total' | 'monthly'>('total');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -202,6 +204,7 @@ const BloggerProfilePremium: React.FC = () => {
         // Mock premium blog stats
         setBlogStats({
           totalViews: 17800,
+          monthlyViews: 4250,
           totalClicks: 1450,
           totalSubmissions: 15,
           approvedSubmissions: 12,
@@ -342,10 +345,25 @@ const BloggerProfilePremium: React.FC = () => {
             </div>
             {blogStats && (
               <div className={styles.premiumStatsGrid}>
-                <div className={styles.statCard}>
-                  <h4>Total Views</h4>
-                  <span className={styles.statNumber}>{blogStats.totalViews.toLocaleString()}</span>
-                  <span className={styles.statGrowth}>+{blogStats.monthlyGrowth}% this month</span>
+                <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
+                  <div className={styles.statCardHeader}>
+                    <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
+                    <button className={styles.toggleButton}>
+                      {viewsToggle === 'total' ? '📊' : '📈'}
+                    </button>
+                  </div>
+                  <span className={styles.statNumber}>
+                    {viewsToggle === 'total' 
+                      ? blogStats.totalViews.toLocaleString() 
+                      : blogStats.monthlyViews.toLocaleString()
+                    }
+                  </span>
+                  <span className={styles.statGrowth}>
+                    {viewsToggle === 'total' 
+                      ? `+${blogStats.monthlyGrowth}% this month` 
+                      : 'Current month performance'
+                    }
+                  </span>
                 </div>
                 <div className={styles.statCard}>
                   <h4>Total Clicks</h4>
