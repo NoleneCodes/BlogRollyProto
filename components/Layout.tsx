@@ -83,7 +83,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             <div className={styles.logo}>
               <a href="/" className={styles.logoLink}>
                 <div className={styles.logoContainer}>
-                  <img src="/BRDigital.svg" alt="BlogRolly Logo" className={styles.logoIcon} />
+                  <img src="/DigitalBR.svg" alt="BlogRolly Logo" className={styles.logoIcon} />
                   <img src="/DigitalText.svg" alt="BlogRolly" className={styles.logoText} />
                 </div>
               </a>
