@@ -70,11 +70,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="BlogRolly - Your personal blog directory" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#0070f3" />
-        <link rel="icon" href="/BRDigital.svg" />
-        <link rel="apple-touch-icon" href="/BRDigital.svg" />
+        <meta name="description" content="Discover and organize your favorite blogs with BlogRolly" />
+        <link rel="icon" href="/DigitalBR.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/DigitalBR.svg" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
 
       <div className={styles.container}>
