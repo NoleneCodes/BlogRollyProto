@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
+import ContactSupportPopup from '../../components/ContactSupportPopup';
+import BugReportPopup from '../../components/BugReportPopup';
 import styles from '../../styles/BloggerProfilePremium.module.css';
 
 interface UserInfo {
@@ -85,6 +87,8 @@ const BloggerProfilePremium: React.FC = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('30d');
   const [viewsToggle, setViewsToggle] = useState<'total' | 'monthly'>('total');
   const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
+  const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
+  const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -712,31 +716,46 @@ const BloggerProfilePremium: React.FC = () => {
       case 'help':
         return (
           <div className={styles.content}>
-            <h2>Premium Support</h2>
+            <h2>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
-                <h3>Priority Support</h3>
-                <p>Get direct access to our premium support team with guaranteed response times</p>
-                <button className={styles.helpButton}>Contact Premium Support</button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>Advanced Features Guide</h3>
-                <p>Learn how to make the most of your premium analytics and features</p>
-                <button className={styles.helpButton}>View Premium Guide</button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>Traffic Optimization</h3>
-                <p>Tips and strategies to maximize your blog's traffic potential</p>
-                <button className={styles.helpButton}>Traffic Guide</button>
+                <h3>Report a Bug</h3>
+                <p>Help us improve BlogRolly by reporting any bugs or issues you encounter</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowBugReportPopup(true)}
+                >
+                  Report a Bug
+                </button>
               </div>
               <div className={styles.helpItem}>
                 <h3>Submission Guidelines</h3>
-                <p>Premium guidelines for getting your content featured prominently</p>
+                <p>Learn about our content guidelines and best practices for blog submissions</p>
                 <button 
                   className={styles.helpButton}
                   onClick={() => setShowSubmissionGuidelinesPopup(true)}
                 >
                   View Guidelines
+                </button>
+              </div>
+              <div className={styles.helpItem}>
+                <h3>How It Works</h3>
+                <p>Learn about our submission and review process for getting your blog featured</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowHowItWorksPopup(true)}
+                >
+                  Learn How It Works
+                </button>
+              </div>
+              <div className={styles.helpItem}>
+                <h3>Contact Support</h3>
+                <p>Get help from our support team</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowContactSupportPopup(true)}
+                >
+                  Contact Us
                 </button>
               </div>
             </div>
@@ -842,10 +861,112 @@ const BloggerProfilePremium: React.FC = () => {
         )}
       </div>
 
+      {/* How It Works Popup */}
+      {showHowItWorksPopup && (
+        <div className={styles.formOverlay}>
+          <div className={styles.formContainer} style={{ maxWidth: '900px', maxHeight: '90vh' }}>
+            <div className={styles.formHeader}>
+              <h3>How It Works</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowHowItWorksPopup(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.howItWorksContent}>
+              <div className={styles.workflowSteps}>
+                <div className={styles.workflowStep}>
+                  <div className={styles.stepNumber}>1</div>
+                  <div className={styles.stepContent}>
+                    <h4>Submit Your Blog</h4>
+                    <p>Once you've signed up for a Blogger Account, use the submission form to share a URL to a live blog post from your main site. We're looking for full, original pieces—not link dumps, teasers, or redirects.</p>
+                  </div>
+                </div>
+
+                <div className={styles.workflowStep}>
+                  <div className={styles.stepNumber}>2</div>
+                  <div className={styles.stepContent}>
+                    <h4>Review Process</h4>
+                    <p>Every submission is reviewed to make sure it meets our content and safety standards. This helps keep the blogroll clean, useful, and trustworthy for readers.</p>
+                  </div>
+                </div>
+
+                <div className={styles.workflowStep}>
+                  <div className={styles.stepNumber}>3</div>
+                  <div className={styles.stepContent}>
+                    <h4>If Approved</h4>
+                    <p>Your blog post will be added to the Blogroll, making it easy for new readers to discover your work and click through to your site. We don't republish your content—we simply help readers find it.</p>
+                  </div>
+                </div>
+
+                <div className={styles.workflowStep}>
+                  <div className={styles.stepNumber}>4</div>
+                  <div className={styles.stepContent}>
+                    <h4>If Rejected</h4>
+                    <p>You'll receive a short reason for the rejection and can resubmit after making changes. Most rejections are quick fixes like broken links or teaser-only content.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.reviewSection}>
+                <h4>🔍 Review & Approval – What We Check For</h4>
+                <p>We're all about making blog discovery simple, safe, and worth people's time. Before a blog goes live, we check that:</p>
+                <ul className={styles.checkList}>
+                  <li>The link loads properly and goes to a working blog post</li>
+                  <li>The post is a complete piece—not a teaser, summary, or gated content</li>
+                  <li>The blog post lives on your main blog domain (not a subdomain or unrelated redirect)</li>
+                  <li>The content is free from spam, scams, or harmful material</li>
+                  <li>It shows original thought and genuine effort</li>
+                </ul>
+              </div>
+
+              <div className={styles.rejectionSection}>
+                <h4>🚫 What We Don't List</h4>
+                <ul className={styles.rejectionList}>
+                  <li>Broken or dead links</li>
+                  <li>Redirects to social media, unrelated third-party sites, or paywalls</li>
+                  <li>Teasers that require "Subscribe to read more"</li>
+                  <li>Anything flagged as spammy, misleading, or unsafe</li>
+                </ul>
+              </div>
+
+              <div className={styles.supportSection}>
+                <h4>Updates & Support</h4>
+                <div className={styles.supportItem}>
+                  <strong>Edit or Resubmit:</strong>
+                  <p>You can easily update your blog post's title, description, or cover image from your Blogger Dashboard—no need for reapproval.</p>
+                </div>
+                <div className={styles.supportItem}>
+                  <strong>Changed the URL?</strong>
+                  <p>If the blog post URL changes, it'll need to go through the review process again. This helps us make sure the new link is working, safe, and still matches our quality standards.</p>
+                </div>
+                <div className={styles.supportItem}>
+                  <strong>Need Help?</strong>
+                  <p>Got questions or stuck somewhere? Reach out anytime. We're building this platform with independent bloggers in mind and are happy to help.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Submission Guidelines Popup */}
       <SubmissionGuidelinesPopup
         isOpen={showSubmissionGuidelinesPopup}
         onClose={() => setShowSubmissionGuidelinesPopup(false)}
+      />
+
+      {/* Contact Support Popup */}
+      <ContactSupportPopup
+        isOpen={showContactSupportPopup}
+        onClose={() => setShowContactSupportPopup(false)}
+      />
+
+      {/* Bug Report Popup */}
+      <BugReportPopup
+        isOpen={showBugReportPopup}
+        onClose={() => setShowBugReportPopup(false)}
       />
     </Layout>
   );
