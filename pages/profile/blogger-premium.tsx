@@ -470,7 +470,7 @@ const BloggerProfilePremium: React.FC = () => {
                         </div>
 
                         {submission.status === 'approved' && submission.isActive && (
-                          
+
                           <div className={styles.premiumMetrics}>
                             <div className={styles.metricItem}>
                               <span className={styles.metricValue}>{submission.views}</span>
@@ -484,7 +484,7 @@ const BloggerProfilePremium: React.FC = () => {
                               <span className={styles.metricValue}>{submission.ctr}%</span>
                               <span className={styles.metricLabel}>CTR</span>
                             </div>
-                           
+
                           </div>
                         )}
                       </div>
@@ -538,7 +538,7 @@ const BloggerProfilePremium: React.FC = () => {
                         <span className={styles.performanceValue}>{blogStats.clickThroughRate}%</span>
                         <span className={styles.performanceGrowth}>+0.8% vs last period</span>
                       </div>
-                      
+
                       <div className={styles.performanceItem}>
                         <span className={styles.performanceLabel}>Monthly Growth</span>
                         <span className={styles.performanceValue}>+{blogStats.monthlyGrowth}%</span>
@@ -796,7 +796,7 @@ const BloggerProfilePremium: React.FC = () => {
               className={`${styles.navItem} ${activeSection === 'help' ? styles.active : ''}`}
               onClick={() => setActiveSection('help')}
             >
-              Premium Support
+              Help
             </button>
             <button 
               className={`${styles.navItem} ${styles.switch}`}
