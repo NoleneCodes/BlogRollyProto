@@ -349,7 +349,7 @@ const BloggerProfilePremium: React.FC = () => {
                   <div className={styles.statCardHeader}>
                     <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
                     <button className={styles.toggleButton}>
-                      {viewsToggle === 'total' ? '📊' : '📈'}
+                      {viewsToggle === 'total' ? 'Monthly' : 'Total'}
                     </button>
                   </div>
                   <span className={styles.statNumber}>
