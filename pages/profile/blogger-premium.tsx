@@ -863,9 +863,9 @@ const BloggerProfilePremium: React.FC = () => {
 
       {/* How It Works Popup */}
       {showHowItWorksPopup && (
-        <div className={styles.formOverlay}>
-          <div className={styles.formContainer} style={{ maxWidth: '900px', maxHeight: '90vh' }}>
-            <div className={styles.formHeader}>
+        <div className={styles.blogSubmissionOverlay}>
+          <div className={styles.blogSubmissionContainer} style={{ maxWidth: '900px', maxHeight: '90vh' }}>
+            <div className={styles.blogSubmissionHeader}>
               <h3>How It Works</h3>
               <button 
                 className={styles.closeButton}
@@ -874,7 +874,7 @@ const BloggerProfilePremium: React.FC = () => {
                 ×
               </button>
             </div>
-            <div className={styles.howItWorksContent}>
+            <div className={styles.blogSubmissionContent} style={{ padding: '2rem', overflow: 'auto' }}>
               <div className={styles.workflowSteps}>
                 <div className={styles.workflowStep}>
                   <div className={styles.stepNumber}>1</div>

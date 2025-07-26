@@ -1018,6 +1018,139 @@
   color: #64748b;
 }
 
+/* How It Works Popup Styles */
+.workflowSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.workflowStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+}
+
+.stepNumber {
+  background: linear-gradient(135deg, #c42142 0%, #a01835 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.stepContent h4 {
+  margin: 0 0 0.75rem 0;
+  color: #1e293b;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.stepContent p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.reviewSection,
+.rejectionSection,
+.supportSection {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.reviewSection h4,
+.rejectionSection h4,
+.supportSection h4 {
+  margin: 0 0 1rem 0;
+  color: #1e293b;
+  font-size: 1.3rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reviewSection p,
+.rejectionSection p {
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.checkList,
+.rejectionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.checkList li,
+.rejectionList li {
+  color: #475569;
+  line-height: 1.6;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.checkList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.rejectionList li::before {
+  content: '×';
+  position: absolute;
+  left: 0;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.supportItem {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #fbbf24;
+}
+
+.supportItem:last-child {
+  margin-bottom: 0;
+}
+
+.supportItem strong {
+  color: #1e293b;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.supportItem p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .profileContainer {
