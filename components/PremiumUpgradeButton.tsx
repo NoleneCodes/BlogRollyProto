@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { stripePayments, STRIPE_PRICES } from '../lib/stripe';
+import { stripePayments, STRIPE_PRICES, clientStripe } from '../lib/stripe';
 import { trackPremiumUpgrade } from '../lib/analytics';
 import styles from '../styles/PremiumUpgrade.module.css';
 
 interface PremiumUpgradeButtonProps {
   userId: string;
-  userEmail: string;
+  userEmail?: string;
   variant?: 'monthly' | 'yearly';
   className?: string;
 }
@@ -48,19 +48,12 @@ const PremiumUpgradeButton: React.FC<PremiumUpgradeButtonProps> = ({
         throw new Error(error);
       }
 
-      // TODO: Implement actual Stripe redirect
-      console.log('TODO: Redirect to Stripe checkout', { sessionId, url });
-      // For now, just redirect to success page
-      window.location.href = url;
-
-      /*
       // Redirect to Stripe Checkout
       if (url) {
         window.location.href = url;
       } else {
         await clientStripe.redirectToCheckout(sessionId);
       }
-      */
     } catch (error) {
       console.error('Upgrade error:', error);
       alert('Failed to start upgrade process. Please try again.');

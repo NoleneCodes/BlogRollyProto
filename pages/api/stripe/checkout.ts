@@ -1,6 +1,5 @@
-
 import type { NextApiRequest, NextApiResponse } from 'next'
-// import { stripePayments } from '../../../lib/stripe'
+import { stripePayments } from '../../../lib/stripe'
 
 type CheckoutData = {
   sessionId?: string
@@ -19,21 +18,10 @@ export default async function handler(
   try {
     const { priceId, userId, successUrl, cancelUrl } = req.body
 
-    // TODO: Implement actual Stripe checkout session creation
-    console.log('TODO: Create Stripe checkout session', {
-      priceId,
-      userId,
-      successUrl,
-      cancelUrl
-    })
+    if (!priceId || !userId || !successUrl || !cancelUrl) {
+      return res.status(400).json({ error: 'Missing required fields' })
+    }
 
-    // Placeholder response
-    res.status(200).json({
-      sessionId: 'placeholder_session_id',
-      url: '/profile/blogger-premium?success=true'
-    })
-
-    /*
     const { sessionId, url } = await stripePayments.createCheckoutSession(
       priceId,
       userId,
@@ -42,7 +30,6 @@ export default async function handler(
     )
 
     res.status(200).json({ sessionId, url })
-    */
   } catch (error) {
     console.error('Checkout session creation error:', error)
     res.status(500).json({ error: 'Failed to create checkout session' })
