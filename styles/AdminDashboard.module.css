@@ -951,6 +951,134 @@
   margin-right: 0;
 }
 
+/* Table Filters */
+.tableFilters {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterGroup label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.filterSelect {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.875rem;
+  color: #374151;
+  min-width: 140px;
+  transition: border-color 0.2s ease;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #c42142;
+  box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
+}
+
+.resultsInfo {
+  margin-left: auto;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Sortable Headers */
+.sortableHeader {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.sortableHeader:hover {
+  background: linear-gradient(135deg, #a01835 0%, #7d1529 100%);
+  color: white;
+}
+
+.sortableHeader:active {
+  transform: translateY(1px);
+}
+
+/* Enhanced Table Styles */
+.adminTable thead tr {
+  background: linear-gradient(135deg, #c42142 0%, #a01835 100%);
+}
+
+.adminTable tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.adminTable tbody tr:nth-child(odd) {
+  background: white;
+}
+
+.adminTable tbody tr:hover {
+  background: #f3f4f6 !important;
+  box-shadow: inset 0 0 0 1px #c42142;
+}
+
+/* Responsive Table Filters */
+@media (max-width: 768px) {
+  .tableFilters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .filterGroup {
+    justify-content: space-between;
+  }
+
+  .filterSelect {
+    min-width: auto;
+    flex: 1;
+  }
+
+  .resultsInfo {
+    margin-left: 0;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .sortableHeader {
+    font-size: 0.75rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .adminTable {
+    font-size: 0.8rem;
+  }
+
+  .adminTable td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .actionButton {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.25rem;
+  }
+}
+
 /* Responsive adjustments for stats cards */
 @media (max-width: 1200px) {
   .statsCardsGrid {

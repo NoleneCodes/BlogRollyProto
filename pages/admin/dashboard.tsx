@@ -21,107 +21,276 @@ interface BlogSubmissionWithReview extends BlogSubmission {
   last_reviewed_at?: string;
 }
 
-// Mock components for now
-const BugReports = () => (
+// Bug Reports with enhanced table functionality
+const BugReports = () => {
+  const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'in-progress' | 'resolved'>('all');
+
+  const bugReportsData = [
+    {
+      id: '#BUG-001',
+      title: 'Login button not responding on mobile',
+      priority: 'high',
+      reporter: 'user@example.com',
+      status: 'open',
+      date: '2025-01-24',
+      dateSort: new Date('2025-01-24')
+    },
+    {
+      id: '#BUG-002',
+      title: 'Search results not displaying correctly',
+      priority: 'medium',
+      reporter: 'blogger@test.com',
+      status: 'in-progress',
+      date: '2025-01-23',
+      dateSort: new Date('2025-01-23')
+    },
+    {
+      id: '#BUG-003',
+      title: 'Profile image upload fails on Chrome',
+      priority: 'medium',
+      reporter: 'tester@blogrolly.com',
+      status: 'open',
+      date: '2025-01-22',
+      dateSort: new Date('2025-01-22')
+    },
+    {
+      id: '#BUG-004',
+      title: 'Email notifications not sending',
+      priority: 'high',
+      reporter: 'admin@example.com',
+      status: 'in-progress',
+      date: '2025-01-21',
+      dateSort: new Date('2025-01-21')
+    },
+    {
+      id: '#BUG-005',
+      title: 'Blog submission form validation issues',
+      priority: 'low',
+      reporter: 'blogger@domain.com',
+      status: 'resolved',
+      date: '2025-01-20',
+      dateSort: new Date('2025-01-20')
+    },
+    {
+      id: '#BUG-006',
+      title: 'Dashboard loading performance issues',
+      priority: 'medium',
+      reporter: 'admin@blogrolly.com',
+      status: 'open',
+      date: '2025-01-19',
+      dateSort: new Date('2025-01-19')
+    }
+  ];
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortedAndFilteredData = () => {
+    let filteredData = [...bugReportsData];
+
+    // Apply priority filter
+    if (priorityFilter !== 'all') {
+      filteredData = filteredData.filter(item => item.priority === priorityFilter);
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filteredData = filteredData.filter(item => item.status === statusFilter);
+    }
+
+    // Apply sorting
+    if (sortConfig !== null) {
+      filteredData.sort((a, b) => {
+        let aValue = a[sortConfig.key as keyof typeof a];
+        let bValue = b[sortConfig.key as keyof typeof b];
+
+        if (sortConfig.key === 'date') {
+          aValue = a.dateSort;
+          bValue = b.dateSort;
+        }
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return filteredData;
+  };
+
+  const getSortIcon = (columnKey: string) => {
+    if (!sortConfig || sortConfig.key !== columnKey) {
+      return ' ↕️';
+    }
+    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
+  const getPriorityClass = (priority: string) => {
+    switch (priority) {
+      case 'high': return styles.priorityHigh;
+      case 'medium': return styles.priorityMedium;
+      case 'low': return styles.priorityLow;
+      default: return '';
+    }
+  };
+
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case 'open': return styles.statusPending;
+      case 'in-progress': return styles.statusInProgress;
+      case 'resolved': return styles.statusResolved;
+      default: return '';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'open': return 'Open';
+      case 'in-progress': return 'In Progress';
+      case 'resolved': return 'Resolved';
+      default: return status;
+    }
+  };
+
+  const sortedAndFilteredData = getSortedAndFilteredData();
+
+  return (
   <div className={styles.sectionContent}>
-    <div className={styles.sectionHeader}>
-      <h2>Bug Reports</h2>
-      <p>Manage and respond to user-reported bugs</p>
-    </div>
+      <div className={styles.sectionHeader}>
+        <h2>Bug Reports</h2>
+        <p>Manage and respond to user-reported bugs</p>
+      </div>
 
-    <div className={styles.statsGrid}>
-      <div className={styles.statCard}>
-        <h3>12</h3>
-        <p>Open Reports</p>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>{sortedAndFilteredData.filter(item => item.status === 'open').length}</h3>
+          <p>Open Reports</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{sortedAndFilteredData.filter(item => item.priority === 'high').length}</h3>
+          <p>High Priority</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{sortedAndFilteredData.filter(item => item.status === 'resolved').length}</h3>
+          <p>Resolved</p>
+        </div>
       </div>
-      <div className={styles.statCard}>
-        <h3>3</h3>
-        <p>High Priority</p>
-      </div>
-      <div className={styles.statCard}>
-        <h3>45</h3>
-        <p>Resolved This Month</p>
-      </div>
-    </div>
 
-    <div className={styles.tableContainer}>
-      <table className={styles.adminTable}>
-        <thead>
-          <tr>
-            <th>Bug ID</th>
-            <th>Title</th>
-            <th>Priority</th>
-            <th>Reporter</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>#BUG-001</strong></td>
-            <td>Login button not responding on mobile</td>
-            <td><span className={styles.priorityHigh}>High</span></td>
-            <td>user@example.com</td>
-            <td><span className={styles.statusPending}>Open</span></td>
-            <td>2025-01-24</td>
-            <td>
-              <button className={styles.actionButton}>View</button>
-              <button className={styles.actionButton}>Assign</button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>#BUG-002</strong></td>
-            <td>Search results not displaying correctly</td>
-            <td><span className={styles.priorityMedium}>Medium</span></td>
-            <td>blogger@test.com</td>
-            <td><span className={styles.statusInProgress}>In Progress</span></td>
-            <td>2025-01-23</td>
-            <td>
-              <button className={styles.actionButton}>View</button>
-              <button className={styles.actionButton}>Update</button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>#BUG-003</strong></td>
-            <td>Profile image upload fails on Chrome</td>
-            <td><span className={styles.priorityMedium}>Medium</span></td>
-            <td>tester@blogrolly.com</td>
-            <td><span className={styles.statusPending}>Open</span></td>
-            <td>2025-01-22</td>
-            <td>
-              <button className={styles.actionButton}>View</button>
-              <button className={styles.actionButton}>Assign</button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>#BUG-004</strong></td>
-            <td>Email notifications not sending</td>
-            <td><span className={styles.priorityHigh}>High</span></td>
-            <td>admin@example.com</td>
-            <td><span className={styles.statusInProgress}>In Progress</span></td>
-            <td>2025-01-21</td>
-            <td>
-              <button className={styles.actionButton}>View</button>
-              <button className={styles.actionButton}>Update</button>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>#BUG-005</strong></td>
-            <td>Blog submission form validation issues</td>
-            <td><span className={styles.priorityLow}>Low</span></td>
-            <td>blogger@domain.com</td>
-            <td><span className={styles.statusResolved}>Resolved</span></td>
-            <td>2025-01-20</td>
-            <td>
-              <button className={styles.actionButton}>View</button>
-              <button className={styles.actionButton}>Archive</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {/* Filters */}
+      <div className={styles.tableFilters}>
+        <div className={styles.filterGroup}>
+          <label htmlFor="priority-filter">Priority:</label>
+          <select 
+            id="priority-filter"
+            value={priorityFilter} 
+            onChange={(e) => setPriorityFilter(e.target.value as 'all' | 'high' | 'medium' | 'low')}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Priorities</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label htmlFor="status-filter">Status:</label>
+          <select 
+            id="status-filter"
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'open' | 'in-progress' | 'resolved')}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Statuses</option>
+            <option value="open">Open</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+
+        <div className={styles.resultsInfo}>
+          Showing {sortedAndFilteredData.length} of {bugReportsData.length} reports
+        </div>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th onClick={() => handleSort('id')} className={styles.sortableHeader}>
+                Bug ID{getSortIcon('id')}
+              </th>
+              <th onClick={() => handleSort('title')} className={styles.sortableHeader}>
+                Title{getSortIcon('title')}
+              </th>
+              <th onClick={() => handleSort('priority')} className={styles.sortableHeader}>
+                Priority{getSortIcon('priority')}
+              </th>
+              <th onClick={() => handleSort('reporter')} className={styles.sortableHeader}>
+                Reporter{getSortIcon('reporter')}
+              </th>
+              <th onClick={() => handleSort('status')} className={styles.sortableHeader}>
+                Status{getSortIcon('status')}
+              </th>
+              <th onClick={() => handleSort('date')} className={styles.sortableHeader}>
+                Date{getSortIcon('date')}
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedAndFilteredData.map((bug) => (
+              <tr key={bug.id}>
+                <td><strong>{bug.id}</strong></td>
+                <td>{bug.title}</td>
+                <td>
+                  <span className={getPriorityClass(bug.priority)}>
+                    {bug.priority.charAt(0).toUpperCase() + bug.priority.slice(1)}
+                  </span>
+                </td>
+                <td>{bug.reporter}</td>
+                <td>
+                  <span className={getStatusClass(bug.status)}>
+                    {getStatusLabel(bug.status)}
+                  </span>
+                </td>
+                <td>{bug.date}</td>
+                <td>
+                  <button className={styles.actionButton}>View</button>
+                  {bug.status === 'open' && (
+                    <button className={styles.actionButton}>Assign</button>
+                  )}
+                  {bug.status === 'in-progress' && (
+                    <button className={styles.actionButton}>Update</button>
+                  )}
+                  {bug.status === 'resolved' && (
+                    <button className={styles.actionButton}>Archive</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {sortedAndFilteredData.length === 0 && (
+          <div className={styles.emptyState}>
+            <h3>No bug reports found</h3>
+            <p>No reports match your current filters.</p>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
 );
 
 const SupportRequests = () => (
