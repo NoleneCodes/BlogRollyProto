@@ -407,6 +407,174 @@
   cursor: not-allowed;
 }
 
+/* Tab Navigation */
+.tabNavigation {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+.tabButton {
+  padding: 1rem 2rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  color: #c42142;
+  background: #f8f9fa;
+}
+
+.tabButton.activeTab {
+  color: #c42142;
+  border-bottom-color: #c42142;
+  font-weight: 600;
+}
+
+.tabContent {
+  min-height: 400px;
+}
+
+/* Blog Manager Styles */
+.managerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.managerHeader h2 {
+  margin: 0;
+  color: #333;
+}
+
+.primaryButton {
+  padding: 0.75rem 1.5rem;
+  background: #c42142;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.primaryButton:hover {
+  background: #a01835;
+}
+
+.blogPostsGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.blogPostCard {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+.blogPostCard:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.blogPostHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.blogPostHeader h3 {
+  margin: 0;
+  color: #333;
+  flex: 1;
+}
+
+.blogPostActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.editButton {
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.editButton:hover {
+  background: #2563eb;
+}
+
+.deleteButton {
+  padding: 0.5rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.deleteButton:hover {
+  background: #dc2626;
+}
+
+.viewButton {
+  padding: 0.5rem 1rem;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.viewButton:hover {
+  background: #059669;
+}
+
+.blogPostDescription {
+  margin: 0 0 1rem 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.blogPostMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.blogPostTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .adminDashboard {
@@ -417,6 +585,21 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+  }
+  
+  .tabNavigation {
+    flex-direction: column;
+  }
+  
+  .tabButton {
+    text-align: left;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+  }
+  
+  .tabButton.activeTab {
+    border-bottom: none;
+    border-left-color: #c42142;
   }
   
   .controls {
@@ -436,5 +619,27 @@
   
   .modalActions {
     flex-direction: column;
+  }
+  
+  .managerHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .blogPostHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .blogPostActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .blogPostMeta {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
