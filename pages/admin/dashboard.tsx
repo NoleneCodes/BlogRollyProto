@@ -291,7 +291,8 @@ const BugReports = () => {
         )}
       </div>
     </div>
-);
+  );
+};
 
 const SupportRequests = () => (
   <div className={styles.sectionContent}>
