@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -22,12 +21,257 @@ interface BlogSubmissionWithReview extends BlogSubmission {
   last_reviewed_at?: string;
 }
 
+// Mock components for now
+const BugReports = () => (
+  <div className={styles.sectionContent}>
+    <div className={styles.sectionHeader}>
+      <h2>Bug Reports</h2>
+      <p>Manage and respond to user-reported bugs</p>
+    </div>
+
+    <div className={styles.statsGrid}>
+      <div className={styles.statCard}>
+        <h3>12</h3>
+        <p>Open Reports</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>3</h3>
+        <p>High Priority</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>45</h3>
+        <p>Resolved This Month</p>
+      </div>
+    </div>
+
+    <div className={styles.tableContainer}>
+      <table className={styles.adminTable}>
+        <thead>
+          <tr>
+            <th>Bug ID</th>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Reporter</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#BUG-001</td>
+            <td>Login button not responding on mobile</td>
+            <td><span className={styles.priorityHigh}>High</span></td>
+            <td>user@example.com</td>
+            <td><span className={styles.statusPending}>Open</span></td>
+            <td>2025-01-24</td>
+            <td>
+              <button className={styles.actionButton}>View</button>
+              <button className={styles.actionButton}>Assign</button>
+            </td>
+          </tr>
+          <tr>
+            <td>#BUG-002</td>
+            <td>Search results not displaying correctly</td>
+            <td><span className={styles.priorityMedium}>Medium</span></td>
+            <td>blogger@test.com</td>
+            <td><span className={styles.statusInProgress}>In Progress</span></td>
+            <td>2025-01-23</td>
+            <td>
+              <button className={styles.actionButton}>View</button>
+              <button className={styles.actionButton}>Update</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const SupportRequests = () => (
+  <div className={styles.sectionContent}>
+    <div className={styles.sectionHeader}>
+      <h2>Support Requests</h2>
+      <p>Handle user inquiries and support tickets</p>
+    </div>
+
+    <div className={styles.statsGrid}>
+      <div className={styles.statCard}>
+        <h3>8</h3>
+        <p>Open Tickets</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>2</h3>
+        <p>Urgent</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>24hr</h3>
+        <p>Avg Response Time</p>
+      </div>
+    </div>
+
+    <div className={styles.tableContainer}>
+      <table className={styles.adminTable}>
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Subject</th>
+            <th>Priority</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#SUP-001</td>
+            <td>Cannot access premium features</td>
+            <td><span className={styles.priorityHigh}>High</span></td>
+            <td>premium@user.com</td>
+            <td><span className={styles.statusPending}>Open</span></td>
+            <td>2025-01-24</td>
+            <td>
+              <button className={styles.actionButton}>Reply</button>
+              <button className={styles.actionButton}>Close</button>
+            </td>
+          </tr>
+          <tr>
+            <td>#SUP-002</td>
+            <td>Question about blog submission</td>
+            <td><span className={styles.priorityLow}>Low</span></td>
+            <td>newuser@blog.com</td>
+            <td><span className={styles.statusInProgress}>Responded</span></td>
+            <td>2025-01-23</td>
+            <td>
+              <button className={styles.actionButton}>View</button>
+              <button className={styles.actionButton}>Follow Up</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const AdminStats = () => (
+  <div className={styles.sectionContent}>
+    <div className={styles.sectionHeader}>
+      <h2>Platform Statistics</h2>
+      <p>Overview of BlogRolly performance and metrics</p>
+    </div>
+
+    <div className={styles.statsGrid}>
+      <div className={styles.statCard}>
+        <h3>1,247</h3>
+        <p>Total Users</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>342</h3>
+        <p>Active Bloggers</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>905</h3>
+        <p>Readers</p>
+      </div>
+      <div className={styles.statCard}>
+        <h3>89</h3>
+        <p>Premium Members</p>
+      </div>
+    </div>
+
+    <div className={styles.statsSection}>
+      <h3>Blog Statistics</h3>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>2,156</h3>
+          <p>Total Blogs</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>45</h3>
+          <p>Pending Approval</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>12</h3>
+          <p>Rejected This Week</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>2,099</h3>
+          <p>Approved Blogs</p>
+        </div>
+      </div>
+    </div>
+
+    <div className={styles.statsSection}>
+      <h3>Monthly Growth</h3>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>+127</h3>
+          <p>New Users</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>+89</h3>
+          <p>New Blogs</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>+15</h3>
+          <p>Premium Upgrades</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>94.2%</h3>
+          <p>User Satisfaction</p>
+        </div>
+      </div>
+    </div>
+
+    <div className={styles.statsSection}>
+      <h3>Top Categories</h3>
+      <div className={styles.categoryStats}>
+        <div className={styles.categoryItem}>
+          <span>Lifestyle</span>
+          <span>245 blogs</span>
+        </div>
+        <div className={styles.categoryItem}>
+          <span>Technology</span>
+          <span>198 blogs</span>
+        </div>
+        <div className={styles.categoryItem}>
+          <span>Health & Wellness</span>
+          <span>167 blogs</span>
+        </div>
+        <div className={styles.categoryItem}>
+          <span>Business</span>
+          <span>134 blogs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const BlogSubmissions = () => (
+  <div className={styles.sectionContent}>
+    <div className={styles.sectionHeader}>
+      <h2>Blog Submissions</h2>
+      <p>Review and manage submitted blog posts</p>
+    </div>
+  </div>
+);
+
+const BlogManager = () => (
+  <div className={styles.sectionContent}>
+    <div className={styles.sectionHeader}>
+      <h2>Blog Manager</h2>
+      <p>Create and edit internal blog posts</p>
+    </div>
+  </div>
+);
+
 const AdminDashboard: React.FC = () => {
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('submissions');
-  
+
   // Blog Submissions State
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
   const [filter, setFilter] = useState<BlogStatus | 'all'>('pending');
@@ -210,6 +454,23 @@ const AdminDashboard: React.FC = () => {
     ];
   };
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'submissions':
+        return <BlogSubmissions />;
+      case 'manager':
+        return <BlogManager />;
+      case 'bug-reports':
+        return <BugReports />;
+      case 'support-requests':
+        return <SupportRequests />;
+      case 'stats':
+        return <AdminStats />;
+      default:
+        return <BlogSubmissions />;
+    }
+  };
+
   if (isLoading) {
     return (
       <Layout title="Loading...">
@@ -241,9 +502,8 @@ const AdminDashboard: React.FC = () => {
             <span className={styles.adminBadge}>ADMIN</span>
           </div>
         </div>
-
-        {/* Tab Navigation */}
-        <div className={styles.tabNavigation}>
+         {/* Tab Navigation */}
+         <div className={styles.tabNavigation}>
           <button 
             className={`${styles.tabButton} ${activeTab === 'submissions' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('submissions')}
@@ -256,6 +516,24 @@ const AdminDashboard: React.FC = () => {
           >
             Blog Manager
           </button>
+            <button 
+                className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
+                onClick={() => setActiveTab('bug-reports')}
+              >
+                Bug Reports
+              </button>
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'support-requests' ? styles.activeTab : ''}`}
+                onClick={() => setActiveTab('support-requests')}
+              >
+                Support Requests
+              </button>
+              <button 
+                className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+                onClick={() => setActiveTab('stats')}
+              >
+                Stats
+              </button>
         </div>
 
         {/* Blog Submissions Tab */}
@@ -398,15 +676,15 @@ const AdminDashboard: React.FC = () => {
                       </a>
                     </div>
                   </div>
-                  
+
                   <p className={styles.blogPostDescription}>{post.description}</p>
-                  
+
                   <div className={styles.blogPostMeta}>
                     <span>Category: {post.category}</span>
                     <span>Published: {post.publishDate}</span>
                     <span>Status: {post.isPublished ? 'Published' : 'Draft'}</span>
                   </div>
-                  
+
                   <div className={styles.blogPostTags}>
                     {post.tags.map((tag, index) => (
                       <span key={index} className={styles.tag}>{tag}</span>
@@ -416,6 +694,17 @@ const AdminDashboard: React.FC = () => {
               ))}
             </div>
           </div>
+        )}
+         {activeTab === 'bug-reports' && (
+          <BugReports />
+        )}
+
+        {activeTab === 'support-requests' && (
+          <SupportRequests />
+        )}
+
+        {activeTab === 'stats' && (
+          <AdminStats />
         )}
 
         {/* Review Modal */}
