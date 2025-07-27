@@ -154,21 +154,12 @@ const BugReports = () => {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'open': return 'Open';
-      case 'in-progress': return 'In Progress';
-      case 'resolved': return 'Resolved';
-      default: return status;
-    }
-  };
-
   const handleStatusChange = (bugId: string, newStatus: 'open' | 'in-progress' | 'resolved') => {
-    // In a real application, this would update the database
     console.log(`Updating bug ${bugId} status to ${newStatus}`);
-    // For now, just show an alert
     alert(`Bug ${bugId} status updated to ${newStatus}`);
   };
+
+  const sortedAndFilteredData = getSortedAndFilteredData();
 
   return (
     <div className={styles.sectionContent}>
@@ -192,7 +183,6 @@ const BugReports = () => {
         </div>
       </div>
 
-      {/* Filters */}
       <div className={styles.tableFilters}>
         <div className={styles.filterGroup}>
           <label htmlFor="priority-filter">Priority:</label>
@@ -379,7 +369,6 @@ const AdminStats = () => (
     </div>
 
     <div className={styles.statsCardsGrid}>
-      {/* Platform Statistics Card */}
       <div className={styles.statsMainCard}>
         <div className={styles.cardHeader}>
           <h3>Platform Statistics</h3>
@@ -405,7 +394,6 @@ const AdminStats = () => (
         </div>
       </div>
 
-      {/* Blog Statistics Card */}
       <div className={styles.statsMainCard}>
         <div className={styles.cardHeader}>
           <h3>Blog Statistics</h3>
@@ -431,7 +419,6 @@ const AdminStats = () => (
         </div>
       </div>
 
-      {/* Monthly Growth Card */}
       <div className={styles.statsMainCard}>
         <div className={styles.cardHeader}>
           <h3>Monthly Growth</h3>
@@ -457,7 +444,6 @@ const AdminStats = () => (
         </div>
       </div>
 
-      {/* Top Categories Card */}
       <div className={styles.statsMainCard}>
         <div className={styles.cardHeader}>
           <h3>Top Categories</h3>
@@ -486,31 +472,12 @@ const AdminStats = () => (
   </div>
 );
 
-const BlogSubmissions = () => (
-  <div className={styles.sectionContent}>
-    <div className={styles.sectionHeader}>
-      <h2>Blog Submissions</h2>
-      <p>Review and manage submitted blog posts</p>
-    </div>
-  </div>
-);
-
-const BlogManager = () => (
-  <div className={styles.sectionContent}>
-    <div className={styles.sectionHeader}>
-      <h2>Blog Manager</h2>
-      <p>Create and edit internal blog posts</p>
-    </div>
-  </div>
-);
-
 const AdminDashboard: React.FC = () => {
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('submissions');
 
-  // Blog Submissions State
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
   const [filter, setFilter] = useState<BlogStatus | 'all'>('pending');
   const [selectedSubmission, setSelectedSubmission] = useState<BlogSubmissionWithReview | null>(null);
@@ -520,15 +487,12 @@ const AdminDashboard: React.FC = () => {
   const [rejectionNote, setRejectionNote] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Blog Manager State
   const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
   const [showManager, setShowManager] = useState(false);
   const [editingPost, setEditingPost] = useState<InternalBlogPost | undefined>();
   const [mode, setMode] = useState<'add' | 'edit'>('add');
 
-  // Check admin authentication - BYPASSED FOR DEVELOPMENT
   useEffect(() => {
-    // Bypass authentication for development
     setAdminUser({
       authenticated: true,
       authorized: true,
@@ -539,7 +503,6 @@ const AdminDashboard: React.FC = () => {
     setIsLoading(false);
   }, []);
 
-  // Load data based on active tab
   useEffect(() => {
     if (adminUser) {
       if (activeTab === 'submissions') {
@@ -552,7 +515,6 @@ const AdminDashboard: React.FC = () => {
 
   const loadSubmissions = async () => {
     try {
-      // Mock data for development
       const mockSubmissions: BlogSubmissionWithReview[] = [
         {
           id: '1',
@@ -573,26 +535,6 @@ const AdminDashboard: React.FC = () => {
           updated_at: '2025-01-24T10:00:00Z',
           blogger_name: 'John Developer',
           blogger_email: 'john@example.com',
-          review_count: 0
-        },
-        {
-          id: '2',
-          user_id: 'user-2',
-          title: 'Adult Content Blog Post',
-          description: 'This is an adult content blog post for testing age-gated content.',
-          url: 'https://adult-blog.com/content',
-          category: 'Lifestyle',
-          tags: ['Adult', 'Lifestyle'],
-          status: 'pending',
-          has_adult_content: true,
-          is_live: false,
-          views: 0,
-          clicks: 0,
-          submitted_at: '2025-01-24T11:00:00Z',
-          created_at: '2025-01-24T11:00:00Z',
-          updated_at: '2025-01-24T11:00:00Z',
-          blogger_name: 'Jane Smith',
-          blogger_email: 'jane@example.com',
           review_count: 0
         }
       ];
@@ -625,26 +567,12 @@ const AdminDashboard: React.FC = () => {
 
     setIsProcessing(true);
     try {
-      const reviewData = {
-        submissionId: selectedSubmission.id,
-        action: reviewAction,
-        reviewerId: adminUser?.userId,
-        rejectionReason: reviewAction === 'reject' ? rejectionReason : undefined,
-        rejectionNote: reviewAction === 'reject' && rejectionNote ? rejectionNote : undefined
-      };
-
-      console.log('Submitting review:', reviewData);
-
-      // Mock success for development
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      alert(`Blog submission ${reviewAction}d successfully! Email notification sent to blogger.`);
-
+      alert(`Blog submission ${reviewAction}d successfully!`);
       setShowReviewModal(false);
       setSelectedSubmission(null);
       setReviewAction(null);
       loadSubmissions();
-
     } catch (error) {
       console.error('Failed to submit review:', error);
       alert('Failed to process review. Please try again.');
@@ -692,23 +620,6 @@ const AdminDashboard: React.FC = () => {
     ];
   };
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'submissions':
-        return <BlogSubmissions />;
-      case 'manager':
-        return <BlogManager />;
-      case 'bug-reports':
-        return <BugReports />;
-      case 'support-requests':
-        return <SupportRequests />;
-      case 'stats':
-        return <AdminStats />;
-      default:
-        return <BlogSubmissions />;
-    }
-  };
-
   if (isLoading) {
     return (
       <Layout title="Loading...">
@@ -740,8 +651,8 @@ const AdminDashboard: React.FC = () => {
             <span className={styles.adminBadge}>ADMIN</span>
           </div>
         </div>
-         {/* Tab Navigation */}
-         <div className={styles.tabNavigation}>
+
+        <div className={styles.tabNavigation}>
           <button 
             className={`${styles.tabButton} ${activeTab === 'submissions' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('submissions')}
@@ -754,27 +665,26 @@ const AdminDashboard: React.FC = () => {
           >
             Blog Manager
           </button>
-            <button 
-                className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('bug-reports')}
-              >
-                Bug Reports
-              </button>
-              <button 
-                className={`${styles.tabButton} ${activeTab === 'support-requests' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('support-requests')}
-              >
-                Support Requests
-              </button>
-              <button 
-                className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
-                onClick={() => setActiveTab('stats')}
-              >
-                Stats
-              </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('bug-reports')}
+          >
+            Bug Reports
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'support-requests' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('support-requests')}
+          >
+            Support Requests
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('stats')}
+          >
+            Stats
+          </button>
         </div>
 
-        {/* Blog Submissions Tab */}
         {activeTab === 'submissions' && (
           <div className={styles.tabContent}>
             <div className={styles.controls}>
@@ -870,7 +780,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Blog Manager Tab */}
         {activeTab === 'manager' && (
           <div className={styles.tabContent}>
             <div className={styles.managerHeader}>
@@ -885,31 +794,17 @@ const AdminDashboard: React.FC = () => {
 
             <div className={styles.blogPostsGrid}>
               {blogPosts.map((post) => (
-                <div 
-                  key={post.id}
-                  className={styles.blogPostCard}
-                >
+                <div key={post.id} className={styles.blogPostCard}>
                   <div className={styles.blogPostHeader}>
                     <h3>{post.title}</h3>
                     <div className={styles.blogPostActions}>
-                      <button
-                        onClick={() => handleEdit(post)}
-                        className={styles.editButton}
-                      >
+                      <button onClick={() => handleEdit(post)} className={styles.editButton}>
                         Edit
                       </button>
-                      <button
-                        onClick={() => handleDelete(post.id)}
-                        className={styles.deleteButton}
-                      >
+                      <button onClick={() => handleDelete(post.id)} className={styles.deleteButton}>
                         Delete
                       </button>
-                      <a 
-                        href={`/blog/post/${post.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.viewButton}
-                      >
+                      <a href={`/blog/post/${post.slug}`} target="_blank" rel="noopener noreferrer" className={styles.viewButton}>
                         View
                       </a>
                     </div>
@@ -933,25 +828,15 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         )}
-         {activeTab === 'bug-reports' && (
-          <BugReports />
-        )}
 
-        {activeTab === 'support-requests' && (
-          <SupportRequests />
-        )}
+        {activeTab === 'bug-reports' && <BugReports />}
+        {activeTab === 'support-requests' && <SupportRequests />}
+        {activeTab === 'stats' && <AdminStats />}
 
-        {activeTab === 'stats' && (
-          <AdminStats />
-        )}
-
-        {/* Review Modal */}
         {showReviewModal && selectedSubmission && (
           <div className={styles.modal}>
             <div className={styles.modalContent}>
-              <h3>
-                {reviewAction === 'approve' ? 'Approve' : 'Reject'} Blog Submission
-              </h3>
+              <h3>{reviewAction === 'approve' ? 'Approve' : 'Reject'} Blog Submission</h3>
 
               <div className={styles.modalSubmissionInfo}>
                 <h4>{selectedSubmission.title}</h4>
@@ -1026,7 +911,6 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Blog Post Manager Modal */}
         {showManager && (
           <BlogPostManager
             onClose={handleCloseManager}
