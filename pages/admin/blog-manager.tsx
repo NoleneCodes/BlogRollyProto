@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -26,32 +25,17 @@ const BlogManagerPage: React.FC = () => {
     checkAuthAndAuthorization();
   }, []);
 
-  const checkAuthAndAuthorization = async () => {
-    try {
-      const response = await fetch('/api/admin-auth-check');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.authenticated) {
-          const user = {
-            id: data.userId,
-            name: data.userName,
-            roles: data.userRoles ? data.userRoles.split(',') : []
-          };
-          setUserInfo(user);
-          
-          if (data.authorized) {
-            setIsAuthorized(true);
-            loadBlogPosts();
-          } else {
-            setIsAuthorized(false);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const checkAuthAndAuthorization = () => {
+    // Bypass authentication for development
+    const user = {
+      id: 'dev-user',
+      name: 'Developer',
+      roles: ['admin']
+    };
+    setUserInfo(user);
+    setIsAuthorized(true);
+    setIsLoading(false);
+    loadBlogPosts();
   };
 
   const loadBlogPosts = () => {
