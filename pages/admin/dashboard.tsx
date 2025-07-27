@@ -157,91 +157,112 @@ const SupportRequests = () => (
 const AdminStats = () => (
   <div className={styles.sectionContent}>
     <div className={styles.sectionHeader}>
-      <h2>Platform Statistics</h2>
+      <h2>Dashboard Overview</h2>
       <p>Overview of BlogRolly performance and metrics</p>
     </div>
 
-    <div className={styles.statsGrid}>
-      <div className={styles.statCard}>
-        <h3>1,247</h3>
-        <p>Total Users</p>
+    <div className={styles.statsCardsGrid}>
+      {/* Platform Statistics Card */}
+      <div className={styles.statsMainCard}>
+        <div className={styles.cardHeader}>
+          <h3>Platform Statistics</h3>
+          <p>Current user metrics and platform health</p>
+        </div>
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <h3>1,247</h3>
+            <p>Total Users</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>342</h3>
+            <p>Active Bloggers</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>905</h3>
+            <p>Readers</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>89</h3>
+            <p>Premium Members</p>
+          </div>
+        </div>
       </div>
-      <div className={styles.statCard}>
-        <h3>342</h3>
-        <p>Active Bloggers</p>
-      </div>
-      <div className={styles.statCard}>
-        <h3>905</h3>
-        <p>Readers</p>
-      </div>
-      <div className={styles.statCard}>
-        <h3>89</h3>
-        <p>Premium Members</p>
-      </div>
-    </div>
 
-    <div className={styles.statsSection}>
-      <h3>Blog Statistics</h3>
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <h3>2,156</h3>
-          <p>Total Blogs</p>
+      {/* Blog Statistics Card */}
+      <div className={styles.statsMainCard}>
+        <div className={styles.cardHeader}>
+          <h3>Blog Statistics</h3>
+          <p>Content submission and approval metrics</p>
         </div>
-        <div className={styles.statCard}>
-          <h3>45</h3>
-          <p>Pending Approval</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>12</h3>
-          <p>Rejected This Week</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>2,099</h3>
-          <p>Approved Blogs</p>
-        </div>
-      </div>
-    </div>
-
-    <div className={styles.statsSection}>
-      <h3>Monthly Growth</h3>
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <h3>+127</h3>
-          <p>New Users</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>+89</h3>
-          <p>New Blogs</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>+15</h3>
-          <p>Premium Upgrades</p>
-        </div>
-        <div className={styles.statCard}>
-          <h3>94.2%</h3>
-          <p>User Satisfaction</p>
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <h3>2,156</h3>
+            <p>Total Blogs</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>45</h3>
+            <p>Pending Approval</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>12</h3>
+            <p>Rejected This Week</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>2,099</h3>
+            <p>Approved Blogs</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div className={styles.statsSection}>
-      <h3>Top Categories</h3>
-      <div className={styles.categoryStats}>
-        <div className={styles.categoryItem}>
-          <span>Lifestyle</span>
-          <span>245 blogs</span>
+      {/* Monthly Growth Card */}
+      <div className={styles.statsMainCard}>
+        <div className={styles.cardHeader}>
+          <h3>Monthly Growth</h3>
+          <p>Growth metrics and performance indicators</p>
         </div>
-        <div className={styles.categoryItem}>
-          <span>Technology</span>
-          <span>198 blogs</span>
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <h3>+127</h3>
+            <p>New Users</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>+89</h3>
+            <p>New Blogs</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>+15</h3>
+            <p>Premium Upgrades</p>
+          </div>
+          <div className={styles.statCard}>
+            <h3>94.2%</h3>
+            <p>User Satisfaction</p>
+          </div>
         </div>
-        <div className={styles.categoryItem}>
-          <span>Health & Wellness</span>
-          <span>167 blogs</span>
+      </div>
+
+      {/* Top Categories Card */}
+      <div className={styles.statsMainCard}>
+        <div className={styles.cardHeader}>
+          <h3>Top Categories</h3>
+          <p>Most popular blog categories by volume</p>
         </div>
-        <div className={styles.categoryItem}>
-          <span>Business</span>
-          <span>134 blogs</span>
+        <div className={styles.categoryStats}>
+          <div className={styles.categoryItem}>
+            <span>Lifestyle</span>
+            <span>245 blogs</span>
+          </div>
+          <div className={styles.categoryItem}>
+            <span>Technology</span>
+            <span>198 blogs</span>
+          </div>
+          <div className={styles.categoryItem}>
+            <span>Health & Wellness</span>
+            <span>167 blogs</span>
+          </div>
+          <div className={styles.categoryItem}>
+            <span>Business</span>
+            <span>134 blogs</span>
+          </div>
         </div>
       </div>
     </div>
