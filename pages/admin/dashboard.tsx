@@ -59,7 +59,7 @@ const BugReports = () => (
         </thead>
         <tbody>
           <tr>
-            <td>#BUG-001</td>
+            <td><strong>#BUG-001</strong></td>
             <td>Login button not responding on mobile</td>
             <td><span className={styles.priorityHigh}>High</span></td>
             <td>user@example.com</td>
@@ -71,7 +71,7 @@ const BugReports = () => (
             </td>
           </tr>
           <tr>
-            <td>#BUG-002</td>
+            <td><strong>#BUG-002</strong></td>
             <td>Search results not displaying correctly</td>
             <td><span className={styles.priorityMedium}>Medium</span></td>
             <td>blogger@test.com</td>
@@ -80,6 +80,42 @@ const BugReports = () => (
             <td>
               <button className={styles.actionButton}>View</button>
               <button className={styles.actionButton}>Update</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>#BUG-003</strong></td>
+            <td>Profile image upload fails on Chrome</td>
+            <td><span className={styles.priorityMedium}>Medium</span></td>
+            <td>tester@blogrolly.com</td>
+            <td><span className={styles.statusPending}>Open</span></td>
+            <td>2025-01-22</td>
+            <td>
+              <button className={styles.actionButton}>View</button>
+              <button className={styles.actionButton}>Assign</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>#BUG-004</strong></td>
+            <td>Email notifications not sending</td>
+            <td><span className={styles.priorityHigh}>High</span></td>
+            <td>admin@example.com</td>
+            <td><span className={styles.statusInProgress}>In Progress</span></td>
+            <td>2025-01-21</td>
+            <td>
+              <button className={styles.actionButton}>View</button>
+              <button className={styles.actionButton}>Update</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>#BUG-005</strong></td>
+            <td>Blog submission form validation issues</td>
+            <td><span className={styles.priorityLow}>Low</span></td>
+            <td>blogger@domain.com</td>
+            <td><span className={styles.statusResolved}>Resolved</span></td>
+            <td>2025-01-20</td>
+            <td>
+              <button className={styles.actionButton}>View</button>
+              <button className={styles.actionButton}>Archive</button>
             </td>
           </tr>
         </tbody>
