@@ -163,10 +163,15 @@ const BugReports = () => {
     }
   };
 
-  const sortedAndFilteredData = getSortedAndFilteredData();
+  const handleStatusChange = (bugId: string, newStatus: 'open' | 'in-progress' | 'resolved') => {
+    // In a real application, this would update the database
+    console.log(`Updating bug ${bugId} status to ${newStatus}`);
+    // For now, just show an alert
+    alert(`Bug ${bugId} status updated to ${newStatus}`);
+  };
 
   return (
-  <div className={styles.sectionContent}>
+    <div className={styles.sectionContent}>
       <div className={styles.sectionHeader}>
         <h2>Bug Reports</h2>
         <p>Manage and respond to user-reported bugs</p>
@@ -261,9 +266,15 @@ const BugReports = () => {
                 </td>
                 <td>{bug.reporter}</td>
                 <td>
-                  <span className={getStatusClass(bug.status)}>
-                    {getStatusLabel(bug.status)}
-                  </span>
+                  <select 
+                    value={bug.status}
+                    onChange={(e) => handleStatusChange(bug.id, e.target.value as 'open' | 'in-progress' | 'resolved')}
+                    className={`${styles.statusSelect} ${getStatusClass(bug.status)}`}
+                  >
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                  </select>
                 </td>
                 <td>{bug.date}</td>
                 <td>
