@@ -544,6 +544,64 @@ export const supabaseDB = {
       .eq('user_id', userId)
       .order('changed_at', { ascending: false });
     return { data, error };
+  },
+
+  // User management for webhooks
+  getUserByEmail: async (email: string) => {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('email', email)
+      .single();
+    return { data, error };
+  },
+
+  updateUserTier: async (userId: string, tier: UserTier) => {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .update({ tier })
+      .eq('user_id', userId)
+      .select();
+    return { data, error };
+  },
+
+  updateBloggerStripeInfo: async (userId: string, stripeInfo: {
+    stripe_customer_id?: string;
+    subscription_status?: 'active' | 'canceled' | 'past_due';
+    subscription_id?: string;
+    subscription_end_date?: string;
+  }) => {
+    const { data, error } = await supabase
+      .from('blogger_profiles')
+      .update(stripeInfo)
+      .eq('user_id', userId)
+      .select();
+    return { data, error };
+  },
+
+  // Premium feature checks
+  isUserPremium: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('tier')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) return { isPremium: false, error };
+    
+    return { isPremium: data?.tier === 'pro', error: null };
+  },
+
+  getUserWithBloggerProfile: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select(`
+        *,
+        blogger_profiles(*)
+      `)
+      .eq('user_id', userId)
+      .single();
+    return { data, error };
   }
 };
 

@@ -7,6 +7,7 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
 import styles from '../../styles/BloggerProfile.module.css';
+import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 
 interface UserInfo {
   id: string;
@@ -79,7 +80,7 @@ const BloggerProfile: React.FC = () => {
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
   const [showStripePricingModal, setShowStripePricingModal] = useState<boolean>(false);
-  
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -189,7 +190,7 @@ const BloggerProfile: React.FC = () => {
           averageTimeOnSite: 3.2
         });
 
-        
+
       } catch (error) {
         console.error('Auth check failed:', error);
       } finally {
@@ -407,7 +408,7 @@ const BloggerProfile: React.FC = () => {
     setEditingField(null);
   };
 
-  
+
 
 
   if (isLoading) {
@@ -706,8 +707,9 @@ const BloggerProfile: React.FC = () => {
 
       case 'stats':
         return (
-          <div className={styles.content}>
-            <h2>Analytics & Stats</h2>
+          <PremiumFeatureGuard>
+            <div className={styles.content}>
+              <h2>Analytics & Stats</h2>
             {blogStats && (
               <>
                 <div className={styles.statsOverview}>
@@ -761,6 +763,7 @@ const BloggerProfile: React.FC = () => {
               </>
             )}
           </div>
+          </PremiumFeatureGuard>
         );
 
       case 'settings':
@@ -948,6 +951,7 @@ const BloggerProfile: React.FC = () => {
   return (
     <Layout title="Blogger Profile - Blogrolly">
       <div className={styles.profileContainer}>
+```python
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h3>Blogger Dashboard</h3>
@@ -1087,7 +1091,7 @@ const BloggerProfile: React.FC = () => {
         </div>
       )}
 
-      
+
     </Layout>
   );
 };

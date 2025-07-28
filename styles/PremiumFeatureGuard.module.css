@@ -1,0 +1,43 @@
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.upgradePrompt {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.promptContent h3 {
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.promptContent p {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+.upgradeButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.upgradeButton:hover {
+  transform: translateY(-2px);
+}

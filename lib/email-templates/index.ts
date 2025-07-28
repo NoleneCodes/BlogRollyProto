@@ -62,12 +62,37 @@ export const emailTemplates = {
   blogDelistedPayment: blogDelistedPaymentTemplate
 };
 
-// Email service functions (placeholders for actual implementation)
+// Email service functions with Resend integration
 export const emailService = {
   //  User Onboarding
   sendWelcomeEmail: async (email: string, firstName: string, userType: 'reader' | 'blogger') => {
-    console.log('TODO: Send welcome email via Resend', { email, firstName, userType });
-    // TODO: Implement Resend integration
+    try {
+      const template = userType === 'reader' ? emailTemplates.welcomeReader : emailTemplates.welcomeBlogger;
+      const { html, subject } = template({ firstName });
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: RESEND_CONFIG.fromEmail,
+          to: email,
+          subject,
+          html
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Resend API error: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Send welcome email error:', error);
+      throw error;
+    }
   },
   
   //  Blog Submission Workflow
@@ -117,29 +142,159 @@ export const emailService = {
 
   // Subscription & Payments
   sendPremiumWelcome: async (email: string, firstName: string) => {
-    console.log('TODO: Send premium welcome email', { email, firstName });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.premiumWelcome({ firstName });
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: RESEND_CONFIG.fromEmail,
+          to: email,
+          subject,
+          html
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Resend API error: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Send premium welcome email error:', error);
+      throw error;
+    }
   },
 
   sendPaymentSuccessful: async (email: string, userName: string, amount: string, planName: string, invoiceUrl: string, nextBillingDate: string) => {
-    console.log('TODO: Send payment successful email', { email, userName, amount, planName, invoiceUrl, nextBillingDate });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.paymentSuccessful({ userName, amount, planName, invoiceUrl, nextBillingDate });
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: RESEND_CONFIG.fromEmail,
+          to: email,
+          subject,
+          html
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Resend API error: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Send payment successful email error:', error);
+      throw error;
+    }
   },
 
   sendPaymentFailedNotice: async (email: string, userName: string, planName: string, amount: string, noticeType: 'first' | 'final', retryDate?: string, delistDate?: string) => {
-    console.log('TODO: Send payment failed notice email', { email, userName, planName, amount, noticeType, retryDate, delistDate });
-    // TODO: Implement Resend integration
+    try {
+      const template = noticeType === 'first' ? emailTemplates.paymentFailedFirstNotice : emailTemplates.paymentFailedFinalNotice;
+      const templateData = noticeType === 'first' 
+        ? { userName, planName, amount, retryDate: retryDate! }
+        : { userName, planName, amount, delistDate: delistDate! };
+      
+      const { html, subject } = template(templateData);
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: RESEND_CONFIG.fromEmail,
+          to: email,
+          subject,
+          html
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Resend API error: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Send payment failed notice email error:', error);
+      throw error;
+    }
   },
 
   sendBlogDelistedPayment: async (email: string, userName: string, blogCount: number, amount: string) => {
-    console.log('TODO: Send blog delisted payment email', { email, userName, blogCount, amount });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.blogDelistedPayment({ userName, blogCount, amount });
+      
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: RESEND_CONFIG.fromEmail,
+          to: email,
+          subject,
+          html
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Resend API error: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Send blog delisted payment email error:', error);
+      throw error;
+    }
   },
 
   // Mailchimp integration
   addToMailchimpAudience: async (email: string, firstName: string, tags: string[]) => {
-    console.log('TODO: Add to Mailchimp audience', { email, firstName, tags });
-    // TODO: Implement Mailchimp integration
+    try {
+      if (!MAILCHIMP_CONFIG.apiKey || !MAILCHIMP_CONFIG.audienceId) {
+        console.log('Mailchimp not configured, skipping audience update');
+        return;
+      }
+
+      const response = await fetch(`https://${MAILCHIMP_CONFIG.serverPrefix}.api.mailchimp.com/3.0/lists/${MAILCHIMP_CONFIG.audienceId}/members`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${MAILCHIMP_CONFIG.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email_address: email,
+          status: 'subscribed',
+          merge_fields: {
+            FNAME: firstName
+          },
+          tags: tags
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Mailchimp API error: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Add to Mailchimp audience error:', error);
+      throw error;
+    }
   }
 };
 
