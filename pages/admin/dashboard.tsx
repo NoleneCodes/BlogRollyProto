@@ -575,18 +575,7 @@ const SupportRequests = () => {
                 </td>
                 <td>{ticket.created}</td>
                 <td>
-                  {ticket.status === 'open' && (
-                    <>
-                      <button className={styles.actionButton}>Reply</button>
-                      <button className={styles.actionButton}>Close</button>
-                    </>
-                  )}
-                  {ticket.status === 'responded' && (
-                    <>
-                      <button className={styles.actionButton}>View</button>
-                      <button className={styles.actionButton}>Follow Up</button>
-                    </>
-                  )}
+                  <button className={styles.actionButton}>View</button>
                 </td>
               </tr>
             ))}
