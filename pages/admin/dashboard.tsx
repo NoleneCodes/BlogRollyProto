@@ -249,15 +249,6 @@ const BugReports = () => {
                   >
                     View
                   </button>
-                  {bug.status === 'open' && (
-                    <button className={styles.actionButton}>Assign</button>
-                  )}
-                  {bug.status === 'in-progress' && (
-                    <button className={styles.actionButton}>Update</button>
-                  )}
-                  {bug.status === 'resolved' && (
-                    <button className={styles.actionButton}>Archive</button>
-                  )}
                 </td>
               </tr>
             ))}
