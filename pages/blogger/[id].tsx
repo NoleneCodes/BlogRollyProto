@@ -299,13 +299,13 @@ const PublicBloggerProfile: React.FC = () => {
           </div>
           
           {blogPosts.length > 0 ? (
-            <div className={styles.blogGrid}>
+            <div className={styles.blogrollGrid}>
               {blogPosts.map((post) => (
                 <BlogCard
                   key={post.id}
                   blog={post}
                   showAuthor={false}
-                  showSaveButton={false}
+                  showSaveButton={true}
                 />
               ))}
             </div>
