@@ -116,6 +116,13 @@ const BugReports = () => {
           bValue = b.dateSort;
         }
 
+        // Special handling for priority column to order low-medium-high
+        if (sortConfig.key === 'priority') {
+          const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
+          aValue = priorityOrder[a.priority as keyof typeof priorityOrder];
+          bValue = priorityOrder[b.priority as keyof typeof priorityOrder];
+        }
+
         if (aValue < bValue) {
           return sortConfig.direction === 'asc' ? -1 : 1;
         }
