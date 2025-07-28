@@ -808,15 +808,27 @@ const AdminDashboard: React.FC = () => {
   const [mode, setMode] = useState<'add' | 'edit'>('add');
 
   useEffect(() => {
-    setAdminUser({
-      authenticated: true,
-      authorized: true,
-      userId: 'dev-user',
-      userName: 'Developer',
-      userRoles: 'admin'
-    });
-    setIsLoading(false);
+    checkAdminAuth();
   }, []);
+
+  const checkAdminAuth = async () => {
+    try {
+      const response = await fetch('/api/admin-auth-check');
+      const data: AdminUser = await response.json();
+      
+      if (!data.authenticated || !data.authorized) {
+        router.push('/admin/login');
+        return;
+      }
+      
+      setAdminUser(data);
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      router.push('/admin/login');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (adminUser) {

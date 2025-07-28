@@ -1,0 +1,157 @@
+
+.adminLogin {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem;
+}
+
+.loginContainer {
+  background: white;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.loginHeader {
+  margin-bottom: 2rem;
+}
+
+.loginHeader h1 {
+  color: #c42142;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.loginHeader p {
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.loginForm {
+  margin-bottom: 2rem;
+}
+
+.loginForm h2 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.loginForm p {
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.authSection {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #d1d5db;
+}
+
+.accessDenied {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 2rem;
+  color: #dc2626;
+}
+
+.accessDenied h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.userInfo {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.userInfo p {
+  margin: 0.5rem 0;
+  color: #374151;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+}
+
+.helpText {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 1rem;
+}
+
+.authorized {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 2rem;
+  color: #166534;
+}
+
+.authorized h2 {
+  color: #166534;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.loading {
+  padding: 2rem;
+}
+
+.loading h2 {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  color: #dc2626;
+}
+
+.retryButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+  background: #a01835;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .adminLogin {
+    padding: 1rem;
+  }
+  
+  .loginContainer {
+    padding: 2rem;
+  }
+  
+  .loginHeader h1 {
+    font-size: 2rem;
+  }
+}
