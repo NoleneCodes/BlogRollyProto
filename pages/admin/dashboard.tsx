@@ -372,6 +372,8 @@ const BugReports = () => {
 
 const SupportRequests = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'responded' | 'closed'>('all');
   const [supportRequestsData] = useState([
     {
       id: 'SUP-001',
@@ -401,11 +403,22 @@ const SupportRequests = () => {
     setSortConfig({ key, direction });
   };
 
-  const getSortedData = () => {
-    let sortedData = [...supportRequestsData];
+  const getSortedAndFilteredData = () => {
+    let filteredData = [...supportRequestsData];
 
+    // Apply priority filter
+    if (priorityFilter !== 'all') {
+      filteredData = filteredData.filter(item => item.priority === priorityFilter);
+    }
+
+    // Apply status filter
+    if (statusFilter !== 'all') {
+      filteredData = filteredData.filter(item => item.status === statusFilter);
+    }
+
+    // Apply sorting
     if (sortConfig !== null) {
-      sortedData.sort((a, b) => {
+      filteredData.sort((a, b) => {
         let aValue = a[sortConfig.key as keyof typeof a];
         let bValue = b[sortConfig.key as keyof typeof b];
 
@@ -431,7 +444,7 @@ const SupportRequests = () => {
       });
     }
 
-    return sortedData;
+    return filteredData;
   };
 
   const getSortIcon = (columnKey: string) => {
@@ -459,7 +472,7 @@ const SupportRequests = () => {
     }
   };
 
-  const sortedData = getSortedData();
+  const sortedAndFilteredData = getSortedAndFilteredData();
 
   return (
     <div className={styles.sectionContent}>
@@ -470,16 +483,52 @@ const SupportRequests = () => {
 
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <h3>8</h3>
+          <h3>{sortedAndFilteredData.filter(item => item.status === 'open').length}</h3>
           <p>Open Tickets</p>
         </div>
         <div className={styles.statCard}>
-          <h3>2</h3>
+          <h3>{sortedAndFilteredData.filter(item => item.priority === 'high').length}</h3>
           <p>Urgent</p>
         </div>
         <div className={styles.statCard}>
           <h3>24hr</h3>
           <p>Avg Response Time</p>
+        </div>
+      </div>
+
+      <div className={styles.tableFilters}>
+        <div className={styles.filterGroup}>
+          <label htmlFor="priority-filter-support">Priority:</label>
+          <select 
+            id="priority-filter-support"
+            value={priorityFilter} 
+            onChange={(e) => setPriorityFilter(e.target.value as 'all' | 'high' | 'medium' | 'low')}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Priorities</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label htmlFor="status-filter-support">Status:</label>
+          <select 
+            id="status-filter-support"
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'open' | 'responded' | 'closed')}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Statuses</option>
+            <option value="open">Open</option>
+            <option value="responded">Responded</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+
+        <div className={styles.resultsInfo}>
+          Showing {sortedAndFilteredData.length} of {supportRequestsData.length} requests
         </div>
       </div>
 
@@ -509,7 +558,7 @@ const SupportRequests = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedData.map((ticket) => (
+            {sortedAndFilteredData.map((ticket) => (
               <tr key={ticket.id}>
                 <td><strong>#{ticket.id}</strong></td>
                 <td>{ticket.subject}</td>
@@ -543,6 +592,13 @@ const SupportRequests = () => {
             ))}
           </tbody>
         </table>
+
+        {sortedAndFilteredData.length === 0 && (
+          <div className={styles.emptyState}>
+            <h3>No support requests found</h3>
+            <p>No requests match your current filters.</p>
+          </div>
+        )}
       </div>
     </div>
   );
