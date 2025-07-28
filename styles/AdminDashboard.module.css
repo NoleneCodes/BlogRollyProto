@@ -6,7 +6,7 @@
 
 .header {
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
   border-bottom: 2px solid #e0e0e0;
@@ -83,6 +83,22 @@
 
 .loginButton:hover {
   background: #a01835;
+}
+
+.signOutButton {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signOutButton:hover {
+  background: #4b5563;
 }
 
 .accessDenied {

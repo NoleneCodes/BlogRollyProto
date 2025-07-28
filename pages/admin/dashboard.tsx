@@ -909,6 +909,16 @@ const AdminDashboard: React.FC = () => {
     loadBlogPosts();
   };
 
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/admin/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+      alert('Failed to sign out. Please try again.');
+    }
+  };
+
   const getRejectionReasons = (): { value: RejectionReason; label: string }[] => {
     return [
       { value: 'inappropriate_content', label: 'Inappropriate Content' },
@@ -951,6 +961,12 @@ const AdminDashboard: React.FC = () => {
       <div className={styles.adminDashboard}>
         <div className={styles.header}>
           <h1>Admin Dashboard</h1>
+          <button 
+            onClick={handleSignOut}
+            className={styles.signOutButton}
+          >
+            Sign Out
+          </button>
         </div>
 
         <div className={styles.tabNavigation}>
