@@ -22,7 +22,7 @@ const About: NextPage = () => {
       </div>
 
       <div className={styles.missionSection}>
-        <h2>Our Mission: A Quiet Revolution for Indie Bloggers</h2>
+        <h2>Our Mission:</h2> <h3>A Quiet Revolution for Indie Bloggers</h3>
         <p>
           BlogRolly has a simple mission:<br />
           To reconnect the fragmented blogosphere and empower independent writers with the visibility they deserve.
