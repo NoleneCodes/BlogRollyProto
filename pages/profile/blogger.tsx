@@ -852,7 +852,7 @@ const BloggerProfile: React.FC = () => {
                 <p>You're currently on our free tier with basic analytics and up to 5 blog submissions per month.</p>
                 <div className={styles.planFeatures}>
                   <ul>
-                    <li>Up to 5 blog submissions per month</li>
+                    <li>List up to 3 blogs</li>
                     <li>Basic analytics</li>
                     <li>Community support</li>
                   </ul>
@@ -862,14 +862,13 @@ const BloggerProfile: React.FC = () => {
                 <h3>Upgrade to Pro</h3>
                 <div className={styles.proFeatures}>
                   <ul>
-                    <li>Unlimited blog submissions</li>
+                    <li>Unlimited blog listings</li>
                     <li>Advanced analytics and insights</li>
                     <li>Priority review for submissions</li>
-                    <li>Custom blog categories</li>
-                    <li>Priority support</li>
+                    <li>Priority Support</li>
                   </ul>
                 </div>
-                <button className={styles.upgradeButton}>Upgrade to Pro - $9/month</button>
+                <button className={styles.upgradeButton}>Upgrade to Pro</button>
               </div>
             </div>
           </div>
