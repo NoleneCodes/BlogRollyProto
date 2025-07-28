@@ -728,7 +728,7 @@ const AdminDashboard: React.FC = () => {
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
   const [filter, setFilter] = useState<BlogStatus | 'all'>('pending');
   const [tierFilter, setTierFilter] = useState<'all' | 'free' | 'pro'>('all');
-  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | '3months'>('all');
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | '3months' | 'newest' | 'oldest'>('all');
   const [selectedSubmission, setSelectedSubmission] = useState<BlogSubmissionWithReview | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewAction, setReviewAction] = useState<'approve' | 'reject' | null>(null);
@@ -901,30 +901,45 @@ const AdminDashboard: React.FC = () => {
         filteredSubmissions = filteredSubmissions.filter(sub => sub.blogger_tier === tierFilter);
       }
 
-      // Apply date filter
+      // Apply date filter and sorting
       if (dateFilter !== 'all') {
-        const now = new Date();
-        let cutoffDate = new Date();
+        if (dateFilter === 'newest' || dateFilter === 'oldest') {
+          // Sort by date
+          filteredSubmissions = filteredSubmissions.sort((a, b) => {
+            const dateA = new Date(a.submitted_at || a.created_at);
+            const dateB = new Date(b.submitted_at || b.created_at);
+            
+            if (dateFilter === 'newest') {
+              return dateB.getTime() - dateA.getTime(); // Most recent first
+            } else {
+              return dateA.getTime() - dateB.getTime(); // Oldest first
+            }
+          });
+        } else {
+          // Filter by date range
+          const now = new Date();
+          let cutoffDate = new Date();
 
-        switch (dateFilter) {
-          case 'today':
-            cutoffDate.setHours(0, 0, 0, 0);
-            break;
-          case 'week':
-            cutoffDate.setDate(now.getDate() - 7);
-            break;
-          case 'month':
-            cutoffDate.setMonth(now.getMonth() - 1);
-            break;
-          case '3months':
-            cutoffDate.setMonth(now.getMonth() - 3);
-            break;
+          switch (dateFilter) {
+            case 'today':
+              cutoffDate.setHours(0, 0, 0, 0);
+              break;
+            case 'week':
+              cutoffDate.setDate(now.getDate() - 7);
+              break;
+            case 'month':
+              cutoffDate.setMonth(now.getMonth() - 1);
+              break;
+            case '3months':
+              cutoffDate.setMonth(now.getMonth() - 3);
+              break;
+          }
+
+          filteredSubmissions = filteredSubmissions.filter(sub => {
+            const submissionDate = new Date(sub.submitted_at || sub.created_at);
+            return submissionDate >= cutoffDate;
+          });
         }
-
-        filteredSubmissions = filteredSubmissions.filter(sub => {
-          const submissionDate = new Date(sub.submitted_at || sub.created_at);
-          return submissionDate >= cutoffDate;
-        });
       }
 
       setSubmissions(filteredSubmissions);
@@ -1118,11 +1133,11 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               <div className={styles.filterSection}>
-                <label htmlFor="date-filter">Filter by Date:</label>
+                <label htmlFor="date-filter">Filter/Sort by Date:</label>
                 <select 
                   id="date-filter"
                   value={dateFilter} 
-                  onChange={(e) => setDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | '3months')}
+                  onChange={(e) => setDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | '3months' | 'newest' | 'oldest')}
                   className={styles.filterSelect}
                 >
                   <option value="all">All Time</option>
@@ -1130,6 +1145,8 @@ const AdminDashboard: React.FC = () => {
                   <option value="week">Last 7 Days</option>
                   <option value="month">Last Month</option>
                   <option value="3months">Last 3 Months</option>
+                  <option value="newest">Most Recent First</option>
+                  <option value="oldest">Oldest First</option>
                 </select>
               </div>
 
