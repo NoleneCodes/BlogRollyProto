@@ -372,7 +372,7 @@ const BugReports = () => {
 
 const SupportRequests = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
-  const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'critical' | 'high' | 'medium' | 'low'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'responded' | 'closed'>('all');
   const [supportRequestsData] = useState([
     {
@@ -394,6 +394,8 @@ const SupportRequests = () => {
       dateSort: new Date('2025-01-23').getTime()
     }
   ]);
+  const [selectedSupportRequest, setSelectedSupportRequest] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
 
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -429,7 +431,7 @@ const SupportRequests = () => {
 
         // Special handling for priority column to order low-medium-high
         if (sortConfig.key === 'priority') {
-          const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
+          const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3, 'critical': 4 };
           aValue = priorityOrder[a.priority as keyof typeof priorityOrder];
           bValue = priorityOrder[b.priority as keyof typeof priorityOrder];
         }
@@ -456,6 +458,7 @@ const SupportRequests = () => {
 
   const getPriorityClass = (priority: string) => {
     switch (priority) {
+      case 'critical': return styles.priorityCritical;
       case 'high': return styles.priorityHigh;
       case 'medium': return styles.priorityMedium;
       case 'low': return styles.priorityLow;
@@ -470,6 +473,16 @@ const SupportRequests = () => {
       case 'closed': return styles.statusResolved;
       default: return '';
     }
+  };
+
+  const handleViewSupportRequest = (requestId: string) => {
+    // Placeholder function, replace with actual implementation
+    alert(`View support request with ID: ${requestId}`);
+    // const request = getSupportRequestById(requestId);
+    // if (request) {
+    //   setSelectedSupportRequest(request);
+    //   setShowViewModal(true);
+    // }
   };
 
   const sortedAndFilteredData = getSortedAndFilteredData();
@@ -502,10 +515,11 @@ const SupportRequests = () => {
           <select 
             id="priority-filter-support"
             value={priorityFilter} 
-            onChange={(e) => setPriorityFilter(e.target.value as 'all' | 'high' | 'medium' | 'low')}
+            onChange={(e) => setPriorityFilter(e.target.value as 'all' | 'critical' | 'high' | 'medium' | 'low')}
             className={styles.filterSelect}
           >
             <option value="all">All Priorities</option>
+            <option value="critical">Critical</option>
             <option value="high">High</option>
             <option value="medium">Medium</option>
             <option value="low">Low</option>
@@ -575,7 +589,12 @@ const SupportRequests = () => {
                 </td>
                 <td>{ticket.created}</td>
                 <td>
-                  <button className={styles.actionButton}>View</button>
+                  <button 
+                    className={styles.actionButton}
+                    onClick={() => handleViewSupportRequest(ticket.id)}
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}

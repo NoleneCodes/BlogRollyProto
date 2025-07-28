@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import styles from '../styles/ReaderProfile.module.css';
+import { createSupportRequest } from '../lib/supportRequestData';
 
 interface ContactSupportPopupProps {
   isOpen: boolean;
@@ -36,18 +37,30 @@ const ContactSupportPopup: React.FC<ContactSupportPopupProps> = ({ isOpen, onClo
       return;
     }
 
-    // TODO: Submit support request to backend
-    console.log('Support request submitted:', formData);
-    alert('Your support request has been submitted! We\'ll get back to you within 24 hours.');
-    
-    // Reset form
-    setFormData({
-      subject: '',
-      priority: '',
-      message: '',
-      email: ''
-    });
-    onClose();
+    try {
+      // Save support request to backend
+      const newRequest = createSupportRequest({
+        subject: formData.subject.trim(),
+        priority: (formData.priority as 'low' | 'medium' | 'high' | 'critical') || 'low',
+        message: formData.message.trim(),
+        email: formData.email.trim() || undefined
+      });
+
+      console.log('Support request submitted:', newRequest);
+      alert('Your support request has been submitted! We\'ll get back to you within 24 hours.');
+      
+      // Reset form
+      setFormData({
+        subject: '',
+        priority: '',
+        message: '',
+        email: ''
+      });
+      onClose();
+    } catch (error) {
+      console.error('Error submitting support request:', error);
+      alert('There was an error submitting your request. Please try again.');
+    }
   };
 
   return (
