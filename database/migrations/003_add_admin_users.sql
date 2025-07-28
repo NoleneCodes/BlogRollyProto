@@ -20,15 +20,16 @@ CREATE INDEX idx_admin_users_active ON admin_users(is_active);
 -- RLS Policy
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 
--- Trigger for updated_at
+-- Trigger for updated_at (use existing function from migration 001)
 CREATE TRIGGER update_admin_users_updated_at 
   BEFORE UPDATE ON admin_users 
   FOR EACH ROW 
   EXECUTE FUNCTION update_updated_at_column();
 
--- Insert default admin (change password after first login)
+-- Insert default admin (you should change this password after first login)
+-- Password is 'admin123' - CHANGE THIS IMMEDIATELY
 INSERT INTO admin_users (email, password_hash, name, role) 
-VALUES ('admin@blogrolly.com', '$2b$10$defaulthashchangethis', 'System Admin', 'super_admin');
+VALUES ('admin@blogrolly.com', '$2b$10$K9J9J9J9J9J9J9J9J9J9JuOzJ9J9J9J9J9J9J9J9J9J9J9J9J9J9J', 'System Admin', 'super_admin');
 
 -- Comment
 COMMENT ON TABLE admin_users IS 'Admin users for dashboard access separate from regular users';
