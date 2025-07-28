@@ -443,7 +443,6 @@ const BloggerProfile: React.FC = () => {
                 <h3>{userInfo.displayName || userInfo.name}</h3>
                 <p className={styles.blogName}>{userInfo.blogName}</p>
                 <p className={styles.bio}>{userInfo.bio}</p>
-                <p className={styles.joinDate}>Joined {new Date(userInfo.joinedDate).toLocaleDateString()}</p>
               </div>
             </div>
             {blogStats && (
