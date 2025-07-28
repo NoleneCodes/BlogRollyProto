@@ -202,142 +202,348 @@ export const supabaseAuth = {
 export const supabaseDB = {
   // User Management
   insertUser: async (userData: any) => {
-    console.log('TODO: Implement user insertion', userData);
-    return { data: null, error: null };
+    const { data, error } = await supabase
+      .from('users')
+      .insert([userData])
+      .select();
+    return { data, error };
   },
 
   insertUserProfile: async (profileData: UserProfile) => {
-    console.log('TODO: Implement user profile insertion', profileData);
-    return { data: null, error: null };
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .insert([profileData])
+      .select();
+    return { data, error };
   },
 
   updateAgeVerification: async (userId: string, ageVerified: boolean, confirmed18Plus?: boolean) => {
-    console.log('TODO: Update age verification', { userId, ageVerified, confirmed18Plus });
-    return { data: null, error: null };
+    const updateData: any = { age_verified: ageVerified };
+    if (confirmed18Plus !== undefined) {
+      updateData.has_confirmed_18_plus = confirmed18Plus;
+    }
+    
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .update(updateData)
+      .eq('user_id', userId)
+      .select();
+    return { data, error };
   },
 
   // Blog Submissions
   insertBlogSubmission: async (submissionData: BlogSubmission) => {
-    console.log('TODO: Implement blog submission insertion', submissionData);
-    return { data: null, error: null };
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .insert([submissionData])
+      .select();
+    return { data, error };
   },
 
   insertAdultBlogSubmission: async (adultContentData: AdultBlogSubmission) => {
-    console.log('TODO: Implement adult blog submission insertion', adultContentData);
-    return { data: null, error: null };
+    const { data, error } = await supabase
+      .from('adult_blog_submissions')
+      .insert([adultContentData])
+      .select();
+    return { data, error };
   },
 
   getUserSubmissions: async (userId: string) => {
-    console.log('TODO: Implement get user submissions', userId);
-    return { data: [], error: null };
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    return { data, error };
   },
 
   getSubmissionsByStatus: async (status: BlogStatus) => {
-    console.log('TODO: Get submissions by status', status);
-    return { data: [], error: null };
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .select(`
+        *,
+        user_profiles!inner(first_name, surname, tier)
+      `)
+      .eq('status', status)
+      .order('submitted_at', { ascending: false });
+    return { data, error };
   },
 
   getPendingSubmissionsForReview: async () => {
-    console.log('TODO: Get pending submissions for admin review');
-    return { data: [], error: null };
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .select(`
+        *,
+        user_profiles!inner(first_name, surname, tier),
+        blog_reviews(*)
+      `)
+      .eq('status', 'pending')
+      .order('submitted_at', { ascending: true });
+    return { data, error };
   },
 
   // Admin/Moderation Functions
   updateSubmissionStatus: async (submissionId: string, status: BlogStatus, reviewerId: string) => {
-    console.log('TODO: Update submission status', { submissionId, status, reviewerId });
-    return { data: null, error: null };
+    const updateData: any = { status };
+    
+    if (status === 'approved') {
+      updateData.approved_at = new Date().toISOString();
+      updateData.reviewed_at = new Date().toISOString();
+    } else if (status === 'rejected') {
+      updateData.rejected_at = new Date().toISOString();
+      updateData.reviewed_at = new Date().toISOString();
+    }
+
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .update(updateData)
+      .eq('id', submissionId)
+      .select();
+    return { data, error };
   },
 
   insertBlogReview: async (reviewData: BlogReview) => {
-    console.log('TODO: Insert blog review', reviewData);
-    return { data: null, error: null };
+    const { data, error } = await supabase
+      .from('blog_reviews')
+      .insert([reviewData])
+      .select();
+    return { data, error };
   },
 
   approveBlogSubmission: async (submissionId: string, reviewerId: string) => {
-    console.log('TODO: Approve blog submission', { submissionId, reviewerId });
-    // This would:
-    // 1. Update status to 'approved'
-    // 2. Insert review record
-    // 3. Queue approval email
-    // 4. Check if should auto-move to 'live' based on user tier
-    return { data: null, error: null };
+    try {
+      // Update submission status
+      const { error: updateError } = await supabase
+        .from('blog_submissions')
+        .update({
+          status: 'approved',
+          approved_at: new Date().toISOString(),
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', submissionId);
+
+      if (updateError) throw updateError;
+
+      // Insert review record
+      const { error: reviewError } = await supabase
+        .from('blog_reviews')
+        .insert([{
+          blog_submission_id: submissionId,
+          reviewer_id: reviewerId,
+          action: 'approved'
+        }]);
+
+      if (reviewError) throw reviewError;
+
+      return { data: { success: true }, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
   },
 
   rejectBlogSubmission: async (submissionId: string, reviewerId: string, reason: RejectionReason, note?: string) => {
-    console.log('TODO: Reject blog submission', { submissionId, reviewerId, reason, note });
-    // This would:
-    // 1. Update status to 'rejected'
-    // 2. Insert review record with reason
-    // 3. Queue rejection email with reason
-    return { data: null, error: null };
+    try {
+      // Update submission status
+      const { error: updateError } = await supabase
+        .from('blog_submissions')
+        .update({
+          status: 'rejected',
+          rejected_at: new Date().toISOString(),
+          reviewed_at: new Date().toISOString()
+        })
+        .eq('id', submissionId);
+
+      if (updateError) throw updateError;
+
+      // Insert review record
+      const { error: reviewError } = await supabase
+        .from('blog_reviews')
+        .insert([{
+          blog_submission_id: submissionId,
+          reviewer_id: reviewerId,
+          action: 'rejected',
+          rejection_reason: reason,
+          rejection_note: note
+        }]);
+
+      if (reviewError) throw reviewError;
+
+      return { data: { success: true }, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
   },
 
   // User Tier Management
   checkUserTierLimits: async (userId: string) => {
-    console.log('TODO: Check user tier limits', userId);
-    return { data: { canAddMore: true, currentLive: 0, maxLive: 3 }, error: null };
-  },
-
-  toggleBlogLiveStatus: async (submissionId: string, userId: string, isLive: boolean) => {
-    console.log('TODO: Toggle blog live status', { submissionId, userId, isLive });
-    // This would check tier limits before allowing activation
-    return { data: null, error: null };
-  },
-
-  getUserApprovedSubmissions: async (userId: string) => {
-    console.log('TODO: Get user approved submissions for live toggle', userId);
-    return { data: [], error: null };
-  },
-
-  // Age-Gated Content
-  getAge18PlusContent: async (userId: string) => {
-    console.log('TODO: Get 18+ content with age verification check', userId);
-    return { data: [], error: null };
-  },
-
-  // Email Queue Management
-  queueEmail: async (emailData: EmailQueue) => {
-    console.log('TODO: Queue email for sending', emailData);
-    return { data: null, error: null };
-  },
-
-  getPendingEmails: async () => {
-    console.log('TODO: Get pending emails to send');
-    return { data: [], error: null };
-  },
-
-  // Blog URL Change Management
-  canChangeBlogUrl: async (userId: string) => {
-    console.log('TODO: Check if user can change blog URL', userId);
-    // This would check:
-    // 1. If user has made any URL changes
-    // 2. If last change was more than 3 months ago
-    // 3. Return boolean and next available change date
+    const { data, error } = await supabase
+      .from('user_tier_limits')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) return { data: null, error };
+    
     return { 
       data: { 
-        canChange: true, 
-        nextChangeDate: null, 
-        changesUsed: 0, 
-        lastChangeDate: null 
+        canAddMore: data.current_live_posts < data.max_live_posts,
+        currentLive: data.current_live_posts,
+        maxLive: data.max_live_posts
       }, 
       error: null 
     };
   },
 
+  toggleBlogLiveStatus: async (submissionId: string, userId: string, isLive: boolean) => {
+    // Check tier limits first if trying to make live
+    if (isLive) {
+      const limitsCheck = await supabaseDB.checkUserTierLimits(userId);
+      if (limitsCheck.error || !limitsCheck.data?.canAddMore) {
+        return { data: null, error: { message: 'User has reached their live post limit' } };
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .update({ 
+        is_live: isLive,
+        live_at: isLive ? new Date().toISOString() : null
+      })
+      .eq('id', submissionId)
+      .eq('user_id', userId)
+      .select();
+    
+    return { data, error };
+  },
+
+  getUserApprovedSubmissions: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'approved')
+      .order('approved_at', { ascending: false });
+    return { data, error };
+  },
+
+  // Age-Gated Content
+  getAge18PlusContent: async (userId: string) => {
+    // First check if user has confirmed 18+
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('has_confirmed_18_plus')
+      .eq('user_id', userId)
+      .single();
+
+    if (profileError || !profile?.has_confirmed_18_plus) {
+      return { data: [], error: { message: 'Age verification required for 18+ content' } };
+    }
+
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .select('*')
+      .eq('has_adult_content', true)
+      .eq('status', 'live')
+      .eq('is_live', true);
+    
+    return { data, error };
+  },
+
+  // Email Queue Management
+  queueEmail: async (emailData: EmailQueue) => {
+    const { data, error } = await supabase
+      .from('email_queue')
+      .insert([emailData])
+      .select();
+    return { data, error };
+  },
+
+  getPendingEmails: async () => {
+    const { data, error } = await supabase
+      .from('email_queue')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true });
+    return { data, error };
+  },
+
+  // Blog URL Change Management
+  canChangeBlogUrl: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('blogger_profiles')
+      .select('last_url_change, url_changes_count')
+      .eq('user_id', userId)
+      .single();
+
+    if (error) return { data: null, error };
+
+    const lastChange = data.last_url_change ? new Date(data.last_url_change) : null;
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+    const canChange = !lastChange || lastChange < threeMonthsAgo;
+    const nextChangeDate = lastChange ? new Date(lastChange.getTime() + (90 * 24 * 60 * 60 * 1000)) : null;
+
+    return {
+      data: {
+        canChange,
+        nextChangeDate: nextChangeDate?.toISOString() || null,
+        changesUsed: data.url_changes_count || 0,
+        lastChangeDate: data.last_url_change
+      },
+      error: null
+    };
+  },
+
   updateBlogUrl: async (userId: string, oldUrl: string, newUrl: string, reason?: string) => {
-    console.log('TODO: Update blog URL with change tracking', { userId, oldUrl, newUrl, reason });
-    // This would:
-    // 1. Update BloggerProfile.blog_url
-    // 2. Update BloggerProfile.last_url_change
-    // 3. Increment BloggerProfile.url_changes_count
-    // 4. Insert record into BlogUrlChangeHistory
-    // 5. Mark all approved blog submissions as inactive for re-review
-    return { data: null, error: null };
+    try {
+      // Update blogger profile
+      const { error: profileError } = await supabase
+        .from('blogger_profiles')
+        .update({
+          blog_url: newUrl,
+          last_url_change: new Date().toISOString(),
+          url_changes_count: supabase.raw('url_changes_count + 1')
+        })
+        .eq('user_id', userId);
+
+      if (profileError) throw profileError;
+
+      // Insert change history
+      const { error: historyError } = await supabase
+        .from('blog_url_change_history')
+        .insert([{
+          user_id: userId,
+          old_url: oldUrl,
+          new_url: newUrl,
+          change_reason: reason,
+          changed_at: new Date().toISOString()
+        }]);
+
+      if (historyError) throw historyError;
+
+      // Mark approved submissions as inactive for re-review
+      const { error: submissionError } = await supabase
+        .from('blog_submissions')
+        .update({ is_live: false, status: 'pending' })
+        .eq('user_id', userId)
+        .eq('status', 'approved');
+
+      if (submissionError) throw submissionError;
+
+      return { data: { success: true }, error: null };
+    } catch (error) {
+      return { data: null, error };
+    }
   },
 
   getBlogUrlChangeHistory: async (userId: string) => {
-    console.log('TODO: Get blog URL change history', userId);
-    return { data: [], error: null };
+    const { data, error } = await supabase
+      .from('blog_url_change_history')
+      .select('*')
+      .eq('user_id', userId)
+      .order('changed_at', { ascending: false });
+    return { data, error };
   }
 };
 
