@@ -987,16 +987,6 @@ const BloggerProfilePremium: React.FC = () => {
               </button>
             </div>
             <div className={styles.urlChangeContent}>
-              <div className={styles.premiumUrlChangeInfo}>
-                <h4>👑 Premium Benefits</h4>
-                <ul>
-                  <li>Priority re-verification (24-48 hours)</li>
-                  <li>Posts maintain approved status during review</li>
-                  <li>Dedicated support for URL transitions</li>
-                  <li>Change URLs once every 3 months</li>
-                </ul>
-              </div>
-              
               <div className={styles.formGroup}>
                 <label>Current URL</label>
                 <input 
