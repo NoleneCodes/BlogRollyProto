@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { initGA, trackPageView } from '../lib/analytics';
-import { BugReportModal } from './BugReportModal';
+import BugReportModal from './BugReportModal';
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {

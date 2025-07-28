@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
-import { BugReportModal } from '../../components/BugReportModal';
+import BugReportModal from '../../components/BugReportModal';
 import styles from '../../styles/BloggerProfile.module.css';
 
 interface UserInfo {
