@@ -743,6 +743,15 @@
   background: #a01835;
 }
 
+.stripePricingTable {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.stripePricingTable stripe-pricing-table {
+  width: 100%;
+}
+
 /* Help section styles */
 .helpSection {
   display: flex;

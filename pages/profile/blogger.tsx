@@ -879,7 +879,13 @@ const BloggerProfile: React.FC = () => {
                     <li>Priority Support</li>
                   </ul>
                 </div>
-                <button className={styles.upgradeButton}>Upgrade to Pro</button>
+                <div className={styles.stripePricingTable}>
+                  <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+                  <stripe-pricing-table 
+                    pricing-table-id="prctbl_1RmgGoDyKgK2ioTOXJv76mNC"
+                    publishable-key="pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL">
+                  </stripe-pricing-table>
+                </div>
               </div>
             </div>
           </div>
