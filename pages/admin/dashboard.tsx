@@ -131,7 +131,7 @@ const BugReports = () => {
 
   const getSortIcon = (columnKey: string) => {
     if (!sortConfig || sortConfig.key !== columnKey) {
-      return ' ↕️';
+      return '';
     }
     return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
   };
