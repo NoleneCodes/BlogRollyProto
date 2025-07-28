@@ -78,13 +78,7 @@ const BloggerProfile: React.FC = () => {
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
-  const [canChangeBlogUrl, setCanChangeBlogUrl] = useState<boolean>(false);
-  const [nextUrlChangeDate, setNextUrlChangeDate] = useState<string | null>(null);
-  const [urlChangesUsed, setUrlChangesUsed] = useState<number>(0);
-  const [lastUrlChangeDate, setLastUrlChangeDate] = useState<string | null>(null);
-  const [showUrlChangeModal, setShowUrlChangeModal] = useState<boolean>(false);
-  const [newBlogUrl, setNewBlogUrl] = useState<string>('');
-  const [urlChangeReason, setUrlChangeReason] = useState<string>('');
+  
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -194,12 +188,7 @@ const BloggerProfile: React.FC = () => {
           averageTimeOnSite: 3.2
         });
 
-        // Check URL change capability
-        // Mock: User made a change 2 months ago, so they can't change for another month
-        setCanChangeBlogUrl(false);
-        setNextUrlChangeDate('2024-03-20');
-        setUrlChangesUsed(1);
-        setLastUrlChangeDate('2023-12-20');
+        
       } catch (error) {
         console.error('Auth check failed:', error);
       } finally {
@@ -417,67 +406,7 @@ const BloggerProfile: React.FC = () => {
     setEditingField(null);
   };
 
-  const validateBlogUrl = (url: string): boolean => {
-    const urlRegex = /^https:\/\/[a-zA-Z0-9\-\.]+\.[a-z]{2,}$/;
-    return urlRegex.test(url);
-  };
-
-  const handleUrlChange = async () => {
-    if (!newBlogUrl || !validateBlogUrl(newBlogUrl)) {
-      alert('Please enter a valid blog URL starting with https://');
-      return;
-    }
-
-    if (newBlogUrl === userInfo?.blogUrl) {
-      alert('The new URL is the same as your current URL.');
-      return;
-    }
-
-    const confirmChange = window.confirm(
-      `⚠️ IMPORTANT: Changing your blog URL will:\n\n` +
-      `• Deactivate all your approved blog posts\n` +
-      `• Require re-verification of your blog ownership\n` +
-      `• You won't be able to change it again for 3 months\n\n` +
-      `Are you sure you want to proceed?`
-    );
-
-    if (!confirmChange) return;
-
-    try {
-      // Update user info
-      setUserInfo(prev => prev ? { ...prev, blogUrl: newBlogUrl } : null);
-      
-      // Deactivate all approved posts
-      setBlogSubmissions(prev => prev.map(post => ({
-        ...post,
-        isActive: false,
-        status: post.status === 'approved' ? 'pending' : post.status
-      })));
-
-      // Update URL change tracking
-      setCanChangeBlogUrl(false);
-      setUrlChangesUsed(prev => prev + 1);
-      setLastUrlChangeDate(new Date().toISOString().split('T')[0]);
-      
-      // Calculate next change date (3 months from now)
-      const nextChange = new Date();
-      nextChange.setMonth(nextChange.getMonth() + 3);
-      setNextUrlChangeDate(nextChange.toISOString().split('T')[0]);
-
-      setShowUrlChangeModal(false);
-      setNewBlogUrl('');
-      setUrlChangeReason('');
-
-      alert(
-        'Blog URL updated successfully!\n\n' +
-        'Your approved blog posts have been deactivated and will need re-review.\n' +
-        'You can change your URL again after: ' + nextChange.toLocaleDateString()
-      );
-    } catch (error) {
-      console.error('Error updating blog URL:', error);
-      alert('Failed to update blog URL. Please try again.');
-    }
-  };
+  
 
 
   if (isLoading) {
@@ -905,28 +834,10 @@ const BloggerProfile: React.FC = () => {
                     className={`${styles.input} ${styles.readOnlyInput}`}
                     readOnly
                   />
-                  <button 
-                    type="button"
-                    className={`${styles.changeUrlButton} ${!canChangeBlogUrl ? styles.disabled : ''}`}
-                    onClick={() => setShowUrlChangeModal(true)}
-                    disabled={!canChangeBlogUrl}
-                  >
-                    Change URL
-                  </button>
                 </div>
-                {!canChangeBlogUrl && (
-                  <div className={styles.urlChangeInfo}>
-                    <small className={styles.urlChangeRestriction}>
-                      ⚠️ You changed your URL on {lastUrlChangeDate ? new Date(lastUrlChangeDate).toLocaleDateString() : 'recently'}. 
-                      Next change available: {nextUrlChangeDate ? new Date(nextUrlChangeDate).toLocaleDateString() : 'N/A'}
-                    </small>
-                  </div>
-                )}
-                {canChangeBlogUrl && (
-                  <small className={styles.urlChangeHint}>
-                    You can change your blog URL once every 3 months. Changes require re-verification.
-                  </small>
-                )}
+                <small className={styles.urlChangeHint}>
+                  URL changes are available with Premium subscription only.
+                </small>
               </div>
               <div className={styles.formGroup}>
                 <label>Bio</label>
@@ -1147,82 +1058,7 @@ const BloggerProfile: React.FC = () => {
         onClose={() => setShowBugReportPopup(false)}
       />
 
-      {/* URL Change Modal */}
-      {showUrlChangeModal && (
-        <div className={styles.urlChangeOverlay}>
-          <div className={styles.urlChangeModal}>
-            <div className={styles.urlChangeHeader}>
-              <h3>Change Blog URL</h3>
-              <button 
-                className={styles.closeButton}
-                onClick={() => setShowUrlChangeModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className={styles.urlChangeContent}>
-              <div className={styles.urlChangeWarning}>
-                <h4>⚠️ Important Notice</h4>
-                <ul>
-                  <li>All approved blog posts will be deactivated</li>
-                  <li>You'll need to re-verify blog ownership</li>
-                  <li>You won't be able to change URL again for 3 months</li>
-                  <li>Your blog submissions will need re-review</li>
-                </ul>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label>Current URL</label>
-                <input 
-                  type="text"
-                  value={userInfo?.blogUrl || ''}
-                  className={`${styles.input} ${styles.readOnlyInput}`}
-                  readOnly
-                />
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label>New Blog URL *</label>
-                <input 
-                  type="url"
-                  value={newBlogUrl}
-                  onChange={(e) => setNewBlogUrl(e.target.value)}
-                  className={styles.input}
-                  placeholder="https://yournewblog.com"
-                />
-                <small className={styles.hint}>Must start with https:// (domain only, no paths)</small>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label>Reason for Change (Optional)</label>
-                <textarea 
-                  value={urlChangeReason}
-                  onChange={(e) => setUrlChangeReason(e.target.value)}
-                  className={styles.textarea}
-                  rows={3}
-                  placeholder="e.g., Rebranding, moved to new domain, etc."
-                />
-              </div>
-              
-              <div className={styles.urlChangeActions}>
-                <button 
-                  className={styles.confirmUrlChangeButton}
-                  onClick={handleUrlChange}
-                  disabled={!newBlogUrl}
-                >
-                  Confirm URL Change
-                </button>
-                <button 
-                  className={styles.cancelButton}
-                  onClick={() => setShowUrlChangeModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </Layout>
   );
 };
