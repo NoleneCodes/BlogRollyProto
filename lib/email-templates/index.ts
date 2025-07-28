@@ -31,30 +31,30 @@ export const RESEND_CONFIG = {
 
 // Email templates organized by category
 export const emailTemplates = {
-  // 🧭 User Onboarding
+  //  User Onboarding
   welcomeReader: welcomeReaderTemplate,
   welcomeBlogger: welcomeBloggerTemplate,
   
-  // 📝 Blog Submission Workflow
+  // Blog Submission Workflow
   blogSubmissionReceived: blogSubmissionReceivedTemplate,
   blogApproved: blogApprovedTemplate,
   blogRejected: blogRejectedTemplate,
 
-  // ⚙️ Blog Management
+  //  Blog Management
   blogUrlChanged: blogUrlChangedTemplate,
   blogDeactivated: blogDeactivatedTemplate,
 
-  // 🔐 System Notifications
+  //  System Notifications
   passwordReset: passwordResetTemplate,
 
-  // 🐞 Bug Reporting
+  // Bug Reporting
   bugReportReceived: bugReportReceivedTemplate,
 
-  // 🧰 Support Requests
+  // Support Requests
   supportRequestReceived: supportRequestReceivedTemplate,
   supportRequestReply: supportRequestReplyTemplate,
 
-  // 💳 Subscription & Payments
+  // Subscription & Payments
   premiumWelcome: premiumWelcomeTemplate,
   paymentSuccessful: paymentSuccessfulTemplate,
   paymentFailedFirstNotice: paymentFailedFirstNoticeTemplate,
@@ -64,13 +64,13 @@ export const emailTemplates = {
 
 // Email service functions (placeholders for actual implementation)
 export const emailService = {
-  // 🧭 User Onboarding
+  //  User Onboarding
   sendWelcomeEmail: async (email: string, firstName: string, userType: 'reader' | 'blogger') => {
     console.log('TODO: Send welcome email via Resend', { email, firstName, userType });
     // TODO: Implement Resend integration
   },
   
-  // 📝 Blog Submission Workflow
+  //  Blog Submission Workflow
   sendBlogSubmissionReceived: async (email: string, userName: string, blogTitle: string) => {
     console.log('TODO: Send blog submission received email', { email, userName, blogTitle });
     // TODO: Implement Resend integration
@@ -81,7 +81,7 @@ export const emailService = {
     // TODO: Implement Resend integration
   },
 
-  // ⚙️ Blog Management
+  //  Blog Management
   sendBlogUrlChangedEmail: async (email: string, userName: string, blogTitle: string, oldUrl: string, newUrl: string) => {
     console.log('TODO: Send blog URL changed email', { email, userName, blogTitle, oldUrl, newUrl });
     // TODO: Implement Resend integration
@@ -92,19 +92,19 @@ export const emailService = {
     // TODO: Implement Resend integration
   },
 
-  // 🔐 System Notifications
+  //  System Notifications
   sendPasswordResetEmail: async (email: string, userName: string, resetLink: string) => {
     console.log('TODO: Send password reset email', { email, userName, resetLink });
     // TODO: Implement Resend integration
   },
 
-  // 🐞 Bug Reporting
+  // Bug Reporting
   sendBugReportThankYou: async (email: string, userName: string, reportId: string) => {
     console.log('TODO: Send bug report thank you email', { email, userName, reportId });
     // TODO: Implement Resend integration
   },
 
-  // 🧰 Support Requests
+  // Support Requests
   sendSupportRequestReceived: async (email: string, userName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => {
     console.log('TODO: Send support request received email', { email, userName, ticketId, supportMessage, estimatedResponse });
     // TODO: Implement Resend integration
@@ -115,7 +115,7 @@ export const emailService = {
     // TODO: Implement Resend integration
   },
 
-  // 💳 Subscription & Payments
+  // Subscription & Payments
   sendPremiumWelcome: async (email: string, firstName: string) => {
     console.log('TODO: Send premium welcome email', { email, firstName });
     // TODO: Implement Resend integration

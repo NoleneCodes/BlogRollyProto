@@ -10,7 +10,7 @@ const Auth: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>Sign Up/In</h1>
         <p className={styles.description}>
-          Join the Blogrolly community to save and organize your favorite blogs
+          Join the Blogrolly community to save and organise your favorite blogs
         </p>
       </div>
 
