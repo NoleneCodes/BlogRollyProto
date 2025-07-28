@@ -1158,6 +1158,44 @@
   white-space: pre-wrap;
 }
 
+.priorityBadge, .statusBadge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.priorityBadge.priorityHigh {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.priorityBadge.priorityMedium {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.priorityBadge.priorityLow {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.statusBadge.statusPending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.statusBadge.statusInProgress {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.statusBadge.statusResolved {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
 .modalHeader {
   display: flex;
   justify-content: space-between;

@@ -382,7 +382,10 @@ const SupportRequests = () => {
       user: 'premium@user.com',
       status: 'open',
       created: '2025-01-24',
-      dateSort: new Date('2025-01-24').getTime()
+      dateSort: new Date('2025-01-24').getTime(),
+      message: 'I upgraded to premium but still cannot access premium features. The payment went through successfully.',
+      email: 'premium@user.com',
+      submittedAt: new Date('2025-01-24')
     },
     {
       id: 'SUP-002',
@@ -391,10 +394,13 @@ const SupportRequests = () => {
       user: 'newuser@blog.com',
       status: 'responded',
       created: '2025-01-23',
-      dateSort: new Date('2025-01-23').getTime()
+      dateSort: new Date('2025-01-23').getTime(),
+      message: 'I would like to know more about the blog submission process and approval times.',
+      email: 'newuser@blog.com',
+      submittedAt: new Date('2025-01-23')
     }
   ]);
-  const [selectedSupportRequest, setSelectedSupportRequest] = useState(null);
+  const [selectedSupportRequest, setSelectedSupportRequest] = useState<any>(null);
   const [showViewModal, setShowViewModal] = useState(false);
 
   const handleSort = (key: string) => {
@@ -476,13 +482,11 @@ const SupportRequests = () => {
   };
 
   const handleViewSupportRequest = (requestId: string) => {
-    // Placeholder function, replace with actual implementation
-    alert(`View support request with ID: ${requestId}`);
-    // const request = getSupportRequestById(requestId);
-    // if (request) {
-    //   setSelectedSupportRequest(request);
-    //   setShowViewModal(true);
-    // }
+    const request = supportRequestsData.find(req => req.id === requestId);
+    if (request) {
+      setSelectedSupportRequest(request);
+      setShowViewModal(true);
+    }
   };
 
   const sortedAndFilteredData = getSortedAndFilteredData();
@@ -608,6 +612,66 @@ const SupportRequests = () => {
           </div>
         )}
       </div>
+
+      {/* Support Request View Modal */}
+      {showViewModal && selectedSupportRequest && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>Support Request Details - {selectedSupportRequest.id}</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.supportRequestDetails}>
+              <div className={styles.supportRequestHeader}>
+                <h4>{selectedSupportRequest.subject}</h4>
+                <div className={styles.supportRequestBadges}>
+                  <span className={`${styles.priorityBadge} ${getPriorityClass(selectedSupportRequest.priority)}`}>
+                    {selectedSupportRequest.priority.toUpperCase()} PRIORITY
+                  </span>
+                  <span className={`${styles.statusBadge} ${getStatusClass(selectedSupportRequest.status)}`}>
+                    {selectedSupportRequest.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.supportRequestMeta}>
+                <div className={styles.metaItem}>
+                  <strong>User:</strong> {selectedSupportRequest.user}
+                </div>
+                <div className={styles.metaItem}>
+                  <strong>Email:</strong> {selectedSupportRequest.email}
+                </div>
+                <div className={styles.metaItem}>
+                  <strong>Submitted:</strong> {new Date(selectedSupportRequest.submittedAt).toLocaleString()}
+                </div>
+                <div className={styles.metaItem}>
+                  <strong>Priority:</strong> {selectedSupportRequest.priority}
+                </div>
+              </div>
+
+              <div className={styles.supportRequestSection}>
+                <h5>Message</h5>
+                <p>{selectedSupportRequest.message}</p>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
