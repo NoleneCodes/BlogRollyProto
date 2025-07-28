@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { initGA, trackPageView } from '../lib/analytics';
-import BugReportPopup from './BugReportPopup';
+import { BugReportModal } from './BugReportModal';
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -190,8 +190,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           </div>
         </footer>
 
-        {/* Bug Report Popup */}
-        <BugReportPopup
+        {/* Bug Report Modal */}
+        <BugReportModal
           isOpen={showBugReportPopup}
           onClose={() => setShowBugReportPopup(false)}
         />
