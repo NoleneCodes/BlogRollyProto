@@ -25,8 +25,8 @@ const PremiumUpgradeButton: React.FC<PremiumUpgradeButtonProps> = ({
 
     try {
       const priceId = variant === 'yearly' 
-        ? STRIPE_PRICES.BLOGGER_PREMIUM_YEARLY 
-        : STRIPE_PRICES.BLOGGER_PREMIUM_MONTHLY;
+        ? STRIPE_PRICES.BLOGGER_PRO_YEARLY 
+        : STRIPE_PRICES.BLOGGER_PRO_MONTHLY;
 
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',

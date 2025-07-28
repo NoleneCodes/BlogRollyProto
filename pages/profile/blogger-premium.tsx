@@ -20,7 +20,7 @@ interface UserInfo {
   blogUrl?: string;
   topics: string[];
   roles: string[];
-  tier: 'premium';
+  tier: 'pro';
 }
 
 interface BlogSubmission {
@@ -112,7 +112,7 @@ const BloggerProfilePremium: React.FC = () => {
           blogUrl: 'https://innovationinsightspro.com',
           topics: ['Tech', 'Innovation', 'Business', 'AI'],
           roles: ['blogger'],
-          tier: 'premium'
+          tier: 'pro'
         });
 
         // Mock premium blog submissions (unlimited)
@@ -348,7 +348,7 @@ const BloggerProfilePremium: React.FC = () => {
     try {
       // Update user info
       setUserInfo(prev => prev ? { ...prev, blogUrl: newBlogUrl } : null);
-      
+
       // For premium users, posts are temporarily deactivated but not set to pending
       setBlogSubmissions(prev => prev.map(post => ({
         ...post,
@@ -358,7 +358,7 @@ const BloggerProfilePremium: React.FC = () => {
       // Update URL change tracking
       setCanChangeBlogUrl(false);
       setUrlChangesUsed(prev => prev + 1);
-      
+
       // Calculate next change date (3 months from now)
       const nextChange = new Date();
       nextChange.setMonth(nextChange.getMonth() + 3);
@@ -996,7 +996,7 @@ const BloggerProfilePremium: React.FC = () => {
                   readOnly
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label>New Blog URL *</label>
                 <input 
@@ -1008,7 +1008,7 @@ const BloggerProfilePremium: React.FC = () => {
                 />
                 <small className={styles.hint}>Must start with https:// (domain only, no paths)</small>
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label>Reason for Change (Optional)</label>
                 <textarea 
@@ -1019,7 +1019,7 @@ const BloggerProfilePremium: React.FC = () => {
                   placeholder="e.g., Rebranding, moved to new domain, etc."
                 />
               </div>
-              
+
               <div className={styles.urlChangeActions}>
                 <button 
                   className={styles.confirmUrlChangeButton}

@@ -8,8 +8,8 @@ export { stripe }
 
 // Stripe pricing configuration
 export const STRIPE_PRICES = {
-  BLOGGER_PREMIUM_MONTHLY: process.env.STRIPE_PRICE_PREMIUM_MONTHLY || 'price_premium_monthly_placeholder',
-  BLOGGER_PREMIUM_YEARLY: process.env.STRIPE_PRICE_PREMIUM_YEARLY || 'price_premium_yearly_placeholder',
+  BLOGGER_PRO_MONTHLY: process.env.STRIPE_PRICE_PRO_MONTHLY || 'price_pro_monthly_placeholder',
+  BLOGGER_PRO_YEARLY: process.env.STRIPE_PRICE_PRO_YEARLY || 'price_pro_yearly_placeholder',
 }
 
 // Stripe payment utilities

@@ -1,4 +1,3 @@
-
 // Supabase configuration and client setup
 import { createClient } from '@supabase/supabase-js'
 
@@ -9,7 +8,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Database Types and Enums
 export type UserRole = 'reader' | 'blogger' | 'admin' | 'moderator';
-export type UserTier = 'free' | 'premium' | 'pro';
+export type UserTier = 'free' | 'pro';
 export type BlogStatus = 'draft' | 'submitted' | 'pending' | 'approved' | 'rejected' | 'live' | 'inactive';
 export type RejectionReason = 
   | 'inappropriate_content'
@@ -94,14 +93,14 @@ export interface BlogSubmission {
   status: BlogStatus;
   has_adult_content: boolean; // 18+ flag
   is_live: boolean; // Whether the post is currently live (for tier limits)
-  
+
   // Analytics
   views: number;
   clicks: number;
   ctr?: number;
   avg_time_on_page?: number;
   bounce_rate?: number;
-  
+
   // Timestamps
   submitted_at?: string;
   reviewed_at?: string;
@@ -138,7 +137,7 @@ export interface UserTierLimits {
   id: string;
   user_id: string; // FK to User
   tier: UserTier;
-  max_live_posts: number; // 3 for free, unlimited for premium/pro
+  max_live_posts: number; // 3 for free, unlimited for pro
   current_live_posts: number;
   total_approved_posts: number;
   updated_at: string;
@@ -206,7 +205,7 @@ export const supabaseDB = {
     console.log('TODO: Implement user insertion', userData);
     return { data: null, error: null };
   },
-  
+
   insertUserProfile: async (profileData: UserProfile) => {
     console.log('TODO: Implement user profile insertion', profileData);
     return { data: null, error: null };
@@ -354,7 +353,7 @@ export const BlogStatusHelpers = {
       'live': ['inactive'],
       'inactive': ['live']
     };
-    
+
     return allowedTransitions[currentStatus]?.includes(newStatus) || false;
   },
 
@@ -368,7 +367,7 @@ export const BlogStatusHelpers = {
       'live': 'Live',
       'inactive': 'Inactive'
     };
-    
+
     return labels[status];
   },
 
@@ -384,7 +383,7 @@ export const BlogStatusHelpers = {
       'ai_generated_low_quality': 'AI-Generated / Low Quality',
       'copyright_violation': 'Copyright Violation'
     };
-    
+
     return labels[reason];
   }
 };
@@ -397,7 +396,7 @@ export interface EmailTemplateData {
     blogUrl: string;
     dateApproved: string;
   };
-  
+
   blogRejected: {
     userName: string;
     blogTitle: string;

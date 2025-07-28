@@ -201,7 +201,6 @@ BEGIN
         NEW.tier, 
         CASE 
             WHEN NEW.tier = 'free' THEN 3
-            WHEN NEW.tier = 'premium' THEN 999999
             WHEN NEW.tier = 'pro' THEN 999999
             ELSE 3
         END,
@@ -305,4 +304,4 @@ COMMENT ON COLUMN user_profiles.age_verified IS 'Primary age verification at sig
 COMMENT ON COLUMN user_profiles.has_confirmed_18_plus IS 'Secondary confirmation for accessing 18+ content';
 COMMENT ON COLUMN blog_submissions.has_adult_content IS 'Flags content as 18+ requiring age verification';
 COMMENT ON COLUMN blog_submissions.is_live IS 'Whether post is currently live (affects tier limits)';
-COMMENT ON COLUMN user_tier_limits.max_live_posts IS '3 for free tier, unlimited for premium/pro';
+COMMENT ON COLUMN user_tier_limits.max_live_posts IS '3 for free tier, unlimited for pro';
