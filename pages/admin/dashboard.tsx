@@ -370,71 +370,183 @@ const BugReports = () => {
   );
 };
 
-const SupportRequests = () => (
-  <div className={styles.sectionContent}>
-    <div className={styles.sectionHeader}>
-      <h2>Support Requests</h2>
-      <p>Handle user inquiries and support tickets</p>
-    </div>
+const SupportRequests = () => {
+  const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
+  const [supportRequestsData] = useState([
+    {
+      id: 'SUP-001',
+      subject: 'Cannot access premium features',
+      priority: 'high',
+      user: 'premium@user.com',
+      status: 'open',
+      created: '2025-01-24',
+      dateSort: new Date('2025-01-24').getTime()
+    },
+    {
+      id: 'SUP-002',
+      subject: 'Question about blog submission',
+      priority: 'low',
+      user: 'newuser@blog.com',
+      status: 'responded',
+      created: '2025-01-23',
+      dateSort: new Date('2025-01-23').getTime()
+    }
+  ]);
 
-    <div className={styles.statsGrid}>
-      <div className={styles.statCard}>
-        <h3>8</h3>
-        <p>Open Tickets</p>
-      </div>
-      <div className={styles.statCard}>
-        <h3>2</h3>
-        <p>Urgent</p>
-      </div>
-      <div className={styles.statCard}>
-        <h3>24hr</h3>
-        <p>Avg Response Time</p>
-      </div>
-    </div>
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
 
-    <div className={styles.tableContainer}>
-      <table className={styles.adminTable}>
-        <thead>
-          <tr>
-            <th>Ticket ID</th>
-            <th>Subject</th>
-            <th>Priority</th>
-            <th>User</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>#SUP-001</td>
-            <td>Cannot access premium features</td>
-            <td><span className={styles.priorityHigh}>High</span></td>
-            <td>premium@user.com</td>
-            <td><span className={styles.statusPending}>Open</span></td>
-            <td>2025-01-24</td>
-            <td>
-              <button className={styles.actionButton}>Reply</button>
-              <button className={styles.actionButton}>Close</button>
-            </td>
-          </tr>
-          <tr>
-            <td>#SUP-002</td>
-            <td>Question about blog submission</td>
-            <td><span className={styles.priorityLow}>Low</span></td>
-            <td>newuser@blog.com</td>
-            <td><span className={styles.statusInProgress}>Responded</span></td>
-            <td>2025-01-23</td>
-            <td>
-              <button className={styles.actionButton}>View</button>
-              <button className={styles.actionButton}>Follow Up</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  const getSortedData = () => {
+    let sortedData = [...supportRequestsData];
+
+    if (sortConfig !== null) {
+      sortedData.sort((a, b) => {
+        let aValue = a[sortConfig.key as keyof typeof a];
+        let bValue = b[sortConfig.key as keyof typeof b];
+
+        if (sortConfig.key === 'created') {
+          aValue = a.dateSort;
+          bValue = b.dateSort;
+        }
+
+        // Special handling for priority column to order low-medium-high
+        if (sortConfig.key === 'priority') {
+          const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
+          aValue = priorityOrder[a.priority as keyof typeof priorityOrder];
+          bValue = priorityOrder[b.priority as keyof typeof priorityOrder];
+        }
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return sortedData;
+  };
+
+  const getSortIcon = (columnKey: string) => {
+    if (!sortConfig || sortConfig.key !== columnKey) {
+      return '';
+    }
+    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
+
+  const getPriorityClass = (priority: string) => {
+    switch (priority) {
+      case 'high': return styles.priorityHigh;
+      case 'medium': return styles.priorityMedium;
+      case 'low': return styles.priorityLow;
+      default: return '';
+    }
+  };
+
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case 'open': return styles.statusPending;
+      case 'responded': return styles.statusInProgress;
+      case 'closed': return styles.statusResolved;
+      default: return '';
+    }
+  };
+
+  const sortedData = getSortedData();
+
+  return (
+    <div className={styles.sectionContent}>
+      <div className={styles.sectionHeader}>
+        <h2>Support Requests</h2>
+        <p>Handle user inquiries and support tickets</p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>8</h3>
+          <p>Open Tickets</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>2</h3>
+          <p>Urgent</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>24hr</h3>
+          <p>Avg Response Time</p>
+        </div>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th onClick={() => handleSort('id')} className={styles.sortableHeader}>
+                Ticket ID{getSortIcon('id')}
+              </th>
+              <th onClick={() => handleSort('subject')} className={styles.sortableHeader}>
+                Subject{getSortIcon('subject')}
+              </th>
+              <th onClick={() => handleSort('priority')} className={styles.sortableHeader}>
+                Priority{getSortIcon('priority')}
+              </th>
+              <th onClick={() => handleSort('user')} className={styles.sortableHeader}>
+                User{getSortIcon('user')}
+              </th>
+              <th onClick={() => handleSort('status')} className={styles.sortableHeader}>
+                Status{getSortIcon('status')}
+              </th>
+              <th onClick={() => handleSort('created')} className={styles.sortableHeader}>
+                Created{getSortIcon('created')}
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedData.map((ticket) => (
+              <tr key={ticket.id}>
+                <td><strong>#{ticket.id}</strong></td>
+                <td>{ticket.subject}</td>
+                <td>
+                  <span className={getPriorityClass(ticket.priority)}>
+                    {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                  </span>
+                </td>
+                <td>{ticket.user}</td>
+                <td>
+                  <span className={getStatusClass(ticket.status)}>
+                    {ticket.status === 'responded' ? 'Responded' : ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+                  </span>
+                </td>
+                <td>{ticket.created}</td>
+                <td>
+                  {ticket.status === 'open' && (
+                    <>
+                      <button className={styles.actionButton}>Reply</button>
+                      <button className={styles.actionButton}>Close</button>
+                    </>
+                  )}
+                  {ticket.status === 'responded' && (
+                    <>
+                      <button className={styles.actionButton}>View</button>
+                      <button className={styles.actionButton}>Follow Up</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AdminStats = () => (
   <div className={styles.sectionContent}>
