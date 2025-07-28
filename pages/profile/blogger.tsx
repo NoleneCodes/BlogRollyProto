@@ -78,6 +78,7 @@ const BloggerProfile: React.FC = () => {
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
+  const [showStripePricingModal, setShowStripePricingModal] = useState<boolean>(false);
   
 
   useEffect(() => {
@@ -879,13 +880,12 @@ const BloggerProfile: React.FC = () => {
                     <li>Priority Support</li>
                   </ul>
                 </div>
-                <div className={styles.stripePricingTable}>
-                  <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-                  <stripe-pricing-table 
-                    pricing-table-id="prctbl_1RmgGoDyKgK2ioTOXJv76mNC"
-                    publishable-key="pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL">
-                  </stripe-pricing-table>
-                </div>
+                <button 
+                  className={styles.upgradeButton}
+                  onClick={() => setShowStripePricingModal(true)}
+                >
+                  Upgrade to Pro
+                </button>
               </div>
             </div>
           </div>
@@ -1062,6 +1062,30 @@ const BloggerProfile: React.FC = () => {
         isOpen={showBugReportPopup}
         onClose={() => setShowBugReportPopup(false)}
       />
+
+      {/* Stripe Pricing Modal */}
+      {showStripePricingModal && (
+        <div className={styles.blogSubmissionOverlay}>
+          <div className={styles.blogSubmissionContainer}>
+            <div className={styles.blogSubmissionHeader}>
+              <h3>Upgrade to Premium</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowStripePricingModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.stripePricingModalContent}>
+              <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+              <stripe-pricing-table 
+                pricing-table-id="prctbl_1RmgGoDyKgK2ioTOXJv76mNC"
+                publishable-key="pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL">
+              </stripe-pricing-table>
+            </div>
+          </div>
+        </div>
+      )}
 
       
     </Layout>

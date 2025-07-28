@@ -743,12 +743,13 @@
   background: #a01835;
 }
 
-.stripePricingTable {
-  margin-top: 1.5rem;
-  width: 100%;
+.stripePricingModalContent {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
-.stripePricingTable stripe-pricing-table {
+.stripePricingModalContent stripe-pricing-table {
   width: 100%;
 }
 
