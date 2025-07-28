@@ -877,18 +877,10 @@ const BloggerProfilePremium: React.FC = () => {
       <ContactSupportPopup
         isOpen={showContactSupportPopup}
         onClose={() => setShowContactSupportPopup(false)}
-      />ContactSupportPopup(false)}
       />
 
       {/* Bug Report Modal */}
       <BugReportModal
-        isOpen={showBugReportPopup}
-        onClose={() => setShowBugReportPopup(false)}
-      />se={() => setShowContactSupportPopup(false)}
-      />
-
-      {/* Bug Report Popup */}
-      <BugReportPopup
         isOpen={showBugReportPopup}
         onClose={() => setShowBugReportPopup(false)}
       />
