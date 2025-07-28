@@ -106,20 +106,31 @@
   padding: 4rem 2rem;
 }
 
+.filterSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.controls > div:first-child {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .filterSection {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .filterSelect {
@@ -270,12 +281,29 @@
 }
 
 .adultBadge {
-  background: #dc3545;
+  background: #ef4444;
   color: white;
   padding: 0.25rem 0.5rem;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.tierBadge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tierBadge.free {
+  background: #6b7280;
+  color: white;
+}
+
+.tierBadge.pro {
+  background: #10b981;
+  color: white;
 }
 
 .submissionMeta {

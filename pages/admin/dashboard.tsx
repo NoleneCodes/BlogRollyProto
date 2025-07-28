@@ -19,6 +19,7 @@ interface AdminUser {
 interface BlogSubmissionWithReview extends BlogSubmission {
   blogger_name: string;
   blogger_email: string;
+  blogger_tier: 'free' | 'pro';
   review_count: number;
   last_reviewed_at?: string;
 }
@@ -726,6 +727,7 @@ const AdminDashboard: React.FC = () => {
 
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
   const [filter, setFilter] = useState<BlogStatus | 'all'>('pending');
+  const [tierFilter, setTierFilter] = useState<'all' | 'free' | 'pro'>('all');
   const [selectedSubmission, setSelectedSubmission] = useState<BlogSubmissionWithReview | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewAction, setReviewAction] = useState<'approve' | 'reject' | null>(null);
@@ -814,7 +816,7 @@ const AdminDashboard: React.FC = () => {
         loadBlogPosts();
       }
     }
-  }, [adminUser, activeTab, filter]);
+  }, [adminUser, activeTab, filter, tierFilter]);
 
   const loadSubmissions = async () => {
     try {
@@ -838,13 +840,65 @@ const AdminDashboard: React.FC = () => {
           updated_at: '2025-01-24T10:00:00Z',
           blogger_name: 'John Developer',
           blogger_email: 'john@example.com',
+          blogger_tier: 'free',
           review_count: 0
+        },
+        {
+          id: '2',
+          user_id: 'user-2',
+          title: 'Advanced Node.js Performance Optimization',
+          description: 'Deep dive into Node.js performance optimization techniques for production applications.',
+          url: 'https://pro-blog.com/nodejs-optimization',
+          image_url: 'https://pro-blog.com/images/nodejs.jpg',
+          category: 'Technology',
+          tags: ['Node.js', 'Performance', 'Backend'],
+          status: 'pending',
+          has_adult_content: false,
+          is_live: false,
+          views: 0,
+          clicks: 0,
+          submitted_at: '2025-01-24T11:30:00Z',
+          created_at: '2025-01-24T11:30:00Z',
+          updated_at: '2025-01-24T11:30:00Z',
+          blogger_name: 'Sarah Pro',
+          blogger_email: 'sarah@problog.com',
+          blogger_tier: 'pro',
+          review_count: 0
+        },
+        {
+          id: '3',
+          user_id: 'user-3',
+          title: 'Getting Started with Web Development',
+          description: 'A beginner-friendly guide to starting your web development journey.',
+          url: 'https://beginner-blog.com/web-dev-start',
+          category: 'Education',
+          tags: ['Web Development', 'Beginner', 'Tutorial'],
+          status: 'approved',
+          has_adult_content: false,
+          is_live: true,
+          views: 245,
+          clicks: 18,
+          submitted_at: '2025-01-23T14:00:00Z',
+          created_at: '2025-01-23T14:00:00Z',
+          updated_at: '2025-01-23T15:30:00Z',
+          blogger_name: 'Mike Beginner',
+          blogger_email: 'mike@beginblog.com',
+          blogger_tier: 'free',
+          review_count: 1
         }
       ];
 
-      const filteredSubmissions = filter === 'all' 
-        ? mockSubmissions 
-        : mockSubmissions.filter(sub => sub.status === filter);
+      let filteredSubmissions = mockSubmissions;
+
+      // Apply status filter
+      if (filter !== 'all') {
+        filteredSubmissions = filteredSubmissions.filter(sub => sub.status === filter);
+      }
+
+      // Apply tier filter
+      if (tierFilter !== 'all') {
+        filteredSubmissions = filteredSubmissions.filter(sub => sub.blogger_tier === tierFilter);
+      }
 
       setSubmissions(filteredSubmissions);
     } catch (error) {
@@ -1022,6 +1076,20 @@ const AdminDashboard: React.FC = () => {
                 </select>
               </div>
 
+              <div className={styles.filterSection}>
+                <label htmlFor="tier-filter">Filter by Tier:</label>
+                <select 
+                  id="tier-filter"
+                  value={tierFilter} 
+                  onChange={(e) => setTierFilter(e.target.value as 'all' | 'free' | 'pro')}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Tiers</option>
+                  <option value="free">Free Members</option>
+                  <option value="pro">Pro Members</option>
+                </select>
+              </div>
+
               <div className={styles.stats}>
                 <div className={styles.statItem}>
                   <span className={styles.statNumber}>{submissions.length}</span>
@@ -1050,6 +1118,9 @@ const AdminDashboard: React.FC = () => {
                       <div className={styles.badges}>
                         <span className={`${styles.statusBadge} ${styles[submission.status]}`}>
                           {BlogStatusHelpers.getStatusLabel(submission.status)}
+                        </span>
+                        <span className={`${styles.tierBadge} ${styles[submission.blogger_tier]}`}>
+                          {submission.blogger_tier.toUpperCase()}
                         </span>
                         {submission.has_adult_content && (
                           <span className={styles.adultBadge}>18+</span>
