@@ -814,35 +814,50 @@ const AdminDashboard: React.FC = () => {
   const checkAdminAuth = async () => {
     try {
       // Get the current session token
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        router.replace('/admin/login');
+        return;
+      }
+      
       if (!session?.access_token) {
-        router.push('/admin/login');
+        console.log('No access token found, redirecting to login');
+        router.replace('/admin/login');
         return;
       }
 
       const response = await fetch('/api/admin-auth-check', {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
         }
       });
       
       if (!response.ok) {
-        throw new Error('Auth check request failed');
+        console.error('Auth check HTTP error:', response.status, response.statusText);
+        router.replace('/admin/login');
+        return;
       }
       
       const data: AdminUser = await response.json();
+      console.log('Dashboard auth response:', data);
 
       setAdminUser(data);
 
       if (!data.authenticated || !data.authorized) {
-        router.push('/admin/login');
+        console.log('User not authenticated or authorized:', data);
+        router.replace('/admin/login');
+        return;
       }
+      
+      console.log('Admin authentication successful');
     } catch (error) {
       console.error('Auth check failed:', error);
       setAdminUser(null);
-      setTimeout(() => {
-        router.push('/admin/login');
-      }, 1000);
+      router.replace('/admin/login');
     } finally {
       setIsLoading(false);
     }

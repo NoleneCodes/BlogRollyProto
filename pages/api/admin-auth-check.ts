@@ -14,11 +14,23 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<AdminAuthData>
 ) {
+  // Only allow GET requests
+  if (req.method !== 'GET') {
+    return res.status(405).json({
+      authenticated: false,
+      authorized: false,
+      message: 'Method not allowed'
+    });
+  }
+
   try {
+    console.log('Admin auth check started');
+    
     // Get the session from the request
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(200).json({
+      console.log('No authorization header provided');
+      return res.status(401).json({
         authenticated: false,
         authorized: false,
         message: 'No authentication token provided'
@@ -27,17 +39,39 @@ export default async function handler(
 
     // Extract the token from the Authorization header
     const token = authHeader.replace('Bearer ', '');
+    if (!token) {
+      console.log('No token found in authorization header');
+      return res.status(401).json({
+        authenticated: false,
+        authorized: false,
+        message: 'Invalid authorization header format'
+      });
+    }
+    
+    console.log('Verifying token with Supabase');
     
     // Verify the token with Supabase
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    if (error || !user) {
-      return res.status(200).json({
+    if (error) {
+      console.error('Supabase auth error:', error);
+      return res.status(401).json({
+        authenticated: false,
+        authorized: false,
+        message: 'Authentication token verification failed'
+      });
+    }
+
+    if (!user) {
+      console.log('No user found for token');
+      return res.status(401).json({
         authenticated: false,
         authorized: false,
         message: 'Invalid or expired authentication token'
       });
     }
+
+    console.log('User authenticated:', user.email);
 
     // Check if the user is an authorized admin
     const authorizedAdminEmails = [
@@ -47,14 +81,16 @@ export default async function handler(
     const isAuthorizedAdmin = authorizedAdminEmails.includes(user.email || '');
 
     if (isAuthorizedAdmin) {
-      res.status(200).json({
+      console.log('User authorized as admin');
+      return res.status(200).json({
         authenticated: true,
         authorized: true,
         userId: user.id,
         userEmail: user.email
       });
     } else {
-      res.status(200).json({
+      console.log('User not authorized as admin:', user.email);
+      return res.status(403).json({
         authenticated: true,
         authorized: false,
         userId: user.id,
@@ -64,7 +100,7 @@ export default async function handler(
     }
   } catch (error) {
     console.error('Admin auth check error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       authenticated: false,
       authorized: false,
       message: 'Authentication check failed'

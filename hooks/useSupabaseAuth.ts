@@ -22,9 +22,47 @@ export const useSupabaseAuth = () => {
   });
 
   useEffect(() => {
+    // Get initial session
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabaseAuth.getSession();
+        if (error) {
+          console.error('Initial session error:', error);
+          setAuthState({
+            user: null,
+            loading: false,
+            error: error.message
+          });
+        } else if (session?.user) {
+          setAuthState({
+            user: session.user,
+            loading: false,
+            error: null
+          });
+        } else {
+          setAuthState({
+            user: null,
+            loading: false,
+            error: null
+          });
+        }
+      } catch (error) {
+        console.error('Failed to get initial session:', error);
+        setAuthState({
+          user: null,
+          loading: false,
+          error: 'Failed to initialize authentication'
+        });
+      }
+    };
+
+    getInitialSession();
+
     const { data: authListener } = supabaseAuth.onAuthStateChange(
       async (event, session) => {
         try {
+          console.log('Auth state change:', event, session?.user?.email);
+          
           if (session?.user) {
             setAuthState({
               user: session.user,

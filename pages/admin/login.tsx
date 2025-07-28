@@ -35,36 +35,46 @@ const AdminLogin: React.FC = () => {
     if (!user) return;
     
     setIsChecking(true);
+    setLoginError(null);
+    
     try {
       // Get the current session token
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        throw new Error('No access token found');
+        setLoginError('No authentication session found');
+        return;
       }
 
       const response = await fetch('/api/admin-auth-check', {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
         }
       });
       
       if (!response.ok) {
-        throw new Error('Failed to check authorization');
+        const errorText = await response.text();
+        throw new Error(`Authorization check failed: ${response.status} - ${errorText}`);
       }
       
       const data: AdminUser = await response.json();
+      console.log('Admin auth response:', data);
       
       setAdminUser(data);
       
       if (data.authenticated && data.authorized) {
-        // Small delay before redirect to prevent crash
-        setTimeout(() => {
-          router.push('/admin/dashboard');
-        }, 100);
+        // Use router.replace instead of push to prevent back navigation issues
+        await router.replace('/admin/dashboard');
+      } else if (data.authenticated && !data.authorized) {
+        setLoginError(data.message || 'Access denied: Administrator privileges required');
+      } else {
+        setLoginError('Authentication failed');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      setLoginError('Failed to check admin authorization');
+      setLoginError(error instanceof Error ? error.message : 'Failed to check admin authorization');
+      setAdminUser(null);
     } finally {
       setIsChecking(false);
     }
