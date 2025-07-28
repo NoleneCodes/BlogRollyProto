@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-// import { supabaseAuth } from '../lib/supabase';
+import { supabaseAuth } from '../lib/supabase';
 
 interface User {
   id: string;
@@ -22,10 +22,6 @@ export const useSupabaseAuth = () => {
   });
 
   useEffect(() => {
-    // TODO: Implement Supabase auth state listener
-    console.log('TODO: Set up Supabase auth state listener');
-    
-    /*
     const { data: authListener } = supabaseAuth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
@@ -47,16 +43,6 @@ export const useSupabaseAuth = () => {
     return () => {
       authListener?.subscription?.unsubscribe();
     };
-    */
-
-    // Placeholder - simulate loading complete
-    setTimeout(() => {
-      setAuthState({
-        user: null,
-        loading: false,
-        error: null
-      });
-    }, 1000);
   }, []);
 
   const signUp = async (email: string, password: string, metadata: any) => {

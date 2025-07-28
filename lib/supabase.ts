@@ -1,16 +1,11 @@
 
 // Supabase configuration and client setup
-// TODO: Install @supabase/supabase-js when ready to integrate
-// TODO: Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to environment variables
-
-/*
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-*/
 
 // Database Types and Enums
 export type UserRole = 'reader' | 'blogger' | 'admin' | 'moderator';
@@ -172,27 +167,36 @@ export interface EmailQueue {
   created_at: string;
 }
 
-// Placeholder functions for development
+// Real Supabase authentication functions
 export const supabaseAuth = {
   signUp: async (email: string, password: string, metadata: any) => {
-    console.log('TODO: Implement Supabase signUp', { email, metadata });
-    return { data: null, error: null };
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata
+      }
+    });
+    return { data, error };
   },
   signIn: async (email: string, password: string) => {
-    console.log('TODO: Implement Supabase signIn', { email });
-    return { data: null, error: null };
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    return { data, error };
   },
   signOut: async () => {
-    console.log('TODO: Implement Supabase signOut');
-    return { error: null };
+    const { error } = await supabase.auth.signOut();
+    return { error };
   },
   getSession: async () => {
-    console.log('TODO: Implement Supabase getSession');
-    return { data: { session: null }, error: null };
+    const { data, error } = await supabase.auth.getSession();
+    return { data, error };
   },
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
-    console.log('TODO: Implement Supabase auth state change listener');
-    return { data: { subscription: null } };
+    const { data } = supabase.auth.onAuthStateChange(callback);
+    return { data };
   }
 };
 
