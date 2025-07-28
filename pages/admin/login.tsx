@@ -48,13 +48,19 @@ const AdminLogin: React.FC = () => {
         }
       });
       
+      if (!response.ok) {
+        throw new Error('Failed to check authorization');
+      }
+      
       const data: AdminUser = await response.json();
       
       setAdminUser(data);
       
       if (data.authenticated && data.authorized) {
-        // Redirect to admin dashboard if authorized
-        router.push('/admin/dashboard');
+        // Small delay before redirect to prevent crash
+        setTimeout(() => {
+          router.push('/admin/dashboard');
+        }, 100);
       }
     } catch (error) {
       console.error('Auth check failed:', error);

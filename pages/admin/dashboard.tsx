@@ -825,6 +825,11 @@ const AdminDashboard: React.FC = () => {
           'Authorization': `Bearer ${session.access_token}`
         }
       });
+      
+      if (!response.ok) {
+        throw new Error('Auth check request failed');
+      }
+      
       const data: AdminUser = await response.json();
 
       setAdminUser(data);
@@ -834,7 +839,10 @@ const AdminDashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      router.push('/admin/login');
+      setAdminUser(null);
+      setTimeout(() => {
+        router.push('/admin/login');
+      }, 1000);
     } finally {
       setIsLoading(false);
     }
@@ -962,6 +970,7 @@ const AdminDashboard: React.FC = () => {
       <Layout title="Loading...">
         <div className={styles.loading}>
           <h2>Loading admin dashboard...</h2>
+          <p>Verifying your admin access...</p>
         </div>
       </Layout>
     );
@@ -973,6 +982,12 @@ const AdminDashboard: React.FC = () => {
         <div className={styles.accessDenied}>
           <h2>Access Denied</h2>
           <p>You don't have permission to access this admin dashboard.</p>
+          <button 
+            onClick={() => router.push('/admin/login')} 
+            className={styles.loginButton}
+          >
+            Back to Login
+          </button>
         </div>
       </Layout>
     );
