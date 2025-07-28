@@ -1,4 +1,3 @@
-
 .adminLogin {
   min-height: 100vh;
   display: flex;
@@ -35,19 +34,79 @@
 }
 
 .loginForm {
-  margin-bottom: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  max-width: 400px;
+  width: 100%;
 }
 
 .loginForm h2 {
+  margin-bottom: 1.5rem;
   color: #374151;
-  margin-bottom: 1rem;
-  font-weight: 600;
+  text-align: center;
 }
 
-.loginForm p {
-  color: #6b7280;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.loginButton {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.loginButton:hover {
+  background: #2563eb;
+}
+
+.signOutButton {
+  background: #6b7280;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.signOutButton:hover {
+  background: #4b5563;
 }
 
 .authSection {
@@ -146,11 +205,11 @@
   .adminLogin {
     padding: 1rem;
   }
-  
+
   .loginContainer {
     padding: 2rem;
   }
-  
+
   .loginHeader h1 {
     font-size: 2rem;
   }

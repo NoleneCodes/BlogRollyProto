@@ -813,15 +813,25 @@ const AdminDashboard: React.FC = () => {
 
   const checkAdminAuth = async () => {
     try {
-      const response = await fetch('/api/admin-auth-check');
-      const data: AdminUser = await response.json();
-      
-      if (!data.authenticated || !data.authorized) {
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
         router.push('/admin/login');
         return;
       }
-      
+
+      const response = await fetch('/api/admin-auth-check', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      const data: AdminUser = await response.json();
+
       setAdminUser(data);
+
+      if (!data.authenticated || !data.authorized) {
+        router.push('/admin/login');
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       router.push('/admin/login');

@@ -1,58 +1,73 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { supabase } from '../../lib/supabase';
 
 type AdminAuthData = {
   authenticated: boolean;
   authorized: boolean;
   userId?: string;
-  userName?: string;
-  userRoles?: string;
+  userEmail?: string;
   message?: string;
 };
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<AdminAuthData>
 ) {
-  // Check for Repl Auth headers
-  const userId = req.headers['x-replit-user-id'] as string;
-  const userName = req.headers['x-replit-user-name'] as string;
-  const userRoles = req.headers['x-replit-user-roles'] as string;
+  try {
+    // Get the session from the request
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(200).json({
+        authenticated: false,
+        authorized: false,
+        message: 'No authentication token provided'
+      });
+    }
 
-  if (!userId || !userName) {
-    return res.status(200).json({
+    // Extract the token from the Authorization header
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify the token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(200).json({
+        authenticated: false,
+        authorized: false,
+        message: 'Invalid or expired authentication token'
+      });
+    }
+
+    // Check if the user is an authorized admin
+    const authorizedAdminEmails = [
+      'hello@blogrolly.com'
+    ];
+
+    const isAuthorizedAdmin = authorizedAdminEmails.includes(user.email || '');
+
+    if (isAuthorizedAdmin) {
+      res.status(200).json({
+        authenticated: true,
+        authorized: true,
+        userId: user.id,
+        userEmail: user.email
+      });
+    } else {
+      res.status(200).json({
+        authenticated: true,
+        authorized: false,
+        userId: user.id,
+        userEmail: user.email,
+        message: 'Only BlogRolly administrators can access this area'
+      });
+    }
+  } catch (error) {
+    console.error('Admin auth check error:', error);
+    res.status(500).json({
       authenticated: false,
       authorized: false,
-      message: 'Authentication required'
-    });
-  }
-
-  // Define authorized users (BlogRolly team members)
-  const authorizedUsers = [
-    'Nolene-AA'
-  ];
-
-  const roles = userRoles ? userRoles.split(',') : [];
-  const isTeamMember = authorizedUsers.includes(userName) || 
-                      roles.includes('admin') || 
-                      roles.includes('blogrolly-admin');
-
-  if (isTeamMember) {
-    res.status(200).json({
-      authenticated: true,
-      authorized: true,
-      userId,
-      userName,
-      userRoles
-    });
-  } else {
-    res.status(200).json({
-      authenticated: true,
-      authorized: false,
-      userId,
-      userName,
-      userRoles,
-      message: 'Insufficient permissions for admin access'
+      message: 'Authentication check failed'
     });
   }
 }

@@ -2,52 +2,98 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
+import { useSupabaseAuth } from '../../hooks/useSupabaseAuth';
+import { supabase } from '../../lib/supabase';
 import styles from '../../styles/AdminLogin.module.css';
 
 interface AdminUser {
   authenticated: boolean;
   authorized: boolean;
   userId?: string;
-  userName?: string;
-  userRoles?: string;
+  userEmail?: string;
   message?: string;
 }
 
 const AdminLogin: React.FC = () => {
   const router = useRouter();
+  const { user, loading, error, signIn } = useSupabaseAuth();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: ''
+  });
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
-    checkAdminAuth();
-  }, []);
+    if (user) {
+      checkAdminAuth();
+    }
+  }, [user]);
 
   const checkAdminAuth = async () => {
+    if (!user) return;
+    
+    setIsChecking(true);
     try {
-      const response = await fetch('/api/admin-auth-check');
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No access token found');
+      }
+
+      const response = await fetch('/api/admin-auth-check', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      
       const data: AdminUser = await response.json();
       
       setAdminUser(data);
       
       if (data.authenticated && data.authorized) {
-        // Redirect to admin dashboard if already authorized
+        // Redirect to admin dashboard if authorized
         router.push('/admin/dashboard');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
-      setError('Failed to check authentication status');
+      setLoginError('Failed to check admin authorization');
     } finally {
-      setIsLoading(false);
+      setIsChecking(false);
     }
   };
 
-  const handleLogin = () => {
-    // Trigger Replit authentication
-    window.location.reload();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+
+    if (!loginForm.email || !loginForm.password) {
+      setLoginError('Please enter both email and password');
+      return;
+    }
+
+    try {
+      const result = await signIn(loginForm.email, loginForm.password);
+      
+      if (result.error) {
+        setLoginError(result.error.message);
+      }
+      // If successful, the useEffect will handle admin check
+    } catch (error) {
+      setLoginError('Login failed. Please try again.');
+    }
   };
 
-  if (isLoading) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  if (loading || isChecking) {
     return (
       <Layout title="Admin Login - BlogRolly">
         <div className={styles.adminLogin}>
@@ -67,58 +113,78 @@ const AdminLogin: React.FC = () => {
         <div className={styles.loginContainer}>
           <div className={styles.loginHeader}>
             <h1>BlogRolly Admin</h1>
-            <p>Access the admin dashboard</p>
+            <p>Sign in with your BlogRolly admin account</p>
           </div>
 
-          {!adminUser?.authenticated ? (
-            <div className={styles.loginForm}>
-              <h2>Authentication Required</h2>
-              <p>Please authenticate with your Replit account to continue.</p>
+          {!user ? (
+            <form onSubmit={handleLogin} className={styles.loginForm}>
+              <h2>Admin Sign In</h2>
               
-              <div className={styles.authSection}>
-                <script
-                  dangerouslySetInnerHTML={{
-                    __html: `
-                      document.addEventListener('DOMContentLoaded', function() {
-                        const script = document.createElement('script');
-                        script.src = 'https://auth.util.repl.co/script.js';
-                        script.setAttribute('authed', 'location.reload()');
-                        document.getElementById('replit-auth').appendChild(script);
-                      });
-                    `
-                  }}
+              <div className={styles.formGroup}>
+                <label htmlFor="email">Email Address</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={loginForm.email}
+                  onChange={handleInputChange}
+                  placeholder="hello@blogrolly.com"
+                  required
                 />
-                <div id="replit-auth"></div>
               </div>
-            </div>
-          ) : !adminUser.authorized ? (
+
+              <div className={styles.formGroup}>
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={loginForm.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <button type="submit" className={styles.loginButton}>
+                Sign In to Admin
+              </button>
+
+              {(loginError || error) && (
+                <div className={styles.error}>
+                  <p>{loginError || error}</p>
+                </div>
+              )}
+            </form>
+          ) : adminUser && !adminUser.authorized ? (
             <div className={styles.accessDenied}>
               <h2>Access Denied</h2>
               <p>{adminUser.message || 'You do not have permission to access the admin dashboard.'}</p>
               <div className={styles.userInfo}>
-                <p><strong>User:</strong> {adminUser.userName}</p>
+                <p><strong>Email:</strong> {adminUser.userEmail}</p>
                 <p><strong>User ID:</strong> {adminUser.userId}</p>
-                <p><strong>Roles:</strong> {adminUser.userRoles || 'None'}</p>
               </div>
               <p className={styles.helpText}>
-                If you believe this is an error, please contact the site administrator.
+                Only BlogRolly administrators can access this area. If you believe this is an error, please contact support.
               </p>
-            </div>
-          ) : (
-            <div className={styles.authorized}>
-              <h2>Access Granted</h2>
-              <p>Welcome, {adminUser.userName}! Redirecting to admin dashboard...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className={styles.error}>
-              <p>{error}</p>
-              <button onClick={checkAdminAuth} className={styles.retryButton}>
-                Retry
+              
+              <button 
+                onClick={() => {
+                  // Sign out and reset form
+                  setAdminUser(null);
+                  setLoginForm({ email: '', password: '' });
+                }} 
+                className={styles.signOutButton}
+              >
+                Sign Out
               </button>
             </div>
-          )}
+          ) : adminUser && adminUser.authorized ? (
+            <div className={styles.authorized}>
+              <h2>Access Granted</h2>
+              <p>Welcome, {adminUser.userEmail}! Redirecting to admin dashboard...</p>
+            </div>
+          ) : null}
         </div>
       </div>
     </Layout>
