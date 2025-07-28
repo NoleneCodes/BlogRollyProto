@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
-import BugReportPopup from '../../components/BugReportPopup';
+import BugReportModal from '../../components/BugReportModal';
 import styles from '../../styles/BloggerProfilePremium.module.css';
 
 interface UserInfo {
@@ -960,6 +960,13 @@ const BloggerProfilePremium: React.FC = () => {
       <ContactSupportPopup
         isOpen={showContactSupportPopup}
         onClose={() => setShowContactSupportPopup(false)}
+      />
+
+      {/* Bug Report Modal */}
+      <BugReportModal
+        isOpen={showBugReportPopup}
+        onClose={() => setShowBugReportPopup(false)}
+      />se={() => setShowContactSupportPopup(false)}
       />
 
       {/* Bug Report Popup */}
