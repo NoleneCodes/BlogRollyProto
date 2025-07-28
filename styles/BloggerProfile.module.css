@@ -743,44 +743,193 @@
   background: #a01835;
 }
 
+/* Help section styles */
 .helpSection {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .helpItem {
   background: white;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  border: 1px solid #e5e7eb;
 }
 
 .helpItem h3 {
-  margin: 0 0 1rem 0;
-  color: #1e293b;
-  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+  color: #111827;
+  font-size: 1.125rem;
 }
 
 .helpItem p {
-  color: #64748b;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+  line-height: 1.5;
 }
 
 .helpButton {
-  background: #c42142;
+  background: #3b82f6;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  cursor: pointer;
+  border-radius: 8px;
   font-weight: 500;
-  transition: background 0.2s ease;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .helpButton:hover {
-  background: #a01835;
+  background: #2563eb;
+}
+
+/* URL Change Styles */
+.blogUrlSection {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.blogUrlSection .input {
+  flex: 1;
+}
+
+.readOnlyInput {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.changeUrlButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.changeUrlButton:hover:not(.disabled) {
+  background: #2563eb;
+}
+
+.changeUrlButton.disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.urlChangeInfo {
+  margin-top: 0.5rem;
+}
+
+.urlChangeRestriction {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.urlChangeHint {
+  color: #6b7280;
+}
+
+/* URL Change Modal */
+.urlChangeOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.urlChangeModal {
+  background: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.urlChangeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.urlChangeHeader h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.urlChangeContent {
+  padding: 2rem;
+}
+
+.urlChangeWarning {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.urlChangeWarning h4 {
+  margin: 0 0 0.75rem 0;
+  color: #92400e;
+  font-size: 1rem;
+}
+
+.urlChangeWarning ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #92400e;
+}
+
+.urlChangeWarning li {
+  margin-bottom: 0.25rem;
+}
+
+.urlChangeActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.confirmUrlChangeButton {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirmUrlChangeButton:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.confirmUrlChangeButton:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
 }
 
 .emptyState {

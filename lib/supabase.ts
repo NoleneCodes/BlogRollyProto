@@ -80,6 +80,8 @@ export interface BloggerProfile {
   stripe_customer_id?: string;
   subscription_status?: 'active' | 'canceled' | 'past_due';
   subscription_end_date?: string;
+  last_url_change?: string; // Date of last URL change
+  url_changes_count: number; // Total number of URL changes
   created_at: string;
   updated_at: string;
 }
@@ -145,6 +147,17 @@ export interface UserTierLimits {
   current_live_posts: number;
   total_approved_posts: number;
   updated_at: string;
+}
+
+// Blog URL Change History
+export interface BlogUrlChangeHistory {
+  id: string;
+  user_id: string; // FK to User
+  old_url: string;
+  new_url: string;
+  change_reason?: string;
+  changed_at: string;
+  created_at: string;
 }
 
 // Email Notifications Queue
@@ -287,6 +300,40 @@ export const supabaseDB = {
 
   getPendingEmails: async () => {
     console.log('TODO: Get pending emails to send');
+    return { data: [], error: null };
+  },
+
+  // Blog URL Change Management
+  canChangeBlogUrl: async (userId: string) => {
+    console.log('TODO: Check if user can change blog URL', userId);
+    // This would check:
+    // 1. If user has made any URL changes
+    // 2. If last change was more than 3 months ago
+    // 3. Return boolean and next available change date
+    return { 
+      data: { 
+        canChange: true, 
+        nextChangeDate: null, 
+        changesUsed: 0, 
+        lastChangeDate: null 
+      }, 
+      error: null 
+    };
+  },
+
+  updateBlogUrl: async (userId: string, oldUrl: string, newUrl: string, reason?: string) => {
+    console.log('TODO: Update blog URL with change tracking', { userId, oldUrl, newUrl, reason });
+    // This would:
+    // 1. Update BloggerProfile.blog_url
+    // 2. Update BloggerProfile.last_url_change
+    // 3. Increment BloggerProfile.url_changes_count
+    // 4. Insert record into BlogUrlChangeHistory
+    // 5. Mark all approved blog submissions as inactive for re-review
+    return { data: null, error: null };
+  },
+
+  getBlogUrlChangeHistory: async (userId: string) => {
+    console.log('TODO: Get blog URL change history', userId);
     return { data: [], error: null };
   }
 };
