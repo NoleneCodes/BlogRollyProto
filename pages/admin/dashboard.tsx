@@ -951,10 +951,6 @@ const AdminDashboard: React.FC = () => {
       <div className={styles.adminDashboard}>
         <div className={styles.header}>
           <h1>Admin Dashboard</h1>
-          <div className={styles.adminInfo}>
-            <span>Welcome, {adminUser.userName}</span>
-            <span className={styles.adminBadge}>ADMIN</span>
-          </div>
         </div>
 
         <div className={styles.tabNavigation}>
