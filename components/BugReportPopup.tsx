@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { addBugReport } from '../lib/bugReportData';
 import styles from '../styles/ReaderProfile.module.css';
 
 interface BugReportPopupProps {
@@ -70,7 +71,7 @@ const BugReportPopup: React.FC<BugReportPopupProps> = ({ isOpen, onClose }) => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -84,24 +85,49 @@ const BugReportPopup: React.FC<BugReportPopupProps> = ({ isOpen, onClose }) => {
       return;
     }
 
-    // TODO: Submit bug report to backend
-    console.log('Bug report submitted:', { formData, images: selectedImages });
-    alert('Bug report submitted successfully! Thank you for helping us improve BlogRolly.');
-    
-    // Reset form
-    setFormData({
-      title: '',
-      description: '',
-      stepsToReproduce: '',
-      expectedBehavior: '',
-      actualBehavior: '',
-      browser: '',
-      operatingSystem: '',
-      additionalInfo: ''
-    });
-    setSelectedImages([]);
-    setImagePreviews([]);
-    onClose();
+    try {
+      // Convert images to base64 for storage
+      const imagePromises = selectedImages.map(file => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(file);
+        });
+      });
+      
+      const imageBase64Array = await Promise.all(imagePromises);
+      
+      // Add default reporter email (in a real app, this would come from user session)
+      const reportData = {
+        ...formData,
+        reporter: 'user@example.com', // This should come from authenticated user
+        images: imageBase64Array
+      };
+      
+      // Save bug report
+      const savedReport = addBugReport(reportData);
+      console.log('Bug report saved:', savedReport);
+      
+      alert('Bug report submitted successfully! Thank you for helping us improve BlogRolly.');
+      
+      // Reset form
+      setFormData({
+        title: '',
+        description: '',
+        stepsToReproduce: '',
+        expectedBehavior: '',
+        actualBehavior: '',
+        browser: '',
+        operatingSystem: '',
+        additionalInfo: ''
+      });
+      setSelectedImages([]);
+      setImagePreviews([]);
+      onClose();
+    } catch (error) {
+      console.error('Error submitting bug report:', error);
+      alert('Failed to submit bug report. Please try again.');
+    }
   };
 
   return (

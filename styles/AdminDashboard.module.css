@@ -992,6 +992,151 @@
   background: #10b981;
 }
 
+/* Bug Report Details Modal */
+.bugReportDetails {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.bugReportHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bugReportHeader h4 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.bugReportBadges {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.priorityBadge,
+.statusBadge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.bugReportMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.metaItem {
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.metaItem strong {
+  color: #1f2937;
+  margin-right: 0.5rem;
+}
+
+.bugReportSection {
+  margin-bottom: 1.5rem;
+}
+
+.bugReportSection h5 {
+  margin: 0 0 0.5rem 0;
+  color: #c42142;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.bugReportSection p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.bugReportSection pre {
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #374151;
+  margin: 0;
+  border-left: 3px solid #c42142;
+}
+
+.bugReportImages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.bugReportImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.bugReportImage:hover {
+  transform: scale(1.02);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.5rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
 /* Action Buttons */
 .actionButton {
   background: #c42142;

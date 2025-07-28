@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogPostManager from '../../components/BlogPostManager';
 import { getAllInternalBlogPosts, deleteInternalBlogPost, InternalBlogPost } from '../../lib/internalBlogData';
+import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
 import { BlogSubmission, BlogStatus, RejectionReason, BlogStatusHelpers } from '../../lib/supabase';
 import styles from '../../styles/AdminDashboard.module.css';
 
@@ -26,63 +27,15 @@ const BugReports = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'in-progress' | 'resolved'>('all');
+  const [bugReportsData, setBugReportsData] = useState<BugReport[]>([]);
+  const [selectedBugReport, setSelectedBugReport] = useState<BugReport | null>(null);
+  const [showViewModal, setShowViewModal] = useState(false);
 
-  const bugReportsData = [
-    {
-      id: '#BUG-001',
-      title: 'Login button not responding on mobile',
-      priority: 'high',
-      reporter: 'user@example.com',
-      status: 'open',
-      date: '2025-01-24',
-      dateSort: new Date('2025-01-24')
-    },
-    {
-      id: '#BUG-002',
-      title: 'Search results not displaying correctly',
-      priority: 'medium',
-      reporter: 'blogger@test.com',
-      status: 'in-progress',
-      date: '2025-01-23',
-      dateSort: new Date('2025-01-23')
-    },
-    {
-      id: '#BUG-003',
-      title: 'Profile image upload fails on Chrome',
-      priority: 'medium',
-      reporter: 'tester@blogrolly.com',
-      status: 'open',
-      date: '2025-01-22',
-      dateSort: new Date('2025-01-22')
-    },
-    {
-      id: '#BUG-004',
-      title: 'Email notifications not sending',
-      priority: 'high',
-      reporter: 'admin@example.com',
-      status: 'in-progress',
-      date: '2025-01-21',
-      dateSort: new Date('2025-01-21')
-    },
-    {
-      id: '#BUG-005',
-      title: 'Blog submission form validation issues',
-      priority: 'low',
-      reporter: 'blogger@domain.com',
-      status: 'resolved',
-      date: '2025-01-20',
-      dateSort: new Date('2025-01-20')
-    },
-    {
-      id: '#BUG-006',
-      title: 'Dashboard loading performance issues',
-      priority: 'medium',
-      reporter: 'admin@blogrolly.com',
-      status: 'open',
-      date: '2025-01-19',
-      dateSort: new Date('2025-01-19')
-    }
-  ];
+  useEffect(() => {
+    // Load bug reports data
+    const reports = getAllBugReports();
+    setBugReportsData(reports);
+  }, []);
 
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -162,8 +115,23 @@ const BugReports = () => {
   };
 
   const handleStatusChange = (bugId: string, newStatus: 'open' | 'in-progress' | 'resolved') => {
-    console.log(`Updating bug ${bugId} status to ${newStatus}`);
-    alert(`Bug ${bugId} status updated to ${newStatus}`);
+    const success = updateBugReportStatus(bugId, newStatus);
+    if (success) {
+      // Refresh the data
+      const updatedReports = getAllBugReports();
+      setBugReportsData(updatedReports);
+      alert(`Bug ${bugId} status updated to ${newStatus}`);
+    } else {
+      alert('Failed to update bug status');
+    }
+  };
+
+  const handleViewBugReport = (bugId: string) => {
+    const report = getBugReportById(bugId);
+    if (report) {
+      setSelectedBugReport(report);
+      setShowViewModal(true);
+    }
   };
 
   const sortedAndFilteredData = getSortedAndFilteredData();
@@ -275,7 +243,12 @@ const BugReports = () => {
                 </td>
                 <td>{bug.date}</td>
                 <td>
-                  <button className={styles.actionButton}>View</button>
+                  <button 
+                    className={styles.actionButton}
+                    onClick={() => handleViewBugReport(bug.id)}
+                  >
+                    View
+                  </button>
                   {bug.status === 'open' && (
                     <button className={styles.actionButton}>Assign</button>
                   )}
@@ -298,6 +271,110 @@ const BugReports = () => {
           </div>
         )}
       </div>
+
+      {/* Bug Report View Modal */}
+      {showViewModal && selectedBugReport && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>Bug Report Details - {selectedBugReport.id}</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.bugReportDetails}>
+              <div className={styles.bugReportHeader}>
+                <h4>{selectedBugReport.title}</h4>
+                <div className={styles.bugReportBadges}>
+                  <span className={`${styles.priorityBadge} ${getPriorityClass(selectedBugReport.priority)}`}>
+                    {selectedBugReport.priority.toUpperCase()} PRIORITY
+                  </span>
+                  <span className={`${styles.statusBadge} ${getStatusClass(selectedBugReport.status)}`}>
+                    {selectedBugReport.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.bugReportMeta}>
+                <div className={styles.metaItem}>
+                  <strong>Reporter:</strong> {selectedBugReport.reporter}
+                </div>
+                <div className={styles.metaItem}>
+                  <strong>Submitted:</strong> {new Date(selectedBugReport.submittedAt).toLocaleString()}
+                </div>
+                <div className={styles.metaItem}>
+                  <strong>Browser:</strong> {selectedBugReport.browser || 'Not specified'}
+                </div>
+                <div className={styles.metaItem}>
+                  <strong>OS:</strong> {selectedBugReport.operatingSystem || 'Not specified'}
+                </div>
+              </div>
+
+              <div className={styles.bugReportSection}>
+                <h5>Description</h5>
+                <p>{selectedBugReport.description}</p>
+              </div>
+
+              {selectedBugReport.stepsToReproduce && (
+                <div className={styles.bugReportSection}>
+                  <h5>Steps to Reproduce</h5>
+                  <pre>{selectedBugReport.stepsToReproduce}</pre>
+                </div>
+              )}
+
+              {selectedBugReport.expectedBehavior && (
+                <div className={styles.bugReportSection}>
+                  <h5>Expected Behavior</h5>
+                  <p>{selectedBugReport.expectedBehavior}</p>
+                </div>
+              )}
+
+              {selectedBugReport.actualBehavior && (
+                <div className={styles.bugReportSection}>
+                  <h5>Actual Behavior</h5>
+                  <p>{selectedBugReport.actualBehavior}</p>
+                </div>
+              )}
+
+              {selectedBugReport.additionalInfo && (
+                <div className={styles.bugReportSection}>
+                  <h5>Additional Information</h5>
+                  <p>{selectedBugReport.additionalInfo}</p>
+                </div>
+              )}
+
+              {selectedBugReport.images && selectedBugReport.images.length > 0 && (
+                <div className={styles.bugReportSection}>
+                  <h5>Screenshots</h5>
+                  <div className={styles.bugReportImages}>
+                    {selectedBugReport.images.map((image, index) => (
+                      <img 
+                        key={index}
+                        src={image} 
+                        alt={`Screenshot ${index + 1}`}
+                        className={styles.bugReportImage}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
