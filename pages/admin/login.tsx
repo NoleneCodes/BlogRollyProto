@@ -155,7 +155,6 @@ const AdminLogin: React.FC = () => {
                   type="email"
                   value={loginForm.email}
                   onChange={handleInputChange}
-                  placeholder="hello@blogrolly.com"
                   required
                 />
               </div>
@@ -168,7 +167,6 @@ const AdminLogin: React.FC = () => {
                   type="password"
                   value={loginForm.password}
                   onChange={handleInputChange}
-                  placeholder="Enter your password"
                   required
                 />
               </div>
