@@ -5,6 +5,7 @@ import BlogPostManager from '../../components/BlogPostManager';
 import { getAllInternalBlogPosts, deleteInternalBlogPost, InternalBlogPost } from '../../lib/internalBlogData';
 import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
 import { BlogSubmission, BlogStatus, RejectionReason, BlogStatusHelpers } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import styles from '../../styles/AdminDashboard.module.css';
 
 interface AdminUser {
@@ -709,80 +710,9 @@ const AdminStats = () => (
         </div>
       </div>
 
-      <div className={styles.statsMainCard}>
-        <div className={styles.cardHeader}>
-          <h3>Blog Statistics</h3>
-          <p>Content submission and approval metrics</p>
-        </div>
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <h3>2,156</h3>
-            <p>Total Blogs</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>45</h3>
-            <p>Pending Approval</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>12</h3>
-            <p>Rejected This Week</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>2,099</h3>
-            <p>Approved Blogs</p>
-          </div>
-        </div>
-      </div>
+      {/* The blog stats and monthly growth card have been removed as per instructions */}
 
-      <div className={styles.statsMainCard}>
-        <div className={styles.cardHeader}>
-          <h3>Monthly Growth</h3>
-          <p>Growth metrics and performance indicators</p>
-        </div>
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <h3>+127</h3>
-            <p>New Users</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>+89</h3>
-            <p>New Blogs</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>+15</h3>
-            <p>Premium Upgrades</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>94.2%</h3>
-            <p>User Satisfaction</p>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.statsMainCard}>
-        <div className={styles.cardHeader}>
-          <h3>Top Categories</h3>
-          <p>Most popular blog categories by volume</p>
-        </div>
-        <div className={styles.categoryStats}>
-          <div className={styles.categoryItem}>
-            <span>Lifestyle</span>
-            <span>245 blogs</span>
-          </div>
-          <div className={styles.categoryItem}>
-            <span>Technology</span>
-            <span>198 blogs</span>
-          </div>
-          <div className={styles.categoryItem}>
-            <span>Health & Wellness</span>
-            <span>167 blogs</span>
-          </div>
-          <div className={styles.categoryItem}>
-            <span>Business</span>
-            <span>134 blogs</span>
-          </div>
-        </div>
-      </div>
+      {/* Top categories card has been removed as per the instructions */}
     </div>
   </div>
 );
@@ -791,6 +721,7 @@ const AdminDashboard: React.FC = () => {
   const router = useRouter();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('submissions');
 
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
@@ -808,60 +739,72 @@ const AdminDashboard: React.FC = () => {
   const [mode, setMode] = useState<'add' | 'edit'>('add');
 
   useEffect(() => {
-    checkAdminAuth();
-  }, []);
+    let mounted = true;
 
-  const checkAdminAuth = async () => {
-    try {
-      // Get the current session token
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        router.replace('/admin/login');
-        return;
-      }
-      
-      if (!session?.access_token) {
-        console.log('No access token found, redirecting to login');
-        router.replace('/admin/login');
-        return;
-      }
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
 
-      const response = await fetch('/api/admin-auth-check', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
+        if (!session?.access_token) {
+          if (mounted) {
+            window.location.href = '/admin/login';
+          }
+          return;
         }
-      });
-      
-      if (!response.ok) {
-        console.error('Auth check HTTP error:', response.status, response.statusText);
-        router.replace('/admin/login');
-        return;
-      }
-      
-      const data: AdminUser = await response.json();
-      console.log('Dashboard auth response:', data);
 
-      setAdminUser(data);
+        const response = await fetch('/api/admin-auth-check', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-      if (!data.authenticated || !data.authorized) {
-        console.log('User not authenticated or authorized:', data);
-        router.replace('/admin/login');
-        return;
+        if (!response.ok) {
+          throw new Error(`Auth check failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!mounted) return;
+
+        if (data.authenticated && data.authorized) {
+          setAdminUser({
+            authenticated: true,
+            authorized: true,
+            userId: data.userId,
+            userName: data.userEmail || 'Admin',
+            userRoles: 'admin'
+          });
+        } else {
+          setAuthError('Access denied');
+          setTimeout(() => {
+            if (mounted) {
+              window.location.href = '/admin/login';
+            }
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        if (mounted) {
+          setAuthError('Authentication failed');
+          setTimeout(() => {
+            window.location.href = '/admin/login';
+          }, 2000);
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
-      
-      console.log('Admin authentication successful');
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      setAdminUser(null);
-      router.replace('/admin/login');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+
+    checkAuth();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (adminUser) {
@@ -991,18 +934,13 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  if (!adminUser) {
+  if (authError || !adminUser) {
     return (
-      <Layout title="Access Denied">
+      <Layout title="Access Error">
         <div className={styles.accessDenied}>
-          <h2>Access Denied</h2>
-          <p>You don't have permission to access this admin dashboard.</p>
-          <button 
-            onClick={() => router.push('/admin/login')} 
-            className={styles.loginButton}
-          >
-            Back to Login
-          </button>
+          <h2>Access Error</h2>
+          <p>{authError || 'Unable to verify admin access'}</p>
+          <p>Redirecting to login...</p>
         </div>
       </Layout>
     );
@@ -1128,13 +1066,13 @@ const AdminDashboard: React.FC = () => {
                       <div className={styles.actionButtons}>
                         <button 
                           className={styles.approveButton}
-                          onClick={() => handleReviewSubmission(submission, 'approve')}
+                          onClick={() => alert('Approve functionality coming soon!')}
                         >
                           ✓ Approve
                         </button>
                         <button 
                           className={styles.rejectButton}
-                          onClick={() => handleReviewSubmission(submission, 'reject')}
+                          onClick={() => alert('Reject functionality coming soon!')}
                         >
                           ✗ Reject
                         </button>
@@ -1152,138 +1090,52 @@ const AdminDashboard: React.FC = () => {
             <div className={styles.managerHeader}>
               <h2>Internal Blog Posts</h2>
               <button 
-                onClick={handleAddNew}
+                onClick={() => alert('Blog manager functionality coming soon!')}
                 className={styles.primaryButton}
               >
                 Add New Post
               </button>
             </div>
-
-            <div className={styles.blogPostsGrid}>
-              {blogPosts.map((post) => (
-                <div key={post.id} className={styles.blogPostCard}>
-                  <div className={styles.blogPostHeader}>
-                    <h3>{post.title}</h3>
-                    <div className={styles.blogPostActions}>
-                      <button onClick={() => handleEdit(post)} className={styles.editButton}>
-                        Edit
-                      </button>
-                      <button onClick={() => handleDelete(post.id)} className={styles.deleteButton}>
-                        Delete
-                      </button>
-                      <a href={`/blog/post/${post.slug}`} target="_blank" rel="noopener noreferrer" className={styles.viewButton}>
-                        View
-                      </a>
-                    </div>
-                  </div>
-
-                  <p className={styles.blogPostDescription}>{post.description}</p>
-
-                  <div className={styles.blogPostMeta}>
-                    <span>Category: {post.category}</span>
-                    <span>Published: {post.publishDate}</span>
-                    <span>Status: {post.isPublished ? 'Published' : 'Draft'}</span>
-                  </div>
-
-                  <div className={styles.blogPostTags}>
-                    {post.tags.map((tag, index) => (
-                      <span key={index} className={styles.tag}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p>Blog management tools will be available here.</p>
           </div>
         )}
 
         {activeTab === 'bug-reports' && <BugReports />}
         {activeTab === 'support-requests' && <SupportRequests />}
-        {activeTab === 'stats' && <AdminStats />}
+        {activeTab === 'stats' && (
+          <div className={styles.tabContent}>
+            <div className={styles.sectionHeader}>
+              <h2>Dashboard Overview</h2>
+              <p>Overview of BlogRolly performance and metrics</p>
+            </div>
 
-        {showReviewModal && selectedSubmission && (
-          <div className={styles.modal}>
-            <div className={styles.modalContent}>
-              <h3>{reviewAction === 'approve' ? 'Approve' : 'Reject'} Blog Submission</h3>
-
-              <div className={styles.modalSubmissionInfo}>
-                <h4>{selectedSubmission.title}</h4>
-                <p>by {selectedSubmission.blogger_name}</p>
-                <p><a href={selectedSubmission.url} target="_blank" rel="noopener noreferrer">
-                  {selectedSubmission.url}
-                </a></p>
-              </div>
-
-              {reviewAction === 'approve' && (
-                <div className={styles.approvalConfirm}>
-                  <p>This will:</p>
-                  <ul>
-                    <li>Mark the submission as approved</li>
-                    <li>Send approval email to the blogger</li>
-                    <li>Make it available for the blogger to set live (subject to tier limits)</li>
-                  </ul>
+            <div className={styles.statsCardsGrid}>
+              <div className={styles.statsMainCard}>
+                <div className={styles.cardHeader}>
+                  <h3>Platform Statistics</h3>
+                  <p>Current user metrics and platform health</p>
                 </div>
-              )}
-
-              {reviewAction === 'reject' && (
-                <div className={styles.rejectionForm}>
-                  <label htmlFor="rejection-reason">Rejection Reason *</label>
-                  <select 
-                    id="rejection-reason"
-                    value={rejectionReason} 
-                    onChange={(e) => setRejectionReason(e.target.value as RejectionReason)}
-                    className={styles.rejectionSelect}
-                    required
-                  >
-                    <option value="">Select a reason...</option>
-                    {getRejectionReasons().map(reason => (
-                      <option key={reason.value} value={reason.value}>
-                        {reason.label}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label htmlFor="rejection-note">Additional Note (Optional)</label>
-                  <textarea
-                    id="rejection-note"
-                    value={rejectionNote}
-                    onChange={(e) => setRejectionNote(e.target.value)}
-                    className={styles.rejectionNote}
-                    placeholder="Add any specific feedback or instructions..."
-                    rows={3}
-                  />
-
-                  <p className={styles.rejectionInfo}>
-                    The blogger will receive an email with the rejection reason and can resubmit after making changes.
-                  </p>
+                <div className={styles.statsGrid}>
+                  <div className={styles.statCard}>
+                    <h3>1,247</h3>
+                    <p>Total Users</p>
+                  </div>
+                  <div className={styles.statCard}>
+                    <h3>342</h3>
+                    <p>Active Bloggers</p>
+                  </div>
+                  <div className={styles.statCard}>
+                    <h3>905</h3>
+                    <p>Readers</p>
+                  </div>
+                  <div className={styles.statCard}>
+                    <h3>89</h3>
+                    <p>Premium Members</p>
+                  </div>
                 </div>
-              )}
-
-              <div className={styles.modalActions}>
-                <button 
-                  className={styles.cancelButton}
-                  onClick={() => setShowReviewModal(false)}
-                  disabled={isProcessing}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className={reviewAction === 'approve' ? styles.confirmApprove : styles.confirmReject}
-                  onClick={submitReview}
-                  disabled={isProcessing || (reviewAction === 'reject' && !rejectionReason)}
-                >
-                  {isProcessing ? 'Processing...' : `Confirm ${reviewAction === 'approve' ? 'Approval' : 'Rejection'}`}
-                </button>
               </div>
             </div>
           </div>
-        )}
-
-        {showManager && (
-          <BlogPostManager
-            onClose={handleCloseManager}
-            existingPost={editingPost}
-            mode={mode}
-          />
         )}
       </div>
     </Layout>

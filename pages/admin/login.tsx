@@ -17,32 +17,32 @@ interface AdminUser {
 const AdminLogin: React.FC = () => {
   const router = useRouter();
   const { user, loading, error, signIn } = useSupabaseAuth();
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: ''
   });
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [authStatus, setAuthStatus] = useState<'loading' | 'authenticated' | 'unauthorized' | 'error'>('loading');
 
   useEffect(() => {
-    if (user) {
+    if (user && !isChecking) {
       checkAdminAuth();
+    } else if (!user && !loading) {
+      setAuthStatus('unauthorized');
     }
-  }, [user]);
+  }, [user, loading]);
 
   const checkAdminAuth = async () => {
-    if (!user) return;
+    if (!user || isChecking) return;
     
     setIsChecking(true);
     setLoginError(null);
     
     try {
-      // Get the current session token
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        setLoginError('No authentication session found');
-        return;
+        throw new Error('No authentication session found');
       }
 
       const response = await fetch('/api/admin-auth-check', {
@@ -54,27 +54,23 @@ const AdminLogin: React.FC = () => {
       });
       
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Authorization check failed: ${response.status} - ${errorText}`);
+        throw new Error(`Authorization check failed: ${response.status}`);
       }
       
       const data: AdminUser = await response.json();
-      console.log('Admin auth response:', data);
-      
-      setAdminUser(data);
       
       if (data.authenticated && data.authorized) {
-        // Use router.replace instead of push to prevent back navigation issues
-        await router.replace('/admin/dashboard');
-      } else if (data.authenticated && !data.authorized) {
-        setLoginError(data.message || 'Access denied: Administrator privileges required');
+        setAuthStatus('authenticated');
+        // Use window.location for reliable redirect
+        window.location.href = '/admin/dashboard';
       } else {
-        setLoginError('Authentication failed');
+        setAuthStatus('unauthorized');
+        setLoginError(data.message || 'Access denied: Administrator privileges required');
       }
     } catch (error) {
       console.error('Auth check failed:', error);
+      setAuthStatus('error');
       setLoginError(error instanceof Error ? error.message : 'Failed to check admin authorization');
-      setAdminUser(null);
     } finally {
       setIsChecking(false);
     }
@@ -95,7 +91,6 @@ const AdminLogin: React.FC = () => {
       if (result.error) {
         setLoginError(result.error.message);
       }
-      // If successful, the useEffect will handle admin check
     } catch (error) {
       setLoginError('Login failed. Please try again.');
     }
@@ -109,13 +104,29 @@ const AdminLogin: React.FC = () => {
     }));
   };
 
-  if (loading || isChecking) {
+  if (loading || isChecking || authStatus === 'loading') {
     return (
       <Layout title="Admin Login - BlogRolly">
         <div className={styles.adminLogin}>
           <div className={styles.loginContainer}>
             <div className={styles.loading}>
               <h2>Checking authentication...</h2>
+              <p>Please wait...</p>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (authStatus === 'authenticated') {
+    return (
+      <Layout title="Admin Login - BlogRolly">
+        <div className={styles.adminLogin}>
+          <div className={styles.loginContainer}>
+            <div className={styles.authorized}>
+              <h2>Access Granted</h2>
+              <p>Redirecting to admin dashboard...</p>
             </div>
           </div>
         </div>
@@ -172,13 +183,12 @@ const AdminLogin: React.FC = () => {
                 </div>
               )}
             </form>
-          ) : adminUser && !adminUser.authorized ? (
+          ) : (
             <div className={styles.accessDenied}>
               <h2>Access Denied</h2>
-              <p>{adminUser.message || 'You do not have permission to access the admin dashboard.'}</p>
+              <p>{loginError || 'You do not have permission to access the admin dashboard.'}</p>
               <div className={styles.userInfo}>
-                <p><strong>Email:</strong> {adminUser.userEmail}</p>
-                <p><strong>User ID:</strong> {adminUser.userId}</p>
+                <p><strong>Email:</strong> {user.email}</p>
               </div>
               <p className={styles.helpText}>
                 Only BlogRolly administrators can access this area. If you believe this is an error, please contact support.
@@ -186,21 +196,16 @@ const AdminLogin: React.FC = () => {
               
               <button 
                 onClick={() => {
-                  // Sign out and reset form
-                  setAdminUser(null);
                   setLoginForm({ email: '', password: '' });
+                  setLoginError(null);
+                  window.location.href = '/';
                 }} 
                 className={styles.signOutButton}
               >
-                Sign Out
+                Return to Home
               </button>
             </div>
-          ) : adminUser && adminUser.authorized ? (
-            <div className={styles.authorized}>
-              <h2>Access Granted</h2>
-              <p>Welcome, {adminUser.userEmail}! Redirecting to admin dashboard...</p>
-            </div>
-          ) : null}
+          )}
         </div>
       </div>
     </Layout>
