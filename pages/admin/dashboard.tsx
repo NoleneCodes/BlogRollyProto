@@ -728,6 +728,7 @@ const AdminDashboard: React.FC = () => {
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
   const [filter, setFilter] = useState<BlogStatus | 'all'>('pending');
   const [tierFilter, setTierFilter] = useState<'all' | 'free' | 'pro'>('all');
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | '3months'>('all');
   const [selectedSubmission, setSelectedSubmission] = useState<BlogSubmissionWithReview | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewAction, setReviewAction] = useState<'approve' | 'reject' | null>(null);
@@ -816,7 +817,7 @@ const AdminDashboard: React.FC = () => {
         loadBlogPosts();
       }
     }
-  }, [adminUser, activeTab, filter, tierFilter]);
+  }, [adminUser, activeTab, filter, tierFilter, dateFilter]);
 
   const loadSubmissions = async () => {
     try {
@@ -898,6 +899,32 @@ const AdminDashboard: React.FC = () => {
       // Apply tier filter
       if (tierFilter !== 'all') {
         filteredSubmissions = filteredSubmissions.filter(sub => sub.blogger_tier === tierFilter);
+      }
+
+      // Apply date filter
+      if (dateFilter !== 'all') {
+        const now = new Date();
+        let cutoffDate = new Date();
+
+        switch (dateFilter) {
+          case 'today':
+            cutoffDate.setHours(0, 0, 0, 0);
+            break;
+          case 'week':
+            cutoffDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            cutoffDate.setMonth(now.getMonth() - 1);
+            break;
+          case '3months':
+            cutoffDate.setMonth(now.getMonth() - 3);
+            break;
+        }
+
+        filteredSubmissions = filteredSubmissions.filter(sub => {
+          const submissionDate = new Date(sub.submitted_at || sub.created_at);
+          return submissionDate >= cutoffDate;
+        });
       }
 
       setSubmissions(filteredSubmissions);
@@ -1087,6 +1114,22 @@ const AdminDashboard: React.FC = () => {
                   <option value="all">All Tiers</option>
                   <option value="free">Free Members</option>
                   <option value="pro">Pro Members</option>
+                </select>
+              </div>
+
+              <div className={styles.filterSection}>
+                <label htmlFor="date-filter">Filter by Date:</label>
+                <select 
+                  id="date-filter"
+                  value={dateFilter} 
+                  onChange={(e) => setDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | '3months')}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="week">Last 7 Days</option>
+                  <option value="month">Last Month</option>
+                  <option value="3months">Last 3 Months</option>
                 </select>
               </div>
 
