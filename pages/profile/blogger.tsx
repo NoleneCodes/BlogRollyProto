@@ -58,19 +58,14 @@ const BloggerProfile: React.FC = () => {
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
   const [editingBlog, setEditingBlog] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<{
-    title: string;
-    description: string;
-    url: string;
-    image: File | null;
-    imagePreview: string | null;
-  }>({
+  const [editForm, setEditForm] = useState({
     title: '',
     description: '',
     url: '',
-    image: null,
-    imagePreview: null
+    image: null as File | null,
+    imagePreview: null as string | null
   });
+  const [savedDrafts, setSavedDrafts] = useState<any[]>([]);
     const [editingSubmission, setEditingSubmission] = useState<string | null>(null);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editedTitle, setEditedTitle] = useState<string>('');
@@ -201,6 +196,22 @@ const BloggerProfile: React.FC = () => {
 
     checkAuth();
   }, [router]);
+
+  const loadSavedDrafts = () => {
+    const saved = localStorage.getItem('blogSubmissionDraft');
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        setSavedDrafts([{
+          id: 'draft-1',
+          ...draft,
+          lastSaved: draft.savedAt ? new Date(draft.savedAt).toLocaleString() : 'Unknown'
+        }]);
+      } catch (error) {
+        console.error('Error loading drafts:', error);
+      }
+    }
+  };
 
   const handleLogout = () => {
     router.push('/');
@@ -926,7 +937,7 @@ const BloggerProfile: React.FC = () => {
                 <p>Learn about our submission and review process for getting your blog featured</p>
                 <button 
                   className={styles.helpButton}
-                  onClick={() => setShowHowItWorksPopup(true)}
+                  onClick={()                  onClick={() => setShowHowItWorksPopup(true)}
                 >
                   Learn How It Works
                 </button>
@@ -945,15 +956,98 @@ const BloggerProfile: React.FC = () => {
           </div>
         );
 
+      case 'drafts':
+        return (
+          <div className={styles.content}>
+            <div className={styles.sectionHeader}>
+              <h2>Saved Drafts</h2>
+              <p>Continue working on your blog submissions</p>
+            </div>
+
+            {savedDrafts.length > 0 ? (
+              <div className={styles.draftsGrid}>
+                {savedDrafts.map((draft) => (
+                  <div key={draft.id} className={styles.draftCard}>
+                    <div className={styles.draftContent}>
+                      <h4 className={styles.draftTitle}>
+                        {draft.title || 'Untitled Draft'}
+                      </h4>
+                      <p className={styles.draftDescription}>
+                        {draft.description || 'No description yet...'}
+                      </p>
+                      <div className={styles.draftMeta}>
+                        <span className={styles.draftCategory}>
+                          {draft.category || 'No category'}
+                        </span>
+                        <span className={styles.draftDate}>
+                          Saved: {draft.lastSaved}
+                        </span>
+                      </div>
+                      {draft.tags && draft.tags.length > 0 && (
+                        <div className={styles.draftTags}>
+                          {draft.tags.slice(0, 3).map((tag: string, index: number) => (
+                            <span key={index} className={styles.draftTag}>
+                              {tag}
+                            </span>
+                          ))}
+                          {draft.tags.length > 3 && (
+                            <span className={styles.draftTag}>
+                              +{draft.tags.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={styles.draftActions}>
+                      <button 
+                        onClick={() => {}}
+                        className={styles.continueDraftButton}
+                      >
+                        Continue Editing
+                      </button>
+                      <button 
+                        onClick={() => {}}
+                        className={styles.deleteDraftButton}
+                        title="Delete draft"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.noDrafts}>
+                <p>No saved drafts yet.</p>
+                <button 
+                  onClick={() => {}}
+                  className={styles.startDraftButton}
+                >
+                  Start Writing
+                </button>
+              </div>
+            )}
+          </div>
+        );
+
       default:
         return null;
     }
   };
 
+  const continueDraft = (draft: any) => {
+    console.log('continueDraft clicked', draft);
+  }
+
+  const deleteDraft = (draftId: any) => {
+    console.log('deleteDraft clicked', draftId);
+  }
+
+
   return (
     <Layout title="Blogger Profile - Blogrolly">
       <div className={styles.profileContainer}>
-```python
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h3>Blogger Dashboard</h3>
@@ -969,6 +1063,12 @@ const BloggerProfile: React.FC = () => {
               onClick={() => setActiveSection('blogroll')}
             >
               My Blogroll
+            </button>
+                        <button 
+              className={`${styles.navItem} ${activeSection === 'drafts' ? styles.active : ''}`}
+              onClick={() => setActiveSection('drafts')}
+            >
+              Saved Drafts
             </button>
             <button 
               className={`${styles.navItem} ${styles.disabled}`}
