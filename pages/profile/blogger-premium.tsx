@@ -97,6 +97,7 @@ const BloggerProfilePremium: React.FC = () => {
   const [showUrlChangeModal, setShowUrlChangeModal] = useState<boolean>(false);
   const [newBlogUrl, setNewBlogUrl] = useState<string>('');
   const [urlChangeReason, setUrlChangeReason] = useState<string>('');
+  const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -495,86 +496,107 @@ const BloggerProfilePremium: React.FC = () => {
                     <div className={styles.featureText}>Premium Features: Unlimited blog posts • Priority review • Advanced analytics</div>
                   </div>
                 </div>
+                <div>
+                  <label htmlFor="blogrollFilter">Filter by Status:</label>
+                  <select
+                    id="blogrollFilter"
+                    value={blogrollFilter}
+                    onChange={(e) => setBlogrollFilter(e.target.value)}
+                  >
+                    <option value="all">All</option>
+                    <option value="draft">Draft</option>
+                    <option value="live">Live</option>
+                    <option value="deactivated">Deactivated</option>
+                  </select>
+                </div>
                 <div className={styles.submissionsList}>
-                  {blogSubmissions.map(submission => (
-                    <div key={submission.id} className={styles.premiumSubmissionCard}>
-                      <div className={styles.submissionImageContainer}>
-                        {submission.image ? (
-                          <img 
-                            src={submission.image} 
-                            alt={submission.title}
-                            className={styles.submissionImage}
-                          />
-                        ) : (
-                          <div className={styles.submissionImagePlaceholder}>
-                            No image
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.submissionContent}>
-                        <div className={styles.submissionHeader}>
-                          <h4 className={styles.submissionTitle}>
-                            {submission.title}
-                            {submission.status === 'approved' && !submission.isActive && (
-                              <span className={styles.inactiveIndicator}> • Inactive</span>
-                            )}
-                          </h4>
-                          <p className={styles.submissionDescription}>
-                            {submission.description}
-                          </p>
+                  {blogSubmissions
+                    .filter(submission => {
+                      if (blogrollFilter === 'all') return true;
+                      if (blogrollFilter === 'draft') return submission.status === 'draft';
+                      if (blogrollFilter === 'live') return submission.status === 'approved' && submission.isActive;
+                      if (blogrollFilter === 'deactivated') return submission.status === 'approved' && !submission.isActive;
+                      return true;
+                    })
+                    .map(submission => (
+                      <div key={submission.id} className={styles.premiumSubmissionCard}>
+                        <div className={styles.submissionImageContainer}>
+                          {submission.image ? (
+                            <img
+                              src={submission.image}
+                              alt={submission.title}
+                              className={styles.submissionImage}
+                            />
+                          ) : (
+                            <div className={styles.submissionImagePlaceholder}>
+                              No image
+                            </div>
+                          )}
                         </div>
 
-                        <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+                        <div className={styles.submissionContent}>
+                          <div className={styles.submissionHeader}>
+                            <h4 className={styles.submissionTitle}>
+                              {submission.title}
+                              {submission.status === 'approved' && !submission.isActive && (
+                                <span className={styles.inactiveIndicator}> • Inactive</span>
+                              )}
+                            </h4>
+                            <p className={styles.submissionDescription}>
+                              {submission.description}
+                            </p>
+                          </div>
 
-                        <div className={styles.submissionMeta}>
-                          <span className={styles.category}>{submission.category}</span>
-                          <span 
-                            className={styles.status}
-                            style={{ backgroundColor: getStatusColor(submission.status) }}
-                          >
-                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-                            {submission.status === 'approved' && submission.isActive && (
-                              <span className={styles.activeIndicator}> • Live</span>
-                            )}
-                          </span>
+                          <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+
+                          <div className={styles.submissionMeta}>
+                            <span className={styles.category}>{submission.category}</span>
+                            <span
+                              className={styles.status}
+                              style={{ backgroundColor: getStatusColor(submission.status) }}
+                            >
+                              {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                              {submission.status === 'approved' && submission.isActive && (
+                                <span className={styles.activeIndicator}> • Live</span>
+                              )}
+                            </span>
+                          </div>
+
+                          {submission.status === 'approved' && submission.isActive && (
+
+                            <div className={styles.premiumMetrics}>
+                              <div className={styles.metricItem}>
+                                <span className={styles.metricValue}>{submission.views}</span>
+                                <span className={styles.metricLabel}>Views</span>
+                              </div>
+                              <div className={styles.metricItem}>
+                                <span className={styles.metricValue}>{submission.clicks}</span>
+                                <span className={styles.metricLabel}>Clicks</span>
+                              </div>
+                              <div className={styles.metricItem}>
+                                <span className={styles.metricValue}>{submission.ctr}%</span>
+                                <span className={styles.metricLabel}>CTR</span>
+                              </div>
+
+                            </div>
+                          )}
                         </div>
 
-                        {submission.status === 'approved' && submission.isActive && (
-
-                          <div className={styles.premiumMetrics}>
-                            <div className={styles.metricItem}>
-                              <span className={styles.metricValue}>{submission.views}</span>
-                              <span className={styles.metricLabel}>Views</span>
-                            </div>
-                            <div className={styles.metricItem}>
-                              <span className={styles.metricValue}>{submission.clicks}</span>
-                              <span className={styles.metricLabel}>Clicks</span>
-                            </div>
-                            <div className={styles.metricItem}>
-                              <span className={styles.metricValue}>{submission.ctr}%</span>
-                              <span className={styles.metricLabel}>CTR</span>
-                            </div>
-
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.submissionActions}>
-                        <button className={styles.editButton}>
-                          Edit
-                        </button>
-                        {submission.status === 'approved' && (
-                          <button 
-                            className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
-                            onClick={() => togglePostActivation(submission.id)}
-                          >
-                            {submission.isActive ? 'Deactivate' : 'Activate'}
+                        <div className={styles.submissionActions}>
+                          <button className={styles.editButton}>
+                            Edit
                           </button>
-                        )}
+                          {submission.status === 'approved' && (
+                            <button
+                              className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
+                              onClick={() => togglePostActivation(submission.id)}
+                            >
+                              {submission.isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </>
             )}

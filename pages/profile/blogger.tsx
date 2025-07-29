@@ -81,6 +81,7 @@ const BloggerProfile: React.FC = () => {
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
   const [showStripePricingModal, setShowStripePricingModal] = useState<boolean>(false);
+  const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
 
 
   useEffect(() => {
@@ -495,8 +496,50 @@ const BloggerProfile: React.FC = () => {
                   <div className={styles.postCount}>You currently have <span className={styles.currentCount}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>/3 active posts</div>
                  </div>
                 </div>
+                
+                <div className={styles.blogrollFilters}>
+                  <div className={styles.filterButtons}>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'all' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('all')}
+                    >
+                      All ({blogSubmissions.length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'draft' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('draft')}
+                    >
+                      Drafts ({blogSubmissions.filter(post => post.status === 'draft').length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'live' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('live')}
+                    >
+                      Live ({blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'inactive' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('inactive')}
+                    >
+                      Inactive ({blogSubmissions.filter(post => post.status === 'approved' && !post.isActive).length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'pending' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('pending')}
+                    >
+                      Pending ({blogSubmissions.filter(post => post.status === 'pending').length})
+                    </button>
+                  </div>
+                </div>
                 <div className={styles.submissionsList}>
-                  {blogSubmissions.map(submission => (
+                  {blogSubmissions.filter(submission => {
+                    if (blogrollFilter === 'all') return true;
+                    if (blogrollFilter === 'draft') return submission.status === 'draft';
+                    if (blogrollFilter === 'live') return submission.status === 'approved' && submission.isActive;
+                    if (blogrollFilter === 'inactive') return submission.status === 'approved' && !submission.isActive;
+                    if (blogrollFilter === 'pending') return submission.status === 'pending';
+                    return true;
+                  }).map(submission => (
                     <div key={submission.id} className={styles.submissionItem}>
                       {editingBlog === submission.id ? (
                         <div className={styles.editBlogForm}>
