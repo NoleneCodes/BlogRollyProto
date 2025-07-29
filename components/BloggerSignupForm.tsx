@@ -273,20 +273,38 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           // Focus after scroll completes
           setTimeout(() => {
             try {
-              (errorElement as HTMLElement).focus();
-              // Add visual highlight using local CSS class
-              errorElement.style.outline = '3px solid #ef4444';
-              errorElement.style.outlineOffset = '2px';
-              errorElement.style.animation = 'pulse-error 1s ease-in-out infinite alternate';
+              // Scroll to element with offset for sticky navbar
+              const navbarHeight = 80; // Approximate navbar height
+              const elementTop = errorElement.getBoundingClientRect().top + window.pageYOffset;
+              const offsetPosition = elementTop - navbarHeight - 20; // 20px extra padding
+              
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+              
+              // Focus and highlight after scroll
               setTimeout(() => {
-                errorElement!.style.outline = '';
-                errorElement!.style.outlineOffset = '';
-                errorElement!.style.animation = '';
-              }, 2000);
+                (errorElement as HTMLElement).focus();
+                // Add visual highlight using inline styles with proper z-index
+                errorElement.style.outline = '3px solid #ef4444';
+                errorElement.style.outlineOffset = '2px';
+                errorElement.style.animation = 'pulse-error 1s ease-in-out infinite alternate';
+                errorElement.style.position = 'relative';
+                errorElement.style.zIndex = '50';
+                
+                setTimeout(() => {
+                  errorElement!.style.outline = '';
+                  errorElement!.style.outlineOffset = '';
+                  errorElement!.style.animation = '';
+                  errorElement!.style.position = '';
+                  errorElement!.style.zIndex = '';
+                }, 2000);
+              }, 300);
             } catch (e) {
               console.log('Could not focus element:', e);
             }
-          }, 500);
+          }, 100);
         } else {
           console.log('Could not find element for field:', firstErrorField);
         }

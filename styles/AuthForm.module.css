@@ -588,6 +588,19 @@
   outline: 3px solid #ef4444 !important;
   outline-offset: 2px !important;
   animation: pulse-error 1s ease-in-out infinite alternate;
+  position: relative;
+  z-index: 50; /* Below navbar z-index of 100 */
+}
+
+@keyframes pulse-error {
+  0% {
+    outline-color: #ef4444;
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  100% {
+    outline-color: #dc2626;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+  }
 }
 
 @keyframes pulse-error {
