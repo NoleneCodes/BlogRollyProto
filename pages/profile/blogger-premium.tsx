@@ -540,11 +540,6 @@ const BloggerProfilePremium: React.FC = () => {
               <p className={styles.emptyState}>No blog submissions yet. Submit your first blog post!</p>
             ) : (
               <>
-                <div className={styles.premiumFeatures}>
-                  <div className={styles.featureBanner}>
-                    <div className={styles.featureText}>Premium Features: Unlimited blog posts • Priority review • Advanced analytics</div>
-                  </div>
-                </div>
                 <div>
                   <label htmlFor="blogrollFilter">Filter by Status:</label>
                   <select
