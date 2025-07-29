@@ -9,6 +9,7 @@ interface BlogSubmissionFormProps {
   bloggerId?: string;
   isBlogger?: boolean;
   hideGuidelines?: boolean;
+  isSignupMode?: boolean;
 }
 
 interface FormData {
@@ -96,7 +97,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   displayName, 
   bloggerId, 
   isBlogger = false,
-  hideGuidelines = false
+  hideGuidelines = false,
+  isSignupMode = false
 }) => {
   const [formData, setFormData] = useState<FormData>({
     image: null,
@@ -112,8 +114,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     hasAdultContent: false
   });
 
-  // Check if user is authenticated as a blogger
-  if (!isBlogger) {
+  // Check if user is authenticated as a blogger (skip check during signup)
+  if (!isBlogger && !isSignupMode) {
     return (
       <div className={styles.formContainer}>
         <div style={{ 

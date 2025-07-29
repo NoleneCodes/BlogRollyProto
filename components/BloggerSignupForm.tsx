@@ -69,6 +69,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const [submittedBlogs, setSubmittedBlogs] = useState<any[]>([]);
   const [showSurveyPopup, setShowSurveyPopup] = useState(false);
   const [surveyCompleted, setSurveyCompleted] = useState(false);
+  const [isPart1Complete, setIsPart1Complete] = useState(false);
 
   const topicOptions = [
     'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
@@ -79,6 +80,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const monetizationOptions = [
     'Ads', 'Affiliate Links', 'Products/Services', 'None Yet'
   ];
+
+  // Check if Part 1 is complete
+  useEffect(() => {
+    const part1Fields = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword'];
+    const part1Complete = part1Fields.every(field => 
+      bloggerForm[field as keyof BloggerFormData] !== ''
+    ) && validateAge(bloggerForm.dateOfBirth) && bloggerForm.password === bloggerForm.confirmPassword;
+    
+    setIsPart1Complete(part1Complete);
+  }, [bloggerForm]);
 
   // Calculate progress for blogger form
   useEffect(() => {
@@ -417,7 +428,19 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </div>
         </div>
 
-        <div className={styles.sectionTitle}>Part 3: Listings</div>
+        <div className={styles.sectionTitle}>
+          Part 3: Listings
+          {!isPart1Complete && (
+            <span style={{ 
+              fontSize: '0.8rem', 
+              color: '#64748b', 
+              fontWeight: 'normal',
+              marginLeft: '0.5rem'
+            }}>
+              (Complete Part 1 to unlock)
+            </span>
+          )}
+        </div>
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
@@ -426,34 +449,50 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile. You can also add these later from your dashboard.</small>
           
-          <div className={styles.blogListingsContainer}>
-            {submittedBlogs.map((blog, index) => (
-              <div key={index} className={styles.submittedBlog}>
-                <div className={styles.blogInfo}>
-                  <h4>{blog.title}</h4>
-                  <p>{blog.description}</p>
-                  <a href={blog.postUrl} target="_blank" rel="noopener noreferrer">{blog.postUrl}</a>
+          {!isPart1Complete ? (
+            <div style={{
+              padding: '2rem',
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              textAlign: 'center',
+              color: '#64748b'
+            }}>
+              <p>Complete Part 1 (Account Setup) to add blog posts during signup.</p>
+              <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                You can always add blog posts later from your dashboard.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.blogListingsContainer}>
+              {submittedBlogs.map((blog, index) => (
+                <div key={index} className={styles.submittedBlog}>
+                  <div className={styles.blogInfo}>
+                    <h4>{blog.title}</h4>
+                    <p>{blog.description}</p>
+                    <a href={blog.postUrl} target="_blank" rel="noopener noreferrer">{blog.postUrl}</a>
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={() => removeBlog(index)}
+                    className={styles.removeBlogButton}
+                  >
+                    Remove
+                  </button>
                 </div>
+              ))}
+              
+              {submittedBlogs.length < 3 && (
                 <button 
                   type="button" 
-                  onClick={() => removeBlog(index)}
-                  className={styles.removeBlogButton}
+                  onClick={() => setShowBlogSubmissionPopup(true)}
+                  className={styles.addBlogButton}
                 >
-                  Remove
+                  + Add Blog Post (Optional)
                 </button>
-              </div>
-            ))}
-            
-            {submittedBlogs.length < 3 && (
-              <button 
-                type="button" 
-                onClick={() => setShowBlogSubmissionPopup(true)}
-                className={styles.addBlogButton}
-              >
-                + Add Blog Post (Optional)
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className={styles.formGroup}>
@@ -539,7 +578,14 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
                 ×
               </button>
             </div>
-            <BlogSubmissionForm onSubmit={handleBlogSubmission} displayName={bloggerForm.displayName} />
+            <BlogSubmissionForm 
+              onSubmit={handleBlogSubmission} 
+              displayName={bloggerForm.displayName}
+              bloggerId="temp_signup"
+              isBlogger={true}
+              hideGuidelines={true}
+              isSignupMode={true}
+            />
           </div>
         </div>
       )}
