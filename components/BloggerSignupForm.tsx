@@ -218,12 +218,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       setErrors(newErrors);
       
       // Scroll to first error field
-      const firstErrorField = Object.keys(newErrors)[0];
       const fieldOrder = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword', 'blogUrl', 'agreeToTerms', 'confirmOwnership', 'agreeToSurvey'];
       const sortedErrors = Object.keys(newErrors).sort((a, b) => fieldOrder.indexOf(a) - fieldOrder.indexOf(b));
+      const firstErrorField = sortedErrors[0];
       
       setTimeout(() => {
-        const errorElement = document.querySelector(`input[name="${sortedErrors[0]}"], input[type="checkbox"][data-field="${sortedErrors[0]}"]`);
+        let errorElement = document.querySelector(`input[name="${firstErrorField}"]`);
+        if (!errorElement && (firstErrorField === 'agreeToTerms' || firstErrorField === 'confirmOwnership' || firstErrorField === 'agreeToSurvey')) {
+          errorElement = document.querySelector(`input[type="checkbox"][data-field="${firstErrorField}"]`);
+        }
+        
         if (errorElement) {
           errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
           (errorElement as HTMLElement).focus();

@@ -629,4 +629,3 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
 };
 
 export default BlogSubmissionForm;
-`
