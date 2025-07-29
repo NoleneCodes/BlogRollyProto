@@ -15,6 +15,13 @@ export const RESEND_CONFIG = {
   replyTo: 'support@blogrolly.com'
 };
 
+// Investor-specific email configuration
+export const INVESTOR_EMAIL_CONFIG = {
+  fromEmail: 'invest@blogrolly.com',
+  fromName: 'BlogRolly Investor Relations',
+  replyTo: 'invest@blogrolly.com'
+};
+
 // Test function to verify Resend client is working
 export const testResendConnection = async () => {
   try {
@@ -66,6 +73,34 @@ export const sendEmail = async (emailData: {
     return { success: true, data };
   } catch (error) {
     console.error('❌ Email sending failed:', error);
+    throw error;
+  }
+};
+
+// Helper function specifically for investor emails
+export const sendInvestorEmail = async (emailData: {
+  to: string | string[];
+  subject: string;
+  html: string;
+}) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `${INVESTOR_EMAIL_CONFIG.fromName} <${INVESTOR_EMAIL_CONFIG.fromEmail}>`,
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailData.html,
+      reply_to: INVESTOR_EMAIL_CONFIG.replyTo,
+    });
+
+    if (error) {
+      console.error('Resend investor email error:', error);
+      throw new Error(`Failed to send investor email: ${error.message}`);
+    }
+
+    console.log('✅ Investor email sent successfully:', data?.id);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ Investor email sending failed:', error);
     throw error;
   }
 };
