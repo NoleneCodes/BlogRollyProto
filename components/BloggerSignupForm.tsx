@@ -218,21 +218,45 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       setErrors(newErrors);
       
       // Scroll to first error field
-      const fieldOrder = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword', 'blogUrl', 'agreeToTerms', 'confirmOwnership', 'agreeToSurvey'];
-      const sortedErrors = Object.keys(newErrors).sort((a, b) => fieldOrder.indexOf(a) - fieldOrder.indexOf(b));
+      const fieldOrder = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword', 'displayName', 'bio', 'blogUrl', 'blogName', 'agreeToTerms', 'confirmOwnership', 'agreeToSurvey'];
+      const sortedErrors = Object.keys(newErrors).sort((a, b) => {
+        const aIndex = fieldOrder.indexOf(a);
+        const bIndex = fieldOrder.indexOf(b);
+        return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+      });
       const firstErrorField = sortedErrors[0];
       
       setTimeout(() => {
-        let errorElement = document.querySelector(`input[name="${firstErrorField}"]`);
-        if (!errorElement && (firstErrorField === 'agreeToTerms' || firstErrorField === 'confirmOwnership' || firstErrorField === 'agreeToSurvey')) {
+        let errorElement: Element | null = null;
+        
+        // Try different selectors for the field
+        if (firstErrorField === 'agreeToTerms' || firstErrorField === 'confirmOwnership' || firstErrorField === 'agreeToSurvey') {
           errorElement = document.querySelector(`input[type="checkbox"][data-field="${firstErrorField}"]`);
+          if (!errorElement) {
+            // Find checkbox by checking the text content of labels
+            const labels = document.querySelectorAll('label.checkboxLabel');
+            for (const label of labels) {
+              const checkbox = label.querySelector('input[type="checkbox"]');
+              if (checkbox && label.textContent?.toLowerCase().includes(firstErrorField.toLowerCase().replace(/([A-Z])/g, ' $1').trim())) {
+                errorElement = checkbox;
+                break;
+              }
+            }
+          }
+        } else {
+          errorElement = document.querySelector(`input[name="${firstErrorField}"]`);
+          if (!errorElement) {
+            errorElement = document.querySelector(`textarea[name="${firstErrorField}"]`);
+          }
         }
         
         if (errorElement) {
           errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          (errorElement as HTMLElement).focus();
+          setTimeout(() => {
+            (errorElement as HTMLElement).focus();
+          }, 300);
         }
-      }, 100);
+      }, 200);
       
       return;
     }
