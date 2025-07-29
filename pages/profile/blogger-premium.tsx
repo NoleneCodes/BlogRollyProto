@@ -566,6 +566,12 @@ const BloggerProfilePremium: React.FC = () => {
                     >
                       Inactive ({blogSubmissions.filter(post => post.status === 'approved' && !post.isActive).length})
                     </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'pending' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('pending')}
+                    >
+                      Pending ({blogSubmissions.filter(post => post.status === 'pending').length})
+                    </button>
                   </div>
                 </div>
                 <div className={styles.submissionsList}>
@@ -575,6 +581,7 @@ const BloggerProfilePremium: React.FC = () => {
                       if (blogrollFilter === 'draft') return submission.status === 'draft';
                       if (blogrollFilter === 'live') return submission.status === 'approved' && submission.isActive;
                       if (blogrollFilter === 'deactivated') return submission.status === 'approved' && !submission.isActive;
+                      if (blogrollFilter === 'pending') return submission.status === 'pending';
                       return true;
                     })
                     .map(submission => (
