@@ -391,6 +391,19 @@
 :global(.dark) .description {
   color: #A1A1AA;
 }
+
+/* Blog card titles - ensure proper red color */
+.blogTitle {
+  color: #c42142;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.3;
+}
+
+:global(.dark) .blogTitle {
+  color: #ff4d6d;
+}
 .ctaButton {
   background: #c42142;
   color: white;
