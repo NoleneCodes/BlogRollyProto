@@ -62,7 +62,11 @@ export const emailTemplates = {
   blogDelistedPayment: blogDelistedPaymentTemplate
 };
 
-// Email service functions with Resend integration
+// Email service functions with Resend SDK
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export const emailService = {
   //  User Onboarding
   sendWelcomeEmail: async (email: string, firstName: string, userType: 'reader' | 'blogger') => {
@@ -70,25 +74,18 @@ export const emailService = {
       const template = userType === 'reader' ? emailTemplates.welcomeReader : emailTemplates.welcomeBlogger;
       const { html, subject } = template({ firstName });
       
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: RESEND_CONFIG.fromEmail,
-          to: email,
-          subject,
-          html
-        })
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
       });
       
-      if (!response.ok) {
-        throw new Error(`Resend API error: ${response.statusText}`);
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Send welcome email error:', error);
       throw error;
@@ -97,13 +94,52 @@ export const emailService = {
   
   //  Blog Submission Workflow
   sendBlogSubmissionReceived: async (email: string, userName: string, blogTitle: string) => {
-    console.log('TODO: Send blog submission received email', { email, userName, blogTitle });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.blogSubmissionReceived({ userName, blogTitle });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send blog submission received email error:', error);
+      throw error;
+    }
   },
 
   sendBlogStatusEmail: async (email: string, userName: string, blogTitle: string, blogUrl: string, status: 'approved' | 'rejected', rejectionReason?: string, rejectionNote?: string) => {
-    console.log('TODO: Send blog status email', { email, userName, blogTitle, blogUrl, status, rejectionReason, rejectionNote });
-    // TODO: Implement Resend integration
+    try {
+      const template = status === 'approved' ? emailTemplates.blogApproved : emailTemplates.blogRejected;
+      const templateData = status === 'approved' 
+        ? { userName, blogTitle, blogUrl }
+        : { userName, blogTitle, rejectionReason: rejectionReason!, rejectionNote };
+      
+      const { html, subject } = template(templateData);
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send blog status email error:', error);
+      throw error;
+    }
   },
 
   //  Blog Management
@@ -145,25 +181,18 @@ export const emailService = {
     try {
       const { html, subject } = emailTemplates.premiumWelcome({ firstName });
       
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: RESEND_CONFIG.fromEmail,
-          to: email,
-          subject,
-          html
-        })
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
       });
       
-      if (!response.ok) {
-        throw new Error(`Resend API error: ${response.statusText}`);
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Send premium welcome email error:', error);
       throw error;
@@ -174,25 +203,18 @@ export const emailService = {
     try {
       const { html, subject } = emailTemplates.paymentSuccessful({ userName, amount, planName, invoiceUrl, nextBillingDate });
       
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: RESEND_CONFIG.fromEmail,
-          to: email,
-          subject,
-          html
-        })
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
       });
       
-      if (!response.ok) {
-        throw new Error(`Resend API error: ${response.statusText}`);
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Send payment successful email error:', error);
       throw error;
@@ -208,25 +230,18 @@ export const emailService = {
       
       const { html, subject } = template(templateData);
       
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: RESEND_CONFIG.fromEmail,
-          to: email,
-          subject,
-          html
-        })
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
       });
       
-      if (!response.ok) {
-        throw new Error(`Resend API error: ${response.statusText}`);
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Send payment failed notice email error:', error);
       throw error;
@@ -237,25 +252,18 @@ export const emailService = {
     try {
       const { html, subject } = emailTemplates.blogDelistedPayment({ userName, blogCount, amount });
       
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_CONFIG.apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: RESEND_CONFIG.fromEmail,
-          to: email,
-          subject,
-          html
-        })
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
       });
       
-      if (!response.ok) {
-        throw new Error(`Resend API error: ${response.statusText}`);
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
       }
       
-      return await response.json();
+      return data;
     } catch (error) {
       console.error('Send blog delisted payment email error:', error);
       throw error;
