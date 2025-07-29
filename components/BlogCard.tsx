@@ -13,6 +13,7 @@ interface BlogPost {
   tags: string[];
   postUrl: string;
   imageUrl?: string;
+  imageDescription?: string; // Description for image alt text
   hasAdultContent?: boolean;
   readTime?: string;
   publishDate?: string;
@@ -65,7 +66,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         {blog.image && (
           <img 
             src={blog.image} 
-            alt={blog.title}
+            alt={blog.imageDescription || blog.title}
             className={styles.blogImage}
           />
         )}
