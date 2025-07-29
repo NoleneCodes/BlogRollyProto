@@ -119,7 +119,7 @@ const ReaderProfile: React.FC = () => {
               bio: 'Passionate reader exploring diverse topics',
               joinedDate: '2024-01-15',
               topics: ['Tech', 'Health & Wellness', 'Books & Media'],
-              roles: ['reader']
+              roles: ['reader', 'blogger']
             });
 
             // Mock saved blogs data
@@ -262,7 +262,7 @@ const ReaderProfile: React.FC = () => {
         return;
       }
       setProfilePictureFile(file);
-      
+
       // Create preview URL
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -611,7 +611,7 @@ const ReaderProfile: React.FC = () => {
                 <p className={styles.popupDescription}>
                   Select the topics you're interested in. This helps us personalize your blog recommendations.
                 </p>
-                
+
                 <div className={styles.topicSection}>
                   <h4>Main Categories</h4>
                   <div className={styles.topicGrid}>
@@ -736,6 +736,14 @@ const ReaderProfile: React.FC = () => {
             >
               Log Out
             </button>
+            {userInfo.roles.includes('blogger') && (
+              <button 
+                className={`${styles.navItem} ${styles.switch}`}
+                onClick={() => router.push('/profile/blogger')}
+              >
+                Switch to Blogger
+              </button>
+            )}
           </nav>
         </aside>
         <main className={styles.main}>
