@@ -151,6 +151,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
   // Calculate progress based on filled fields
   useEffect(() => {
@@ -168,31 +170,70 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     setProgress(totalProgress);
   }, [formData]);
 
-  // Auto-save to localStorage every 5 seconds
+  // Auto-save to localStorage every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      localStorage.setItem('blogSubmissionDraft', JSON.stringify({
-        title: formData.title,
-        imageDescription: formData.imageDescription,
-        description: formData.description,
-        category: formData.category,
-        tags: formData.tags,
-        postUrl: formData.postUrl,
-        hasAdultContent: formData.hasAdultContent
-      }));
-    }, 5000);
+      if (formData.title || formData.description || formData.postUrl) {
+        saveDraft();
+      }
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [formData]);
+
+  const saveDraft = () => {
+    const draftData = {
+      title: formData.title,
+      imageDescription: formData.imageDescription,
+      description: formData.description,
+      category: formData.category,
+      tags: formData.tags,
+      postUrl: formData.postUrl,
+      hasAdultContent: formData.hasAdultContent,
+      savedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
+    setDraftSaved(true);
+    setLastSavedAt(new Date().toLocaleTimeString());
+    
+    // Clear the "saved" indicator after 3 seconds
+    setTimeout(() => {
+      setDraftSaved(false);
+    }, 3000);
+  };
 
   // Load draft on component mount
   useEffect(() => {
     const savedDraft = localStorage.getItem('blogSubmissionDraft');
     if (savedDraft) {
       const draft = JSON.parse(savedDraft);
-      setFormData(prev => ({ ...prev, ...draft }));
+      const { savedAt, ...draftFormData } = draft;
+      setFormData(prev => ({ ...prev, ...draftFormData }));
+      if (savedAt) {
+        setLastSavedAt(new Date(savedAt).toLocaleString());
+      }
     }
   }, []);
+
+  const clearDraft = () => {
+    localStorage.removeItem('blogSubmissionDraft');
+    setFormData({
+      image: null,
+      imageDescription: '',
+      title: '',
+      author: displayName || '',
+      bloggerId: bloggerId || '',
+      bloggerDisplayName: displayName || '',
+      description: '',
+      category: '',
+      tags: [],
+      postUrl: '',
+      hasAdultContent: false
+    });
+    setLastSavedAt(null);
+    setDraftSaved(false);
+  };
 
   const validateUrl = (url: string): boolean => {
     const urlRegex = /^https:\/\/[^\/]+\/.+/;
@@ -331,7 +372,36 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             style={{ width: `${progress}%` }}
           ></div>
         </div>
-        <span className={styles.progressText}>{Math.round(progress)}% Complete</span>
+        <div className={styles.progressInfo}>
+          <span className={styles.progressText}>{Math.round(progress)}% Complete</span>
+          {lastSavedAt && (
+            <span className={styles.draftStatus}>
+              Draft saved at {lastSavedAt}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Draft Management */}
+      <div className={styles.draftManagement}>
+        <button 
+          type="button"
+          onClick={saveDraft}
+          className={`${styles.draftButton} ${draftSaved ? styles.draftSaved : ''}`}
+          disabled={!formData.title && !formData.description && !formData.postUrl}
+        >
+          {draftSaved ? '✓ Draft Saved' : 'Save Draft'}
+        </button>
+        
+        {(formData.title || formData.description || formData.postUrl || lastSavedAt) && (
+          <button 
+            type="button"
+            onClick={clearDraft}
+            className={styles.clearDraftButton}
+          >
+            Clear Draft
+          </button>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
