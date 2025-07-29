@@ -411,7 +411,7 @@
 }
 
 :global(.dark) .description {
-  color: white;
+  color: #4a5568;
 }
 
 /* Dark mode blog card */
@@ -421,7 +421,7 @@
 
 /* Dark mode blog description */
 :global(.dark) .blogDescription {
-  color: white;
+  color: #4a5568;
 }
 
 /* Blog card titles - ensure proper red color */
