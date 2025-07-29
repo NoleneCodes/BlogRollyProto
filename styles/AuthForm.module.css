@@ -574,3 +574,21 @@
     align-self: flex-start;
   }
 }
+.draftSaved {
+  background: #fecaca !important;
+  color: #7f1d1d !important;
+  border-color: #c42142 !important;
+}
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #c42142;
+  cursor: pointer;
+}
+.authInfo li::before {
+  content: '✓';
+  color: #10b981;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}

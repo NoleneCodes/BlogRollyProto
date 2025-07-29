@@ -578,7 +578,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
               >
                 mandatory survey
               </button> to help us understand our blogger community *
-              {surveyCompleted && <span style={{ color: '#10b981', marginLeft: '0.5rem' }}>✓ Completed</span>}
+              {surveyCompleted && <span style={{ color: '#c42142', marginLeft: '0.5rem' }}>✓ Completed</span>}
             </span>
           </label>
           {errors.agreeToSurvey && <span className={styles.error}>{errors.agreeToSurvey}</span>}
