@@ -1,17 +1,21 @@
-
 export const blogRejectedTemplate = {
-  subject: 'Blog Submission Update',
-  template: (blogTitle: string, userName: string, rejectionReason: string, rejectionNote?: string) => `
-    <h1>Update on Your Blog Submission</h1>
-    <p>Hi ${userName},</p>
-    <p>Thank you for submitting <strong>${blogTitle}</strong>.</p>
-    <p>Unfortunately, we're unable to approve it at this time due to: <strong>${rejectionReason}</strong></p>
+  subject: 'Blog Submission Update - Action Required',
+  template: (firstName: string, blogTitle: string, rejectionReason: string, rejectionNote?: string) => `
+    <h1>Blog Submission Review Update</h1>
+    <p>Hi ${firstName},</p>
+    <p>Thank you for submitting "<strong>${blogTitle}</strong>" to BlogRolly. After review, we're unable to approve this submission at this time.</p>
+
+    <p><strong>Reason:</strong> ${rejectionReason}</p>
     ${rejectionNote ? `<p><strong>Additional notes:</strong> ${rejectionNote}</p>` : ''}
-    <p>Don't worry! You can make adjustments and resubmit anytime.</p>
-    <a href="${process.env.NEXT_PUBLIC_APP_URL}/submit" style="background: #c42142; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-      Submit Again
-    </a>
-    <p>If you have questions about this decision, please contact our support team.</p>
+
+    <p><strong>What you can do:</strong></p>
+    <ul>
+      <li>Review our <a href="https://blogrolly.com/guidelines">submission guidelines</a></li>
+      <li>Make the necessary adjustments to your content</li>
+      <li>Resubmit your post when ready</li>
+    </ul>
+
+    <p>We're here to help you succeed! If you have questions about this feedback, please don't hesitate to contact our support team.</p>
     <p>The BlogRolly Team</p>
   `
 };

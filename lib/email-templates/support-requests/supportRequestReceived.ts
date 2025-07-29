@@ -1,9 +1,9 @@
 
 export const supportRequestReceivedTemplate = {
   subject: 'Support Request Received - We\'re Here to Help!',
-  template: (userName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => `
+  template: (firstName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => `
     <h1>Support Request Received</h1>
-    <p>Hi ${userName},</p>
+    <p>Hi ${firstName},</p>
     <p>Thank you for contacting BlogRolly support. We've received your request and will get back to you soon.</p>
     <p><strong>Ticket ID:</strong> ${ticketId}</p>
     <p><strong>Your Message:</strong></p>

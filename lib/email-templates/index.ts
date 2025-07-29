@@ -89,9 +89,9 @@ export const emailService = {
   },
   
   //  Blog Submission Workflow
-  sendBlogSubmissionReceived: async (email: string, userName: string, blogTitle: string) => {
+  sendBlogSubmissionReceived: async (email: string, firstName: string, blogTitle: string) => {
     try {
-      const { html, subject } = emailTemplates.blogSubmissionReceived({ userName, blogTitle });
+      const { html, subject } = emailTemplates.blogSubmissionReceived({ firstName, blogTitle });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -111,12 +111,12 @@ export const emailService = {
     }
   },
 
-  sendBlogStatusEmail: async (email: string, userName: string, blogTitle: string, blogUrl: string, status: 'approved' | 'rejected', rejectionReason?: string, rejectionNote?: string) => {
+  sendBlogStatusEmail: async (email: string, firstName: string, blogTitle: string, blogUrl: string, status: 'approved' | 'rejected', rejectionReason?: string, rejectionNote?: string) => {
     try {
       const template = status === 'approved' ? emailTemplates.blogApproved : emailTemplates.blogRejected;
       const templateData = status === 'approved' 
-        ? { userName, blogTitle, blogUrl }
-        : { userName, blogTitle, rejectionReason: rejectionReason!, rejectionNote };
+        ? { firstName, blogTitle, blogUrl }
+        : { firstName, blogTitle, rejectionReason: rejectionReason!, rejectionNote };
       
       const { html, subject } = template(templateData);
       
@@ -139,9 +139,9 @@ export const emailService = {
   },
 
   //  Blog Management
-  sendBlogUrlChangedEmail: async (email: string, userName: string, blogTitle: string, oldUrl: string, newUrl: string) => {
+  sendBlogUrlChangedEmail: async (email: string, firstName: string, blogTitle: string, oldUrl: string, newUrl: string) => {
     try {
-      const { html, subject } = emailTemplates.blogUrlChanged({ userName, blogTitle, oldUrl, newUrl });
+      const { html, subject } = emailTemplates.blogUrlChanged({ firstName, blogTitle, oldUrl, newUrl });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -161,9 +161,9 @@ export const emailService = {
     }
   },
 
-  sendBlogDeactivatedEmail: async (email: string, userName: string, blogTitle: string, reason: string) => {
+  sendBlogDeactivatedEmail: async (email: string, firstName: string, blogTitle: string, reason: string) => {
     try {
-      const { html, subject } = emailTemplates.blogDeactivated({ userName, blogTitle, reason });
+      const { html, subject } = emailTemplates.blogDeactivated({ firstName, blogTitle, reason });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -184,9 +184,9 @@ export const emailService = {
   },
 
   //  System Notifications
-  sendPasswordResetEmail: async (email: string, userName: string, resetLink: string) => {
+  sendPasswordResetEmail: async (email: string, firstName: string, resetLink: string) => {
     try {
-      const { html, subject } = emailTemplates.passwordReset({ userName, resetLink });
+      const { html, subject } = emailTemplates.passwordReset({ firstName, resetLink });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -207,9 +207,9 @@ export const emailService = {
   },
 
   // Bug Reporting
-  sendBugReportThankYou: async (email: string, userName: string, reportId: string) => {
+  sendBugReportThankYou: async (email: string, firstName: string, reportId: string) => {
     try {
-      const { html, subject } = emailTemplates.bugReportReceived({ userName, reportId });
+      const { html, subject } = emailTemplates.bugReportReceived({ firstName, reportId });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -230,9 +230,9 @@ export const emailService = {
   },
 
   // Support Requests
-  sendSupportRequestReceived: async (email: string, userName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => {
+  sendSupportRequestReceived: async (email: string, firstName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => {
     try {
-      const { html, subject } = emailTemplates.supportRequestReceived({ userName, ticketId, supportMessage, estimatedResponse });
+      const { html, subject } = emailTemplates.supportRequestReceived({ firstName, ticketId, supportMessage, estimatedResponse });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -252,9 +252,9 @@ export const emailService = {
     }
   },
 
-  sendSupportRequestReply: async (email: string, userName: string, ticketId: string, originalMessage: string, supportReply: string) => {
+  sendSupportRequestReply: async (email: string, firstName: string, ticketId: string, originalMessage: string, supportReply: string) => {
     try {
-      const { html, subject } = emailTemplates.supportRequestReply({ userName, ticketId, originalMessage, supportReply });
+      const { html, subject } = emailTemplates.supportRequestReply({ firstName, ticketId, originalMessage, supportReply });
       
       const { data, error } = await resend.emails.send({
         from: `${RESEND_CONFIG.fromName} Support <support@blogrolly.com>`,
@@ -298,9 +298,9 @@ export const emailService = {
     }
   },
 
-  sendPaymentSuccessful: async (email: string, userName: string, amount: string, planName: string, invoiceUrl: string, nextBillingDate: string) => {
+  sendPaymentSuccessful: async (email: string, firstName: string, amount: string, planName: string, invoiceUrl: string, nextBillingDate: string) => {
     try {
-      const { html, subject } = emailTemplates.paymentSuccessful({ userName, amount, planName, invoiceUrl, nextBillingDate });
+      const { html, subject } = emailTemplates.paymentSuccessful({ firstName, amount, planName, invoiceUrl, nextBillingDate });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -320,12 +320,12 @@ export const emailService = {
     }
   },
 
-  sendPaymentFailedNotice: async (email: string, userName: string, planName: string, amount: string, noticeType: 'first' | 'final', retryDate?: string, delistDate?: string) => {
+  sendPaymentFailedNotice: async (email: string, firstName: string, planName: string, amount: string, noticeType: 'first' | 'final', retryDate?: string, delistDate?: string) => {
     try {
       const template = noticeType === 'first' ? emailTemplates.paymentFailedFirstNotice : emailTemplates.paymentFailedFinalNotice;
       const templateData = noticeType === 'first' 
-        ? { userName, planName, amount, retryDate: retryDate! }
-        : { userName, planName, amount, delistDate: delistDate! };
+        ? { firstName, planName, amount, retryDate: retryDate! }
+        : { firstName, planName, amount, delistDate: delistDate! };
       
       const { html, subject } = template(templateData);
       
@@ -347,9 +347,9 @@ export const emailService = {
     }
   },
 
-  sendBlogDelistedPayment: async (email: string, userName: string, blogCount: number, amount: string) => {
+  sendBlogDelistedPayment: async (email: string, firstName: string, blogCount: number, amount: string) => {
     try {
-      const { html, subject } = emailTemplates.blogDelistedPayment({ userName, blogCount, amount });
+      const { html, subject } = emailTemplates.blogDelistedPayment({ firstName, blogCount, amount });
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -412,28 +412,28 @@ export interface EmailTemplateData {
   welcomeBlogger: { firstName: string };
 
   // Blog Submission Workflow
-  blogSubmissionReceived: { userName: string; blogTitle: string };
-  blogApproved: { userName: string; blogTitle: string; blogUrl: string };
-  blogRejected: { userName: string; blogTitle: string; rejectionReason: string; rejectionNote?: string };
+  blogSubmissionReceived: { firstName: string; blogTitle: string };
+  blogApproved: { firstName: string; blogTitle: string; blogUrl: string };
+  blogRejected: { firstName: string; blogTitle: string; rejectionReason: string; rejectionNote?: string };
 
   // Blog Management
-  blogUrlChanged: { userName: string; blogTitle: string; oldUrl: string; newUrl: string };
-  blogDeactivated: { userName: string; blogTitle: string; reason: string };
+  blogUrlChanged: { firstName: string; blogTitle: string; oldUrl: string; newUrl: string };
+  blogDeactivated: { firstName: string; blogTitle: string; reason: string };
 
   // System Notifications
-  passwordReset: { userName: string; resetLink: string };
+  passwordReset: { firstName: string; resetLink: string };
 
   // Bug Reporting
-  bugReportReceived: { userName: string; reportId: string };
+  bugReportReceived: { firstName: string; reportId: string };
 
   // Support Requests
-  supportRequestReceived: { userName: string; ticketId: string; supportMessage: string; estimatedResponse?: string };
-  supportRequestReply: { userName: string; ticketId: string; originalMessage: string; supportReply: string };
+  supportRequestReceived: { firstName: string; ticketId: string; supportMessage: string; estimatedResponse?: string };
+  supportRequestReply: { firstName: string; ticketId: string; originalMessage: string; supportReply: string };
 
   // Subscription & Payments
   premiumWelcome: { firstName: string };
-  paymentSuccessful: { userName: string; amount: string; planName: string; invoiceUrl: string; nextBillingDate: string };
-  paymentFailedFirstNotice: { userName: string; planName: string; amount: string; retryDate: string };
-  paymentFailedFinalNotice: { userName: string; planName: string; amount: string; delistDate: string };
-  blogDelistedPayment: { userName: string; blogCount: number; amount: string };
+  paymentSuccessful: { firstName: string; amount: string; planName: string; invoiceUrl: string; nextBillingDate: string };
+  paymentFailedFirstNotice: { firstName: string; planName: string; amount: string; retryDate: string };
+  paymentFailedFinalNotice: { firstName: string; planName: string; amount: string; delistDate: string };
+  blogDelistedPayment: { firstName: string; blogCount: number; amount: string };
 }

@@ -1,9 +1,9 @@
 
 export const supportRequestReplyTemplate = {
   subject: 'Re: Support Request #{ticketId}',
-  template: (userName: string, ticketId: string, originalMessage: string, supportReply: string) => `
+  template: (firstName: string, ticketId: string, originalMessage: string, supportReply: string) => `
     <h1>Support Team Response</h1>
-    <p>Hi ${userName},</p>
+    <p>Hi ${firstName},</p>
     <p>We have an update regarding your support request (Ticket #${ticketId}).</p>
     
     <p><strong>Our Response:</strong></p>
