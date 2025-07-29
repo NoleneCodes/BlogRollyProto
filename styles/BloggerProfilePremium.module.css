@@ -7,13 +7,12 @@
 
 .sidebar {
   width: 280px;
-  background: linear-gradient(135deg, #c42142 0%, #a01835 100%);
-  color: white;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
   padding: 2rem 1rem;
   position: sticky;
   top: 80px;
   height: fit-content;
-  border-radius: 0 12px 12px 0;
 }
 
 .sidebarHeader {
@@ -24,7 +23,7 @@
 }
 
 .sidebarHeader h3 {
-  color: white;
+  color: #1e293b;
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
@@ -50,48 +49,52 @@
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #64748b;
   transition: all 0.2s ease;
   width: 100%;
 }
 
 .navItem:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #e2e8f0;
+  color: #475569;
 }
 
 .navItem.active {
-  background: rgba(255, 255, 255, 0.2);
+  background: #c42142;
   color: white;
-  font-weight: 600;
 }
 
 .navItem.submitBlog {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #c42142;
 }
 
 .navItem.submitBlog:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #fef2f2;
+  color: #a01835;
 }
 
 .navItem.switch {
   margin-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: #c42142;
+  border-top: 1px solid #e2e8f0;
   padding-top: 1rem;
+}
+
+.navItem.switch:hover {
+  background: #fef2f2;
+  color: #a01835;
 }
 
 .navItem.logout {
   margin-top: 1rem;
-  color: #ffccd5;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ef4444;
+  border-top: 1px solid #e2e8f0;
   padding-top: 1rem;
 }
 
 .navItem.logout:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ff8a95;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .main {
