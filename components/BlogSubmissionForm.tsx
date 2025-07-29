@@ -12,6 +12,7 @@ interface BlogSubmissionFormProps {
 
 interface FormData {
   image: File | null;
+  imageDescription: string;
   title: string;
   author: string; // Will be set to blogger's display name
   bloggerId: string;
@@ -97,6 +98,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<FormData>({
     image: null,
+    imageDescription: '',
     title: '',
     author: displayName || '', // Blogger's display name
     bloggerId: bloggerId || '',
@@ -170,6 +172,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     const interval = setInterval(() => {
       localStorage.setItem('blogSubmissionDraft', JSON.stringify({
         title: formData.title,
+        imageDescription: formData.imageDescription,
         description: formData.description,
         category: formData.category,
         tags: formData.tags,
@@ -346,6 +349,24 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             </div>
           )}
           <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP</small>
+          
+          {formData.image && (
+            <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
+              <label className={styles.label}>
+                Image Description
+                <span className={styles.optional}>(Optional - used for SEO and accessibility)</span>
+              </label>
+              <input
+                type="text"
+                value={formData.imageDescription}
+                onChange={(e) => setFormData(prev => ({ ...prev, imageDescription: e.target.value }))}
+                maxLength={200}
+                className={styles.textInput}
+                placeholder="Describe what's in the image for screen readers and SEO"
+              />
+              <small className={styles.hint}>{formData.imageDescription.length}/200 characters</small>
+            </div>
+          )}
         </div>
 
         {/* Step 2: Blog Title */}
