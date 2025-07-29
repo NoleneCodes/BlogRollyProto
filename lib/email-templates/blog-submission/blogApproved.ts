@@ -14,6 +14,7 @@ export const blogApprovedTemplate = {
       <li>Feel free to submit more posts anytime!</li>
     </ul>
     <p>Thank you for contributing to the BlogRolly community!</p>
+    <p>If you have any questions, feel free to reach out to us at <a href="mailto:support@blogrolly.com">support@blogrolly.com</a>.</p>
     <p>The BlogRolly Team</p>
   `
 };

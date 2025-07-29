@@ -7,7 +7,7 @@ export const passwordResetTemplate = {
     <p>Click the link below to reset your password:</p>
     <p><a href="${resetLink}" style="background: #c42142; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Reset Password</a></p>
     <p>This link will expire in 24 hours for security purposes.</p>
-    <p>If you didn't request this password reset, please ignore this email or contact support if you have concerns.</p>
+    <p>If you didn't request this password reset, please ignore this email or contact support at <a href="mailto:support@blogrolly.com">support@blogrolly.com</a> if you have concerns.</p>
     <p>The BlogRolly Team</p>
   `
 };

@@ -15,7 +15,7 @@ export const blogRejectedTemplate = {
       <li>Resubmit your post when ready</li>
     </ul>
 
-    <p>We're here to help you succeed! If you have questions about this feedback, please don't hesitate to contact our support team.</p>
+    <p>We're here to help you succeed! If you have questions about this feedback, please don't hesitate to contact our support team at <a href="mailto:support@blogrolly.com">support@blogrolly.com</a>.</p>
     <p>The BlogRolly Team</p>
   `
 };

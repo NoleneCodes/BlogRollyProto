@@ -11,7 +11,8 @@ export const blogSubmissionReceivedTemplate = {
       <li>If approved, it will be added to our featured blogroll</li>
       <li>You'll receive an email with the result either way</li>
     </ul>
-    <p>Thanks for being part of the BlogRolly community!</p>
+    <p>We'll be in touch with updates on your submission status.</p>
+    <p>If you have any questions, feel free to contact us at <a href="mailto:support@blogrolly.com">support@blogrolly.com</a>.</p>
     <p>The BlogRolly Team</p>
   `
 };

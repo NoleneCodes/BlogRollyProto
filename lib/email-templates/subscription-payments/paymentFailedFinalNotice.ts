@@ -11,6 +11,7 @@ export const paymentFailedFinalNoticeTemplate = {
       <li>Or contact our support team for assistance</li>
     </ul>
     <p>We're here to help resolve any payment issues you may be experiencing.</p>
+    <p>If you believe this is an error or need assistance, please contact our support team immediately at <a href="mailto:support@blogrolly.com">support@blogrolly.com</a>.</p>
     <p>The BlogRolly Team</p>
   `
 };

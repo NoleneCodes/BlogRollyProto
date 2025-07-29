@@ -9,7 +9,7 @@ export const blogDelistedPaymentTemplate = {
       <li>Update your payment method in account settings</li>
       <li>Or contact our support team for assistance</li>
     </ul>
-    <p>Once payment is resolved, your blogs will be automatically restored.</p>
+    <p>If you have questions about this action or need assistance with your payment, please don't hesitate to reach out to us at <a href="mailto:support@blogrolly.com">support@blogrolly.com</a>.</p>
     <p>The BlogRolly Team</p>
   `
 };
