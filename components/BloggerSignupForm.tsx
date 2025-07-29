@@ -94,16 +94,31 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   // Calculate progress for blogger form
   useEffect(() => {
     if (showProgressBar) {
-      const requiredFields = ['firstName', 'surname', 'email', 'dateOfBirth', 'displayName', 'blogUrl', 'blogName'];
-      const filledFields = requiredFields.filter(field => 
+      // Part 1 (required): 6 fields + 3 checkboxes = 9 items (75% of total)
+      const part1Fields = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword'];
+      const filledPart1Fields = part1Fields.filter(field => 
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
+      const validPassword = bloggerForm.password === bloggerForm.confirmPassword && bloggerForm.password.length >= 8;
+      const validAge = validateAge(bloggerForm.dateOfBirth);
+      const part1Score = filledPart1Fields.length === 6 && validPassword && validAge ? 6 : filledPart1Fields.length;
+      
       const checkboxes = (bloggerForm.agreeToTerms ? 1 : 0) + (bloggerForm.confirmOwnership ? 1 : 0) + (bloggerForm.agreeToSurvey ? 1 : 0);
+      
+      // Part 2 & 3 (optional): 3 items (25% of total)
+      const optionalFields = ['displayName', 'blogUrl', 'blogName'];
+      const filledOptionalFields = optionalFields.filter(field => 
+        bloggerForm[field as keyof BloggerFormData] !== ''
+      );
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
       const blogsProgress = submittedBlogs.length > 0 ? 1 : 0;
-
-      const totalProgress = (filledFields.length + checkboxes + topicsProgress + blogsProgress) / 12 * 100;
-      setProgress(totalProgress);
+      
+      // Weight: Part 1 = 75%, Part 2&3 = 25%
+      const part1Progress = (part1Score + checkboxes) / 9 * 75;
+      const optionalProgress = (filledOptionalFields.length + topicsProgress + blogsProgress) / 5 * 25;
+      
+      const totalProgress = part1Progress + optionalProgress;
+      setProgress(Math.min(totalProgress, 100));
     }
   }, [bloggerForm, submittedBlogs, showProgressBar]);
 
@@ -180,6 +195,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
+    // Part 1 validation (required)
     if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
     if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
     if (!bloggerForm.email) newErrors.email = 'Email is required';
@@ -189,10 +205,11 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
     if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
     else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!bloggerForm.displayName) newErrors.displayName = 'Display name is required';
-    if (!bloggerForm.blogUrl) newErrors.blogUrl = 'Blog URL is required';
-    else if (!validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
-    if (!bloggerForm.blogName) newErrors.blogName = 'Blog name is required';
+    
+    // Part 2 validation (optional, but validate if filled)
+    if (bloggerForm.blogUrl && !validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
+    
+    // Required checkboxes
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
     if (!bloggerForm.agreeToSurvey || !surveyCompleted) newErrors.agreeToSurvey = 'You must complete the mandatory survey';
@@ -204,7 +221,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
     // TODO: Implement Supabase integration
     console.log('Blogger form submitted:', bloggerForm);
-    alert('Account created successfully! We\'re reviewing your blog. You\'ll be notified when it\'s listed.');
+    alert('Account created successfully! Your profile can be completed from your dashboard.');
   };
 
   return (
@@ -316,117 +333,155 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <small className={styles.hint}>Re-enter your password to confirm.</small>
         </div>
 
-        <div className={styles.sectionTitle}>Part 2: Profile Creation</div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Profile Picture
-            <span className={styles.optional}>(Optional)</span>
-          </label>
-          <input
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                  setErrors(prev => ({ ...prev, profilePicture: 'Image must be less than 2MB' }));
-                  return;
-                }
-                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                  setErrors(prev => ({ ...prev, profilePicture: 'Only JPG, PNG, and WebP files are allowed' }));
-                  return;
-                }
-                setBloggerForm(prev => ({ ...prev, profilePicture: file }));
-                setErrors(prev => ({ ...prev, profilePicture: '' }));
-              }
-            }}
-            className={styles.fileInput}
-          />
-          {errors.profilePicture && <span className={styles.error}>{errors.profilePicture}</span>}
-          <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
+        <div className={styles.sectionTitle}>
+          Part 2: Profile Creation
+          <span className={styles.optional}>(Optional)</span>
+          {!isPart1Complete && (
+            <span style={{ 
+              fontSize: '0.8rem', 
+              color: '#64748b', 
+              fontWeight: 'normal',
+              marginLeft: '0.5rem'
+            }}>
+              (Complete Part 1 to unlock)
+            </span>
+          )}
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Display Name *
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.displayName}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, displayName: e.target.value }))}
-            className={styles.textInput}
-            required
-          />
-          {errors.displayName && <span className={styles.error}>{errors.displayName}</span>}
-          <small className={styles.hint}>Shown on public profile</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Short Bio
-            <span className={styles.optional}>(Optional)</span>
-          </label>
-          <textarea
-            value={bloggerForm.bio}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, bio: e.target.value }))}
-            className={styles.textarea}
-            maxLength={280}
-            rows={4}
-            placeholder="Tell us who you are in a sentence or two. Can be added later."
-          />
-          {errors.bio && <span className={styles.error}>{errors.bio}</span>}
-          <small className={styles.hint}>{bloggerForm.bio.length}/280 characters. Can be completed later.</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Blog URL *
-          </label>
-          <input
-            type="url"
-            value={bloggerForm.blogUrl}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
-            className={styles.textInput}
-            placeholder="https://yourblog.com"
-            required
-          />
-          {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
-          <small className={styles.hint}>Must start with https:// (no paths or slugs)</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Blog Name *
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.blogName}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, blogName: e.target.value }))}
-            className={styles.textInput}
-            required
-          />
-          {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
-          <small className={styles.hint}>Shown in search & on your profile</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>Primary Topics / Niche</label>
-          <div className={styles.checkboxGrid}>
-            {topicOptions.filter(t => t !== 'Other').map(topic => (
-              <label key={topic} className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  checked={bloggerForm.topics.includes(topic)}
-                  onChange={(e) => handleBloggerTopicChange(topic, e.target.checked)}
-                  className={styles.checkbox}
-                />
-                <span className={styles.checkboxText}>{topic}</span>
-              </label>
-            ))}
+        {!isPart1Complete ? (
+          <div style={{
+            padding: '2rem',
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            textAlign: 'center',
+            color: '#64748b',
+            marginBottom: '2rem'
+          }}>
+            <p>Complete Part 1 (Account Setup) to unlock profile creation.</p>
+            <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              You can always complete your profile later from your dashboard.
+            </p>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Profile Picture
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.webp"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                      setErrors(prev => ({ ...prev, profilePicture: 'Image must be less than 2MB' }));
+                      return;
+                    }
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                      setErrors(prev => ({ ...prev, profilePicture: 'Only JPG, PNG, and WebP files are allowed' }));
+                      return;
+                    }
+                    setBloggerForm(prev => ({ ...prev, profilePicture: file }));
+                    setErrors(prev => ({ ...prev, profilePicture: '' }));
+                  }
+                }}
+                className={styles.fileInput}
+              />
+              {errors.profilePicture && <span className={styles.error}>{errors.profilePicture}</span>}
+              <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Display Name
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={bloggerForm.displayName}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, displayName: e.target.value }))}
+                className={styles.textInput}
+                placeholder="How you want to be known publicly"
+              />
+              {errors.displayName && <span className={styles.error}>{errors.displayName}</span>}
+              <small className={styles.hint}>Shown on public profile. Can be added later.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Short Bio
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <textarea
+                value={bloggerForm.bio}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, bio: e.target.value }))}
+                className={styles.textarea}
+                maxLength={280}
+                rows={4}
+                placeholder="Tell us who you are in a sentence or two. Can be added later."
+              />
+              {errors.bio && <span className={styles.error}>{errors.bio}</span>}
+              <small className={styles.hint}>{bloggerForm.bio.length}/280 characters. Can be completed later.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Blog URL
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <input
+                type="url"
+                value={bloggerForm.blogUrl}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
+                className={styles.textInput}
+                placeholder="https://yourblog.com"
+              />
+              {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
+              <small className={styles.hint}>Must start with https:// (no paths or slugs). Can be added later.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Blog Name
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <input
+                type="text"
+                value={bloggerForm.blogName}
+                onChange={(e) => setBloggerForm(prev => ({ ...prev, blogName: e.target.value }))}
+                className={styles.textInput}
+                placeholder="The name of your blog"
+              />
+              {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
+              <small className={styles.hint}>Shown in search & on your profile. Can be added later.</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Primary Topics / Niche
+                <span className={styles.optional}>(Optional)</span>
+              </label>
+              <div className={styles.checkboxGrid}>
+                {topicOptions.filter(t => t !== 'Other').map(topic => (
+                  <label key={topic} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={bloggerForm.topics.includes(topic)}
+                      onChange={(e) => handleBloggerTopicChange(topic, e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.checkboxText}>{topic}</span>
+                  </label>
+                ))}
+              </div>
+              <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
+            </div>
+          </>
+        )}
 
         <div className={styles.sectionTitle}>
           Part 3: Listings
