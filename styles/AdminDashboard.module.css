@@ -1499,3 +1499,99 @@
     gap: 1rem;
   }
 }
+
+/* Email Testing styles */
+.emailTestingForm {
+  max-width: 800px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.emailInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.emailTestGrid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.emailTestItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: #f9f9f9;
+}
+
+.emailTestName {
+  font-weight: 500;
+}
+
+.emailTestResults {
+  margin-top: 30px;
+}
+
+.resultsContainer {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.testResult {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.testResult:last-child {
+  border-bottom: none;
+}
+
+.testSuccess {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+.testError {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+.testResultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.testStatus {
+  font-weight: 500;
+}
+
+.testResultDetails {
+  font-family: monospace;
+  font-size: 12px;
+  color: #666;
+  background: rgba(0,0,0,0.05);
+  padding: 8px;
+  border-radius: 3px;
+  max-height: 100px;
+  overflow-y: auto;
+}

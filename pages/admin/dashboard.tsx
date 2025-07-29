@@ -741,6 +741,12 @@ const AdminDashboard: React.FC = () => {
   const [editingPost, setEditingPost] = useState<InternalBlogPost | undefined>();
   const [mode, setMode] = useState<'add' | 'edit'>('add');
 
+  // Email testing states
+  const [testEmail, setTestEmail] = useState('');
+  const [testFirstName, setTestFirstName] = useState('John');
+  const [emailTestLoading, setEmailTestLoading] = useState(false);
+  const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
+
   useEffect(() => {
     let mounted = true;
 
@@ -979,6 +985,125 @@ const AdminDashboard: React.FC = () => {
     loadBlogPosts();
   };
 
+  // Email testing functions
+  const testEmailTemplates = [
+    {
+      name: 'Welcome Reader',
+      endpoint: '/api/test-email/welcome-reader',
+      params: { firstName: testFirstName }
+    },
+    {
+      name: 'Welcome Blogger',
+      endpoint: '/api/test-email/welcome-blogger',
+      params: { firstName: testFirstName }
+    },
+    {
+      name: 'Blog Submission Received',
+      endpoint: '/api/test-email/blog-submission-received',
+      params: { firstName: testFirstName, blogTitle: 'My Awesome Blog Post' }
+    },
+    {
+      name: 'Blog Approved',
+      endpoint: '/api/test-email/blog-approved',
+      params: { firstName: testFirstName, blogTitle: 'My Awesome Blog Post', blogUrl: 'https://example.com/blog' }
+    },
+    {
+      name: 'Blog Rejected',
+      endpoint: '/api/test-email/blog-rejected',
+      params: { firstName: testFirstName, blogTitle: 'My Blog Post', rejectionReason: 'Content quality', rejectionNote: 'Please improve readability' }
+    },
+    {
+      name: 'Password Reset',
+      endpoint: '/api/test-email/password-reset',
+      params: { firstName: testFirstName, resetLink: 'https://blogrolly.com/reset?token=test123' }
+    },
+    {
+      name: 'Bug Report Received',
+      endpoint: '/api/test-email/bug-report-received',
+      params: { firstName: testFirstName, reportId: 'BUG-001' }
+    },
+    {
+      name: 'Support Request Received',
+      endpoint: '/api/test-email/support-request-received',
+      params: { firstName: testFirstName, ticketId: 'SUPPORT-001', supportMessage: 'I need help with my account' }
+    },
+    {
+      name: 'Support Request Reply',
+      endpoint: '/api/test-email/support-request-reply',
+      params: { firstName: testFirstName, ticketId: 'SUPPORT-001', originalMessage: 'I need help', supportReply: 'We are here to help you!' }
+    },
+    {
+      name: 'Payment Successful',
+      endpoint: '/api/test-email/payment-successful',
+      params: { firstName: testFirstName, amount: '$9.99', planName: 'Pro Monthly', invoiceUrl: 'https://example.com/invoice', nextBillingDate: '2025-02-28' }
+    },
+    {
+      name: 'Payment Failed (First Notice)',
+      endpoint: '/api/test-email/payment-failed-first',
+      params: { firstName: testFirstName, planName: 'Pro Monthly', amount: '$9.99', retryDate: '2025-02-03' }
+    },
+    {
+      name: 'Blog Delisted Payment',
+      endpoint: '/api/test-email/blog-delisted-payment',
+      params: { firstName: testFirstName, blogCount: 3, amount: '$9.99' }
+    }
+  ];
+
+  const sendTestEmail = async (template: any) => {
+    if (!testEmail) {
+      alert('Please enter a test email address');
+      return;
+    }
+
+    setEmailTestLoading(true);
+    try {
+      const response = await fetch(template.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: testEmail,
+          ...template.params
+        }),
+      });
+
+      const result = await response.json();
+      setEmailTestResults(prev => [...prev, {
+        template: template.name,
+        success: response.ok,
+        result,
+        timestamp: new Date().toLocaleTimeString()
+      }]);
+    } catch (error) {
+      setEmailTestResults(prev => [...prev, {
+        template: template.name,
+        success: false,
+        result: { error: error instanceof Error ? error.message : 'Unknown error' },
+        timestamp: new Date().toLocaleTimeString()
+      }]);
+    }
+    setEmailTestLoading(false);
+  };
+
+  const sendAllTestEmails = async () => {
+    if (!testEmail) {
+      alert('Please enter a test email address');
+      return;
+    }
+
+    setEmailTestLoading(true);
+    setEmailTestResults([]);
+    
+    for (const template of testEmailTemplates) {
+      await sendTestEmail(template);
+      // Small delay between emails to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    setEmailTestLoading(false);
+  };
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
@@ -1069,6 +1194,12 @@ const AdminDashboard: React.FC = () => {
             onClick={() => setActiveTab('stats')}
           >
             Stats
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'email-testing' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('email-testing')}
+          >
+            Email Testing
           </button>
         </div>
 
@@ -1247,6 +1378,90 @@ const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'email-testing' && (
+          <div className={styles.tabContent}>
+            <div className={styles.sectionHeader}>
+              <h2>Email Template Testing</h2>
+              <p>Test all email templates to ensure they work correctly</p>
+            </div>
+
+            <div className={styles.emailTestingForm}>
+              <div className={styles.formGroup}>
+                <label htmlFor="test-email">Test Email Address:</label>
+                <input
+                  id="test-email"
+                  type="email"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                  placeholder="your-email@example.com"
+                  className={styles.emailInput}
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="test-first-name">First Name (for personalization):</label>
+                <input
+                  id="test-first-name"
+                  type="text"
+                  value={testFirstName}
+                  onChange={(e) => setTestFirstName(e.target.value)}
+                  placeholder="John"
+                  className={styles.emailInput}
+                />
+              </div>
+              
+              <button
+                onClick={sendAllTestEmails}
+                disabled={emailTestLoading || !testEmail}
+                className={styles.primaryButton}
+                style={{ marginBottom: '20px' }}
+              >
+                {emailTestLoading ? 'Sending All Tests...' : 'Send All Test Emails'}
+              </button>
+
+              <h3>Individual Email Tests</h3>
+              <div className={styles.emailTestGrid}>
+                {testEmailTemplates.map((template, index) => (
+                  <div key={index} className={styles.emailTestItem}>
+                    <span className={styles.emailTestName}>{template.name}</span>
+                    <button
+                      onClick={() => sendTestEmail(template)}
+                      disabled={emailTestLoading || !testEmail}
+                      className={styles.actionButton}
+                    >
+                      Send Test
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {emailTestResults.length > 0 && (
+                <div className={styles.emailTestResults}>
+                  <h3>Test Results</h3>
+                  <div className={styles.resultsContainer}>
+                    {emailTestResults.map((result, index) => (
+                      <div 
+                        key={index}
+                        className={`${styles.testResult} ${result.success ? styles.testSuccess : styles.testError}`}
+                      >
+                        <div className={styles.testResultHeader}>
+                          <strong>{result.template}</strong> - {result.timestamp}
+                          <span className={styles.testStatus}>
+                            {result.success ? '✅ Success' : '❌ Failed'}
+                          </span>
+                        </div>
+                        <div className={styles.testResultDetails}>
+                          <small>{JSON.stringify(result.result, null, 2)}</small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
