@@ -126,6 +126,14 @@
   color: #a01835;
 }
 
+:global(.dark) .blogAuthor {
+  color: #c42142;
+}
+
+:global(.dark) .blogAuthor:hover {
+  color: #a01835;
+}
+
 .blogMeta {
   display: flex;
   flex-wrap: wrap;
@@ -140,6 +148,10 @@
   font-weight: 600;
   text-decoration: none;
   margin-bottom: 0;
+}
+
+:global(.dark) .blogMeta .blogAuthor {
+  color: #c42142;
 }
 
 .blogDate {
@@ -412,7 +424,7 @@
 }
 
 :global(.dark) .blogTitle {
-  color: #ff4d6d;
+  color: #c42142;
 }
 .ctaButton {
   background: #c42142;
