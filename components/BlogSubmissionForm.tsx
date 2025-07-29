@@ -170,16 +170,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     setProgress(totalProgress);
   }, [formData]);
 
-  // Auto-save to localStorage every 10 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (formData.title || formData.description || formData.postUrl) {
-        saveDraft();
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [formData]);
+  // No auto-save - only save when user clicks Save Draft button
 
   const saveDraft = () => {
     const draftData = {
