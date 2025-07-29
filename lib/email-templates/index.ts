@@ -144,36 +144,138 @@ export const emailService = {
 
   //  Blog Management
   sendBlogUrlChangedEmail: async (email: string, userName: string, blogTitle: string, oldUrl: string, newUrl: string) => {
-    console.log('TODO: Send blog URL changed email', { email, userName, blogTitle, oldUrl, newUrl });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.blogUrlChanged({ userName, blogTitle, oldUrl, newUrl });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send blog URL changed email error:', error);
+      throw error;
+    }
   },
 
   sendBlogDeactivatedEmail: async (email: string, userName: string, blogTitle: string, reason: string) => {
-    console.log('TODO: Send blog deactivated email', { email, userName, blogTitle, reason });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.blogDeactivated({ userName, blogTitle, reason });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send blog deactivated email error:', error);
+      throw error;
+    }
   },
 
   //  System Notifications
   sendPasswordResetEmail: async (email: string, userName: string, resetLink: string) => {
-    console.log('TODO: Send password reset email', { email, userName, resetLink });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.passwordReset({ userName, resetLink });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send password reset email error:', error);
+      throw error;
+    }
   },
 
   // Bug Reporting
   sendBugReportThankYou: async (email: string, userName: string, reportId: string) => {
-    console.log('TODO: Send bug report thank you email', { email, userName, reportId });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.bugReportReceived({ userName, reportId });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send bug report thank you email error:', error);
+      throw error;
+    }
   },
 
   // Support Requests
   sendSupportRequestReceived: async (email: string, userName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => {
-    console.log('TODO: Send support request received email', { email, userName, ticketId, supportMessage, estimatedResponse });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.supportRequestReceived({ userName, ticketId, supportMessage, estimatedResponse });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send support request received email error:', error);
+      throw error;
+    }
   },
 
   sendSupportRequestReply: async (email: string, userName: string, ticketId: string, originalMessage: string, supportReply: string) => {
-    console.log('TODO: Send support request reply email', { email, userName, ticketId, originalMessage, supportReply });
-    // TODO: Implement Resend integration
+    try {
+      const { html, subject } = emailTemplates.supportRequestReply({ userName, ticketId, originalMessage, supportReply });
+      
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+      
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Send support request reply email error:', error);
+      throw error;
+    }
   },
 
   // Subscription & Payments
