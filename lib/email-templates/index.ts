@@ -257,10 +257,11 @@ export const emailService = {
       const { html, subject } = emailTemplates.supportRequestReply({ userName, ticketId, originalMessage, supportReply });
       
       const { data, error } = await resend.emails.send({
-        from: RESEND_CONFIG.fromEmail,
+        from: `${RESEND_CONFIG.fromName} Support <support@blogrolly.com>`,
         to: email,
         subject,
-        html
+        html,
+        reply_to: 'support@blogrolly.com'
       });
       
       if (error) {
