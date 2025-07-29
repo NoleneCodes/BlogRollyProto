@@ -16,6 +16,7 @@ interface UserInfo {
   avatar?: string;
   topics: string[];
   roles: string[];
+  tier?: 'free' | 'pro';
 }
 
 interface SavedBlog {
@@ -119,7 +120,8 @@ const ReaderProfile: React.FC = () => {
               bio: 'Passionate reader exploring diverse topics',
               joinedDate: '2024-01-15',
               topics: ['Tech', 'Health & Wellness', 'Books & Media'],
-              roles: ['reader', 'blogger']
+              roles: ['reader', 'blogger'],
+              tier: 'free' // Change to 'pro' to test premium routing
             });
 
             // Mock saved blogs data
@@ -739,7 +741,11 @@ const ReaderProfile: React.FC = () => {
             {userInfo.roles.includes('blogger') && (
               <button 
                 className={`${styles.navItem} ${styles.switch}`}
-                onClick={() => router.push('/profile/blogger')}
+                onClick={() => {
+                  // Route to appropriate blogger dashboard based on tier
+                  const targetRoute = userInfo.tier === 'pro' ? '/profile/blogger-premium' : '/profile/blogger';
+                  router.push(targetRoute);
+                }}
               >
                 Switch to Blogger
               </button>
