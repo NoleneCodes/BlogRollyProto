@@ -159,9 +159,25 @@ const About: NextPage = () => {
             <span className={styles.contactIcon}>📧</span>
             <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
           </div>
+
           <div className={styles.contactItem}>
-            <span className={styles.contactIcon}>📱</span>
-            <span>Instagram, TikTok, and X: @BlogRolly</span>
+            <span>Follow us:</span>
+          </div>
+
+          <div className={styles.contactItem}>
+            <span>Twitter/X: <a href="https://x.com/BlogRolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@BlogRolly</a></span>
+          </div>
+
+          <div className={styles.contactItem}>
+            <span>Instagram: <a href="https://www.instagram.com/blogrolly/" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
+          </div>
+
+          <div className={styles.contactItem}>
+            <span>Facebook: <a href="https://www.facebook.com/blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
+          </div>
+
+          <div className={styles.contactItem}>
+            <span>TikTok: <a href="https://www.tiktok.com/@blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
           </div>
         </div>
       </div>
