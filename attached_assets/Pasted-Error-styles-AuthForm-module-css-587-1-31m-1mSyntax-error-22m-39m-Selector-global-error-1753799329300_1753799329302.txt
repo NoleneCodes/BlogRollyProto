@@ -1,0 +1,21 @@
+Error: ./styles/AuthForm.module.css:587:1
+[31m[1mSyntax error[22m[39m: Selector ":global(.error-highlight)" is not pure (pure selectors must contain at least one local class or id)
+
+ [90m 585 | [39m
+ [90m 586 | [39m[90m/* Error highlight animation */[39m
+[1m[31m>[39m[22m[90m 587 | [39m[33m:[39m[36mglobal[39m[36m(.error-highlight)[39m [33m{[39m
+ [90m     | [39m[1m[31m^[39m[22m
+ [90m 588 | [39m  outline[33m:[39m 3px solid [35m#ef4444[39m !important[33m;[39m
+ [90m 589 | [39m  outline-offset[33m:[39m 2px !important[33m;[39m
+    at BuildError (webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/components/react-dev-overlay/ui/container/build-error.js:43:41)
+    at react-stack-bottom-frame (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:22429:20)
+    at renderWithHooks (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:5758:22)
+    at updateFunctionComponent (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:8019:19)
+    at beginWork (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:9684:18)
+    at runWithFiberInDEV (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:544:16)
+    at performUnitOfWork (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:15045:22)
+    at workLoopSync (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:14871:41)
+    at renderRootSync (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:14851:11)
+    at performWorkOnRoot (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:14335:13)
+    at performWorkOnRootViaSchedulerTask (webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:15932:7)
+    at MessagePort.performWorkUntilDeadline (webpack-internal:///(pages-dir-browser)/./node_modules/scheduler/cjs/scheduler.development.js:44:48)
