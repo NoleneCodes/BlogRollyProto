@@ -161,9 +161,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     });
 
     const imageProgress = formData.image ? 1 : 0;
+    const imageDescriptionProgress = formData.image && formData.imageDescription.trim() ? 1 : 0;
     const tagsProgress = formData.tags.length > 0 ? 1 : 0;
 
-    const totalProgress = (filledFields.length + imageProgress + tagsProgress) / 5 * 100;
+    const totalProgress = (filledFields.length + imageProgress + imageDescriptionProgress + tagsProgress) / 7 * 100;
     setProgress(totalProgress);
   }, [formData]);
 
@@ -267,6 +268,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     // Validate required fields
     const newErrors: Record<string, string> = {};
 
+    if (!formData.image) newErrors.image = 'Blog image is required';
+    if (formData.image && !formData.imageDescription.trim()) newErrors.imageDescription = 'Image description is required';
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (formData.title.length > 120) newErrors.title = 'Title must be 120 characters or less';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
@@ -284,7 +287,9 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   };
 
   const isFormValid = () => {
-    return formData.title.trim() && 
+    return formData.image &&
+           formData.imageDescription.trim() &&
+           formData.title.trim() && 
            formData.description.trim() && 
            formData.category &&
            validateUrl(formData.postUrl) &&
@@ -333,8 +338,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         {/* Step 1: Blog Image */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Blog Image
-            <span className={styles.optional}>(Optional)</span>
+            Blog Image *
           </label>
           <input
             type="file"
@@ -353,8 +357,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           {formData.image && (
             <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
               <label className={styles.label}>
-                Image Description
-                <span className={styles.optional}>(Optional - used for SEO and accessibility)</span>
+                Image Description *
               </label>
               <input
                 type="text"
@@ -363,7 +366,9 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
                 maxLength={200}
                 className={styles.textInput}
                 placeholder="Describe what's in the image for screen readers and SEO"
+                required
               />
+              {errors.imageDescription && <span className={styles.error}>{errors.imageDescription}</span>}
               <small className={styles.hint}>{formData.imageDescription.length}/200 characters</small>
             </div>
           )}
