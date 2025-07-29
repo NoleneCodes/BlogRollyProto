@@ -302,7 +302,7 @@ const BloggerProfilePremium: React.FC = () => {
     const newSubmission: BlogSubmission = {
       id: Date.now().toString(),
       title: formData.title,
-      url: formData.url,
+      url: formData.postUrl,
       category: formData.category,
       status: 'pending',
       submittedDate: new Date().toISOString().split('T')[0],
@@ -310,6 +310,7 @@ const BloggerProfilePremium: React.FC = () => {
       clicks: 0,
       description: formData.description,
       image: formData.image ? URL.createObjectURL(formData.image) : null,
+      imageDescription: formData.imageDescription,
       ctr: 0,
       avgTimeOnPage: 0,
       bounceRate: 0

@@ -276,14 +276,15 @@ const BloggerProfile: React.FC = () => {
     const newSubmission: BlogSubmission = {
       id: Date.now().toString(),
       title: formData.title,
-      url: formData.url,
+      url: formData.postUrl,
       category: formData.category,
       status: 'pending',
       submittedDate: new Date().toISOString().split('T')[0],
       views: 0,
       clicks: 0,
       description: formData.description,
-      image: formData.image ? URL.createObjectURL(formData.image) : null
+      image: formData.image ? URL.createObjectURL(formData.image) : null,
+      imageDescription: formData.imageDescription
     };
     setBlogSubmissions(prev => [newSubmission, ...prev]);
     setShowBlogSubmissionForm(false);
