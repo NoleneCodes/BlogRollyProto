@@ -219,6 +219,16 @@
   transform: translateY(-1px);
 }
 
+/* Dark mode read button */
+:global(.dark) .readButton {
+  background: #c42142;
+  color: white;
+}
+
+:global(.dark) .readButton:hover {
+  background: #a01835;
+}
+
 .saveButton {
   background: transparent;
   color: #c42142;
@@ -424,10 +434,10 @@
 
 /* Dark mode CTA button */
 :global(.dark) .ctaButton {
-  background: #ff4d6d;
+  background: #c42142;
   color: white;
 }
 
 :global(.dark) .ctaButton:hover {
-  background: #c42142;
+  background: #a01835;
 }
