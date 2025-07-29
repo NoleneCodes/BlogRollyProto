@@ -540,18 +540,33 @@ const BloggerProfilePremium: React.FC = () => {
               <p className={styles.emptyState}>No blog submissions yet. Submit your first blog post!</p>
             ) : (
               <>
-                <div>
-                  <label htmlFor="blogrollFilter">Filter by Status:</label>
-                  <select
-                    id="blogrollFilter"
-                    value={blogrollFilter}
-                    onChange={(e) => setBlogrollFilter(e.target.value)}
-                  >
-                    <option value="all">All</option>
-                    <option value="draft">Draft</option>
-                    <option value="live">Live</option>
-                    <option value="deactivated">Deactivated</option>
-                  </select>
+                <div className={styles.blogrollFilters}>
+                  <div className={styles.filterButtons}>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'all' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('all')}
+                    >
+                      All ({blogSubmissions.length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'draft' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('draft')}
+                    >
+                      Drafts ({blogSubmissions.filter(post => post.status === 'draft').length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'live' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('live')}
+                    >
+                      Live ({blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length})
+                    </button>
+                    <button 
+                      className={`${styles.filterButton} ${blogrollFilter === 'deactivated' ? styles.active : ''}`}
+                      onClick={() => setBlogrollFilter('deactivated')}
+                    >
+                      Inactive ({blogSubmissions.filter(post => post.status === 'approved' && !post.isActive).length})
+                    </button>
+                  </div>
                 </div>
                 <div className={styles.submissionsList}>
                   {blogSubmissions

@@ -944,6 +944,52 @@
   border-color: #9ca3af;
 }
 
+/* Blogroll Filter Styles */
+.blogrollFilters {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.filterButton:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.filterButton.active {
+  background: #c42142;
+  border-color: #c42142;
+  color: white;
+}
+
+.filterButton.active:hover {
+  background: #a01835;
+  border-color: #a01835;
+}
+
 /* Help section */
 .helpSection {
   display: flex;
