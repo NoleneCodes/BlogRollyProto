@@ -216,100 +216,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      
-      // Scroll to first error field
-      const fieldOrder = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword', 'displayName', 'bio', 'blogUrl', 'blogName', 'agreeToTerms', 'confirmOwnership', 'agreeToSurvey'];
-      const sortedErrors = Object.keys(newErrors).sort((a, b) => {
-        const aIndex = fieldOrder.indexOf(a);
-        const bIndex = fieldOrder.indexOf(b);
-        return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
-      });
-      const firstErrorField = sortedErrors[0];
-      
-      setTimeout(() => {
-        console.log('Trying to scroll to error field:', firstErrorField);
-        
-        let errorElement: Element | null = null;
-        
-        // For checkbox fields, try to find by data-field attribute first
-        if (firstErrorField === 'agreeToTerms' || firstErrorField === 'confirmOwnership' || firstErrorField === 'agreeToSurvey') {
-          errorElement = document.querySelector(`input[data-field="${firstErrorField}"]`);
-          
-          // If not found, search by text content in checkbox labels
-          if (!errorElement) {
-            const checkboxLabels = document.querySelectorAll('label');
-            for (const label of checkboxLabels) {
-              const checkbox = label.querySelector('input[type="checkbox"]');
-              const labelText = label.textContent?.toLowerCase() || '';
-              
-              if (checkbox && (
-                (firstErrorField === 'agreeToTerms' && labelText.includes('terms')) ||
-                (firstErrorField === 'confirmOwnership' && labelText.includes('ownership')) ||
-                (firstErrorField === 'agreeToSurvey' && labelText.includes('survey'))
-              )) {
-                errorElement = checkbox;
-                break;
-              }
-            }
-          }
-        } else {
-          // For regular input fields
-          errorElement = document.querySelector(`input[name="${firstErrorField}"]`);
-          if (!errorElement) {
-            errorElement = document.querySelector(`textarea[name="${firstErrorField}"]`);
-          }
-        }
-        
-        console.log('Found error element:', errorElement);
-        
-        if (errorElement) {
-          // Scroll to element
-          errorElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',
-            inline: 'nearest'
-          });
-          
-          // Focus after scroll completes
-          setTimeout(() => {
-            try {
-              // Scroll to element with offset for sticky navbar
-              const navbarHeight = 80; // Approximate navbar height
-              const elementTop = errorElement.getBoundingClientRect().top + window.pageYOffset;
-              const offsetPosition = elementTop - navbarHeight - 20; // 20px extra padding
-              
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-              });
-              
-              // Focus and highlight after scroll
-              setTimeout(() => {
-                (errorElement as HTMLElement).focus();
-                // Add visual highlight using inline styles with proper z-index
-                errorElement.style.outline = '3px solid #ef4444';
-                errorElement.style.outlineOffset = '2px';
-                errorElement.style.animation = 'pulse-error 1s ease-in-out infinite alternate';
-                errorElement.style.position = 'relative';
-                errorElement.style.zIndex = '50';
-                
-                setTimeout(() => {
-                  errorElement!.style.outline = '';
-                  errorElement!.style.outlineOffset = '';
-                  errorElement!.style.animation = '';
-                  errorElement!.style.position = '';
-                  errorElement!.style.zIndex = '';
-                }, 2000);
-              }, 300);
-            } catch (e) {
-              console.log('Could not focus element:', e);
-            }
-          }, 100);
-        } else {
-          console.log('Could not find element for field:', firstErrorField);
-        }
-      }, 100);
-      
       return;
     }
 
@@ -344,7 +250,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="text"
-            name="firstName"
             value={bloggerForm.firstName}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, firstName: e.target.value }))}
             className={styles.textInput}
@@ -359,7 +264,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="text"
-            name="surname"
             value={bloggerForm.surname}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, surname: e.target.value }))}
             className={styles.textInput}
@@ -374,7 +278,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="email"
-            name="email"
             value={bloggerForm.email}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, email: e.target.value }))}
             className={styles.textInput}
@@ -390,7 +293,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="date"
-            name="dateOfBirth"
             value={bloggerForm.dateOfBirth}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
             className={styles.textInput}
@@ -406,7 +308,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="password"
-            name="password"
             value={bloggerForm.password}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, password: e.target.value }))}
             className={styles.textInput}
@@ -423,7 +324,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="password"
-            name="confirmPassword"
             value={bloggerForm.confirmPassword}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
             className={styles.textInput}
@@ -508,7 +408,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="url"
-            name="blogUrl"
             value={bloggerForm.blogUrl}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
             className={styles.textInput}
@@ -626,7 +525,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
-              data-field="agreeToTerms"
               checked={bloggerForm.agreeToTerms}
               onChange={(e) => setBloggerForm(prev => ({ ...prev, agreeToTerms: e.target.checked }))}
               className={styles.checkbox}
@@ -643,7 +541,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
-              data-field="confirmOwnership"
               checked={bloggerForm.confirmOwnership}
               onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmOwnership: e.target.checked }))}
               className={styles.checkbox}
@@ -660,7 +557,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
-              data-field="agreeToSurvey"
               checked={bloggerForm.agreeToSurvey}
               onChange={(e) => {
                 if (e.target.checked && !surveyCompleted) {
