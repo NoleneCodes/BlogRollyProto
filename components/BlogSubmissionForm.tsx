@@ -187,14 +187,14 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       hasAdultContent: formData.hasAdultContent,
       savedAt: new Date().toISOString()
     };
-    
+
     localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
     setDraftSaved(true);
     setLastSavedAt(new Date().toLocaleTimeString());
-    
+
     // Notify parent component that draft was saved
     onDraftSaved?.();
-    
+
     // Clear the "saved" indicator after 3 seconds
     setTimeout(() => {
       setDraftSaved(false);
@@ -390,7 +390,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         >
           {draftSaved ? '✓ Draft Saved' : 'Save Draft'}
         </button>
-        
+
         {(formData.title || formData.description || formData.postUrl || lastSavedAt) && (
           <button 
             type="button"
@@ -421,7 +421,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             </div>
           )}
           <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP</small>
-          
+
           {formData.image && (
             <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
               <label className={styles.label}>
@@ -429,6 +429,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
               </label>
               <input
                 type="text"
+                name="imageDescription"
                 value={formData.imageDescription}
                 onChange={(e) => setFormData(prev => ({ ...prev, imageDescription: e.target.value }))}
                 maxLength={200}
@@ -449,6 +450,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           </label>
           <input
             type="text"
+            name="title"
             value={formData.title}
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
             maxLength={120}
@@ -465,6 +467,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             Description / Excerpt *
           </label>
           <textarea
+            name="description"
             value={formData.description}
             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
             maxLength={500}
@@ -482,6 +485,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             Main Category *
           </label>
           <select
+            name="category"
             value={formData.category}
             onChange={handleCategoryChange}
             className={styles.selectInput}
@@ -574,12 +578,13 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             Blog Post URL *
           </label>
           <input
-            type="url"
-            value={formData.postUrl}
-            onChange={handleUrlChange}
-            className={styles.textInput}
-            placeholder="https://yourblog.com/your-post-title"
-          />
+              type="url"
+              name="postUrl"
+              value={formData.postUrl}
+              onChange={handleUrlChange}
+              className={styles.textInput}
+              placeholder="https://yourblog.com/your-post-title"
+            />
           {errors.postUrl && <span className={styles.error}>{errors.postUrl}</span>}
           <small className={styles.hint}>
             Must start with https:// and include a path (e.g., /blog/my-post)
@@ -624,3 +629,4 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
 };
 
 export default BlogSubmissionForm;
+`

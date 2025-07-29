@@ -216,6 +216,20 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      
+      // Scroll to first error field
+      const firstErrorField = Object.keys(newErrors)[0];
+      const fieldOrder = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword', 'blogUrl', 'agreeToTerms', 'confirmOwnership', 'agreeToSurvey'];
+      const sortedErrors = Object.keys(newErrors).sort((a, b) => fieldOrder.indexOf(a) - fieldOrder.indexOf(b));
+      
+      setTimeout(() => {
+        const errorElement = document.querySelector(`input[name="${sortedErrors[0]}"], input[type="checkbox"][data-field="${sortedErrors[0]}"]`);
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          (errorElement as HTMLElement).focus();
+        }
+      }, 100);
+      
       return;
     }
 
@@ -250,6 +264,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="text"
+            name="firstName"
             value={bloggerForm.firstName}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, firstName: e.target.value }))}
             className={styles.textInput}
@@ -264,6 +279,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="text"
+            name="surname"
             value={bloggerForm.surname}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, surname: e.target.value }))}
             className={styles.textInput}
@@ -278,6 +294,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="email"
+            name="email"
             value={bloggerForm.email}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, email: e.target.value }))}
             className={styles.textInput}
@@ -293,6 +310,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="date"
+            name="dateOfBirth"
             value={bloggerForm.dateOfBirth}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
             className={styles.textInput}
@@ -308,6 +326,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="password"
+            name="password"
             value={bloggerForm.password}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, password: e.target.value }))}
             className={styles.textInput}
@@ -324,6 +343,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="password"
+            name="confirmPassword"
             value={bloggerForm.confirmPassword}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
             className={styles.textInput}
@@ -408,6 +428,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <input
             type="url"
+            name="blogUrl"
             value={bloggerForm.blogUrl}
             onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
             className={styles.textInput}
@@ -525,6 +546,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
+              data-field="agreeToTerms"
               checked={bloggerForm.agreeToTerms}
               onChange={(e) => setBloggerForm(prev => ({ ...prev, agreeToTerms: e.target.checked }))}
               className={styles.checkbox}
@@ -541,6 +563,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
+              data-field="confirmOwnership"
               checked={bloggerForm.confirmOwnership}
               onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmOwnership: e.target.checked }))}
               className={styles.checkbox}
@@ -557,6 +580,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
+              data-field="agreeToSurvey"
               checked={bloggerForm.agreeToSurvey}
               onChange={(e) => {
                 if (e.target.checked && !surveyCompleted) {
