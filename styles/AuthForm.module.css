@@ -592,3 +592,15 @@
   position: absolute;
   left: 0;
 }
+/* Error highlight animation */
+.errorHighlight {
+  outline: 3px solid #ef4444 !important;
+  outline-offset: 2px !important;
+  animation: errorPulse 0.6s ease-in-out;
+}
+
+@keyframes errorPulse {
+  0% { outline-color: transparent; }
+  50% { outline-color: #ef4444; }
+  100% { outline-color: #ef4444; }
+}

@@ -24,10 +24,8 @@ export const MAILCHIMP_CONFIG = {
   audienceId: process.env.MAILCHIMP_AUDIENCE_ID
 };
 
-export const RESEND_CONFIG = {
-  apiKey: process.env.RESEND_API_KEY,
-  fromEmail: 'hello@blogrolly.com'
-};
+// Re-export RESEND_CONFIG from the dedicated client
+export { RESEND_CONFIG } from '../resend-client';
 
 // Email templates organized by category
 export const emailTemplates = {
@@ -63,9 +61,7 @@ export const emailTemplates = {
 };
 
 // Email service functions with Resend SDK
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { resend, RESEND_CONFIG, sendEmail } from '../resend-client';
 
 export const emailService = {
   //  User Onboarding
