@@ -274,10 +274,14 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           setTimeout(() => {
             try {
               (errorElement as HTMLElement).focus();
-              // Add visual highlight
-              errorElement.classList.add('error-highlight');
+              // Add visual highlight using local CSS class
+              errorElement.style.outline = '3px solid #ef4444';
+              errorElement.style.outlineOffset = '2px';
+              errorElement.style.animation = 'pulse-error 1s ease-in-out infinite alternate';
               setTimeout(() => {
-                errorElement?.classList.remove('error-highlight');
+                errorElement!.style.outline = '';
+                errorElement!.style.outlineOffset = '';
+                errorElement!.style.animation = '';
               }, 2000);
             } catch (e) {
               console.log('Could not focus element:', e);

@@ -584,7 +584,7 @@
 }
 
 /* Error highlight animation */
-:global(.error-highlight) {
+.errorHighlight {
   outline: 3px solid #ef4444 !important;
   outline-offset: 2px !important;
   animation: pulse-error 1s ease-in-out infinite alternate;
