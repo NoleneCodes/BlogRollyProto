@@ -10,14 +10,14 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Resend configuration
 export const RESEND_CONFIG = {
-  fromEmail: 'no-reply@blogrolly.com',
+  fromEmail: 'BlogRolly <no-reply@blogrolly.com>',
   fromName: 'BlogRolly',
   replyTo: 'support@blogrolly.com'
 };
 
 // Investor-specific email configuration
 export const INVESTOR_EMAIL_CONFIG = {
-  fromEmail: 'invest@blogrolly.com',
+  fromEmail: 'BlogRolly <invest@blogrolly.com>',
   fromName: 'BlogRolly Investor Relations',
   replyTo: 'invest@blogrolly.com'
 };
@@ -57,7 +57,7 @@ export const sendEmail = async (emailData: {
 }) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: emailData.from || `${RESEND_CONFIG.fromName} <${RESEND_CONFIG.fromEmail}>`,
+      from: emailData.from || RESEND_CONFIG.fromEmail,
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,
@@ -85,7 +85,7 @@ export const sendInvestorEmail = async (emailData: {
 }) => {
   try {
     const { data, error } = await resend.emails.send({
-      from: `${INVESTOR_EMAIL_CONFIG.fromName} <${INVESTOR_EMAIL_CONFIG.fromEmail}>`,
+      from: INVESTOR_EMAIL_CONFIG.fromEmail,
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,
