@@ -68,7 +68,8 @@ export const emailService = {
   sendWelcomeEmail: async (email: string, firstName: string, userType: 'reader' | 'blogger') => {
     try {
       const template = userType === 'reader' ? emailTemplates.welcomeReader : emailTemplates.welcomeBlogger;
-      const { html, subject } = template({ firstName });
+      const html = template.template(firstName);
+      const subject = template.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -91,7 +92,8 @@ export const emailService = {
   //  Blog Submission Workflow
   sendBlogSubmissionReceived: async (email: string, firstName: string, blogTitle: string) => {
     try {
-      const { html, subject } = emailTemplates.blogSubmissionReceived({ firstName, blogTitle });
+      const html = emailTemplates.blogSubmissionReceived.template(firstName, blogTitle);
+      const subject = emailTemplates.blogSubmissionReceived.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -114,11 +116,15 @@ export const emailService = {
   sendBlogStatusEmail: async (email: string, firstName: string, blogTitle: string, blogUrl: string, status: 'approved' | 'rejected', rejectionReason?: string, rejectionNote?: string) => {
     try {
       const template = status === 'approved' ? emailTemplates.blogApproved : emailTemplates.blogRejected;
-      const templateData = status === 'approved' 
-        ? { firstName, blogTitle, blogUrl }
-        : { firstName, blogTitle, rejectionReason: rejectionReason!, rejectionNote };
+      let html: string;
       
-      const { html, subject } = template(templateData);
+      if (status === 'approved') {
+        html = template.template(firstName, blogTitle, blogUrl);
+      } else {
+        html = template.template(firstName, blogTitle, rejectionReason!, rejectionNote);
+      }
+      
+      const subject = template.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -141,7 +147,8 @@ export const emailService = {
   //  Blog Management
   sendBlogUrlChangedEmail: async (email: string, firstName: string, blogTitle: string, oldUrl: string, newUrl: string) => {
     try {
-      const { html, subject } = emailTemplates.blogUrlChanged({ firstName, blogTitle, oldUrl, newUrl });
+      const html = emailTemplates.blogUrlChanged.template(firstName, blogTitle, oldUrl, newUrl);
+      const subject = emailTemplates.blogUrlChanged.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -163,7 +170,8 @@ export const emailService = {
 
   sendBlogDeactivatedEmail: async (email: string, firstName: string, blogTitle: string, reason: string) => {
     try {
-      const { html, subject } = emailTemplates.blogDeactivated({ firstName, blogTitle, reason });
+      const html = emailTemplates.blogDeactivated.template(firstName, blogTitle, reason);
+      const subject = emailTemplates.blogDeactivated.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -186,7 +194,8 @@ export const emailService = {
   //  System Notifications
   sendPasswordResetEmail: async (email: string, firstName: string, resetLink: string) => {
     try {
-      const { html, subject } = emailTemplates.passwordReset({ firstName, resetLink });
+      const html = emailTemplates.passwordReset.template(firstName, resetLink);
+      const subject = emailTemplates.passwordReset.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -209,7 +218,8 @@ export const emailService = {
   // Bug Reporting
   sendBugReportThankYou: async (email: string, firstName: string, reportId: string) => {
     try {
-      const { html, subject } = emailTemplates.bugReportReceived({ firstName, reportId });
+      const html = emailTemplates.bugReportReceived.template(firstName, reportId);
+      const subject = emailTemplates.bugReportReceived.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -232,7 +242,8 @@ export const emailService = {
   // Support Requests
   sendSupportRequestReceived: async (email: string, firstName: string, ticketId: string, supportMessage: string, estimatedResponse?: string) => {
     try {
-      const { html, subject } = emailTemplates.supportRequestReceived({ firstName, ticketId, supportMessage, estimatedResponse });
+      const html = emailTemplates.supportRequestReceived.template(firstName, ticketId, supportMessage, estimatedResponse);
+      const subject = emailTemplates.supportRequestReceived.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -254,7 +265,8 @@ export const emailService = {
 
   sendSupportRequestReply: async (email: string, firstName: string, ticketId: string, originalMessage: string, supportReply: string) => {
     try {
-      const { html, subject } = emailTemplates.supportRequestReply({ firstName, ticketId, originalMessage, supportReply });
+      const html = emailTemplates.supportRequestReply.template(firstName, ticketId, originalMessage, supportReply);
+      const subject = emailTemplates.supportRequestReply.subject;
       
       const { data, error } = await resend.emails.send({
         from: `${RESEND_CONFIG.fromName} Support <support@blogrolly.com>`,
@@ -278,7 +290,8 @@ export const emailService = {
   // Subscription & Payments
   sendPremiumWelcome: async (email: string, firstName: string) => {
     try {
-      const { html, subject } = emailTemplates.premiumWelcome({ firstName });
+      const html = emailTemplates.premiumWelcome.template(firstName);
+      const subject = emailTemplates.premiumWelcome.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -300,7 +313,8 @@ export const emailService = {
 
   sendPaymentSuccessful: async (email: string, firstName: string, amount: string, planName: string, invoiceUrl: string, nextBillingDate: string) => {
     try {
-      const { html, subject } = emailTemplates.paymentSuccessful({ firstName, amount, planName, invoiceUrl, nextBillingDate });
+      const html = emailTemplates.paymentSuccessful.template(firstName, amount, planName, invoiceUrl, nextBillingDate);
+      const subject = emailTemplates.paymentSuccessful.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -323,11 +337,15 @@ export const emailService = {
   sendPaymentFailedNotice: async (email: string, firstName: string, planName: string, amount: string, noticeType: 'first' | 'final', retryDate?: string, delistDate?: string) => {
     try {
       const template = noticeType === 'first' ? emailTemplates.paymentFailedFirstNotice : emailTemplates.paymentFailedFinalNotice;
-      const templateData = noticeType === 'first' 
-        ? { firstName, planName, amount, retryDate: retryDate! }
-        : { firstName, planName, amount, delistDate: delistDate! };
+      let html: string;
       
-      const { html, subject } = template(templateData);
+      if (noticeType === 'first') {
+        html = template.template(firstName, planName, amount, retryDate!);
+      } else {
+        html = template.template(firstName, planName, amount, delistDate!);
+      }
+      
+      const subject = template.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
@@ -349,7 +367,8 @@ export const emailService = {
 
   sendBlogDelistedPayment: async (email: string, firstName: string, blogCount: number, amount: string) => {
     try {
-      const { html, subject } = emailTemplates.blogDelistedPayment({ firstName, blogCount, amount });
+      const html = emailTemplates.blogDelistedPayment.template(firstName, blogCount, amount);
+      const subject = emailTemplates.blogDelistedPayment.subject;
       
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
