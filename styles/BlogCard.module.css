@@ -386,7 +386,7 @@
 
 /* Dark mode card */
 :global(.dark) .card {
-  background: #1f1f1f;
+  background: #E0E0E0;
   border: 1px solid #374151;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
@@ -411,7 +411,17 @@
 }
 
 :global(.dark) .description {
-  color: #A1A1AA;
+  color: white;
+}
+
+/* Dark mode blog card */
+:global(.dark) .blogCard {
+  background: #E0E0E0;
+}
+
+/* Dark mode blog description */
+:global(.dark) .blogDescription {
+  color: white;
 }
 
 /* Blog card titles - ensure proper red color */
