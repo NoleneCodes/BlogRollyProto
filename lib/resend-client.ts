@@ -10,7 +10,7 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Resend configuration
 export const RESEND_CONFIG = {
-  fromEmail: 'hello@blogrolly.com',
+  fromEmail: 'no-reply@blogrolly.com',
   fromName: 'BlogRolly',
   replyTo: 'support@blogrolly.com'
 };
