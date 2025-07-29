@@ -336,152 +336,123 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
         <div className={styles.sectionTitle}>
           Part 2: Profile Creation
           <span className={styles.optional}>(Optional)</span>
-          {!isPart1Complete && (
-            <span style={{ 
-              fontSize: '0.8rem', 
-              color: '#64748b', 
-              fontWeight: 'normal',
-              marginLeft: '0.5rem'
-            }}>
-              (Complete Part 1 to unlock)
-            </span>
-          )}
         </div>
 
-        {!isPart1Complete ? (
-          <div style={{
-            padding: '2rem',
-            backgroundColor: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            textAlign: 'center',
-            color: '#64748b',
-            marginBottom: '2rem'
-          }}>
-            <p>Complete Part 1 (Account Setup) to unlock profile creation.</p>
-            <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
-              You can always complete your profile later from your dashboard.
-            </p>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            Profile Picture
+            <span className={styles.optional}>(Optional)</span>
+          </label>
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                  setErrors(prev => ({ ...prev, profilePicture: 'Image must be less than 2MB' }));
+                  return;
+                }
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                  setErrors(prev => ({ ...prev, profilePicture: 'Only JPG, PNG, and WebP files are allowed' }));
+                  return;
+                }
+                setBloggerForm(prev => ({ ...prev, profilePicture: file }));
+                setErrors(prev => ({ ...prev, profilePicture: '' }));
+              }
+            }}
+            className={styles.fileInput}
+          />
+          {errors.profilePicture && <span className={styles.error}>{errors.profilePicture}</span>}
+          <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            Display Name
+            <span className={styles.optional}>(Optional)</span>
+          </label>
+          <input
+            type="text"
+            value={bloggerForm.displayName}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, displayName: e.target.value }))}
+            className={styles.textInput}
+            placeholder="How you want to be known publicly"
+          />
+          {errors.displayName && <span className={styles.error}>{errors.displayName}</span>}
+          <small className={styles.hint}>Shown on public profile. Can be added later.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            Short Bio
+            <span className={styles.optional}>(Optional)</span>
+          </label>
+          <textarea
+            value={bloggerForm.bio}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, bio: e.target.value }))}
+            className={styles.textarea}
+            maxLength={280}
+            rows={4}
+            placeholder="Tell us who you are in a sentence or two. Can be added later."
+          />
+          {errors.bio && <span className={styles.error}>{errors.bio}</span>}
+          <small className={styles.hint}>{bloggerForm.bio.length}/280 characters. Can be completed later.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            Blog URL
+            <span className={styles.optional}>(Optional)</span>
+          </label>
+          <input
+            type="url"
+            value={bloggerForm.blogUrl}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
+            className={styles.textInput}
+            placeholder="https://yourblog.com"
+          />
+          {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
+          <small className={styles.hint}>Must start with https:// (no paths or slugs). Can be added later.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            Blog Name
+            <span className={styles.optional}>(Optional)</span>
+          </label>
+          <input
+            type="text"
+            value={bloggerForm.blogName}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, blogName: e.target.value }))}
+            className={styles.textInput}
+            placeholder="The name of your blog"
+          />
+          {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
+          <small className={styles.hint}>Shown in search & on your profile. Can be added later.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            Primary Topics / Niche
+            <span className={styles.optional}>(Optional)</span>
+          </label>
+          <div className={styles.checkboxGrid}>
+            {topicOptions.filter(t => t !== 'Other').map(topic => (
+              <label key={topic} className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={bloggerForm.topics.includes(topic)}
+                  onChange={(e) => handleBloggerTopicChange(topic, e.target.checked)}
+                  className={styles.checkbox}
+                />
+                <span className={styles.checkboxText}>{topic}</span>
+              </label>
+            ))}
           </div>
-        ) : (
-          <>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Profile Picture
-                <span className={styles.optional}>(Optional)</span>
-              </label>
-              <input
-                type="file"
-                accept=".jpg,.jpeg,.png,.webp"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    if (file.size > 2 * 1024 * 1024) {
-                      setErrors(prev => ({ ...prev, profilePicture: 'Image must be less than 2MB' }));
-                      return;
-                    }
-                    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                    if (!validTypes.includes(file.type)) {
-                      setErrors(prev => ({ ...prev, profilePicture: 'Only JPG, PNG, and WebP files are allowed' }));
-                      return;
-                    }
-                    setBloggerForm(prev => ({ ...prev, profilePicture: file }));
-                    setErrors(prev => ({ ...prev, profilePicture: '' }));
-                  }
-                }}
-                className={styles.fileInput}
-              />
-              {errors.profilePicture && <span className={styles.error}>{errors.profilePicture}</span>}
-              <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Display Name
-                <span className={styles.optional}>(Optional)</span>
-              </label>
-              <input
-                type="text"
-                value={bloggerForm.displayName}
-                onChange={(e) => setBloggerForm(prev => ({ ...prev, displayName: e.target.value }))}
-                className={styles.textInput}
-                placeholder="How you want to be known publicly"
-              />
-              {errors.displayName && <span className={styles.error}>{errors.displayName}</span>}
-              <small className={styles.hint}>Shown on public profile. Can be added later.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Short Bio
-                <span className={styles.optional}>(Optional)</span>
-              </label>
-              <textarea
-                value={bloggerForm.bio}
-                onChange={(e) => setBloggerForm(prev => ({ ...prev, bio: e.target.value }))}
-                className={styles.textarea}
-                maxLength={280}
-                rows={4}
-                placeholder="Tell us who you are in a sentence or two. Can be added later."
-              />
-              {errors.bio && <span className={styles.error}>{errors.bio}</span>}
-              <small className={styles.hint}>{bloggerForm.bio.length}/280 characters. Can be completed later.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Blog URL
-                <span className={styles.optional}>(Optional)</span>
-              </label>
-              <input
-                type="url"
-                value={bloggerForm.blogUrl}
-                onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
-                className={styles.textInput}
-                placeholder="https://yourblog.com"
-              />
-              {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
-              <small className={styles.hint}>Must start with https:// (no paths or slugs). Can be added later.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Blog Name
-                <span className={styles.optional}>(Optional)</span>
-              </label>
-              <input
-                type="text"
-                value={bloggerForm.blogName}
-                onChange={(e) => setBloggerForm(prev => ({ ...prev, blogName: e.target.value }))}
-                className={styles.textInput}
-                placeholder="The name of your blog"
-              />
-              {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
-              <small className={styles.hint}>Shown in search & on your profile. Can be added later.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Primary Topics / Niche
-                <span className={styles.optional}>(Optional)</span>
-              </label>
-              <div className={styles.checkboxGrid}>
-                {topicOptions.filter(t => t !== 'Other').map(topic => (
-                  <label key={topic} className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={bloggerForm.topics.includes(topic)}
-                      onChange={(e) => handleBloggerTopicChange(topic, e.target.checked)}
-                      className={styles.checkbox}
-                    />
-                    <span className={styles.checkboxText}>{topic}</span>
-                  </label>
-                ))}
-              </div>
-              <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
-            </div>
-          </>
-        )}
+          <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
+        </div>
 
         <div className={styles.sectionTitle}>
           Part 3: Listings
