@@ -11,7 +11,7 @@
 
 /* Dark mode hero */
 :global(.dark) .hero {
-  background: linear-gradient(135deg, #621121 0%, #4a1a24 100%);
+  background: #621121;
 }
 
 .title {
