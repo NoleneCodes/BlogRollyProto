@@ -673,7 +673,7 @@ const BloggerProfilePremium: React.FC = () => {
         return (
           <div className={styles.content}>
             <div className={styles.sectionHeader}>
-              <h2>Advanced Analytics</h2>
+              <h2>Analytics</h2>
               <select 
                 value={selectedTimeframe}
                 onChange={(e) => setSelectedTimeframe(e.target.value)}
@@ -747,7 +747,7 @@ const BloggerProfilePremium: React.FC = () => {
       case 'settings':
         return (
           <div className={styles.content}>
-            <h2>Premium Account Settings</h2>
+            <h2>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
                 <label>Profile Picture</label>
@@ -857,25 +857,24 @@ const BloggerProfilePremium: React.FC = () => {
       case 'billing':
         return (
           <div className={styles.content}>
-            <h2>Premium Subscription</h2>
+            <h2>Membership</h2>
             <div className={styles.billingSection}>
               <div className={styles.currentPlan}>
                 <div className={styles.planHeader}>
-                  <h3>Current Plan: Premium</h3>
-                  <span className={styles.premiumBadgeSmall}>👑 Premium</span>
+                  <h3>Current Plan: Pro</h3>                  
                 </div>
-                <p>You're subscribed to our premium tier with unlimited features and priority support.</p>
+                <p>You're subscribed to our Pro plan with unlimited listings and priority support.</p>
                 <div className={styles.planFeatures}>
                   <ul>
                     <li>✅ Unlimited blog submissions</li>
                     <li>✅ Advanced analytics and insights</li>
-                    <li>✅ Priority review for submissions</li>
-                    <li>✅ Traffic optimization insights</li>
-                    <li>✅ Custom blog categories</li>
+                    <li>✅ Priority review for submissions</li>                 
                     <li>✅ Priority support</li>
                     <li>✅ Export analytics data</li>
-                    <li>✅ Custom profile themes</li>
+                    <li>✅ Custom profile themes(coming soon)</li>
                   </ul>
+                  <p>More Pro features coming soon... Feel free to make suggestions</p>
+                  
                 </div>
                 <div className={styles.billingInfo}>
                   <p><strong>Next billing date:</strong> February 15, 2024</p>
@@ -950,7 +949,7 @@ const BloggerProfilePremium: React.FC = () => {
       <div className={styles.profileContainer}>
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
-            <h3>Premium Dashboard</h3>
+            <h3>Blogger Dashboard</h3>
           </div>
           <nav className={styles.sidebarNav}>
             <button 
@@ -987,7 +986,7 @@ const BloggerProfilePremium: React.FC = () => {
               className={`${styles.navItem} ${activeSection === 'billing' ? styles.active : ''}`}
               onClick={() => setActiveSection('billing')}
             >
-              Subscription
+              Billing
             </button>
             <button 
               className={`${styles.navItem} ${activeSection === 'help' ? styles.active : ''}`}
