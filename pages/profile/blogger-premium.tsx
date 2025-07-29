@@ -230,6 +230,9 @@ const BloggerProfilePremium: React.FC = () => {
           topPerformingCategory: 'Tech',
           readerRetention: 68.3
         });
+
+        // Load saved drafts from localStorage
+        loadSavedDrafts();
       } catch (error) {
         console.error('Auth check failed:', error);
       } finally {
@@ -239,6 +242,52 @@ const BloggerProfilePremium: React.FC = () => {
 
     checkAuth();
   }, [router]);
+
+  const loadSavedDrafts = () => {
+    const savedDraft = localStorage.getItem('blogSubmissionDraft');
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        const { savedAt, ...draftFormData } = draft;
+        
+        // Only add draft if it has meaningful content
+        if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
+          const draftSubmission: BlogSubmission = {
+            id: 'draft-' + Date.now().toString(),
+            title: draftFormData.title || 'Untitled Draft',
+            url: draftFormData.postUrl || '',
+            category: draftFormData.category || 'Other',
+            status: 'draft',
+            submittedDate: new Date().toISOString().split('T')[0],
+            views: 0,
+            clicks: 0,
+            description: draftFormData.description || 'Draft in progress...',
+            image: null,
+            imageDescription: draftFormData.imageDescription || '',
+            ctr: 0,
+            avgTimeOnPage: 0,
+            bounceRate: 0
+          };
+
+          setBlogSubmissions(prev => {
+            // Check if draft already exists to avoid duplicates
+            const existingDraftIndex = prev.findIndex(sub => sub.status === 'draft' && sub.title === draftSubmission.title);
+            if (existingDraftIndex >= 0) {
+              // Update existing draft
+              const updated = [...prev];
+              updated[existingDraftIndex] = draftSubmission;
+              return updated;
+            } else {
+              // Add new draft
+              return [draftSubmission, ...prev];
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error loading saved draft:', error);
+      }
+    }
+  };
 
   const handleLogout = () => {
     router.push('/');
@@ -963,6 +1012,7 @@ const BloggerProfilePremium: React.FC = () => {
               <div className={styles.blogSubmissionContent}>
                 <BlogSubmissionForm 
                   onSubmit={handleBlogSubmit}
+                  onDraftSaved={loadSavedDrafts}
                   displayName={userInfo.displayName}
                   bloggerId={userInfo.id}
                   isBlogger={true}

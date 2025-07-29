@@ -4,6 +4,7 @@ import SubmissionGuidelinesPopup from './SubmissionGuidelinesPopup';
 
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
+  onDraftSaved?: () => void;
   displayName?: string;
   bloggerId?: string;
   isBlogger?: boolean;
@@ -91,6 +92,7 @@ const TAGS = {
 
 const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ 
   onSubmit, 
+  onDraftSaved,
   displayName, 
   bloggerId, 
   isBlogger = false,
@@ -187,6 +189,9 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
     setDraftSaved(true);
     setLastSavedAt(new Date().toLocaleTimeString());
+    
+    // Notify parent component that draft was saved
+    onDraftSaved?.();
     
     // Clear the "saved" indicator after 3 seconds
     setTimeout(() => {
