@@ -35,6 +35,7 @@ interface BlogSubmission {
   isActive?: boolean; // Only matters for approved posts
   description?: string;
   image?: string;
+  imageDescription?: string;
 }
 
 interface BlogStats {

@@ -35,6 +35,7 @@ interface BlogSubmission {
   isActive?: boolean;
   description?: string;
   image?: string;
+  imageDescription?: string;
   ctr?: number;
   avgTimeOnPage?: number;
   bounceRate?: number;
