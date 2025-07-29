@@ -1,10 +1,17 @@
 .hero {
+  background: linear-gradient(135deg, #c42142 0%, #e63946 100%);
+  color: white;
   text-align: center;
   padding: 2.5rem 2rem;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
   background: #c42142;
   margin-top: 0;
+}
+
+/* Dark mode hero */
+:global(.dark) .hero {
+  background: linear-gradient(135deg, #2c0f14 0%, #1a0a0d 100%);
 }
 
 .title {
@@ -351,11 +358,16 @@
 }
 
 .valueItem {
-  margin-bottom: 2.5rem;
-  padding: 1.5rem;
   background: #f8f9fa;
+  padding: 1.5rem;
   border-radius: 12px;
   border-left: 4px solid #c42142;
+}
+
+/* Dark mode value item */
+:global(.dark) .valueItem {
+  background: #1f1f1f;
+  border: 1px solid #374151;
 }
 
 .valueItem h3 {
@@ -369,6 +381,15 @@
   font-size: 1.1rem;
   color: #333;
   margin: 0;
+}
+
+/* Dark mode value item text */
+:global(.dark) .valueItem h3 {
+  color: #ff4d6d;
+}
+
+:global(.dark) .valueItem p {
+  color: #A1A1AA;
 }
 
 .contactSection {
@@ -408,10 +429,6 @@
   color: #333;
 }
 
-.contactIcon {
-  font-size: 1.5rem;
-}
-
 .contactItem a {
   color: #c42142;
   text-decoration: none;
@@ -420,6 +437,15 @@
 
 .contactItem a:hover {
   text-decoration: underline;
+}
+
+/* Dark mode contact items */
+:global(.dark) .contactItem {
+  color: #E4E4E7;
+}
+
+:global(.dark) .contactItem a {
+  color: #ff4d6d;
 }
 
 .brandHandle {

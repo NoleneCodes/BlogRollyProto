@@ -13,6 +13,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Dark mode navbar */
+:global(.dark) .navbar {
+  background: #121212;
+  border-bottom: 1px solid #374151;
+}
+
 .navContent {
   position: relative;
 }
@@ -79,6 +85,17 @@
   background-color: rgba(196, 33, 66, 0.1);
 }
 
+/* Dark mode nav links */
+:global(.dark) .navLink {
+  color: #E4E4E7;
+  border: 1px solid transparent;
+}
+
+:global(.dark) .navLink:hover {
+  color: #ff4d6d;
+  border-color: #ff4d6d;
+}
+
 .mobileMenu {
   display: none;
 }
@@ -112,10 +129,21 @@
   padding-top: 0;
 }
 
+/* Dark mode main */
+:global(.dark) .main {
+  background: #121212;
+}
+
 .footer {
   background: #f8f9fa;
   border-top: 1px solid #e5e5e5;
   margin-top: auto;
+}
+
+/* Dark mode footer */
+:global(.dark) .footer {
+  background: #0a0a0a;
+  border-top: 1px solid #374151;
 }
 
 .footerContent {
