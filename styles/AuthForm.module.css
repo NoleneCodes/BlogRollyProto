@@ -574,3 +574,27 @@
     align-self: flex-start;
   }
 }
+.linkButton {
+  background: none;
+  border: none;
+  color: #c42142;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+/* Error highlight animation */
+:global(.error-highlight) {
+  outline: 3px solid #ef4444 !important;
+  outline-offset: 2px !important;
+  animation: pulse-error 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-error {
+  0% {
+    outline-color: #ef4444;
+  }
+  100% {
+    outline-color: #f87171;
+  }
+}

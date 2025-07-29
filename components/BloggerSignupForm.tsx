@@ -227,36 +227,66 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       const firstErrorField = sortedErrors[0];
       
       setTimeout(() => {
+        console.log('Trying to scroll to error field:', firstErrorField);
+        
         let errorElement: Element | null = null;
         
-        // Try different selectors for the field
+        // For checkbox fields, try to find by data-field attribute first
         if (firstErrorField === 'agreeToTerms' || firstErrorField === 'confirmOwnership' || firstErrorField === 'agreeToSurvey') {
-          errorElement = document.querySelector(`input[type="checkbox"][data-field="${firstErrorField}"]`);
+          errorElement = document.querySelector(`input[data-field="${firstErrorField}"]`);
+          
+          // If not found, search by text content in checkbox labels
           if (!errorElement) {
-            // Find checkbox by checking the text content of labels
-            const labels = document.querySelectorAll('label.checkboxLabel');
-            for (const label of labels) {
+            const checkboxLabels = document.querySelectorAll('label');
+            for (const label of checkboxLabels) {
               const checkbox = label.querySelector('input[type="checkbox"]');
-              if (checkbox && label.textContent?.toLowerCase().includes(firstErrorField.toLowerCase().replace(/([A-Z])/g, ' $1').trim())) {
+              const labelText = label.textContent?.toLowerCase() || '';
+              
+              if (checkbox && (
+                (firstErrorField === 'agreeToTerms' && labelText.includes('terms')) ||
+                (firstErrorField === 'confirmOwnership' && labelText.includes('ownership')) ||
+                (firstErrorField === 'agreeToSurvey' && labelText.includes('survey'))
+              )) {
                 errorElement = checkbox;
                 break;
               }
             }
           }
         } else {
+          // For regular input fields
           errorElement = document.querySelector(`input[name="${firstErrorField}"]`);
           if (!errorElement) {
             errorElement = document.querySelector(`textarea[name="${firstErrorField}"]`);
           }
         }
         
+        console.log('Found error element:', errorElement);
+        
         if (errorElement) {
-          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Scroll to element
+          errorElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'nearest'
+          });
+          
+          // Focus after scroll completes
           setTimeout(() => {
-            (errorElement as HTMLElement).focus();
-          }, 300);
+            try {
+              (errorElement as HTMLElement).focus();
+              // Add visual highlight
+              errorElement.classList.add('error-highlight');
+              setTimeout(() => {
+                errorElement?.classList.remove('error-highlight');
+              }, 2000);
+            } catch (e) {
+              console.log('Could not focus element:', e);
+            }
+          }, 500);
+        } else {
+          console.log('Could not find element for field:', firstErrorField);
         }
-      }, 200);
+      }, 100);
       
       return;
     }
