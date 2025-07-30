@@ -491,17 +491,94 @@ export const supabaseDB = {
     return { data, error };
   },
 
-  // Premium feature checks
+  // Premium feature checks with Stripe verification
   isUserPremium: async (userId: string) => {
     const { data, error } = await supabase
       .from('user_profiles')
-      .select('tier')
+      .select(`
+        tier,
+        blogger_profiles(
+          stripe_customer_id,
+          subscription_status,
+          subscription_end_date
+        )
+      `)
       .eq('user_id', userId)
       .single();
     
     if (error) return { isPremium: false, error };
     
-    return { isPremium: data?.tier === 'pro', error: null };
+    // Check if user has pro tier AND active subscription
+    const hasPro = data?.tier === 'pro';
+    const bloggerProfile = data?.blogger_profiles?.[0];
+    const hasActiveSubscription = bloggerProfile?.subscription_status === 'active';
+    const hasValidEndDate = bloggerProfile?.subscription_end_date 
+      ? new Date(bloggerProfile.subscription_end_date) > new Date() 
+      : false;
+    
+    // User is premium only if they have pro tier AND active subscription
+    const isPremium = hasPro && hasActiveSubscription && hasValidEndDate;
+    
+    return { 
+      isPremium, 
+      error: null,
+      tier: data?.tier,
+      subscriptionStatus: bloggerProfile?.subscription_status,
+      subscriptionEndDate: bloggerProfile?.subscription_end_date
+    };
+  },
+
+  // Verify and sync user tier with Stripe status
+  verifyAndSyncUserTier: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select(`
+        tier,
+        blogger_profiles(
+          stripe_customer_id,
+          subscription_status,
+          subscription_end_date
+        )
+      `)
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) return { synced: false, error };
+    
+    const currentTier = data?.tier;
+    const bloggerProfile = data?.blogger_profiles?.[0];
+    const subscriptionStatus = bloggerProfile?.subscription_status;
+    const subscriptionEndDate = bloggerProfile?.subscription_end_date;
+    
+    // Determine correct tier based on Stripe status
+    let correctTier: UserTier = 'free';
+    
+    if (subscriptionStatus === 'active' && subscriptionEndDate) {
+      const endDate = new Date(subscriptionEndDate);
+      if (endDate > new Date()) {
+        correctTier = 'pro';
+      }
+    }
+    
+    // If tier doesn't match Stripe status, update it
+    if (currentTier !== correctTier) {
+      const { error: updateError } = await supabase
+        .from('user_profiles')
+        .update({ tier: correctTier })
+        .eq('user_id', userId);
+      
+      if (updateError) return { synced: false, error: updateError };
+      
+      return { 
+        synced: true, 
+        error: null, 
+        changed: true,
+        oldTier: currentTier,
+        newTier: correctTier
+      };
+    }
+    
+    return { synced: true, error: null, changed: false, tier: currentTier };
   },
 
   getUserWithBloggerProfile: async (userId: string) => {
