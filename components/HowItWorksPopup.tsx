@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../styles/AuthForm.module.css';
-import profileStyles from '../styles/BloggerProfilePremium.module.css';
+import profileStyles from '../styles/BloggerProfilePro.module.css';
 
 interface HowItWorksPopupProps {
   isOpen: boolean;
