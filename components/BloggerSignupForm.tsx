@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
 import SurveyPopup from './SurveyPopup';
+import { MAIN_CATEGORIES } from '../lib/categories-tags';
 
 interface BloggerSignupFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -71,11 +72,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const [surveyCompleted, setSurveyCompleted] = useState(false);
   const [isPart1Complete, setIsPart1Complete] = useState(false);
 
-  const topicOptions = [
-    'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
-    'Homesteading', 'Books & Media', 'Money & Work', 'Spirituality', 
-    'Creativity', 'Relationships', 'Food', 'Learning', 'Society & Politics', 'Other'
-  ];
+  
 
   const monetizationOptions = [
     'Ads', 'Affiliate Links', 'Products/Services', 'None Yet'
@@ -439,15 +436,15 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             <span className={styles.optional}>(Optional)</span>
           </label>
           <div className={styles.checkboxGrid}>
-            {topicOptions.filter(t => t !== 'Other').map(topic => (
-              <label key={topic} className={styles.checkboxLabel}>
+            {MAIN_CATEGORIES.map(category => (
+              <label key={category} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
-                  checked={bloggerForm.topics.includes(topic)}
-                  onChange={(e) => handleBloggerTopicChange(topic, e.target.checked)}
+                  checked={bloggerForm.topics.includes(category)}
+                  onChange={(e) => handleBloggerTopicChange(category, e.target.checked)}
                   className={styles.checkbox}
                 />
-                <span className={styles.checkboxText}>{topic}</span>
+                <span className={styles.checkboxText}>{category}</span>
               </label>
             ))}
           </div>

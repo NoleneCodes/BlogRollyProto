@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
-import { READER_TOPIC_OPTIONS } from '../lib/categories-tags';
+import { MAIN_CATEGORIES } from '../lib/categories-tags';
 
 interface AuthFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -63,7 +63,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showOtherTopic, setShowOtherTopic] = useState(false);
 
   
 
@@ -117,10 +116,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   };
 
   const handleReaderTopicChange = (topic: string, checked: boolean) => {
-    if (topic === 'Other') {
-      setShowOtherTopic(checked);
-    }
-
     setReaderForm(prev => ({
       ...prev,
       topics: checked 
@@ -439,28 +434,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             <div className={styles.formGroup}>
               <label className={styles.label}>Topics You're Into *</label>
               <div className={styles.checkboxGrid}>
-                {READER_TOPIC_OPTIONS.map(topic => (
-                  <label key={topic} className={styles.checkboxLabel}>
+                {MAIN_CATEGORIES.map(category => (
+                  <label key={category} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"
-                      checked={readerForm.topics.includes(topic)}
-                      onChange={(e) => handleReaderTopicChange(topic, e.target.checked)}
+                      checked={readerForm.topics.includes(category)}
+                      onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
                       className={styles.checkbox}
                     />
-                    <span className={styles.checkboxText}>{topic}</span>
+                    <span className={styles.checkboxText}>{category}</span>
                   </label>
                 ))}
               </div>
               {errors.topics && <span className={styles.error}>{errors.topics}</span>}
-              {showOtherTopic && (
-                <textarea
-                  value={readerForm.otherTopic}
-                  onChange={(e) => setReaderForm(prev => ({ ...prev, otherTopic: e.target.value }))}
-                  className={styles.textarea}
-                  placeholder="Tell us your niche."
-                  rows={3}
-                />
-              )}
             </div>
 
             <div className={styles.formGroup}>
