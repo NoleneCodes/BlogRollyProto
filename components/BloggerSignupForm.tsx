@@ -23,7 +23,7 @@ interface BloggerFormData {
   dateOfBirth: string;
   password: string;
   confirmPassword: string;
-  displayName: string;
+  username: string;
   profilePicture?: File | null;
   bio: string;
   blogUrl: string;
@@ -51,7 +51,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     dateOfBirth: '',
     password: '',
     confirmPassword: '',
-    displayName: '',
+    username: '',
     profilePicture: null,
     bio: '',
     blogUrl: '',
@@ -106,7 +106,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       const checkboxes = (bloggerForm.agreeToTerms ? 1 : 0) + (bloggerForm.confirmOwnership ? 1 : 0) + (bloggerForm.agreeToSurvey ? 1 : 0);
       
       // Part 2 & 3 (optional): 3 items (25% of total)
-      const optionalFields = ['displayName', 'blogUrl', 'blogName'];
+      const optionalFields = ['username', 'blogUrl', 'blogName'];
       const filledOptionalFields = optionalFields.filter(field => 
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
@@ -172,8 +172,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       const blogWithBloggerInfo = {
         ...blogData,
         bloggerId: 'temp_' + Date.now(), // In real app, this would be the authenticated user ID
-        bloggerDisplayName: bloggerForm.displayName,
-        author: bloggerForm.displayName
+        bloggerDisplayName: bloggerForm.username,
+        author: bloggerForm.username
       };
       setSubmittedBlogs(prev => [...prev, blogWithBloggerInfo]);
       setShowBlogSubmissionPopup(false);
@@ -370,18 +370,18 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Display Name
+            Username
             <span className={styles.optional}>(Optional)</span>
           </label>
           <input
             type="text"
-            value={bloggerForm.displayName}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, displayName: e.target.value }))}
+            value={bloggerForm.username}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
             className={styles.textInput}
-            placeholder="How you want to be known publicly"
+            placeholder="Choose your unique username"
           />
-          {errors.displayName && <span className={styles.error}>{errors.displayName}</span>}
-          <small className={styles.hint}>Shown on public profile. Can be added later.</small>
+          {errors.username && <span className={styles.error}>{errors.username}</span>}
+          <small className={styles.hint}>Your unique identifier on the platform. Can be added later.</small>
         </div>
 
         <div className={styles.formGroup}>
@@ -606,7 +606,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             </div>
             <BlogSubmissionForm 
               onSubmit={handleBlogSubmission} 
-              displayName={bloggerForm.displayName}
+              displayName={bloggerForm.username}
               bloggerId="temp_signup"
               isBlogger={true}
               hideGuidelines={true}
