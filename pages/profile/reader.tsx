@@ -39,7 +39,7 @@ interface ReadingHistory {
 
 interface FollowedBlogger {
   id: string;
-  displayName: string;
+  username: string;
   blogName: string;
   blogUrl: string;
   avatar?: string;

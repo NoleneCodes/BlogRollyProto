@@ -427,7 +427,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Display Name / Username (optional)
+                Username (optional)
               </label>
               <input
                 type="text"

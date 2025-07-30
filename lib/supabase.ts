@@ -37,7 +37,6 @@ export interface UserProfile {
   user_id: string; // FK to User
   first_name: string;
   surname: string;
-  display_name?: string;
   username?: string;
   date_of_birth: string;
   age_verified: boolean; // Primary age verification at signup

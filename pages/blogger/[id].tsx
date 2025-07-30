@@ -89,7 +89,7 @@ const PublicBloggerProfile: React.FC = () => {
       // Get the profile or use a default one
       const mockBlogger = mockProfiles[bloggerId] || {
         id: bloggerId,
-        displayName: 'Blogger User',
+        username: 'Blogger User',
         bio: 'Welcome to my blog! I share insights and stories about my passions.',
         avatar: `https://picsum.photos/150/150?random=${Math.floor(Math.random() * 10)}`,
         blogName: 'My Blog',

@@ -13,7 +13,7 @@ interface UserInfo {
   id: string;
   name: string;
   email: string;
-  displayName?: string;
+  username?: string;
   bio?: string;
   joinedDate: string;
   avatar?: string;
@@ -878,10 +878,10 @@ const BloggerProfile: React.FC = () => {
                 </div>
               </div>
               <div className={styles.formGroup}>
-                <label>Display Name</label>
+                <label>Username</label>
                 <input 
                   type="text" 
-                  defaultValue={userInfo.displayName} 
+                  defaultValue={userInfo.username} 
                   className={styles.input}
                 />
               </div>
