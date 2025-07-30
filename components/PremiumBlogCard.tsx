@@ -106,9 +106,6 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
           <div className={styles.urlSection}>
             <p className={styles.submissionUrl}>
               {submission.url || 'Draft - No URL yet'}
-              <span className={styles.premiumUrlFeature}>
-                ✨ Pro: URL Editable
-              </span>
             </p>
           </div>
 
