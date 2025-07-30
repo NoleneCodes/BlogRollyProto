@@ -485,24 +485,85 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               </div>
               
               {readerForm.topics.includes('Other') && (
-                <div style={{ marginTop: '1rem' }}>
-                  <input
-                    type="text"
-                    value={customTopic}
-                    onChange={(e) => handleCustomTopicChange(e.target.value)}
-                    className={styles.textInput}
-                    placeholder="Enter your custom topic (max 3 words)"
-                    maxLength={50}
-                  />
-                  <small className={styles.hint}>
-                    Maximum 3 words allowed. {customTopic.split(/\s+/).filter(w => w).length}/3 words
+                <div className={styles.customTopicContainer}>
+                  <label className={styles.customTopicLabel}>
+                    Add your custom topic (one word at a time, max 3 words)
+                  </label>
+                  <div className={styles.customTopicInputContainer}>
+                    <input
+                      type="text"
+                      value={customTopic}
+                      onChange={(e) => {
+                        const value = e.target.value.trim();
+                        // Only allow single words (no spaces)
+                        if (!value.includes(' ')) {
+                          setCustomTopic(value);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          const word = customTopic.trim();
+                          if (word && readerForm.topics.filter(t => t.startsWith('custom:')).length < 3) {
+                            setReaderForm(prev => ({
+                              ...prev,
+                              topics: [...prev.topics, `custom:${word}`]
+                            }));
+                            setCustomTopic('');
+                          }
+                        }
+                      }}
+                      className={styles.customTopicInput}
+                      placeholder="Type a word and press Enter"
+                      maxLength={20}
+                      disabled={readerForm.topics.filter(t => t.startsWith('custom:')).length >= 3}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const word = customTopic.trim();
+                        if (word && readerForm.topics.filter(t => t.startsWith('custom:')).length < 3) {
+                          setReaderForm(prev => ({
+                            ...prev,
+                            topics: [...prev.topics, `custom:${word}`]
+                          }));
+                          setCustomTopic('');
+                        }
+                      }}
+                      className={styles.addWordButton}
+                      disabled={!customTopic.trim() || readerForm.topics.filter(t => t.startsWith('custom:')).length >= 3}
+                    >
+                      Add Word
+                    </button>
+                  </div>
+                  
+                  {readerForm.topics.filter(t => t.startsWith('custom:')).length > 0 && (
+                    <div className={styles.customTopicTags}>
+                      {readerForm.topics
+                        .filter(t => t.startsWith('custom:'))
+                        .map((topic, index) => (
+                          <span key={index} className={styles.customTopicTag}>
+                            {topic.replace('custom:', '')}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setReaderForm(prev => ({
+                                  ...prev,
+                                  topics: prev.topics.filter(t => t !== topic)
+                                }));
+                              }}
+                              className={styles.removeTagButton}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                    </div>
+                  )}
+                  
+                  <small className={styles.customTopicHint}>
+                    {readerForm.topics.filter(t => t.startsWith('custom:')).length}/3 words added
                   </small>
-                  {(() => {
-                    const validation = validateCustomInput(customTopic);
-                    return !validation.isValid && customTopic ? (
-                      <span className={styles.error}>{validation.error}</span>
-                    ) : null;
-                  })()}
                 </div>
               )}
 
