@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseDB } from '../../lib/supabase';
 
-type PremiumStatusData = {
+type ProStatusData = {
   isPremium: boolean;
   tier?: string;
   subscriptionStatus?: string;
@@ -11,7 +11,7 @@ type PremiumStatusData = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<PremiumStatusData>
+  res: NextApiResponse<ProStatusData>
 ) {
   if (req.method !== 'GET') {
     return res.status(405).json({
@@ -39,33 +39,33 @@ export default async function handler(
       });
     }
 
-    // Check user's premium status
+    // Check user's pro status
     const { data: profile, error: profileError } = await supabaseDB.getUserWithBloggerProfile(user.id);
     
     if (profileError) {
       return res.status(500).json({
         isPremium: false,
-        error: 'Failed to check premium status'
+        error: 'Failed to check pro status'
       });
     }
 
-    const isPremium = profile?.tier === 'pro';
+    const isPro = profile?.tier === 'pro';
     const subscriptionStatus = profile?.blogger_profiles?.[0]?.subscription_status;
 
     // Additional check: verify subscription is actually active
     const isActiveSubscription = subscriptionStatus === 'active';
 
     return res.status(200).json({
-      isPremium: isPremium && isActiveSubscription,
+      isPremium: isPro && isActiveSubscription,
       tier: profile?.tier,
       subscriptionStatus
     });
 
   } catch (error) {
-    console.error('Premium status check error:', error);
+    console.error('Pro status check error:', error);
     return res.status(500).json({
       isPremium: false,
-      error: 'Premium status check failed'
+      error: 'Pro status check failed'
     });
   }
 }

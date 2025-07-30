@@ -116,9 +116,9 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
 
   // Check premium status
   useEffect(() => {
-    const checkPremiumStatus = async () => {
+    const checkProStatus = async () => {
       if (!user) {
-        // For the premium blogger demo page, simulate premium status
+        // For the pro blogger demo page, simulate pro status
         if (window.location.pathname.includes('blogger-premium')) {
           setIsPremium(true);
           return;
@@ -138,7 +138,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           const data = await response.json();
           setIsPremium(data.isPremium || data.tier === 'pro');
         } else {
-          // For demo purposes on premium page
+          // For demo purposes on pro page
           if (window.location.pathname.includes('blogger-premium')) {
             setIsPremium(true);
           } else {
@@ -146,8 +146,8 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           }
         }
       } catch (error) {
-        console.error('Error checking premium status:', error);
-        // For demo purposes on premium page
+        console.error('Error checking pro status:', error);
+        // For demo purposes on pro page
         if (window.location.pathname.includes('blogger-premium')) {
           setIsPremium(true);
         } else {
@@ -156,7 +156,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       }
     };
 
-    checkPremiumStatus();
+    checkProStatus();
   }, [user]);
 
   // Handle clicking outside to close dropdown
@@ -179,7 +179,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
   if (!isVisible) return null;
 
   // Debug logging
-  console.log('BlogEditForm - isPremium:', isPremium, 'pathname:', window.location.pathname);
+  console.log('BlogEditForm - isPro:', isPremium, 'pathname:', window.location.pathname);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -320,7 +320,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             type="url"
             value={editForm.url}
             onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
-            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''} ${isPremium ? styles.premiumInput : ''}`}
+            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''} ${isPremium ? styles.proInput : ''}`}
             placeholder={isPremium ? "https://yourblog.com/post-url" : "Upgrade to Pro to edit URLs"}
             readOnly={!isPremium}
             disabled={!isPremium}

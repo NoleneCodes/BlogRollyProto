@@ -81,12 +81,12 @@ const BloggerProfilePremium: React.FC = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Mock premium blogger user data
+        // Mock pro blogger user data
         setUserInfo({
-          id: 'premium-blogger-123',
-          name: 'Premium Blogger',
-          email: 'premium@example.com',
-          displayName: 'Premium Content Creator',
+          id: 'pro-blogger-123',
+          name: 'Pro Blogger',
+          email: 'pro@example.com',
+          displayName: 'Pro Content Creator',
           bio: 'Professional content creator and thought leader in tech innovation',
           joinedDate: '2023-06-15',
           blogName: 'Innovation Insights Pro',
@@ -96,7 +96,7 @@ const BloggerProfilePremium: React.FC = () => {
           tier: 'pro'
         });
 
-        // Mock premium blog submissions (unlimited)
+        // Mock pro blog submissions (unlimited)
         setBlogSubmissions([
           {
             id: '1',
@@ -198,7 +198,7 @@ const BloggerProfilePremium: React.FC = () => {
           }
         ]);
 
-        // Mock premium blog stats
+        // Mock pro blog stats
         setBlogStats({
           totalViews: 17800,
           monthlyViews: 4250,
@@ -305,7 +305,7 @@ const BloggerProfilePremium: React.FC = () => {
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // Premium: 5MB limit
+      if (file.size > 5 * 1024 * 1024) { // Pro: 5MB limit
         alert('Image must be less than 5MB');
         return;
       }
@@ -388,9 +388,9 @@ const BloggerProfilePremium: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Layout title="Premium Blogger Profile - Blogrolly">
+      <Layout title="Pro Blogger Profile - Blogrolly">
         <div className={styles.loading}>
-          <h2>Loading your premium profile...</h2>
+          <h2>Loading your pro profile...</h2>
         </div>
       </Layout>
     );
@@ -423,7 +423,7 @@ const BloggerProfilePremium: React.FC = () => {
               </div>
             </div>
             {blogStats && (
-              <div className={styles.premiumStatsGrid}>
+              <div className={styles.proStatsGrid}>
                 <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
                   <div className={styles.statCardHeader}>
                     <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
@@ -716,7 +716,7 @@ const BloggerProfilePremium: React.FC = () => {
                   rows={4}
                   maxLength={500}
                 />
-                <small className={styles.hint}>Premium accounts get extended bio length (500 characters)</small>
+                <small className={styles.hint}>Pro accounts get extended bio length (500 characters)</small>
               </div>
               <button className={styles.saveButton} onClick={handleSaveSettings}>
                 Save Changes
@@ -742,7 +742,7 @@ const BloggerProfilePremium: React.FC = () => {
                     <li>✅ Priority review for submissions</li>                 
                     <li>✅ Priority support</li>
                     <li>✅ Export analytics data</li>
-                    <li>✅ Custom profile themes(coming soon)</li>
+                    <li>✅ Custom profile themes (coming soon)</li>
                   </ul>
                   <p>More Pro features coming soon... Feel free to make suggestions</p>
                   
@@ -816,7 +816,7 @@ const BloggerProfilePremium: React.FC = () => {
   };
 
   return (
-    <Layout title="Premium Blogger Profile - Blogrolly">
+    <Layout title="Pro Blogger Profile - Blogrolly">
       <div className={styles.profileContainer}>
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
