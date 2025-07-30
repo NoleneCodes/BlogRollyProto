@@ -1112,6 +1112,7 @@
   .formHeader h3 {
     font-size: 1.25rem;
   }
+}
 
   .editBlogForm {
   background: #f8fafc;
@@ -1302,6 +1303,7 @@
   content: '❌';
   font-size: 0.875rem;
 }
+
 .editButton {
   background: #c42142;
   color: white;
@@ -1317,6 +1319,7 @@
 .editButton:hover {
   background: #a01835;
 }
+
 .submissionCard {
   background: white;
   border: 2px solid #c42142;
