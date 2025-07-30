@@ -805,7 +805,7 @@ const BloggerProfile: React.FC = () => {
                         className={styles.previewImage}
                       />
                     ) : (
-                      <div className={stylespreviewPlaceholder}>
+                      <div className={styles.previewPlaceholder}>
                         {getInitials(userInfo.displayName || userInfo.name)}
                       </div>
                     )}
