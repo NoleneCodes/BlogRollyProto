@@ -62,7 +62,8 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
             category: submission.category,
             tags: submission.tags || [],
             description: submission.description || '',
-            image: submission.image || ''
+            image: submission.image || '',
+            imageDescription: submission.imageDescription || ''
           }}
           onSave={onSaveEdit}
           onCancel={onCancelEdit}
@@ -102,7 +103,14 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
             </p>
           </div>
 
-          <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+          <div className={styles.urlSection}>
+            <p className={styles.submissionUrl}>
+              {submission.url || 'Draft - No URL yet'}
+              <span className={styles.premiumUrlFeature}>
+                ✨ Pro: URL Editable
+              </span>
+            </p>
+          </div>
 
           <div className={styles.submissionMeta}>
             <div className={styles.metaRow}>

@@ -296,14 +296,15 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
         <div className={styles.editField}>
           <label>
             URL
+            {isPremium && <span style={{ color: '#10b981', fontSize: '0.875rem', marginLeft: '0.5rem' }}>✨ Pro Feature</span>}
             {!isPremium && <span style={{ color: '#c42142', fontSize: '0.875rem', marginLeft: '0.5rem' }}>🔒 Pro Feature</span>}
           </label>
           <input
             type="url"
             value={editForm.url}
             onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
-            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''}`}
-            placeholder="https://yourblog.com/post-url"
+            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''} ${isPremium ? styles.premiumInput : ''}`}
+            placeholder={isPremium ? "https://yourblog.com/post-url" : "Upgrade to Pro to edit URLs"}
             readOnly={!isPremium}
             style={!isPremium ? { backgroundColor: '#f9fafb', color: '#6b7280', cursor: 'not-allowed' } : {}}
           />
@@ -313,6 +314,11 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
               <a href="/profile/blogger#billing" style={{ color: '#c42142', textDecoration: 'underline' }}>
                 Upgrade to Pro
               </a> to edit blog URLs.
+            </small>
+          )}
+          {isPremium && (
+            <small style={{ color: '#10b981', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+              ✅ Pro feature enabled - You can edit your blog URL
             </small>
           )}
         </div>

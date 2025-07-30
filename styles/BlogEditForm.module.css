@@ -133,6 +133,16 @@
   box-shadow: none !important;
 }
 
+.premiumInput {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.1) !important;
+}
+
+.premiumInput:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
 .editTextarea {
   resize: vertical;
   min-height: 100px;
