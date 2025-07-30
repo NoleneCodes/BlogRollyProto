@@ -91,12 +91,7 @@ const BloggerProfilePremium: React.FC = () => {
   const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
-  const [canChangeBlogUrl, setCanChangeBlogUrl] = useState<boolean>(true); // Premium users get more flexibility
-  const [nextUrlChangeDate, setNextUrlChangeDate] = useState<string | null>(null);
-  const [urlChangesUsed, setUrlChangesUsed] = useState<number>(0);
-  const [showUrlChangeModal, setShowUrlChangeModal] = useState<boolean>(false);
-  const [newBlogUrl, setNewBlogUrl] = useState<string>('');
-  const [urlChangeReason, setUrlChangeReason] = useState<string>('');
+  
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
 
   useEffect(() => {
@@ -376,60 +371,7 @@ const BloggerProfilePremium: React.FC = () => {
     return urlRegex.test(url);
   };
 
-  const handleUrlChange = async () => {
-    if (!newBlogUrl || !validateBlogUrl(newBlogUrl)) {
-      alert('Please enter a valid blog URL starting with https://');
-      return;
-    }
-
-    if (newBlogUrl === userInfo?.blogUrl) {
-      alert('The new URL is the same as your current URL.');
-      return;
-    }
-
-    const confirmChange = window.confirm(
-      `⚠️ PREMIUM FEATURE: Changing your blog URL will:\n\n` +
-      `• Temporarily deactivate your blog posts for re-verification\n` +
-      `• Premium users get priority re-review (24-48 hours)\n` +
-      `• You can change URLs once every 3 months\n\n` +
-      `Are you sure you want to proceed?`
-    );
-
-    if (!confirmChange) return;
-
-    try {
-      // Update user info
-      setUserInfo(prev => prev ? { ...prev, blogUrl: newBlogUrl } : null);
-
-      // For premium users, posts are temporarily deactivated but not set to pending
-      setBlogSubmissions(prev => prev.map(post => ({
-        ...post,
-        isActive: false // Premium users keep approved status
-      })));
-
-      // Update URL change tracking
-      setCanChangeBlogUrl(false);
-      setUrlChangesUsed(prev => prev + 1);
-
-      // Calculate next change date (3 months from now)
-      const nextChange = new Date();
-      nextChange.setMonth(nextChange.getMonth() + 3);
-      setNextUrlChangeDate(nextChange.toISOString().split('T')[0]);
-
-      setShowUrlChangeModal(false);
-      setNewBlogUrl('');
-      setUrlChangeReason('');
-
-      alert(
-        'Blog URL updated successfully!\n\n' +
-        'As a Premium user, your posts will be re-verified within 24-48 hours.\n' +
-        'You can change your URL again after: ' + nextChange.toLocaleDateString()
-      );
-    } catch (error) {
-      console.error('Error updating blog URL:', error);
-      alert('Failed to update blog URL. Please try again.');
-    }
-  };
+  
 
   if (isLoading) {
     return (
@@ -815,27 +757,10 @@ const BloggerProfilePremium: React.FC = () => {
                     className={`${styles.input} ${styles.readOnlyInput}`}
                     readOnly
                   />
-                  <button 
-                    type="button"
-                    className={`${styles.changeUrlButton} ${!canChangeBlogUrl ? styles.disabled : ''}`}
-                    onClick={() => setShowUrlChangeModal(true)}
-                    disabled={!canChangeBlogUrl}
-                  >
-                    Change URL
-                  </button>
                 </div>
-                {!canChangeBlogUrl && nextUrlChangeDate && (
-                  <div className={styles.urlChangeInfo}>
-                    <small className={styles.urlChangeRestriction}>
-                      ⚠️ Next change available: {new Date(nextUrlChangeDate).toLocaleDateString()}
-                    </small>
-                  </div>
-                )}
-                {canChangeBlogUrl && (
-                  <small className={styles.urlChangeHint}>
-                    Premium: Change URL once every 3 months with priority re-verification.
-                  </small>
-                )}
+                <small className={styles.urlChangeHint}>
+                  Blog URL cannot be changed after initial setup.
+                </small>
               </div>
               <div className={styles.formGroup}>
                 <label>Bio</label>
@@ -1063,72 +988,7 @@ const BloggerProfilePremium: React.FC = () => {
         onClose={() => setShowBugReportPopup(false)}
       />
 
-      {/* URL Change Modal */}
-      {showUrlChangeModal && (
-        <div className={styles.urlChangeOverlay}>
-          <div className={styles.urlChangeModal}>
-            <div className={styles.urlChangeHeader}>
-              <h3>Change Blog URL - Premium</h3>
-              <button 
-                className={styles.closeButton}
-                onClick={() => setShowUrlChangeModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className={styles.urlChangeContent}>
-              <div className={styles.formGroup}>
-                <label>Current URL</label>
-                <input 
-                  type="text"
-                  value={userInfo?.blogUrl || ''}
-                  className={`${styles.input} ${styles.readOnlyInput}`}
-                  readOnly
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>New Blog URL *</label>
-                <input 
-                  type="url"
-                  value={newBlogUrl}
-                  onChange={(e) => setNewBlogUrl(e.target.value)}
-                  className={styles.input}
-                  placeholder="https://yournewblog.com"
-                />
-                <small className={styles.hint}>Must start with https:// (domain only, no paths)</small>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Reason for Change (Optional)</label>
-                <textarea 
-                  value={urlChangeReason}
-                  onChange={(e) => setUrlChangeReason(e.target.value)}
-                  className={styles.textarea}
-                  rows={3}
-                  placeholder="e.g., Rebranding, moved to new domain, etc."
-                />
-              </div>
-
-              <div className={styles.urlChangeActions}>
-                <button 
-                  className={styles.confirmUrlChangeButton}
-                  onClick={handleUrlChange}
-                  disabled={!newBlogUrl}
-                >
-                  Confirm URL Change
-                </button>
-                <button 
-                  className={styles.cancelButton}
-                  onClick={() => setShowUrlChangeModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </Layout>
   );
 };
