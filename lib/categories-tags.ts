@@ -14,7 +14,8 @@ export const MAIN_CATEGORIES = [
   'Travel & Places',
   'Identity & Intersectionality',
   'Spirituality & Inner Work',
-  'Opinion & Commentary'
+  'Opinion & Commentary',
+  'Other'
 ];
 
 // Utility function to validate custom category/tag input (max 3 words)
