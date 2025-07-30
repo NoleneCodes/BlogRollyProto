@@ -632,6 +632,7 @@ const BloggerProfilePremium: React.FC = () => {
                           isVisible={true}
                         />
                       )}
+                    </div>
                     ))}
                 </div>
               </>
