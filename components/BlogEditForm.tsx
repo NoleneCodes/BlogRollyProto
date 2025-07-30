@@ -27,6 +27,71 @@ interface BlogData {
   imagePreview: string | null;
 }
 
+const MAIN_CATEGORIES = [
+  'Lifestyle',
+  'Health & Wellness',
+  'Culture & Society',
+  'Tech & Digital Life',
+  'Creative Expression',
+  'Work & Money',
+  'Education & Learning',
+  'Relationships & Emotions',
+  'Art & Media',
+  'Home & Garden',
+  'Food & Drink',
+  'Travel & Places',
+  'Identity & Intersectionality',
+  'Spirituality & Inner Work',
+  'Opinion & Commentary',
+  'Other'
+];
+
+const TAGS = {
+  'Themes & Topics': [
+    'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
+    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
+    'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
+    'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
+    'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
+    'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
+    'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
+    'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
+    'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
+    'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
+    'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
+    'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
+    'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
+    'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
+    'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
+    'Addiction & Recovery', 'Chronic Illness', 'Other'
+  ],
+  'Structure / Format': [
+    'Listicle', 'Longform Essay', 'Personal Diary', 'Photo Essay', 'Letter',
+    'Manifesto', 'Interview', 'Tutorial', 'Poem', 'Short Story', 'Q&A',
+    'Open Thread', 'Roundup', 'Resource Guide', 'Commentary', 'Thought Piece',
+    'Audio Journal', 'Microblog', 'Illustrated Piece', 'Visual Essay',
+    'Thread Dump', 'Journal Entry', 'Other'
+  ],
+  'Vibe / Tone': [
+    'Vulnerable', 'Funny', 'Educational', 'Chill', 'Angry', 'Empowering',
+    'Comforting', 'Provocative', 'Uplifting', 'Raw & Unfiltered', 'Philosophical',
+    'Meditative', 'Sarcastic', 'Loving', 'Analytical', 'Dreamy', 'Manifesting',
+    'Deep Dive', 'Reflective', 'Activist', 'Spiritual', 'Poetic', 'Other'
+  ],
+  'Intended Audience': [
+    'For Creatives', 'For Founders', 'For Parents', 'For Coders', 'For Students',
+    'For Readers', 'For Black Women', 'For the Diaspora', 'For Queer Folks',
+    'For Neurodivergents', 'For Healers', 'For Side Hustlers', 'For Burnt-Out People',
+    'For the Culture', 'For Survivors', 'For Book Lovers', 'For Poets',
+    'For Makers', 'For Beginners', 'For the Overwhelmed', 'Other'
+  ],
+  'Content Filters': [
+    'Evergreen', 'Trending', 'Monthly Highlight', 'Seasonal', 'Archive Gem',
+    'Hot Take', 'Experimental', 'Series Part', 'Collaboration', 'Anonymous',
+    'Sponsored', 'Debut Blog', 'Staff Pick', 'Reader Pick', 'Other'
+  ]
+};
+
 const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isVisible }) => {
   const [editForm, setEditForm] = useState<BlogData>({
     title: blog.title,
@@ -37,6 +102,9 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     image: null,
     imagePreview: blog.image || null
   });
+
+  const [tagInput, setTagInput] = useState('');
+  const [showTagDropdown, setShowTagDropdown] = useState(false);
 
   if (!isVisible) return null;
 
@@ -61,6 +129,38 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       reader.readAsDataURL(file);
     }
   };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const category = e.target.value;
+    setEditForm(prev => ({ 
+      ...prev, 
+      category
+    }));
+  };
+
+  const handleTagAdd = (tag: string) => {
+    if (editForm.tags.length < 10 && !editForm.tags.includes(tag)) {
+      setEditForm(prev => ({ ...prev, tags: [...prev.tags, tag] }));
+    }
+    setTagInput('');
+    setShowTagDropdown(false);
+  };
+
+  const handleTagRemove = (tagToRemove: string) => {
+    setEditForm(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
+  const getAllTags = () => {
+    return Object.values(TAGS).flat();
+  };
+
+  const filteredTags = getAllTags().filter(tag => 
+    tag.toLowerCase().includes(tagInput.toLowerCase()) && 
+    !editForm.tags.includes(tag)
+  );
 
   const handleSave = () => {
     onSave(blog.id, editForm);
@@ -123,23 +223,88 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
         </div>
         <div className={styles.editField}>
           <label>Category</label>
-          <input
-            type="text"
+          <select
             value={editForm.category}
-            onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))}
-            className={styles.editInput}
-            placeholder="Enter the category..."
-          />
+            onChange={handleCategoryChange}
+            className={styles.editSelect}
+          >
+            <option value="">Select a main category</option>
+            {MAIN_CATEGORIES.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
         </div>
         <div className={styles.editField}>
-          <label>Tags</label>
-          <input
-            type="text"
-            value={editForm.tags.join(', ')}
-            onChange={(e) => setEditForm(prev => ({ ...prev, tags: e.target.value.split(',').map(tag => tag.trim()) }))}
-            className={styles.editInput}
-            placeholder="Enter tags separated by commas..."
-          />
+          <label>
+            Tags
+            <span className={styles.optional}>(Up to 10 tags)</span>
+          </label>
+
+          <div className={styles.tagsContainer}>
+            {editForm.tags.map(tag => (
+              <span key={tag} className={styles.tag}>
+                {tag}
+                <button 
+                  type="button" 
+                  onClick={() => handleTagRemove(tag)}
+                  className={styles.tagRemove}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+
+          {editForm.tags.length < 10 && (
+            <div className={styles.tagInputContainer}>
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onFocus={() => setShowTagDropdown(true)}
+                placeholder="Type to search tags..."
+                className={styles.editInput}
+              />
+
+              {showTagDropdown && filteredTags.length > 0 && (
+                <div className={styles.tagDropdown}>
+                  {filteredTags.slice(0, 10).map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => handleTagAdd(tag)}
+                      className={styles.tagOption}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tag Categories */}
+          <div className={styles.tagCategories}>
+            <small className={styles.hint}>Browse by category:</small>
+            {Object.entries(TAGS).map(([categoryName, tags]) => (
+              <details key={categoryName} className={styles.tagCategory}>
+                <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
+                <div className={styles.tagCategoryTags}>
+                  {tags.map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => handleTagAdd(tag)}
+                      disabled={editForm.tags.includes(tag) || editForm.tags.length >= 10}
+                      className={`${styles.tagCategoryTag} ${editForm.tags.includes(tag) ? styles.tagSelected : ''}`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
       <div className={styles.editActions}>
