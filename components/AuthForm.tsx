@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
+import { READER_TOPIC_OPTIONS } from '../lib/categories-tags';
 
 interface AuthFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -64,11 +65,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showOtherTopic, setShowOtherTopic] = useState(false);
 
-  const topicOptions = [
-    'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
-    'Homesteading', 'Books & Media', 'Money & Work', 'Spirituality', 
-    'Creativity', 'Relationships', 'Food', 'Learning', 'Society & Politics', 'Other'
-  ];
+  
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -442,7 +439,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             <div className={styles.formGroup}>
               <label className={styles.label}>Topics You're Into *</label>
               <div className={styles.checkboxGrid}>
-                {topicOptions.map(topic => (
+                {READER_TOPIC_OPTIONS.map(topic => (
                   <label key={topic} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"

@@ -5,6 +5,7 @@ import BugReportPopup from '../../components/BugReportPopup';
 import FeedbackPopup from '../../components/FeedbackPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import styles from '../../styles/ReaderProfile.module.css';
+import { MAIN_CATEGORIES, TOPIC_TAGS } from '../../lib/categories-tags';
 
 interface UserInfo {
   id: string;
@@ -63,45 +64,6 @@ const ReaderProfile: React.FC = () => {
   const [showBugReportPopup, setShowBugReportPopup] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [showContactSupportPopup, setShowContactSupportPopup] = useState(false);
-
-  // Categories and tags from blog submission form
-  const MAIN_CATEGORIES = [
-    'Lifestyle',
-    'Health & Wellness',
-    'Culture & Society',
-    'Tech & Digital Life',
-    'Creative Expression',
-    'Work & Money',
-    'Education & Learning',
-    'Relationships & Emotions',
-    'Art & Media',
-    'Home & Garden',
-    'Food & Drink',
-    'Travel & Places',
-    'Identity & Intersectionality',
-    'Spirituality & Inner Work',
-    'Opinion & Commentary',
-    'Other'
-  ];
-
-  const TOPIC_TAGS = [
-    'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
-    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
-    'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
-    'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
-    'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
-    'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
-    'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
-    'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
-    'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
-    'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
-    'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
-    'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
-    'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
-    'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
-    'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
-    'Addiction & Recovery', 'Chronic Illness'
-  ];
 
   useEffect(() => {
     const checkAuth = async () => {
