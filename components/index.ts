@@ -3,6 +3,7 @@ export { default as BlogCard } from './BlogCard';
 export { default as AuthForm } from './AuthForm';
 export { default as SearchBar } from './SearchBar';
 export { default as PersonalizedBlogroll } from './PersonalizedBlogroll';
+export { default as PremiumUpgradeButton } from './PremiumUpgradeButton';
 export { default as BlogSubmissionForm } from './BlogSubmissionForm';
 export { default as BloggerSignupForm } from './BloggerSignupForm';
 export { default as BlogPostManager } from './BlogPostManager';
