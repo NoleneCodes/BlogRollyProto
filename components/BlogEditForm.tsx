@@ -25,6 +25,7 @@ interface BlogData {
   tags: string[];
   image: File | null;
   imagePreview: string | null;
+  imageDescription: string;
 }
 
 const MAIN_CATEGORIES = [
@@ -100,11 +101,13 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     category: blog.category,
     tags: blog.tags || [],
     image: null,
-    imagePreview: blog.image || null
+    imagePreview: blog.image || null,
+    imageDescription: ''
   });
 
   const [tagInput, setTagInput] = useState('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
+  const [imageChanged, setImageChanged] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle clicking outside to close dropdown
@@ -138,7 +141,8 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
         alert('Only JPG, PNG, and WebP files are allowed');
         return;
       }
-      setEditForm(prev => ({ ...prev, image: file }));
+      setEditForm(prev => ({ ...prev, image: file, imageDescription: '' }));
+      setImageChanged(true);
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -181,6 +185,10 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
   );
 
   const handleSave = () => {
+    if (imageChanged && !editForm.imageDescription.trim()) {
+      alert('Please provide an image description for the new image. This is used for accessibility and SEO.');
+      return;
+    }
     onSave(blog.id, editForm);
   };
 
@@ -207,6 +215,28 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             Max 2MB • JPG, PNG, WebP
           </small>
         </div>
+        
+        {(editForm.imagePreview || imageChanged) && (
+          <div className={styles.editField} style={{ marginTop: '1rem' }}>
+            <label>
+              Image Description *
+              {imageChanged && <span style={{ color: '#c42142', fontWeight: 'bold' }}> (Required for new image)</span>}
+            </label>
+            <input
+              type="text"
+              value={editForm.imageDescription}
+              onChange={(e) => setEditForm(prev => ({ ...prev, imageDescription: e.target.value }))}
+              className={styles.editInput}
+              placeholder="Describe what's in the image for screen readers and SEO"
+              maxLength={200}
+              required={imageChanged}
+            />
+            <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+              {editForm.imageDescription.length}/200 characters
+              {imageChanged && ' • This will be used as the alt text for your image'}
+            </small>
+          </div>
+        )}
       </div>
       <div className={styles.editFormFields}>
         <div className={styles.editField}>
