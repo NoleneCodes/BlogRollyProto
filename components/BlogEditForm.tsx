@@ -11,6 +11,7 @@ interface BlogEditFormProps {
     tags?: string[];
     description?: string;
     image?: string;
+    imageDescription?: string;
   };
   onSave: (blogId: string, updatedData: BlogData) => void;
   onCancel: () => void;
@@ -102,7 +103,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     tags: blog.tags || [],
     image: null,
     imagePreview: blog.image || null,
-    imageDescription: ''
+    imageDescription: blog.imageDescription || ''
   });
 
   const [tagInput, setTagInput] = useState('');
@@ -216,10 +217,10 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           </small>
         </div>
         
-        {(editForm.imagePreview || imageChanged) && (
+        {editForm.imagePreview && (
           <div className={styles.editField} style={{ marginTop: '1rem' }}>
             <label>
-              Image Description *
+              Image Description {imageChanged && '*'}
               {imageChanged && <span style={{ color: '#c42142', fontWeight: 'bold' }}> (Required for new image)</span>}
             </label>
             <input
@@ -233,7 +234,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             />
             <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>
               {editForm.imageDescription.length}/200 characters
-              {imageChanged && ' • This will be used as the alt text for your image'}
+              {imageChanged ? ' • This will be used as the alt text for your image' : ' • Used for accessibility and SEO'}
             </small>
           </div>
         )}
