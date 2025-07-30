@@ -587,6 +587,9 @@ const BloggerProfile: React.FC = () => {
                               <label htmlFor={`editImage-${submission.id}`} className={styles.uploadButton}>
                                 {editForm.imagePreview ? 'Change Image' : 'Add Image'}
                               </label>
+                              <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                                Max 2MB • JPG, PNG, WebP
+                              </small>
                             </div>
                           </div>
                           <div className={styles.editFormFields}>
@@ -597,6 +600,7 @@ const BloggerProfile: React.FC = () => {
                                 value={editForm.title}
                                 onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
                                 className={styles.editInput}
+                                placeholder="Enter your blog post title..."
                               />
                             </div>
                             <div className={styles.editField}>
@@ -605,7 +609,8 @@ const BloggerProfile: React.FC = () => {
                                 value={editForm.description}
                                 onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
                                 className={styles.editTextarea}
-                                rows={3}
+                                rows={4}
+                                placeholder="Write a compelling description of your blog post..."
                               />
                             </div>
                             <div className={styles.editField}>
@@ -615,6 +620,7 @@ const BloggerProfile: React.FC = () => {
                                 value={editForm.url}
                                 onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
                                 className={styles.editInput}
+                                placeholder="https://yourblog.com/post-url"
                               />
                             </div>
                           </div>
