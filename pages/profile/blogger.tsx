@@ -383,18 +383,6 @@ const BloggerProfile: React.FC = () => {
   };
 
   const saveEditedBlog = (blogId: string) => {
-    const originalBlog = blogSubmissions.find(b => b.id === blogId);
-    if (!originalBlog) return;
-
-    const urlChanged = originalBlog.url !== editForm.url;
-
-    if (urlChanged && originalBlog.status === 'approved') {
-      const confirmEdit = window.confirm(
-        'Warning: Changing the URL will deactivate this blog post and it will need to go through review again. Do you want to continue?'
-      );
-      if (!confirmEdit) return;
-    }
-
     setBlogSubmissions(prev => prev.map(blog => {
       if (blog.id === blogId) {
         return {
@@ -402,9 +390,7 @@ const BloggerProfile: React.FC = () => {
           title: editForm.title,
           description: editForm.description,
           url: editForm.url,
-          image: editForm.image ? URL.createObjectURL(editForm.image) : editForm.imagePreview,
-          status: urlChanged && blog.status === 'approved' ? 'pending' : blog.status,
-          isActive: urlChanged && blog.status === 'approved' ? false : blog.isActive
+          image: editForm.image ? URL.createObjectURL(editForm.image) : editForm.imagePreview
         };
       }
       return blog;
@@ -418,10 +404,6 @@ const BloggerProfile: React.FC = () => {
       image: null,
       imagePreview: null
     });
-
-    if (urlChanged && originalBlog.status === 'approved') {
-      alert('Blog post has been deactivated and submitted for review due to URL change.');
-    }
   };
 
   const handleEditField = (submissionId: string, field: string, value: string) => {
@@ -634,11 +616,6 @@ const BloggerProfile: React.FC = () => {
                                 onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
                                 className={styles.editInput}
                               />
-                              {submission.url !== editForm.url && submission.status === 'approved' && (
-                                <small className={styles.urlWarning}>
-                                  ⚠️ Changing the URL will deactivate this post and require review
-                                </small>
-                              )}
                             </div>
                           </div>
                           <div className={styles.editActions}>
@@ -929,7 +906,7 @@ const BloggerProfile: React.FC = () => {
                   />
                 </div>
                 <small className={styles.urlChangeHint}>
-                  URL changes are available with Premium subscription only.
+                  Blog URL cannot be changed after initial setup.
                 </small>
               </div>
               <div className={styles.formGroup}>

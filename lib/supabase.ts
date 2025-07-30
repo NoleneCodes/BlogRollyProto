@@ -74,8 +74,7 @@ export interface BloggerProfile {
   stripe_customer_id?: string;
   subscription_status?: 'active' | 'canceled' | 'past_due';
   subscription_end_date?: string;
-  last_url_change?: string; // Date of last URL change
-  url_changes_count: number; // Total number of URL changes
+  
   created_at: string;
   updated_at: string;
 }
@@ -143,16 +142,7 @@ export interface UserTierLimits {
   updated_at: string;
 }
 
-// Blog URL Change History
-export interface BlogUrlChangeHistory {
-  id: string;
-  user_id: string; // FK to User
-  old_url: string;
-  new_url: string;
-  change_reason?: string;
-  changed_at: string;
-  created_at: string;
-}
+
 
 // Email Notifications Queue
 export interface EmailQueue {
@@ -467,84 +457,7 @@ export const supabaseDB = {
     return { data, error };
   },
 
-  // Blog URL Change Management
-  canChangeBlogUrl: async (userId: string) => {
-    const { data, error } = await supabase
-      .from('blogger_profiles')
-      .select('last_url_change, url_changes_count')
-      .eq('user_id', userId)
-      .single();
-
-    if (error) return { data: null, error };
-
-    const lastChange = data.last_url_change ? new Date(data.last_url_change) : null;
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-
-    const canChange = !lastChange || lastChange < threeMonthsAgo;
-    const nextChangeDate = lastChange ? new Date(lastChange.getTime() + (90 * 24 * 60 * 60 * 1000)) : null;
-
-    return {
-      data: {
-        canChange,
-        nextChangeDate: nextChangeDate?.toISOString() || null,
-        changesUsed: data.url_changes_count || 0,
-        lastChangeDate: data.last_url_change
-      },
-      error: null
-    };
-  },
-
-  updateBlogUrl: async (userId: string, oldUrl: string, newUrl: string, reason?: string) => {
-    try {
-      // Update blogger profile
-      const { error: profileError } = await supabase
-        .from('blogger_profiles')
-        .update({
-          blog_url: newUrl,
-          last_url_change: new Date().toISOString(),
-          url_changes_count: supabase.raw('url_changes_count + 1')
-        })
-        .eq('user_id', userId);
-
-      if (profileError) throw profileError;
-
-      // Insert change history
-      const { error: historyError } = await supabase
-        .from('blog_url_change_history')
-        .insert([{
-          user_id: userId,
-          old_url: oldUrl,
-          new_url: newUrl,
-          change_reason: reason,
-          changed_at: new Date().toISOString()
-        }]);
-
-      if (historyError) throw historyError;
-
-      // Mark approved submissions as inactive for re-review
-      const { error: submissionError } = await supabase
-        .from('blog_submissions')
-        .update({ is_live: false, status: 'pending' })
-        .eq('user_id', userId)
-        .eq('status', 'approved');
-
-      if (submissionError) throw submissionError;
-
-      return { data: { success: true }, error: null };
-    } catch (error) {
-      return { data: null, error };
-    }
-  },
-
-  getBlogUrlChangeHistory: async (userId: string) => {
-    const { data, error } = await supabase
-      .from('blog_url_change_history')
-      .select('*')
-      .eq('user_id', userId)
-      .order('changed_at', { ascending: false });
-    return { data, error };
-  },
+  
 
   // User management for webhooks
   getUserByEmail: async (email: string) => {
