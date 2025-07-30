@@ -884,24 +884,23 @@
 }
 
 .helpItem h3::before {
-  content: '📚';
-  font-size: 1.5rem;
+  display: none;
 }
 
 .helpItem:nth-child(1) h3::before {
-  content: '🐛';
+  display: none;
 }
 
 .helpItem:nth-child(2) h3::before {
-  content: '📋';
+  display: none;
 }
 
 .helpItem:nth-child(3) h3::before {
-  content: '⚙️';
+  display: none;
 }
 
 .helpItem:nth-child(4) h3::before {
-  content: '💬';
+  display: none;
 }
 
 .helpItem p {
