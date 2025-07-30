@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import BlogEditForm from '../../components/BlogEditForm';
+import BloggerBlogCard from '../../components/BloggerBlogCard';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
@@ -581,145 +582,24 @@ const BloggerProfile: React.FC = () => {
                     return true;
                   }).map(submission => (
                     <div key={submission.id} className={styles.submissionItem}>
-                      {editingBlog === submission.id ? (
-                        <BlogEditForm
-                          blog={submission}
-                          onSave={saveEditedBlog}
-                          onCancel={cancelEditingBlog}
-                          isVisible={true}
-                        />
-                      ) : (
-
-
-
-                    <div key={submission.id} className={styles.submissionCard}>
-                          <div className={styles.submissionImageContainer}>
-                            {editingSubmission === submission.id && editingField === 'image' ? (
-                              <input
-                                type="url"
-                                value={editedImage}
-                                onChange={(e) => setEditedImage(e.target.value)}
-                                className={styles.editInput}
-                                placeholder="Image URL"
-                                onBlur={() => handleSaveEdit(submission.id, 'image', editedImage)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit(submission.id, 'image', editedImage)}
-                                autoFocus
-                              />
-                            ) : submission.image ? (
-                              <img 
-                                src={submission.image} 
-                                alt={submission.title}
-                                className={styles.submissionImage}
-                                onClick={() => handleEditField(submission.id, 'image', submission.image)}
-                              />
-                            ) : (
-                              <div 
-                                className={styles.submissionImagePlaceholder}
-                                onClick={() => handleEditField(submission.id, 'image', '')}
-                              >
-                                Click to add image
-                              </div>
-                            )}
-                          </div>
-
-                          <div className={styles.submissionContent}>
-                            <div className={styles.submissionHeader}>
-                              <div className={styles.submissionDetails}>
-                                <h4 className={styles.submissionTitle}>
-                                  {editingSubmission === submission.id && editingField === 'title' ? (
-                                    <input
-                                      type="text"
-                                      value={editedTitle}
-                                      onChange={(e) => setEditedTitle(e.target.value)}
-                                      className={styles.editInput}
-                                      onBlur={() => handleSaveEdit(submission.id, 'title', editedTitle)}
-                                      onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit(submission.id, 'title', editedTitle)}
-                                      autoFocus
-                                    />
-                                  ) : (
-                                    <span onClick={() => handleEditField(submission.id, 'title', submission.title)}>
-                                      {submission.title}
-                                      {submission.status === 'approved' && !submission.isActive && (
-                                        <span className={styles.inactiveIndicator}> • Inactive</span>
-                                      )}
-                                    </span>
-                                  )}
-                                </h4>
-
-                                <p className={styles.submissionDescription}>
-                                  {editingSubmission === submission.id && editingField === 'description' ? (
-                                    <textarea
-                                      value={editedDescription}
-                                      onChange={(e) => setEditedDescription(e.target.value)}
-                                      className={styles.editTextarea}
-                                      onBlur={() => handleSaveEdit(submission.id, 'description', editedDescription)}
-                                      autoFocus
-                                      rows={2}
-                                    />
-                                  ) : (
-                                    <span onClick={() => handleEditField(submission.id, 'description', submission.description)}>
-                                      {submission.description}
-                                    </span>
-                                  )}
-                                </p>
-
-                              </div>
-                            </div>
-
-
-                            <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
-                              <div className={styles.submissionMeta}>
-                        <span className={styles.metaItem}>
-                          <strong>Status:</strong> 
-                          <span className={`${styles.status} ${styles[submission.status]}`}>
-                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-                          </span>
-                        </span>
-                        <span className={styles.metaItem}>
-                          <strong>Category:</strong> {submission.category}
-                        </span>
-                        {submission.tags && submission.tags.length > 0 && (
-                          <span className={styles.metaItem}>
-                            <strong>Tags:</strong> 
-                            <div className={styles.tagsDisplay}>
-                              {submission.tags.map((tag, index) => (
-                                <span key={index} className={styles.tagChip}>{tag}</span>
-                              ))}
-                            </div>
-                          </span>
-                        )}
-                      </div>
-                          </div>
-                          <div className={styles.submissionActions}>
-                            <button 
-                              className={styles.editButton}
-                              onClick={() => startEditingBlog(submission)}
-                            >
-                              Edit
-                            </button>
-                            {submission.status === 'approved' && (
-                              <button 
-                                className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
-                                onClick={() => togglePostActivation(submission.id)}
-                              >
-                                {submission.isActive ? 'Deactivate' : 'Activate'}
-                              </button>
-                            )}
-                            {submission.status === 'approved' && submission.isActive && (
-                              <div className={styles.submissionStats}>
-                                <div className={styles.statItem}>
-                                  <span className={styles.statLabel}>Views</span>
-                                  <span className={styles.statValue}>{submission.views}</span>
-                                </div>
-                                <div className={styles.statItem}>
-                                  <span className={styles.statLabel}>Clicks</span>
-                                  <span className={styles.statValue}>{submission.clicks}</span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                      <BloggerBlogCard
+                        blog={submission}
+                        isEditing={editingBlog === submission.id}
+                        editingSubmission={editingSubmission}
+                        editingField={editingField}
+                        editedTitle={editedTitle}
+                        editedDescription={editedDescription}
+                        editedImage={editedImage}
+                        onStartEdit={startEditingBlog}
+                        onCancelEdit={cancelEditingBlog}
+                        onSaveEdit={saveEditedBlog}
+                        onEditField={handleEditField}
+                        onSaveFieldEdit={handleSaveEdit}
+                        onToggleActivation={togglePostActivation}
+                        setEditedTitle={setEditedTitle}
+                        setEditedDescription={setEditedDescription}
+                        setEditedImage={setEditedImage}
+                      />
                     </div>
                   ))}
                 </div>
