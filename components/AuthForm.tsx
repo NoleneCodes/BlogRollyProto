@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
@@ -66,7 +65,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -150,7 +149,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const handleCustomTopicChange = (value: string) => {
     setCustomTopic(value);
     const validation = validateCustomInput(value);
-    
+
     if (validation.isValid && value.trim()) {
       const formattedTopic = formatCustomInput(value);
       setReaderForm(prev => ({
@@ -181,17 +180,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
     // TODO: Implement Supabase authentication
     console.log('Sign in attempted:', signInForm);
-    
+
     // Mock successful authentication - replace with actual Supabase logic
     // For now, assume all users are readers unless they have blogger role
     const userRoles = ['reader']; // This would come from your database
-    
+
     if (userRoles.includes('blogger')) {
       router.push('/profile/blogger');
     } else {
       router.push('/profile/reader');
     }
-    
+
     alert('Sign in successful! Welcome back!');
   };
 
@@ -219,7 +218,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     // TODO: Implement Supabase authentication
     console.log('Reader form submitted:', readerForm);
     alert('Account created successfully! Welcome to BlogRolly!');
-    
+
     // Redirect to reader profile
     router.push('/profile/reader');
   };
@@ -252,7 +251,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
         <div className={styles.authCard}>
           <h2>Welcome to Blogrolly</h2>
           <p>Join our community of readers and bloggers</p>
-          
+
           <div className={styles.modeSelection}>
             <button 
               className={styles.modeButton}
@@ -261,7 +260,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               <h3>Create Account</h3>
               <p>New to Blogrolly? Sign up to start discovering amazing blogs or share your own.</p>
             </button>
-            
+
             <button 
               className={styles.modeButton}
               onClick={() => setAuthMode('signin')}
@@ -270,7 +269,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               <p>Already have an account? Sign in to access your dashboard and submissions.</p>
             </button>
           </div>
-          
+
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <button 
               className={styles.linkButton}
@@ -477,7 +476,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             <div className={styles.formGroup}>
               <label className={styles.label}>Topics You're Into *</label>
               <div className={styles.checkboxGrid}>
-                {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
+                {MAIN_CATEGORIES.map(category => (
                   <label key={category} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"
@@ -491,15 +490,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 <label className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
-                    checked={!!readerForm.otherTopic}
+                    checked={!!customTopic || !!readerForm.otherTopic}
                     onChange={(e) => handleReaderTopicChange('Other', e.target.checked)}
                     className={styles.checkbox}
                   />
                   <span className={styles.checkboxText}>Other</span>
                 </label>
               </div>
-              
-              {readerForm.topics.some(topic => topic === 'Other') || readerForm.otherTopic ? (
+
+              {(customTopic || readerForm.otherTopic) ? (
                 <div style={{ marginTop: '1rem' }}>
                   <input
                     type="text"
@@ -520,7 +519,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   })()}
                 </div>
               ) : null}
-              
+
               {errors.topics && <span className={styles.error}>{errors.topics}</span>}
             </div>
 

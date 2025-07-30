@@ -474,7 +474,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             <span className={styles.optional}>(Optional)</span>
           </label>
           <div className={styles.checkboxGrid}>
-            {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
+            {MAIN_CATEGORIES.map(category => (
               <label key={category} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -488,7 +488,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
-                checked={!!customTopic && bloggerForm.topics.includes(customTopic)}
+                checked={!!customTopic}
                 onChange={(e) => handleBloggerTopicChange('Other', e.target.checked)}
                 className={styles.checkbox}
               />
@@ -496,7 +496,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             </label>
           </div>
           
-          {customTopic || bloggerForm.topics.some(topic => !MAIN_CATEGORIES.includes(topic)) ? (
+          {customTopic ? (
             <div style={{ marginTop: '1rem' }}>
               <input
                 type="text"
