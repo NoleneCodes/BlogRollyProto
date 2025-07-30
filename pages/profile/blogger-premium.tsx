@@ -725,7 +725,7 @@ const BloggerProfilePremium: React.FC = () => {
                 </div>
               </div>
               <div className={styles.formGroup}>
-                <label>Display Name</label>
+                <label>Username</label>
                 <input 
                   type="text" 
                   defaultValue={userInfo.displayName} 
