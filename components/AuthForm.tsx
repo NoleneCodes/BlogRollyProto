@@ -480,23 +480,36 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   <label key={category} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"
-                      checked={readerForm.topics.includes(category)}
+                      checked={category === 'Other' ? !!customTopic || !!readerForm.otherTopic : readerForm.topics.includes(category)}
                       onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
                       className={styles.checkbox}
                     />
                     <span className={styles.checkboxText}>{category}</span>
                   </label>
                 ))}
-                <label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={!!customTopic || !!readerForm.otherTopic}
-                    onChange={(e) => handleReaderTopicChange('Other', e.target.checked)}
-                    className={styles.checkbox}
-                  />
-                  <span className={styles.checkboxText}>Other</span>
-                </label>
               </div>
+              
+              {(customTopic || readerForm.otherTopic) && (
+                <div style={{ marginTop: '1rem' }}>
+                  <input
+                    type="text"
+                    value={customTopic}
+                    onChange={(e) => handleCustomTopicChange(e.target.value)}
+                    className={styles.textInput}
+                    placeholder="Enter your custom topic (max 3 words)"
+                    maxLength={50}
+                  />
+                  <small className={styles.hint}>
+                    Maximum 3 words allowed. {customTopic.split(/\s+/).filter(w => w).length}/3 words
+                  </small>
+                  {(() => {
+                    const validation = validateCustomInput(customTopic);
+                    return !validation.isValid && customTopic ? (
+                      <span className={styles.error}>{validation.error}</span>
+                    ) : null;
+                  })()}
+                </div>
+              )}
 
               {(customTopic || readerForm.otherTopic) ? (
                 <div style={{ marginTop: '1rem' }}>

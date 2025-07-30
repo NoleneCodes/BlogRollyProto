@@ -478,25 +478,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
               <label key={category} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
-                  checked={bloggerForm.topics.includes(category)}
+                  checked={category === 'Other' ? !!customTopic : bloggerForm.topics.includes(category)}
                   onChange={(e) => handleBloggerTopicChange(category, e.target.checked)}
                   className={styles.checkbox}
                 />
                 <span className={styles.checkboxText}>{category}</span>
               </label>
             ))}
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={!!customTopic}
-                onChange={(e) => handleBloggerTopicChange('Other', e.target.checked)}
-                className={styles.checkbox}
-              />
-              <span className={styles.checkboxText}>Other</span>
-            </label>
           </div>
           
-          {customTopic ? (
+          {bloggerForm.topics.some(topic => MAIN_CATEGORIES.includes('Other')) || customTopic ? (
             <div style={{ marginTop: '1rem' }}>
               <input
                 type="text"
