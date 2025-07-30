@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
-import { MAIN_CATEGORIES } from '../lib/categories-tags';
+import { MAIN_CATEGORIES, validateCustomInput, formatCustomInput } from '../lib/categories-tags';
 
 interface AuthFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -55,6 +55,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     agreeToTerms: false,
     subscribeToUpdates: false
   });
+
+  const [customTopic, setCustomTopic] = useState('');
 
   // Sign in form state
   const [signInForm, setSignInForm] = useState<SignInFormData>({
@@ -116,12 +118,53 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   };
 
   const handleReaderTopicChange = (topic: string, checked: boolean) => {
-    setReaderForm(prev => ({
-      ...prev,
-      topics: checked 
-        ? [...prev.topics, topic]
-        : prev.topics.filter(t => t !== topic)
-    }));
+    if (topic === 'Other') {
+      if (checked && customTopic.trim()) {
+        const validation = validateCustomInput(customTopic);
+        if (validation.isValid) {
+          const formattedTopic = formatCustomInput(customTopic);
+          setReaderForm(prev => ({
+            ...prev,
+            topics: [...prev.topics.filter(t => t !== 'Other'), formattedTopic],
+            otherTopic: formattedTopic
+          }));
+        }
+      } else if (!checked) {
+        setReaderForm(prev => ({
+          ...prev,
+          topics: prev.topics.filter(t => t !== prev.otherTopic),
+          otherTopic: ''
+        }));
+        setCustomTopic('');
+      }
+    } else {
+      setReaderForm(prev => ({
+        ...prev,
+        topics: checked 
+          ? [...prev.topics, topic]
+          : prev.topics.filter(t => t !== topic)
+      }));
+    }
+  };
+
+  const handleCustomTopicChange = (value: string) => {
+    setCustomTopic(value);
+    const validation = validateCustomInput(value);
+    
+    if (validation.isValid && value.trim()) {
+      const formattedTopic = formatCustomInput(value);
+      setReaderForm(prev => ({
+        ...prev,
+        topics: [...prev.topics.filter(t => t !== prev.otherTopic), formattedTopic],
+        otherTopic: formattedTopic
+      }));
+    } else if (readerForm.otherTopic) {
+      setReaderForm(prev => ({
+        ...prev,
+        topics: prev.topics.filter(t => t !== prev.otherTopic),
+        otherTopic: ''
+      }));
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -434,7 +477,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             <div className={styles.formGroup}>
               <label className={styles.label}>Topics You're Into *</label>
               <div className={styles.checkboxGrid}>
-                {MAIN_CATEGORIES.map(category => (
+                {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
                   <label key={category} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"
@@ -445,7 +488,39 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                     <span className={styles.checkboxText}>{category}</span>
                   </label>
                 ))}
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={!!readerForm.otherTopic}
+                    onChange={(e) => handleReaderTopicChange('Other', e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.checkboxText}>Other</span>
+                </label>
               </div>
+              
+              {readerForm.topics.some(topic => topic === 'Other') || readerForm.otherTopic ? (
+                <div style={{ marginTop: '1rem' }}>
+                  <input
+                    type="text"
+                    value={customTopic}
+                    onChange={(e) => handleCustomTopicChange(e.target.value)}
+                    className={styles.textInput}
+                    placeholder="Enter your custom topic (max 3 words)"
+                    maxLength={50}
+                  />
+                  <small className={styles.hint}>
+                    Maximum 3 words allowed. {customTopic.split(/\s+/).filter(w => w).length}/3 words
+                  </small>
+                  {(() => {
+                    const validation = validateCustomInput(customTopic);
+                    return !validation.isValid && customTopic ? (
+                      <span className={styles.error}>{validation.error}</span>
+                    ) : null;
+                  })()}
+                </div>
+              ) : null}
+              
               {errors.topics && <span className={styles.error}>{errors.topics}</span>}
             </div>
 

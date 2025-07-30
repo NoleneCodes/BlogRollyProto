@@ -18,6 +18,32 @@ export const MAIN_CATEGORIES = [
   'Other'
 ];
 
+// Utility function to validate custom category/tag input (max 3 words)
+export const validateCustomInput = (input: string): { isValid: boolean; error?: string } => {
+  if (!input.trim()) {
+    return { isValid: false, error: 'Please enter your custom category/tag' };
+  }
+  
+  const words = input.trim().split(/\s+/);
+  if (words.length > 3) {
+    return { isValid: false, error: 'Maximum 3 words allowed' };
+  }
+  
+  if (input.length > 50) {
+    return { isValid: false, error: 'Maximum 50 characters allowed' };
+  }
+  
+  return { isValid: true };
+};
+
+// Function to format custom input (capitalize first letter of each word)
+export const formatCustomInput = (input: string): string => {
+  return input.trim()
+    .split(/\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 export const TAGS = {
   'Themes & Topics': [
     'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',

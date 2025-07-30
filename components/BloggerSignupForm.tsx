@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
 import SurveyPopup from './SurveyPopup';
-import { MAIN_CATEGORIES } from '../lib/categories-tags';
+import { MAIN_CATEGORIES, validateCustomInput, formatCustomInput } from '../lib/categories-tags';
 
 interface BloggerSignupFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -71,6 +71,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const [showSurveyPopup, setShowSurveyPopup] = useState(false);
   const [surveyCompleted, setSurveyCompleted] = useState(false);
   const [isPart1Complete, setIsPart1Complete] = useState(false);
+  const [customTopic, setCustomTopic] = useState('');
 
   
 
@@ -140,12 +141,49 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   };
 
   const handleBloggerTopicChange = (topic: string, checked: boolean) => {
-    setBloggerForm(prev => ({
-      ...prev,
-      topics: checked 
-        ? [...prev.topics, topic]
-        : prev.topics.filter(t => t !== topic)
-    }));
+    if (topic === 'Other') {
+      if (checked && customTopic.trim()) {
+        const validation = validateCustomInput(customTopic);
+        if (validation.isValid) {
+          const formattedTopic = formatCustomInput(customTopic);
+          setBloggerForm(prev => ({
+            ...prev,
+            topics: [...prev.topics.filter(t => !prev.topics.includes(t) || t !== 'Other'), formattedTopic]
+          }));
+        }
+      } else if (!checked) {
+        setBloggerForm(prev => ({
+          ...prev,
+          topics: prev.topics.filter(t => t !== customTopic)
+        }));
+        setCustomTopic('');
+      }
+    } else {
+      setBloggerForm(prev => ({
+        ...prev,
+        topics: checked 
+          ? [...prev.topics, topic]
+          : prev.topics.filter(t => t !== topic)
+      }));
+    }
+  };
+
+  const handleBloggerCustomTopicChange = (value: string) => {
+    setCustomTopic(value);
+    const validation = validateCustomInput(value);
+    
+    if (validation.isValid && value.trim()) {
+      const formattedTopic = formatCustomInput(value);
+      setBloggerForm(prev => ({
+        ...prev,
+        topics: [...prev.topics.filter(t => t !== customTopic), formattedTopic]
+      }));
+    } else {
+      setBloggerForm(prev => ({
+        ...prev,
+        topics: prev.topics.filter(t => t !== customTopic)
+      }));
+    }
   };
 
   const handleMonetizationChange = (method: string, checked: boolean) => {
@@ -436,7 +474,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             <span className={styles.optional}>(Optional)</span>
           </label>
           <div className={styles.checkboxGrid}>
-            {MAIN_CATEGORIES.map(category => (
+            {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
               <label key={category} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -447,7 +485,39 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
                 <span className={styles.checkboxText}>{category}</span>
               </label>
             ))}
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={!!customTopic && bloggerForm.topics.includes(customTopic)}
+                onChange={(e) => handleBloggerTopicChange('Other', e.target.checked)}
+                className={styles.checkbox}
+              />
+              <span className={styles.checkboxText}>Other</span>
+            </label>
           </div>
+          
+          {customTopic || bloggerForm.topics.some(topic => !MAIN_CATEGORIES.includes(topic)) ? (
+            <div style={{ marginTop: '1rem' }}>
+              <input
+                type="text"
+                value={customTopic}
+                onChange={(e) => handleBloggerCustomTopicChange(e.target.value)}
+                className={styles.textInput}
+                placeholder="Enter your custom topic (max 3 words)"
+                maxLength={50}
+              />
+              <small className={styles.hint}>
+                Maximum 3 words allowed. {customTopic.split(/\s+/).filter(w => w).length}/3 words
+              </small>
+              {(() => {
+                const validation = validateCustomInput(customTopic);
+                return !validation.isValid && customTopic ? (
+                  <span className={styles.error}>{validation.error}</span>
+                ) : null;
+              })()}
+            </div>
+          ) : null}
+          
           <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
         </div>
 
