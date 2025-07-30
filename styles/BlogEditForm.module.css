@@ -123,24 +123,20 @@
 }
 
 .readOnlyInput {
-  background-color: #f9fafb !important;
-  color: #6b7280 !important;
+  background-color: #f9fafb;
+  color: #6b7280;
   cursor: not-allowed !important;
 }
 
-.readOnlyInput:focus {
-  border-color: #d1d5db !important;
-  box-shadow: none !important;
-}
-
 .premiumInput {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.1) !important;
+  border: 2px solid #10b981;
+  background-color: #f0fdf4;
 }
 
 .premiumInput:focus {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .editTextarea {
