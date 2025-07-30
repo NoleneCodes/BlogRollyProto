@@ -28,6 +28,7 @@ interface BlogSubmission {
   title: string;
   url: string;
   category: string;
+  tags?: string[];
   status: 'approved' | 'pending' | 'draft' | 'rejected';
   submittedDate: string;
   views?: number;
@@ -62,12 +63,16 @@ const BloggerProfile: React.FC = () => {
     title: string;
     description: string;
     url: string;
+    category: string;
+    tags: string[];
     image: File | null;
     imagePreview: string | null;
   }>({
     title: '',
     description: '',
     url: '',
+    category: '',
+    tags: [],
     image: null,
     imagePreview: null
   });
@@ -109,6 +114,7 @@ const BloggerProfile: React.FC = () => {
             title: 'The Future of Remote Work',
             url: 'https://techlifeinsights.com/remote-work-future',
             category: 'Tech',
+            tags: ['remote work', 'technology', 'future'],
             status: 'approved',
             submittedDate: '2024-01-15',
             views: 1250,
@@ -122,6 +128,7 @@ const BloggerProfile: React.FC = () => {
             title: 'Building Better Morning Routines',
             url: 'https://techlifeinsights.com/morning-routines',
             category: 'Lifestyle',
+            tags: ['morning routine', 'productivity', 'self-improvement'],
             status: 'approved',
             submittedDate: '2024-01-20',
             views: 890,
@@ -135,6 +142,7 @@ const BloggerProfile: React.FC = () => {
             title: 'Mastering Work-Life Balance',
             url: 'https://techlifeinsights.com/work-life-balance',
             category: 'Lifestyle',
+            tags: ['work-life balance', 'stress management', 'wellness'],
             status: 'approved',
             submittedDate: '2024-01-18',
             views: 650,
@@ -148,6 +156,7 @@ const BloggerProfile: React.FC = () => {
             title: 'Advanced JavaScript Techniques',
             url: 'https://techlifeinsights.com/advanced-js',
             category: 'Tech',
+            tags: ['javascript', 'programming', 'web development'],
             status: 'approved',
             submittedDate: '2024-01-22',
             views: 0,
@@ -161,6 +170,7 @@ const BloggerProfile: React.FC = () => {
             title: 'AI in Content Creation',
             url: 'https://techlifeinsights.com/ai-content',
             category: 'Tech',
+            tags: ['artificial intelligence', 'content creation', 'marketing'],
             status: 'pending',
             submittedDate: '2024-01-25',
             views: 0,
@@ -173,6 +183,7 @@ const BloggerProfile: React.FC = () => {
             title: 'Productivity Hacks for Developers',
             url: '',
             category: 'Tech',
+            tags: ['productivity', 'developers', 'coding'],
             status: 'draft',
             submittedDate: '2024-01-28',
             views: 0,
@@ -211,7 +222,7 @@ const BloggerProfile: React.FC = () => {
       try {
         const draft = JSON.parse(savedDraft);
         const { savedAt, ...draftFormData } = draft;
-        
+
         // Only add draft if it has meaningful content
         if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
           const draftSubmission: BlogSubmission = {
@@ -219,6 +230,7 @@ const BloggerProfile: React.FC = () => {
             title: draftFormData.title || 'Untitled Draft',
             url: draftFormData.postUrl || '',
             category: draftFormData.category || 'Other',
+            tags: [],
             status: 'draft',
             submittedDate: new Date().toISOString().split('T')[0],
             views: 0,
@@ -325,6 +337,7 @@ const BloggerProfile: React.FC = () => {
       title: formData.title,
       url: formData.postUrl,
       category: formData.category,
+      tags: formData.tags,
       status: 'pending',
       submittedDate: new Date().toISOString().split('T')[0],
       views: 0,
@@ -344,6 +357,8 @@ const BloggerProfile: React.FC = () => {
       title: blog.title,
       description: blog.description || '',
       url: blog.url,
+      category: blog.category,
+      tags: blog.tags || [],
       image: null,
       imagePreview: blog.image || null
     });
@@ -355,6 +370,8 @@ const BloggerProfile: React.FC = () => {
       title: '',
       description: '',
       url: '',
+      category: '',
+      tags: [],
       image: null,
       imagePreview: null
     });
@@ -390,6 +407,8 @@ const BloggerProfile: React.FC = () => {
           title: editForm.title,
           description: editForm.description,
           url: editForm.url,
+          category: editForm.category,
+          tags: editForm.tags,
           image: editForm.image ? URL.createObjectURL(editForm.image) : editForm.imagePreview
         };
       }
@@ -401,6 +420,8 @@ const BloggerProfile: React.FC = () => {
       title: '',
       description: '',
       url: '',
+      category: '',
+      tags: [],
       image: null,
       imagePreview: null
     });
@@ -523,7 +544,7 @@ const BloggerProfile: React.FC = () => {
                   <div className={styles.postCount}>You currently have <span className={styles.currentCount}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>/3 active posts</div>
                  </div>
                 </div>
-                
+
                 <div className={styles.blogrollFilters}>
                   <div className={styles.filterButtons}>
                     <button 
@@ -623,6 +644,26 @@ const BloggerProfile: React.FC = () => {
                                 placeholder="https://yourblog.com/post-url"
                               />
                             </div>
+                            <div className={styles.editField}>
+                              <label>Category</label>
+                              <input
+                                type="text"
+                                value={editForm.category}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))}
+                                className={styles.editInput}
+                                placeholder="Enter the category..."
+                              />
+                            </div>
+                             <div className={styles.editField}>
+                              <label>Tags</label>
+                              <input
+                                type="text"
+                                value={editForm.tags.join(', ')}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, tags: e.target.value.split(',').map(tag => tag.trim()) }))}
+                                className={styles.editInput}
+                                placeholder="Enter tags separated by commas..."
+                              />
+                            </div>
                           </div>
                           <div className={styles.editActions}>
                             <button 
@@ -720,20 +761,35 @@ const BloggerProfile: React.FC = () => {
 
                             <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
                               <div className={styles.submissionMeta}>
-                                <span className={styles.category}>{submission.category}</span>
-                                <span 
-                                  className={styles.status}
-                                  style={{ backgroundColor: getStatusColor(submission.status) }}
-                                >
-                                  {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-                                  {submission.status === 'approved' && submission.isActive && (
-                                    <span className={styles.activeIndicator}> • Live</span>
-                                  )}
-                                  {submission.status === 'approved' && !submission.isActive && (
-                                    <span className={styles.inactiveIndicator}> • Inactive</span>
-                                  )}
-                                </span>
-                              </div>
+                        <span className={styles.metaItem}>
+                          <strong>Status:</strong> 
+                          <span className={`${styles.status} ${styles[submission.status]}`}>
+                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                          </span>
+                        </span>
+                        <span className={styles.metaItem}>
+                          <strong>Category:</strong> {submission.category}
+                        </span>
+                        {submission.tags && submission.tags.length > 0 && (
+                          <span className={styles.metaItem}>
+                            <strong>Tags:</strong> 
+                            <div className={styles.tagsDisplay}>
+                              {submission.tags.map((tag, index) => (
+                                <span key={index} className={styles.tagChip}>{tag}</span>
+                              ))}
+                            </div>
+                          </span>
+                        )}
+                        <span className={styles.metaItem}>
+                          <strong>Submitted:</strong> {submission.submittedDate}
+                        </span>
+                        <span className={styles.metaItem}>
+                          <strong>Views:</strong> {submission.views.toLocaleString()}
+                        </span>
+                        <span className={styles.metaItem}>
+                          <strong>Clicks:</strong> {submission.clicks.toLocaleString()}
+                        </span>
+                      </div>
                           </div>
                           <div className={styles.submissionActions}>
                             <button 
@@ -1024,7 +1080,6 @@ const BloggerProfile: React.FC = () => {
   return (
     <Layout title="Blogger Profile - Blogrolly">
       <div className={styles.profileContainer}>
-```python
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
             <h3>Blogger Dashboard</h3>
