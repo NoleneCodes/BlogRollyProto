@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 import styles from '../styles/BlogEditForm.module.css';
@@ -118,7 +119,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     const checkProStatus = async () => {
       if (!user) {
         // For the pro blogger demo page, simulate pro status
-        if (window.location.pathname.includes('blogger-pro')) {
+        if (window.location.pathname.includes('blogger-premium')) {
           setIsPremium(true);
           return;
         }
@@ -138,7 +139,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           setIsPremium(data.isPremium || data.tier === 'pro');
         } else {
           // For demo purposes on pro page
-          if (window.location.pathname.includes('blogger-pro')) {
+          if (window.location.pathname.includes('blogger-premium')) {
             setIsPremium(true);
           } else {
             setIsPremium(false);
@@ -147,7 +148,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       } catch (error) {
         console.error('Error checking pro status:', error);
         // For demo purposes on pro page
-        if (window.location.pathname.includes('blogger-pro')) {
+        if (window.location.pathname.includes('blogger-premium')) {
           setIsPremium(true);
         } else {
           setIsPremium(false);
@@ -266,7 +267,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             Max 2MB • JPG, PNG, WebP
           </small>
         </div>
-
+        
         {editForm.imagePreview && (
           <div className={styles.editField} style={{ marginTop: '1rem' }}>
             <label>

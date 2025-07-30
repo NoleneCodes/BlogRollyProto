@@ -9,7 +9,7 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
 import styles from '../../styles/BloggerProfile.module.css';
-import ProFeatureGuard from '../../components/ProFeatureGuard';
+import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 
 interface UserInfo {
   id: string;
@@ -610,7 +610,7 @@ const BloggerProfile: React.FC = () => {
 
       case 'stats':
         return (
-          <ProFeatureGuard>
+          <PremiumFeatureGuard>
             <div className={styles.content}>
               <h2>Analytics & Stats</h2>
             {blogStats && (
@@ -666,7 +666,7 @@ const BloggerProfile: React.FC = () => {
               </>
             )}
           </div>
-          </ProFeatureGuard>
+          </PremiumFeatureGuard>
         );
 
       case 'settings':
