@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
+import BlogEditForm from '../../components/BlogEditForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
@@ -66,24 +67,6 @@ const BloggerProfilePremium: React.FC = () => {
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
   const [editingBlog, setEditingBlog] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<{
-    title: string;
-    description: string;
-    url: string;
-    image: File | null;
-    imagePreview: string | null;
-  }>({
-    title: '',
-    description: '',
-    url: '',
-    image: null,
-    imagePreview: null
-  });
-  const [editingSubmission, setEditingSubmission] = useState<string | null>(null);
-  const [editingField, setEditingField] = useState<string | null>(null);
-  const [editedTitle, setEditedTitle] = useState<string>('');
-  const [editedDescription, setEditedDescription] = useState<string>('');
-  const [editedImage, setEditedImage] = useState<string>('');
   const [showHowItWorksPopup, setShowHowItWorksPopup] = useState<boolean>(false);
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState<string>('30d');
@@ -371,6 +354,32 @@ const BloggerProfilePremium: React.FC = () => {
     return urlRegex.test(url);
   };
 
+  const handleEditBlog = (blogId: string) => {
+    setEditingBlog(blogId);
+  };
+
+  const handleSaveBlogEdit = (blogId: string, updatedData: any) => {
+    setBlogSubmissions(prev => prev.map(submission => {
+      if (submission.id === blogId) {
+        return {
+          ...submission,
+          title: updatedData.title,
+          description: updatedData.description,
+          url: updatedData.url,
+          category: updatedData.category,
+          tags: updatedData.tags,
+          image: updatedData.imagePreview || submission.image
+        };
+      }
+      return submission;
+    }));
+    setEditingBlog(null);
+  };
+
+  const handleCancelBlogEdit = () => {
+    setEditingBlog(null);
+  };
+
   
 
   if (isLoading) {
@@ -591,7 +600,10 @@ const BloggerProfilePremium: React.FC = () => {
                         </div>
 
                         <div className={styles.submissionActions}>
-                          <button className={styles.editButton}>
+                          <button 
+                            className={styles.editButton}
+                            onClick={() => handleEditBlog(submission.id)}
+                          >
                             Edit
                           </button>
                           {submission.status === 'approved' && (
@@ -604,6 +616,22 @@ const BloggerProfilePremium: React.FC = () => {
                           )}
                         </div>
                       </div>
+                      {editingBlog === submission.id && (
+                        <BlogEditForm
+                          blog={{
+                            id: submission.id,
+                            title: submission.title,
+                            url: submission.url,
+                            category: submission.category,
+                            tags: submission.tags || [],
+                            description: submission.description || '',
+                            image: submission.image || ''
+                          }}
+                          onSave={handleSaveBlogEdit}
+                          onCancel={handleCancelBlogEdit}
+                          isVisible={true}
+                        />
+                      )}
                     ))}
                 </div>
               </>
