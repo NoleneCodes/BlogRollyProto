@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
 import SurveyPopup from './SurveyPopup';
-import { MAIN_CATEGORIES, validateCustomInput, formatCustomInput } from '../lib/categories-tags';
+import { MAIN_CATEGORIES, validateCustomInput } from '../lib/categories-tags';
+import { CustomCategoryInput } from './CustomCategoryInput';
 
 interface BloggerSignupFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -73,7 +73,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const [isPart1Complete, setIsPart1Complete] = useState(false);
   const [customTopic, setCustomTopic] = useState('');
 
-  
+
 
   const monetizationOptions = [
     'Ads', 'Affiliate Links', 'Products/Services', 'None Yet'
@@ -85,7 +85,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     const part1Complete = part1Fields.every(field => 
       bloggerForm[field as keyof BloggerFormData] !== ''
     ) && validateAge(bloggerForm.dateOfBirth) && bloggerForm.password === bloggerForm.confirmPassword;
-    
+
     setIsPart1Complete(part1Complete);
   }, [bloggerForm]);
 
@@ -100,9 +100,9 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       const validPassword = bloggerForm.password === bloggerForm.confirmPassword && bloggerForm.password.length >= 8;
       const validAge = validateAge(bloggerForm.dateOfBirth);
       const part1Score = filledPart1Fields.length === 6 && validPassword && validAge ? 6 : filledPart1Fields.length;
-      
+
       const checkboxes = (bloggerForm.agreeToTerms ? 1 : 0) + (bloggerForm.confirmOwnership ? 1 : 0) + (bloggerForm.agreeToSurvey ? 1 : 0);
-      
+
       // Part 2 & 3 (optional): 3 items (25% of total)
       const optionalFields = ['username', 'blogUrl', 'blogName'];
       const filledOptionalFields = optionalFields.filter(field => 
@@ -110,11 +110,11 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       );
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
       const blogsProgress = submittedBlogs.length > 0 ? 1 : 0;
-      
+
       // Weight: Part 1 = 75%, Part 2&3 = 25%
       const part1Progress = (part1Score + checkboxes) / 9 * 75;
       const optionalProgress = (filledOptionalFields.length + topicsProgress + blogsProgress) / 5 * 25;
-      
+
       const totalProgress = part1Progress + optionalProgress;
       setProgress(Math.min(totalProgress, 100));
     }
@@ -167,7 +167,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const handleBloggerCustomTopicChange = (value: string) => {
     setCustomTopic(value);
     const validation = validateCustomInput(value);
-    
+
     if (validation.isValid && value.trim()) {
       const formattedTopic = formatCustomInput(value);
       setBloggerForm(prev => ({
@@ -236,10 +236,10 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
     if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
     else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    
+
     // Part 2 validation (optional, but validate if filled)
     if (bloggerForm.blogUrl && !validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
-    
+
     // Required checkboxes
     if (!bloggerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     if (!bloggerForm.confirmOwnership) newErrors.confirmOwnership = 'You must confirm blog ownership';
@@ -468,7 +468,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.label}>
             Primary Topics / Niche
             <span className={styles.optional}></span>
-            
+
           </label>
           <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
           <div className={styles.checkboxGrid}>
@@ -484,91 +484,17 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
               </label>
             ))}
           </div>
-          
-          {bloggerForm.topics.includes('Other') && (
-            <div className={styles.customTopicContainer}>
-              <label className={styles.customTopicLabel}>
-                Add your custom topic (one word at a time, max 3 words)
-              </label>
-              <div className={styles.customTopicInputContainer}>
-                <input
-                  type="text"
-                  value={customTopic}
-                  onChange={(e) => {
-                    const value = e.target.value.trim();
-                    // Only allow single words (no spaces)
-                    if (!value.includes(' ')) {
-                      setCustomTopic(value);
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      const word = customTopic.trim();
-                      if (word && bloggerForm.topics.filter(t => t.startsWith('custom:')).length < 3) {
-                        setBloggerForm(prev => ({
-                          ...prev,
-                          topics: [...prev.topics, `custom:${word}`]
-                        }));
-                        setCustomTopic('');
-                      }
-                    }
-                  }}
-                  className={styles.customTopicInput}
-                  placeholder="Type a word and press Enter"
-                  maxLength={20}
-                  disabled={bloggerForm.topics.filter(t => t.startsWith('custom:')).length >= 3}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const word = customTopic.trim();
-                    if (word && bloggerForm.topics.filter(t => t.startsWith('custom:')).length < 3) {
-                      setBloggerForm(prev => ({
-                        ...prev,
-                        topics: [...prev.topics, `custom:${word}`]
-                      }));
-                      setCustomTopic('');
-                    }
-                  }}
-                  className={styles.addWordButton}
-                  disabled={!customTopic.trim() || bloggerForm.topics.filter(t => t.startsWith('custom:')).length >= 3}
-                >
-                  Add Word
-                </button>
-              </div>
-              
-              {bloggerForm.topics.filter(t => t.startsWith('custom:')).length > 0 && (
-                <div className={styles.customTopicTags}>
-                  {bloggerForm.topics
-                    .filter(t => t.startsWith('custom:'))
-                    .map((topic, index) => (
-                      <span key={index} className={styles.customTopicTag}>
-                        {topic.replace('custom:', '')}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setBloggerForm(prev => ({
-                              ...prev,
-                              topics: prev.topics.filter(t => t !== topic)
-                            }));
-                          }}
-                          className={styles.removeTagButton}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                </div>
-              )}
-              
-              <small className={styles.customTopicHint}>
-                {bloggerForm.topics.filter(t => t.startsWith('custom:')).length}/3 words added
-              </small>
-            </div>
-          )}
-          
-          
+
+          <CustomCategoryInput
+            selectedCategories={bloggerForm.topics}
+            onCategoryChange={(categories) => 
+              setBloggerForm(prev => ({ ...prev, topics: categories }))
+            }
+            maxWords={3}
+            label="Add your custom topic (one word at a time, max 3 words)"
+          />
+
+
         </div>
 
         <div className={styles.sectionTitle}>
@@ -591,7 +517,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             <span className={styles.optional}>(Optional)</span>
           </label>
           <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile. You can also add these later from your dashboard.</small>
-          
+
           {!isPart1Complete ? (
             <div style={{
               padding: '2rem',
@@ -624,7 +550,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
                   </button>
                 </div>
               ))}
-              
+
               {submittedBlogs.length < 3 && (
                 <button 
                   type="button" 
