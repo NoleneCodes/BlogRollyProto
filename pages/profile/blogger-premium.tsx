@@ -536,103 +536,103 @@ const BloggerProfilePremium: React.FC = () => {
                       return true;
                     })
                     .map(submission => (
-                      <div key={submission.id} className={styles.premiumSubmissionCard}>
-                        <div className={styles.submissionImageContainer}>
-                          {submission.image ? (
-                            <img
-                              src={submission.image}
-                              alt={submission.title}
-                              className={styles.submissionImage}
-                            />
-                          ) : (
-                            <div className={styles.submissionImagePlaceholder}>
-                              No image
-                            </div>
-                          )}
-                        </div>
-
-                        <div className={styles.submissionContent}>
-                          <div className={styles.submissionHeader}>
-                            <h4 className={styles.submissionTitle}>
-                              {submission.title}
-                              {submission.status === 'approved' && !submission.isActive && (
-                                <span className={styles.inactiveIndicator}> • Inactive</span>
+                      <div key={submission.id} className={styles.submissionItem}>
+                        {editingBlog === submission.id ? (
+                          <BlogEditForm
+                            blog={{
+                              id: submission.id,
+                              title: submission.title,
+                              url: submission.url,
+                              category: submission.category,
+                              tags: submission.tags || [],
+                              description: submission.description || '',
+                              image: submission.image || ''
+                            }}
+                            onSave={handleSaveBlogEdit}
+                            onCancel={handleCancelBlogEdit}
+                            isVisible={true}
+                          />
+                        ) : (
+                          <div className={styles.premiumSubmissionCard}>
+                            <div className={styles.submissionImageContainer}>
+                              {submission.image ? (
+                                <img
+                                  src={submission.image}
+                                  alt={submission.title}
+                                  className={styles.submissionImage}
+                                />
+                              ) : (
+                                <div className={styles.submissionImagePlaceholder}>
+                                  No image
+                                </div>
                               )}
-                            </h4>
-                            <p className={styles.submissionDescription}>
-                              {submission.description}
-                            </p>
-                          </div>
+                            </div>
 
-                          <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+                            <div className={styles.submissionContent}>
+                              <div className={styles.submissionHeader}>
+                                <h4 className={styles.submissionTitle}>
+                                  {submission.title}
+                                  {submission.status === 'approved' && !submission.isActive && (
+                                    <span className={styles.inactiveIndicator}> • Inactive</span>
+                                  )}
+                                </h4>
+                                <p className={styles.submissionDescription}>
+                                  {submission.description}
+                                </p>
+                              </div>
 
-                          <div className={styles.submissionMeta}>
-                            <span className={styles.category}>{submission.category}</span>
-                            <span
-                              className={styles.status}
-                              style={{ backgroundColor: getStatusColor(submission.status) }}
-                            >
-                              {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                              <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
+
+                              <div className={styles.submissionMeta}>
+                                <span className={styles.category}>{submission.category}</span>
+                                <span
+                                  className={styles.status}
+                                  style={{ backgroundColor: getStatusColor(submission.status) }}
+                                >
+                                  {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                                  {submission.status === 'approved' && submission.isActive && (
+                                    <span className={styles.activeIndicator}> • Live</span>
+                                  )}
+                                </span>
+                              </div>
+
                               {submission.status === 'approved' && submission.isActive && (
-                                <span className={styles.activeIndicator}> • Live</span>
+                                <div className={styles.premiumMetrics}>
+                                  <div className={styles.metricItem}>
+                                    <span className={styles.metricValue}>{submission.views}</span>
+                                    <span className={styles.metricLabel}>Views</span>
+                                  </div>
+                                  <div className={styles.metricItem}>
+                                    <span className={styles.metricValue}>{submission.clicks}</span>
+                                    <span className={styles.metricLabel}>Clicks</span>
+                                  </div>
+                                  <div className={styles.metricItem}>
+                                    <span className={styles.metricValue}>{submission.ctr}%</span>
+                                    <span className={styles.metricLabel}>CTR</span>
+                                  </div>
+                                </div>
                               )}
-                            </span>
-                          </div>
-
-                          {submission.status === 'approved' && submission.isActive && (
-
-                            <div className={styles.premiumMetrics}>
-                              <div className={styles.metricItem}>
-                                <span className={styles.metricValue}>{submission.views}</span>
-                                <span className={styles.metricLabel}>Views</span>
-                              </div>
-                              <div className={styles.metricItem}>
-                                <span className={styles.metricValue}>{submission.clicks}</span>
-                                <span className={styles.metricLabel}>Clicks</span>
-                              </div>
-                              <div className={styles.metricItem}>
-                                <span className={styles.metricValue}>{submission.ctr}%</span>
-                                <span className={styles.metricLabel}>CTR</span>
-                              </div>
-
                             </div>
-                          )}
-                        </div>
 
-                        <div className={styles.submissionActions}>
-                          <button 
-                            className={styles.editButton}
-                            onClick={() => handleEditBlog(submission.id)}
-                          >
-                            Edit
-                          </button>
-                          {submission.status === 'approved' && (
-                            <button
-                              className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
-                              onClick={() => togglePostActivation(submission.id)}
-                            >
-                              {submission.isActive ? 'Deactivate' : 'Activate'}
-                            </button>
-                          )}
-                        </div>
+                            <div className={styles.submissionActions}>
+                              <button 
+                                className={styles.editButton}
+                                onClick={() => handleEditBlog(submission.id)}
+                              >
+                                Edit
+                              </button>
+                              {submission.status === 'approved' && (
+                                <button
+                                  className={`${styles.activationButton} ${submission.isActive ? styles.deactivate : styles.activate}`}
+                                  onClick={() => togglePostActivation(submission.id)}
+                                >
+                                  {submission.isActive ? 'Deactivate' : 'Activate'}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      {editingBlog === submission.id && (
-                        <BlogEditForm
-                          blog={{
-                            id: submission.id,
-                            title: submission.title,
-                            url: submission.url,
-                            category: submission.category,
-                            tags: submission.tags || [],
-                            description: submission.description || '',
-                            image: submission.image || ''
-                          }}
-                          onSave={handleSaveBlogEdit}
-                          onCancel={handleCancelBlogEdit}
-                          isVisible={true}
-                        />
-                      )}
-                    </div>
                     ))}
                 </div>
               </>
