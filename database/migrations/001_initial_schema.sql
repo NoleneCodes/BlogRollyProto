@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create custom types/enums
 CREATE TYPE user_role AS ENUM ('reader', 'blogger', 'admin', 'moderator');
-CREATE TYPE user_tier AS ENUM ('free', 'premium', 'pro');
+CREATE TYPE user_tier AS ENUM ('free', 'pro');
 CREATE TYPE blog_status AS ENUM ('draft', 'submitted', 'pending', 'approved', 'rejected', 'live', 'inactive');
 CREATE TYPE rejection_reason AS ENUM (
   'inappropriate_content',
