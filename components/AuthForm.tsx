@@ -118,20 +118,15 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const handleReaderTopicChange = (topic: string, checked: boolean) => {
     if (topic === 'Other') {
-      if (checked && customTopic.trim()) {
-        const validation = validateCustomInput(customTopic);
-        if (validation.isValid) {
-          const formattedTopic = formatCustomInput(customTopic);
-          setReaderForm(prev => ({
-            ...prev,
-            topics: [...prev.topics.filter(t => t !== 'Other'), formattedTopic],
-            otherTopic: formattedTopic
-          }));
-        }
-      } else if (!checked) {
+      if (checked) {
         setReaderForm(prev => ({
           ...prev,
-          topics: prev.topics.filter(t => t !== prev.otherTopic),
+          topics: [...prev.topics, 'Other']
+        }));
+      } else {
+        setReaderForm(prev => ({
+          ...prev,
+          topics: prev.topics.filter(t => t !== 'Other' && t !== prev.otherTopic),
           otherTopic: ''
         }));
         setCustomTopic('');
@@ -480,7 +475,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   <label key={category} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"
-                      checked={category === 'Other' ? !!customTopic || !!readerForm.otherTopic : readerForm.topics.includes(category)}
+                      checked={readerForm.topics.includes(category)}
                       onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
                       className={styles.checkbox}
                     />
@@ -489,7 +484,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 ))}
               </div>
               
-              {(customTopic || readerForm.otherTopic) && (
+              {readerForm.topics.includes('Other') && (
                 <div style={{ marginTop: '1rem' }}>
                   <input
                     type="text"
@@ -510,28 +505,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   })()}
                 </div>
               )}
-
-              {(customTopic || readerForm.otherTopic) ? (
-                <div style={{ marginTop: '1rem' }}>
-                  <input
-                    type="text"
-                    value={customTopic}
-                    onChange={(e) => handleCustomTopicChange(e.target.value)}
-                    className={styles.textInput}
-                    placeholder="Enter your custom topic (max 3 words)"
-                    maxLength={50}
-                  />
-                  <small className={styles.hint}>
-                    Maximum 3 words allowed. {customTopic.split(/\s+/).filter(w => w).length}/3 words
-                  </small>
-                  {(() => {
-                    const validation = validateCustomInput(customTopic);
-                    return !validation.isValid && customTopic ? (
-                      <span className={styles.error}>{validation.error}</span>
-                    ) : null;
-                  })()}
-                </div>
-              ) : null}
 
               {errors.topics && <span className={styles.error}>{errors.topics}</span>}
             </div>

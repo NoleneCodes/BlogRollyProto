@@ -142,19 +142,15 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
   const handleBloggerTopicChange = (topic: string, checked: boolean) => {
     if (topic === 'Other') {
-      if (checked && customTopic.trim()) {
-        const validation = validateCustomInput(customTopic);
-        if (validation.isValid) {
-          const formattedTopic = formatCustomInput(customTopic);
-          setBloggerForm(prev => ({
-            ...prev,
-            topics: [...prev.topics.filter(t => !prev.topics.includes(t) || t !== 'Other'), formattedTopic]
-          }));
-        }
-      } else if (!checked) {
+      if (checked) {
         setBloggerForm(prev => ({
           ...prev,
-          topics: prev.topics.filter(t => t !== customTopic)
+          topics: [...prev.topics, 'Other']
+        }));
+      } else {
+        setBloggerForm(prev => ({
+          ...prev,
+          topics: prev.topics.filter(t => t !== 'Other' && t !== customTopic)
         }));
         setCustomTopic('');
       }
@@ -478,7 +474,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
               <label key={category} className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
-                  checked={category === 'Other' ? !!customTopic : bloggerForm.topics.includes(category)}
+                  checked={bloggerForm.topics.includes(category)}
                   onChange={(e) => handleBloggerTopicChange(category, e.target.checked)}
                   className={styles.checkbox}
                 />
@@ -487,7 +483,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             ))}
           </div>
           
-          {bloggerForm.topics.some(topic => MAIN_CATEGORIES.includes('Other')) || customTopic ? (
+          {bloggerForm.topics.includes('Other') && (
             <div style={{ marginTop: '1rem' }}>
               <input
                 type="text"
@@ -507,7 +503,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
                 ) : null;
               })()}
             </div>
-          ) : null}
+          )}
           
           <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
         </div>
