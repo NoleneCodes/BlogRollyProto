@@ -402,7 +402,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Username
-            <span className={styles.optional}>(Optional)</span>
+            <span className={styles.optional}></span>
           </label>
           <input
             type="text"
@@ -426,10 +426,10 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             className={styles.textarea}
             maxLength={280}
             rows={4}
-            placeholder="Tell us who you are in a sentence or two. Can be added later."
+            placeholder="Tell us who you are in a sentence or two."
           />
           {errors.bio && <span className={styles.error}>{errors.bio}</span>}
-          <small className={styles.hint}>{bloggerForm.bio.length}/280 characters. Can be completed later.</small>
+          <small className={styles.hint}>{bloggerForm.bio.length}/280 characters.</small>
         </div>
 
         <div className={styles.formGroup}>
@@ -445,13 +445,13 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             placeholder="https://yourblog.com"
           />
           {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
-          <small className={styles.hint}>Must start with https:// (no paths or slugs). Can be added later.</small>
+          <small className={styles.hint}>You must own your blog domain and it must start with https:// (no paths or slugs).</small>
         </div>
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Blog Name
-            <span className={styles.optional}>(Optional)</span>
+            <span className={styles.optional}></span>
           </label>
           <input
             type="text"
@@ -461,14 +461,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             placeholder="The name of your blog"
           />
           {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
-          <small className={styles.hint}>Shown in search & on your profile. Can be added later.</small>
+          <small className={styles.hint}>Shown in search & on your profile.</small>
         </div>
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Primary Topics / Niche
-            <span className={styles.optional}>(Optional)</span>
+            <span className={styles.optional}></span>
+            
           </label>
+          <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
           <div className={styles.checkboxGrid}>
             {MAIN_CATEGORIES.map(category => (
               <label key={category} className={styles.checkboxLabel}>
@@ -505,7 +507,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             </div>
           )}
           
-          <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
+          
         </div>
 
         <div className={styles.sectionTitle}>
