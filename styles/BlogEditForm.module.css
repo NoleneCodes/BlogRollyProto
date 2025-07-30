@@ -116,11 +116,21 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.editInput:focus, .editTextarea:focus {
+.editInput:focus {
   outline: none;
   border-color: #c42142;
   box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
-  transform: translateY(-1px);
+}
+
+.readOnlyInput {
+  background-color: #f9fafb !important;
+  color: #6b7280 !important;
+  cursor: not-allowed !important;
+}
+
+.readOnlyInput:focus {
+  border-color: #d1d5db !important;
+  box-shadow: none !important;
 }
 
 .editTextarea {

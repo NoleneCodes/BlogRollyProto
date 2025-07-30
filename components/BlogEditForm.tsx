@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 import styles from '../styles/BlogEditForm.module.css';
 
 interface BlogEditFormProps {
@@ -95,6 +96,8 @@ const TAGS = {
 };
 
 const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isVisible }) => {
+  const { user } = useSupabaseAuth();
+  const [isPremium, setIsPremium] = useState<boolean | null>(null);
   const [editForm, setEditForm] = useState<BlogData>({
     title: blog.title,
     description: blog.description || '',
@@ -110,6 +113,36 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Check premium status
+  useEffect(() => {
+    const checkPremiumStatus = async () => {
+      if (!user) {
+        setIsPremium(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/check-premium-status', {
+          headers: {
+            'Authorization': `Bearer ${user.access_token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setIsPremium(data.isPremium);
+        } else {
+          setIsPremium(false);
+        }
+      } catch (error) {
+        console.error('Error checking premium status:', error);
+        setIsPremium(false);
+      }
+    };
+
+    checkPremiumStatus();
+  }, [user]);
 
   // Handle clicking outside to close dropdown
   useEffect(() => {
@@ -261,14 +294,27 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           />
         </div>
         <div className={styles.editField}>
-          <label>URL</label>
+          <label>
+            URL
+            {!isPremium && <span style={{ color: '#c42142', fontSize: '0.875rem', marginLeft: '0.5rem' }}>🔒 Pro Feature</span>}
+          </label>
           <input
             type="url"
             value={editForm.url}
             onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
-            className={styles.editInput}
+            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''}`}
             placeholder="https://yourblog.com/post-url"
+            readOnly={!isPremium}
+            style={!isPremium ? { backgroundColor: '#f9fafb', color: '#6b7280', cursor: 'not-allowed' } : {}}
           />
+          {!isPremium && (
+            <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+              URL editing is only available to Pro subscribers. 
+              <a href="/profile/blogger#billing" style={{ color: '#c42142', textDecoration: 'underline' }}>
+                Upgrade to Pro
+              </a> to edit blog URLs.
+            </small>
+          )}
         </div>
         <div className={styles.editField}>
           <label>Category</label>
