@@ -902,10 +902,165 @@ const BloggerProfile: React.FC = () => {
                         className={styles.previewImage}
                       />
                     ) : (
-                      <div className={```text
-// The submission date, views, and clicks information are removed from the blog cards.
-<replit_final_file>
-import React, { useState, useEffect } from 'react';
+                      <div className={styles.previewPlaceholder}>
+                        {getInitials(userInfo.displayName || userInfo.name)}
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.pictureUpload}>
+                    <input
+                      type="file"
+                      id="profilePicture"
+                      accept=".jpg,.jpeg,.png,.webp"
+                      onChange={handleProfilePictureChange}
+                      className={styles.fileInput}
+                    />
+                    <label htmlFor="profilePicture" className={styles.uploadButton}>
+                      Choose New Picture
+                    </label>
+                    <small className={styles.uploadHint}>
+                      Max size: 2MB. Formats: JPG, PNG, WebP
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Username</label>
+                <input 
+                  type="text" 
+                  defaultValue={userInfo.username} 
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Email</label>
+                <input 
+                  type="email" 
+                  defaultValue={userInfo.email} 
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Blog Name</label>
+                <input 
+                  type="text" 
+                  defaultValue={userInfo.blogName} 
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Blog URL</label>
+                <div className={styles.blogUrlSection}>
+                  <input 
+                    type="url" 
+                    value={userInfo.blogUrl} 
+                    className={`${styles.input} ${styles.readOnlyInput}`}
+                    readOnly
+                  />
+                </div>
+                <small className={styles.urlChangeHint}>
+                  Blog URL cannot be changed after initial setup.
+                </small>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Bio</label>
+                <textarea 
+                  defaultValue={userInfo.bio} 
+                  className={styles.textarea}
+                  rows={3}
+                />
+              </div>
+              <button className={styles.saveButton} onClick={handleSaveSettings}>
+                Save Changes
+              </button>
+            </div>
+          </div>
+        );
+
+      case 'billing':
+        return (
+          <div className={styles.content}>
+            <h2>Billing & Subscription</h2>
+            <div className={styles.billingSection}>
+              <div className={styles.currentPlan}>
+                <h3>Current Plan: Free Tier</h3>
+                <p>You're currently on our free tier with basic analytics and up to 5 blog submissions per month.</p>
+                <div className={styles.planFeatures}>
+                  <ul>
+                    <li>List up to 3 blogs</li>
+                    <li>Basic analytics</li>
+                    <li>Community support</li>
+                  </ul>
+                </div>
+              </div>
+              <div className={styles.upgradeSection}>
+                <h3>Upgrade to Pro</h3>
+                <div className={styles.proFeatures}>
+                  <ul>
+                    <li>Unlimited blog listings</li>
+                    <li>Advanced analytics and insights</li>
+                    <li>Priority review for submissions</li>
+                    <li>Priority Support</li>
+                  </ul>
+                </div>
+                <button 
+                  className={styles.upgradeButton}
+                  onClick={() => setShowStripePricingModal(true)}
+                >
+                  Upgrade to Pro
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'help':
+        return (
+          <div className={styles.content}>
+            <h2>Help & Support</h2>
+            <div className={styles.helpSection}>
+              <div className={styles.helpItem}>
+                <h3>Report a Bug</h3>
+                <p>Help us improve BlogRolly by reporting any bugs or issues you encounter</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowBugReportPopup(true)}
+                >
+                  Report a Bug
+                </button>
+              </div>
+              <div className={styles.helpItem}>
+                <h3>Submission Guidelines</h3>
+                <p>Learn about our content guidelines and best practices for blog submissions</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowSubmissionGuidelinesPopup(true)}
+                >
+                  View Guidelines
+                </button>
+              </div>
+              <div className={styles.helpItem}>
+                <h3>How It Works</h3>
+                <p>Learn about our submission and review process for getting your blog featured</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowHowItWorksPopup(true)}
+                >
+                  Learn How It Works
+                </button>
+              </div>
+              <div className={styles.helpItem}>
+                <h3>Contact Support</h3>
+                <p>Get help from our support team</p>
+                <button 
+                  className={styles.helpButton}
+                  onClick={() => setShowContactSupportPopup(true)}
+                >
+                  Contact Us
+                </button>
+              </div>
+            </div>
+          </div></old_str>
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
