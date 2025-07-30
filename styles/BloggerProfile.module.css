@@ -1216,11 +1216,6 @@
   gap: 0.5rem;
 }
 
-.editField label::before {
-  content: '✏️';
-  font-size: 0.875rem;
-}
-
 .editInput, .editTextarea {
   width: 100%;
   padding: 1rem;
@@ -1275,10 +1270,7 @@
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
 }
 
-.editActions .saveButton::before {
-  content: '💾';
-  font-size: 0.875rem;
-}
+
 
 .editActions .cancelButton {
   background: transparent;
@@ -1301,10 +1293,7 @@
   transform: translateY(-1px);
 }
 
-.editActions .cancelButton::before {
-  content: '❌';
-  font-size: 0.875rem;
-}
+
 
 .editButton {
   background: #c42142;
