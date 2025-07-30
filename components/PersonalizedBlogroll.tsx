@@ -34,6 +34,7 @@ const mockBlogs: BlogPost[] = [
   {
     id: '1',
     image: "https://picsum.photos/300/200?random=1",
+    imageDescription: "A peaceful morning scene with a cup of coffee and journal on a wooden table near a window",
     title: "The Complete Guide to Building a Sustainable Morning Routine That Actually Works",
     author: "Sarah Johnson",
     authorProfile: "/blogger/sarah-johnson",
@@ -50,6 +51,7 @@ const mockBlogs: BlogPost[] = [
   {
     id: '2',
     image: "https://picsum.photos/300/200?random=2",
+    imageDescription: "A person working at a computer with stress-relief items like plants and calming lighting around their workspace",
     title: "Mental Health in Tech: Finding Balance",
     author: "Alexander Chen",
     authorProfile: "/blogger/blogger_2",
@@ -66,6 +68,7 @@ const mockBlogs: BlogPost[] = [
   {
     id: '3',
     image: "https://picsum.photos/300/200?random=3",
+    imageDescription: "A colorful plate of fresh, healthy meal ingredients arranged artistically on a kitchen counter",
     title: "15-Minute Healthy Meals for Busy Days",
     author: "Maria Garcia",
     authorProfile: "/blogger/blogger_3",
