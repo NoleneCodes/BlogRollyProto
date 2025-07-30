@@ -1,0 +1,63 @@
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+.upgradePrompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.promptContent {
+  text-align: center;
+  max-width: 400px;
+}
+
+.promptContent h3 {
+  margin: 0 0 1rem 0;
+  color: #374151;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.promptContent p {
+  margin: 0 0 1.5rem 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.upgradeButton {
+  background: linear-gradient(135deg, #c42142 0%, #a91d3a 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
+}
+
+.upgradeButton:hover {
+  background: linear-gradient(135deg, #a91d3a 0%, #8b1538 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(196, 33, 66, 0.3);
+}
+
+.upgradeButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(196, 33, 66, 0.2);
+}
