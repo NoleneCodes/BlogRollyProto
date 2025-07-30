@@ -40,6 +40,7 @@ interface BlogSubmission {
   ctr?: number;
   avgTimeOnPage?: number;
   bounceRate?: number;
+  tags?: string[];
 }
 
 interface BlogStats {
@@ -111,7 +112,8 @@ const BloggerProfilePremium: React.FC = () => {
             image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=200&fit=crop',
             ctr: 8.2,
             avgTimeOnPage: 4.5,
-            bounceRate: 24.8
+            bounceRate: 24.8,
+            tags: ['AI', 'Enterprise', 'Software Development', 'Future Tech']
           },
           {
             id: '2',
@@ -127,7 +129,8 @@ const BloggerProfilePremium: React.FC = () => {
             image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop',
             ctr: 8.0,
             avgTimeOnPage: 6.2,
-            bounceRate: 18.5
+            bounceRate: 18.5,
+            tags: ['SaaS', 'Architecture', 'Scalability']
           },
           {
             id: '3',
@@ -143,7 +146,8 @@ const BloggerProfilePremium: React.FC = () => {
             image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop',
             ctr: 7.5,
             avgTimeOnPage: 5.1,
-            bounceRate: 28.3
+            bounceRate: 28.3,
+            tags: ['Leadership', 'Remote Work', 'Team Management']
           },
           {
             id: '4',
@@ -584,16 +588,39 @@ const BloggerProfilePremium: React.FC = () => {
                               <p className={styles.submissionUrl}>{submission.url || 'Draft - No URL yet'}</p>
 
                               <div className={styles.submissionMeta}>
-                                <span className={styles.category}>{submission.category}</span>
-                                <span
-                                  className={styles.status}
-                                  style={{ backgroundColor: getStatusColor(submission.status) }}
-                                >
-                                  {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
-                                  {submission.status === 'approved' && submission.isActive && (
-                                    <span className={styles.activeIndicator}> • Live</span>
-                                  )}
-                                </span>
+                                <div className={styles.metaRow}>
+                                  <span className={styles.metaLabel}>Status:</span>
+                                  <span
+                                    className={styles.status}
+                                    style={{ backgroundColor: getStatusColor(submission.status) }}
+                                  >
+                                    {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                                    {submission.status === 'approved' && submission.isActive && (
+                                      <span className={styles.activeIndicator}> • Live</span>
+                                    )}
+                                  </span>
+                                </div>
+                                <div className={styles.metaRow}>
+                                  <span className={styles.metaLabel}>Category:</span>
+                                  <span className={styles.category}>{submission.category}</span>
+                                </div>
+                                {submission.tags && submission.tags.length > 0 && (
+                                  <div className={styles.metaRow}>
+                                    <span className={styles.metaLabel}>Tags:</span>
+                                    <div className={styles.tagsDisplay}>
+                                      {submission.tags.slice(0, 3).map(tag => (
+                                        <span key={tag} className={styles.tagChip}>
+                                          {tag}
+                                        </span>
+                                      ))}
+                                      {submission.tags.length > 3 && (
+                                        <span className={styles.tagChip}>
+                                          +{submission.tags.length - 3} more
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
 
                               {submission.status === 'approved' && submission.isActive && (
