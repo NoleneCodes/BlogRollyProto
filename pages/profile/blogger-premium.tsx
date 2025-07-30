@@ -48,7 +48,7 @@ export default function BloggerPremiumProfile() {
 
     setLoadingSubmissions(true);
     try {
-      const { data, error } = await supabaseDB.getUserBlogSubmissions(user.id);
+      const { data, error } = await supabaseDB.getUserSubmissions(user.id);
       if (error) {
         console.error('Error fetching submissions:', error);
       } else {
