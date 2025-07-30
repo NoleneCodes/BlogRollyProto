@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
+import BlogEditForm from '../../components/BlogEditForm';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
@@ -399,32 +400,23 @@ const BloggerProfile: React.FC = () => {
     }
   };
 
-  const saveEditedBlog = (blogId: string) => {
+  const saveEditedBlog = (blogId: string, updatedData: any) => {
     setBlogSubmissions(prev => prev.map(blog => {
       if (blog.id === blogId) {
         return {
           ...blog,
-          title: editForm.title,
-          description: editForm.description,
-          url: editForm.url,
-          category: editForm.category,
-          tags: editForm.tags,
-          image: editForm.image ? URL.createObjectURL(editForm.image) : editForm.imagePreview
+          title: updatedData.title,
+          description: updatedData.description,
+          url: updatedData.url,
+          category: updatedData.category,
+          tags: updatedData.tags,
+          image: updatedData.image ? URL.createObjectURL(updatedData.image) : updatedData.imagePreview
         };
       }
       return blog;
     }));
 
     setEditingBlog(null);
-    setEditForm({
-      title: '',
-      description: '',
-      url: '',
-      category: '',
-      tags: [],
-      image: null,
-      imagePreview: null
-    });
   };
 
   const handleEditField = (submissionId: string, field: string, value: string) => {
@@ -590,96 +582,12 @@ const BloggerProfile: React.FC = () => {
                   }).map(submission => (
                     <div key={submission.id} className={styles.submissionItem}>
                       {editingBlog === submission.id ? (
-                        <div className={styles.editBlogForm}>
-                          <div className={styles.editImageSection}>
-                            {editForm.imagePreview && (
-                              <div className={styles.editImagePreview}>
-                                <img src={editForm.imagePreview} alt="Blog preview" />
-                              </div>
-                            )}
-                            <div className={styles.editImageUpload}>
-                              <input
-                                type="file"
-                                id={`editImage-${submission.id}`}
-                                accept=".jpg,.jpeg,.png,.webp"
-                                onChange={handleEditImageChange}
-                                className={styles.fileInput}
-                              />
-                              <label htmlFor={`editImage-${submission.id}`} className={styles.uploadButton}>
-                                {editForm.imagePreview ? 'Change Image' : 'Add Image'}
-                              </label>
-                              <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>
-                                Max 2MB • JPG, PNG, WebP
-                              </small>
-                            </div>
-                          </div>
-                          <div className={styles.editFormFields}>
-                            <div className={styles.editField}>
-                              <label>Title</label>
-                              <input
-                                type="text"
-                                value={editForm.title}
-                                onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
-                                className={styles.editInput}
-                                placeholder="Enter your blog post title..."
-                              />
-                            </div>
-                            <div className={styles.editField}>
-                              <label>Description</label>
-                              <textarea
-                                value={editForm.description}
-                                onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                                className={styles.editTextarea}
-                                rows={4}
-                                placeholder="Write a compelling description of your blog post..."
-                              />
-                            </div>
-                            <div className={styles.editField}>
-                              <label>URL</label>
-                              <input
-                                type="url"
-                                value={editForm.url}
-                                onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
-                                className={styles.editInput}
-                                placeholder="https://yourblog.com/post-url"
-                              />
-                            </div>
-                            <div className={styles.editField}>
-                              <label>Category</label>
-                              <input
-                                type="text"
-                                value={editForm.category}
-                                onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))}
-                                className={styles.editInput}
-                                placeholder="Enter the category..."
-                              />
-                            </div>
-                             <div className={styles.editField}>
-                              <label>Tags</label>
-                              <input
-                                type="text"
-                                value={editForm.tags.join(', ')}
-                                onChange={(e) => setEditForm(prev => ({ ...prev, tags: e.target.value.split(',').map(tag => tag.trim()) }))}
-                                className={styles.editInput}
-                                placeholder="Enter tags separated by commas..."
-                              />
-                            </div>
-                          </div>
-                          <div className={styles.editActions}>
-                            <button 
-                              className={styles.saveButton}
-                              onClick={() => saveEditedBlog(submission.id)}
-                            >
-                              Save Changes
-                            </button>
-                            <button 
-                              className={styles.cancelButton}
-                              onClick={cancelEditingBlog}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
+                        <BlogEditForm
+                          blog={submission}
+                          onSave={saveEditedBlog}
+                          onCancel={cancelEditingBlog}
+                          isVisible={true}
+                        />
                       ) : (
 
 
