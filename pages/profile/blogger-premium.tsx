@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
+import HowItWorksPopup from '../../components/HowItWorksPopup';
+import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
+import ContactSupportPopup from '../../components/ContactSupportPopup';
+import BugReportModal from '../../components/BugReportModal';
+import PremiumBlogCard from '../../components/PremiumBlogCard';
 import styles from '../../styles/BloggerProfilePremium.module.css';
+import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
 import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
 interface UserInfo {
