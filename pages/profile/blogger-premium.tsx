@@ -7,7 +7,7 @@ import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopu
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
-import { MAIN_CATEGORIES } from '../../lib/categories-tags';
+import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
 import styles from '../../styles/BloggerProfilePremium.module.css';
 
 interface UserInfo {
@@ -76,6 +76,8 @@ const BloggerProfilePremium: React.FC = () => {
   const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
+  const [showTopicEditPopup, setShowTopicEditPopup] = useState(false);
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
 
@@ -383,6 +385,30 @@ const BloggerProfilePremium: React.FC = () => {
 
   const handleCancelBlogEdit = () => {
     setEditingBlog(null);
+  };
+
+  const handleEditTopics = () => {
+    setSelectedTopics([...userInfo!.topics]);
+    setShowTopicEditPopup(true);
+  };
+
+  const handleTopicToggle = (topic: string) => {
+    setSelectedTopics(prev => 
+      prev.includes(topic) 
+        ? prev.filter(t => t !== topic)
+        : [...prev, topic]
+    );
+  };
+
+  const handleSaveTopics = () => {
+    if (userInfo) {
+      setUserInfo(prev => prev ? { ...prev, topics: selectedTopics } : null);
+    }
+    setShowTopicEditPopup(false);
+  };
+
+  const handleCancelTopicEdit = () => {
+    setShowTopicEditPopup(false);
   };
 
   const handleTopicChange = (category: string, isChecked: boolean) => {
@@ -736,34 +762,26 @@ const BloggerProfilePremium: React.FC = () => {
 
               <div className={styles.formGroup}>
                 <label>Blog Topics / Niche</label>
-                <small className={styles.hint}>Select topics that best describe your blog content</small>
-                <div className={styles.topicsSection}>
-                  <div className={styles.checkboxGrid}>
-                    {MAIN_CATEGORIES.map(category => (
-                      <label key={category} className={styles.checkboxLabel}>
-                        <input
-                          type="checkbox"
-                          checked={userInfo.topics?.includes(category) || false}
-                          onChange={(e) => handleTopicChange(category, e.target.checked)}
-                          className={styles.checkbox}
-                        />
-                        <span className={styles.checkboxText}>{category}</span>
-                      </label>
-                    ))}
+                <small className={styles.hint}>Topics that describe your blog content</small>
+                <div className={styles.topicsDisplaySection}>
+                  <div className={styles.topicTags}>
+                    {userInfo.topics && userInfo.topics.length > 0 ? (
+                      userInfo.topics.map(topic => (
+                        <span key={topic} className={styles.topicTag}>
+                          {topic}
+                        </span>
+                      ))
+                    ) : (
+                      <span className={styles.noTopics}>No topics selected</span>
+                    )}
                   </div>
-
-                  {userInfo.topics && userInfo.topics.length > 0 && (
-                    <div className={styles.selectedTopics}>
-                      <h4>Selected Topics:</h4>
-                      <div className={styles.topicTags}>
-                        {userInfo.topics.map(topic => (
-                          <span key={topic} className={styles.topicTag}>
-                            {topic}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <button 
+                    type="button"
+                    className={styles.editTopicsButton} 
+                    onClick={handleEditTopics}
+                  >
+                    Edit Topics
+                  </button>
                 </div>
               </div>
 
@@ -983,6 +1001,83 @@ const BloggerProfilePremium: React.FC = () => {
         onClose={() => setShowBugReportPopup(false)}
       />
 
+      {/* Topic Edit Popup */}
+      {showTopicEditPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popupContent}>
+            <div className={styles.popupHeader}>
+              <h3>Edit Your Blog Topics</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={handleCancelTopicEdit}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.popupBody}>
+              <p className={styles.popupDescription}>
+                Select the topics that best describe your blog content. This helps readers discover your content.
+              </p>
+
+              <div className={styles.topicSection}>
+                <h4>Main Categories</h4>
+                <div className={styles.topicGrid}>
+                  {MAIN_CATEGORIES.map(category => (
+                    <label key={category} className={styles.topicLabel}>
+                      <input
+                        type="checkbox"
+                        checked={selectedTopics.includes(category)}
+                        onChange={() => handleTopicToggle(category)}
+                        className={styles.topicCheckbox}
+                      />
+                      <span className={styles.topicText}>{category}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.topicSection}>
+                <h4>Specific Topics & Tags</h4>
+                <div className={styles.tagCategories}>
+                  {Object.entries(TAGS).map(([categoryName, tags]) => (
+                    <details key={categoryName} className={styles.tagCategory}>
+                      <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
+                      <div className={styles.tagCategoryGrid}>
+                        {tags.filter(tag => tag !== 'Other').map(tag => (
+                          <label key={tag} className={styles.topicLabel}>
+                            <input
+                              type="checkbox"
+                              checked={selectedTopics.includes(tag)}
+                              onChange={() => handleTopicToggle(tag)}
+                              className={styles.topicCheckbox}
+                            />
+                            <span className={styles.topicText}>{tag}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.popupActions}>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={handleCancelTopicEdit}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className={styles.saveButton}
+                  onClick={handleSaveTopics}
+                >
+                  Save Topics ({selectedTopics.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </Layout>
   );
