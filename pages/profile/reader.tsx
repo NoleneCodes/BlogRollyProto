@@ -5,7 +5,7 @@ import BugReportPopup from '../../components/BugReportPopup';
 import FeedbackPopup from '../../components/FeedbackPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import styles from '../../styles/ReaderProfile.module.css';
-import { MAIN_CATEGORIES, TOPIC_TAGS } from '../../lib/categories-tags';
+import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
 
 interface UserInfo {
   id: string;
@@ -596,7 +596,7 @@ const ReaderProfile: React.FC = () => {
                 <div className={styles.topicSection}>
                   <h4>Specific Topics & Tags</h4>
                   <div className={styles.topicGrid}>
-                    {TOPIC_TAGS.map(tag => (
+                    {Object.values(TAGS).flat().filter(tag => tag !== 'Other').map(tag => (
                       <label key={tag} className={styles.topicLabel}>
                         <input
                           type="checkbox"

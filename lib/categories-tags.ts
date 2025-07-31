@@ -95,29 +95,4 @@ export const TAGS = {
   ]
 };
 
-// Reader topic options for AuthForm
-export const READER_TOPIC_OPTIONS = [
-  'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
-  'Homesteading', 'Books & Media', 'Money & Work', 'Spirituality', 
-  'Creativity', 'Relationships', 'Food', 'Learning', 'Society & Politics', 'Other'
-];
 
-// All topic tags for reader profile
-export const TOPIC_TAGS = [
-  'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
-  'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
-  'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
-  'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
-  'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
-  'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
-  'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
-  'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
-  'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
-  'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
-  'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
-  'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
-  'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
-  'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
-  'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
-  'Addiction & Recovery', 'Chronic Illness'
-];
