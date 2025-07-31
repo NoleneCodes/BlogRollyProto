@@ -264,7 +264,7 @@ const PublicBloggerProfile: React.FC = () => {
             
             <div className={styles.profileMeta}>
               <div className={styles.metaItem}>
-                <span className={styles.metaLabel}>Topics:</span>
+                <span className={styles.metaLabel}>Talks about:</span>
                 <div className={styles.topicTags}>
                   {blogger.topics.map((topic, index) => (
                     <a 
