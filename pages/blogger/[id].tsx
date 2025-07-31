@@ -58,9 +58,14 @@ const PublicBloggerProfile: React.FC = () => {
     if (id) {
       loadBloggerProfile(id as string);
       checkAuthStatus();
-      checkFollowStatus(id as string);
     }
   }, [id]);
+
+  useEffect(() => {
+    if (id && isAuthenticated) {
+      checkFollowStatus(id as string);
+    }
+  }, [id, isAuthenticated]);
 
   const checkAuthStatus = async () => {
     try {
@@ -69,12 +74,11 @@ const PublicBloggerProfile: React.FC = () => {
       setIsAuthenticated(data.isAuthenticated);
     } catch (error) {
       console.error('Error checking auth status:', error);
+      setIsAuthenticated(false);
     }
   };
 
   const checkFollowStatus = async (bloggerId: string) => {
-    if (!isAuthenticated) return;
-    
     try {
       // In production, this would check if current user follows this blogger
       // For now, simulate with localStorage
