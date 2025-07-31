@@ -1032,7 +1032,7 @@ const BloggerProfilePremium: React.FC = () => {
             </div>
             <div className={styles.popupBody}>
               <p className={styles.popupDescription}>
-                  Select up to 5 topics that best describe your blog content. This helps readers discover your content.
+                  Select up to 7 topics that best describe your blog content. This helps readers discover your content.
                 </p>
 
               <div className={styles.topicSection}>
@@ -1040,7 +1040,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <div className={styles.topicGrid}>
                   {MAIN_CATEGORIES.map(category => {
                           const isSelected = selectedTopics.includes(category);
-                          const isDisabled = !isSelected && selectedTopics.length >= 5;
+                          const isDisabled = !isSelected && selectedTopics.length >= 7;
                           return (
                             <label 
                               key={category} 
