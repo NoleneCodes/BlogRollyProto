@@ -154,6 +154,7 @@
 .profileActions {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .visitBlogButton {
@@ -172,6 +173,63 @@
 .visitBlogButton:hover {
   background: #a01d37;
   transform: translateY(-1px);
+}
+
+.followButton {
+  background: transparent;
+  color: #c42142;
+  border: 2px solid #c42142;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.followButton:hover {
+  background: #c42142;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.followButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.followButton.following {
+  background: #c42142;
+  color: white;
+}
+
+.followButton.following:hover {
+  background: #a01d37;
+}
+
+.followButtonContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.followSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .blogPostsSection {
@@ -330,5 +388,14 @@
 
   .blogGrid {
     grid-template-columns: 1fr;
+  }
+
+  .profileActions {
+    justify-content: center;
+  }
+
+  .followButton {
+    min-width: 100px;
+    padding: 0.625rem 1.25rem;
   }
 }

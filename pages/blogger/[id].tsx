@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import BlogCard from '../../components/BlogCard';
 import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 import styles from '../../styles/PublicBloggerProfile.module.css';
-import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
+import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub, FaHeart, FaRegHeart } from 'react-icons/fa';
 
 interface BloggerProfile {
   id: string;
@@ -50,12 +50,71 @@ const PublicBloggerProfile: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
       loadBloggerProfile(id as string);
+      checkAuthStatus();
+      checkFollowStatus(id as string);
     }
   }, [id]);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      setIsAuthenticated(data.isAuthenticated);
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+    }
+  };
+
+  const checkFollowStatus = async (bloggerId: string) => {
+    if (!isAuthenticated) return;
+    
+    try {
+      // In production, this would check if current user follows this blogger
+      // For now, simulate with localStorage
+      const followedBloggers = JSON.parse(localStorage.getItem('followedBloggers') || '[]');
+      setIsFollowing(followedBloggers.includes(bloggerId));
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+    }
+  };
+
+  const handleFollowToggle = async () => {
+    if (!isAuthenticated) {
+      router.push('/auth');
+      return;
+    }
+
+    setFollowLoading(true);
+    
+    try {
+      // In production, this would make an API call to follow/unfollow
+      // For now, simulate with localStorage
+      const followedBloggers = JSON.parse(localStorage.getItem('followedBloggers') || '[]');
+      
+      if (isFollowing) {
+        // Unfollow
+        const updatedFollowed = followedBloggers.filter((bloggerId: string) => bloggerId !== id);
+        localStorage.setItem('followedBloggers', JSON.stringify(updatedFollowed));
+        setIsFollowing(false);
+      } else {
+        // Follow
+        const updatedFollowed = [...followedBloggers, id];
+        localStorage.setItem('followedBloggers', JSON.stringify(updatedFollowed));
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   const loadBloggerProfile = async (bloggerId: string) => {
     try {
@@ -389,6 +448,26 @@ const PublicBloggerProfile: React.FC = () => {
               >
                 Visit {blogger.blogName} →
               </a>
+              {blogger.isPro && (
+                <button
+                  onClick={handleFollowToggle}
+                  disabled={followLoading}
+                  className={`${styles.followButton} ${isFollowing ? styles.following : ''}`}
+                  title={isFollowing ? 'Unfollow this blogger' : 'Follow this blogger'}
+                >
+                  {followLoading ? (
+                    <span className={styles.followButtonContent}>
+                      <span className={styles.followSpinner}></span>
+                      {isFollowing ? 'Unfollowing...' : 'Following...'}
+                    </span>
+                  ) : (
+                    <span className={styles.followButtonContent}>
+                      {isFollowing ? <FaHeart /> : <FaRegHeart />}
+                      {isFollowing ? 'Following' : 'Follow'}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
