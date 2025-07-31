@@ -1530,11 +1530,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
   background: white;
+  position: relative;
 }
 
 .topicLabel:hover {
   background: #f8fafc;
   border-color: #c42142;
+}
+
+.topicLabel.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f9fafb;
+}
+
+.topicLabel.disabled:hover {
+  background: #f9fafb;
+  border-color: #e2e8f0;
 }
 
 .topicCheckbox {

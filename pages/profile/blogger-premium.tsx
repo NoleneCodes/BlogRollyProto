@@ -908,6 +908,8 @@ const BloggerProfilePremium: React.FC = () => {
             >
               Advanced Analytics
             </button>
+            The code has been modified to limit the topic selection to 5 in the pro blogger profile's topic edit popup.```text
+
             <button 
               className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
               onClick={() => setShowBlogSubmissionForm(true)}
@@ -1016,8 +1018,8 @@ const BloggerProfilePremium: React.FC = () => {
             </div>
             <div className={styles.popupBody}>
               <p className={styles.popupDescription}>
-                Select the topics that best describe your blog content. This helps readers discover your content.
-              </p>
+                  Select up to 5 topics that best describe your blog content. This helps readers discover your content.
+                </p>
 
               <div className={styles.topicSection}>
                 <h4>Main Categories</h4>
