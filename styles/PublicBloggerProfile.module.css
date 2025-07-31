@@ -117,7 +117,8 @@
 }
 
 .topicTag:hover {
-  background: #2563eb;
+  background: #c42142;
+  color: white;
   transform: translateY(-1px);
 }
 
