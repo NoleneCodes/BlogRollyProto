@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogCard from '../../components/BlogCard';
+import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 import styles from '../../styles/PublicBloggerProfile.module.css';
 
 interface BloggerProfile {
@@ -267,7 +268,7 @@ const PublicBloggerProfile: React.FC = () => {
               <p className={styles.bio}>{blogger.bio}</p>
             )}
             
-            {blogger.isPro && (
+            <PremiumFeatureGuard showUpgradePrompt={false}>
               <div className={styles.profileMeta}>
                 <div className={styles.metaItem}>
                   <span className={styles.metaLabel}>Talks about:</span>
@@ -284,7 +285,7 @@ const PublicBloggerProfile: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )}
+            </PremiumFeatureGuard>
             
             <div className={styles.profileActions}>
               <a 
