@@ -1,8 +1,8 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
-import styles from '../styles/BlogEditForm.module.css';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
+import { CustomCategoryInput } from './CustomCategoryInput';
+import styles from '../styles/BlogEditForm.module.css';
 
 interface BlogEditFormProps {
   blog: {
@@ -205,7 +205,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             Max 2MB • JPG, PNG, WebP
           </small>
         </div>
-        
+
         {editForm.imagePreview && (
           <div className={styles.editField} style={{ marginTop: '1rem' }}>
             <label>
@@ -285,6 +285,20 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
               <option key={category} value={category}>{category}</option>
             ))}
           </select>
+        {editForm.category === 'Other' && (
+            <CustomCategoryInput
+              selectedCategories={editForm.category === 'Other' ? [editForm.category] : []}
+              onCategoryChange={(categories) => {
+                const customCategories = categories.filter(cat => cat.startsWith('custom:'));
+                if (customCategories.length > 0) {
+                  const customCategoryName = customCategories[customCategories.length - 1].replace('custom:', '');
+                  setEditForm(prev => ({ ...prev, category: customCategoryName }));
+                }
+              }}
+              maxWords={3}
+              label="Enter your custom category (one word at a time, max 3 words)"
+            />
+          )}
         </div>
         <div className={styles.editField}>
           <label>

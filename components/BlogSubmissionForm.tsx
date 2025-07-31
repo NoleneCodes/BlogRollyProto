@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
+import { CustomCategoryInput } from './CustomCategoryInput';
 import styles from '../styles/BlogSubmissionForm.module.css';
 import SubmissionGuidelinesPopup from './SubmissionGuidelinesPopup';
-import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
@@ -95,6 +96,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   // Calculate progress based on filled fields
   useEffect(() => {
@@ -125,14 +127,14 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       hasAdultContent: formData.hasAdultContent,
       savedAt: new Date().toISOString()
     };
-    
+
     localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
     setDraftSaved(true);
     setLastSavedAt(new Date().toLocaleTimeString());
-    
+
     // Notify parent component that draft was saved
     onDraftSaved?.();
-    
+
     // Clear the "saved" indicator after 3 seconds
     setTimeout(() => {
       setDraftSaved(false);
@@ -208,6 +210,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       ...prev, 
       category
     }));
+
+    setShowCustomCategory(category === 'Other');
   };
 
   const handleTagAdd = (tag: string) => {
@@ -328,7 +332,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         >
           {draftSaved ? '✓ Draft Saved' : 'Save Draft'}
         </button>
-        
+
         {(formData.title || formData.description || formData.postUrl || lastSavedAt) && (
           <button 
             type="button"
@@ -359,7 +363,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             </div>
           )}
           <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP</small>
-          
+
           {formData.image && (
             <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
               <label className={styles.label}>
@@ -428,9 +432,22 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             {MAIN_CATEGORIES.map(category => (
               <option key={category} value={category}>{category}</option>
             ))}
+             <option value="Other">Other</option>
           </select>
           {errors.category && <span className={styles.error}>{errors.category}</span>}
         </div>
+
+         {/* Custom Category Input */}
+         {showCustomCategory && (
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Custom Category *
+            </label>
+            <CustomCategoryInput
+              onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+            />
+          </div>
+        )}
 
         {/* Step 5: Tags */}
         <div className={styles.formGroup}>
