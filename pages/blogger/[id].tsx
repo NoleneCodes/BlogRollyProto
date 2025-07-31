@@ -14,6 +14,7 @@ interface BloggerProfile {
   blogUrl: string;
   joinedDate: string;
   topics: string[];
+  isPro?: boolean;
 }
 
 interface BlogPost {
@@ -62,7 +63,8 @@ const PublicBloggerProfile: React.FC = () => {
           blogName: 'Mindful Productivity',
           blogUrl: 'https://mindfulproductivity.com',
           joinedDate: '2024-01-15',
-          topics: ['Productivity', 'Wellness', 'Personal Growth']
+          topics: ['Productivity', 'Wellness', 'Personal Growth'],
+          isPro: true
         },
         'blogger_2': {
           id: bloggerId,
@@ -72,7 +74,8 @@ const PublicBloggerProfile: React.FC = () => {
           blogName: 'Tech & Balance',
           blogUrl: 'https://techandbalance.com',
           joinedDate: '2024-02-10',
-          topics: ['Tech', 'Mental Health', 'Career']
+          topics: ['Tech', 'Mental Health', 'Career'],
+          isPro: false
         },
         'blogger_3': {
           id: bloggerId,
@@ -82,20 +85,22 @@ const PublicBloggerProfile: React.FC = () => {
           blogName: 'Nourish Daily',
           blogUrl: 'https://nourishdaily.com',
           joinedDate: '2024-01-28',
-          topics: ['Food', 'Health', 'Nutrition']
+          topics: ['Food', 'Health', 'Nutrition'],
+          isPro: true
         }
       };
 
       // Get the profile or use a default one
       const mockBlogger = mockProfiles[bloggerId] || {
         id: bloggerId,
-        username: 'Blogger User',
+        displayName: 'Blogger User',
         bio: 'Welcome to my blog! I share insights and stories about my passions.',
         avatar: `https://picsum.photos/150/150?random=${Math.floor(Math.random() * 10)}`,
         blogName: 'My Blog',
         blogUrl: 'https://example.com',
         joinedDate: '2024-01-01',
-        topics: ['General', 'Writing']
+        topics: ['General', 'Writing'],
+        isPro: false
       };
 
       // Create different mock blog posts based on blogger ID
@@ -262,22 +267,24 @@ const PublicBloggerProfile: React.FC = () => {
               <p className={styles.bio}>{blogger.bio}</p>
             )}
             
-            <div className={styles.profileMeta}>
-              <div className={styles.metaItem}>
-                <span className={styles.metaLabel}>Talks about:</span>
-                <div className={styles.topicTags}>
-                  {blogger.topics.map((topic, index) => (
-                    <a 
-                      key={index} 
-                      href={`/blogroll?tag=${encodeURIComponent(topic)}`}
-                      className={styles.topicTag}
-                    >
-                      {topic}
-                    </a>
-                  ))}
+            {blogger.isPro && (
+              <div className={styles.profileMeta}>
+                <div className={styles.metaItem}>
+                  <span className={styles.metaLabel}>Talks about:</span>
+                  <div className={styles.topicTags}>
+                    {blogger.topics.map((topic, index) => (
+                      <a 
+                        key={index} 
+                        href={`/blogroll?tag=${encodeURIComponent(topic)}`}
+                        className={styles.topicTag}
+                      >
+                        {topic}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             
             <div className={styles.profileActions}>
               <a 
