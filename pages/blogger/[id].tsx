@@ -268,7 +268,7 @@ const PublicBloggerProfile: React.FC = () => {
               <p className={styles.bio}>{blogger.bio}</p>
             )}
             
-            <PremiumFeatureGuard showUpgradePrompt={false}>
+            {blogger.isPro && (
               <div className={styles.profileMeta}>
                 <div className={styles.metaItem}>
                   <span className={styles.metaLabel}>Talks about:</span>
@@ -285,7 +285,7 @@ const PublicBloggerProfile: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </PremiumFeatureGuard>
+            )}
             
             <div className={styles.profileActions}>
               <a 
