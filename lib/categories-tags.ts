@@ -44,16 +44,6 @@ export const formatCustomInput = (input: string): string => {
     .join(' ');
 };
 
-// Helper function to extract custom categories from a list
-export const getCustomCategories = (categories: string[]): string[] => {
-  return categories.filter(cat => cat.startsWith('custom:'));
-};
-
-// Helper function to get display text for custom categories
-export const getCustomCategoryDisplay = (customCategory: string): string => {
-  return customCategory.replace('custom:', '');
-};
-
 // Helper function to create custom category string
 export const createCustomCategory = (input: string): string => {
   return `custom:${formatCustomInput(input)}`;
