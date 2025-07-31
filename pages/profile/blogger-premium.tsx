@@ -908,10 +908,7 @@ const BloggerProfilePremium: React.FC = () => {
             >
               Advanced Analytics
             </button>
-            The code has been modified to limit the topic selection to 5 in the pro blogger profile's topic edit popup.```text
-
-            <button 
-              className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
+            <button className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
               onClick={() => setShowBlogSubmissionForm(true)}
             >
               Submit a Blog
@@ -1024,17 +1021,25 @@ const BloggerProfilePremium: React.FC = () => {
               <div className={styles.topicSection}>
                 <h4>Main Categories</h4>
                 <div className={styles.topicGrid}>
-                  {MAIN_CATEGORIES.map(category => (
-                    <label key={category} className={styles.topicLabel}>
-                      <input
-                        type="checkbox"
-                        checked={selectedTopics.includes(category)}
-                        onChange={() => handleTopicToggle(category)}
-                        className={styles.topicCheckbox}
-                      />
-                      <span className={styles.topicText}>{category}</span>
-                    </label>
-                  ))}
+                  {MAIN_CATEGORIES.map(category => {
+                          const isSelected = selectedTopics.includes(category);
+                          const isDisabled = !isSelected && selectedTopics.length >= 5;
+                          return (
+                            <label 
+                              key={category} 
+                              className={`${styles.topicLabel} ${isDisabled ? styles.disabled : ''}`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => handleTopicToggle(category)}
+                                className={styles.topicCheckbox}
+                                disabled={isDisabled}
+                              />
+                              <span className={styles.topicText}>{category}</span>
+                            </label>
+                          );
+                        })}
                 </div>
               </div>
 
@@ -1045,17 +1050,25 @@ const BloggerProfilePremium: React.FC = () => {
                     <details key={categoryName} className={styles.tagCategory}>
                       <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
                       <div className={styles.tagCategoryGrid}>
-                        {tags.filter(tag => tag !== 'Other').map(tag => (
-                          <label key={tag} className={styles.topicLabel}>
-                            <input
-                              type="checkbox"
-                              checked={selectedTopics.includes(tag)}
-                              onChange={() => handleTopicToggle(tag)}
-                              className={styles.topicCheckbox}
-                            />
-                            <span className={styles.topicText}>{tag}</span>
-                          </label>
-                        ))}
+                        {tags.filter(tag => tag !== 'Other').map(tag => {
+                            const isSelected = selectedTopics.includes(tag);
+                            const isDisabled = !isSelected && selectedTopics.length >= 5;
+                            return (
+                              <label 
+                                key={tag} 
+                                className={`${styles.topicLabel} ${isDisabled ? styles.disabled : ''}`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => handleTopicToggle(tag)}
+                                  className={styles.topicCheckbox}
+                                  disabled={isDisabled}
+                                />
+                                <span className={styles.topicText}>{tag}</span>
+                              </label>
+                            );
+                          })}
                       </div>
                     </details>
                   ))}
