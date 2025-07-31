@@ -595,17 +595,24 @@ const ReaderProfile: React.FC = () => {
 
                 <div className={styles.topicSection}>
                   <h4>Specific Topics & Tags</h4>
-                  <div className={styles.topicGrid}>
-                    {Object.values(TAGS).flat().filter(tag => tag !== 'Other').map(tag => (
-                      <label key={tag} className={styles.topicLabel}>
-                        <input
-                          type="checkbox"
-                          checked={selectedTopics.includes(tag)}
-                          onChange={() => handleTopicToggle(tag)}
-                          className={styles.topicCheckbox}
-                        />
-                        <span className={styles.topicText}>{tag}</span>
-                      </label>
+                  <div className={styles.tagCategories}>
+                    {Object.entries(TAGS).map(([categoryName, tags]) => (
+                      <details key={categoryName} className={styles.tagCategory}>
+                        <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
+                        <div className={styles.tagCategoryGrid}>
+                          {tags.filter(tag => tag !== 'Other').map(tag => (
+                            <label key={tag} className={styles.topicLabel}>
+                              <input
+                                type="checkbox"
+                                checked={selectedTopics.includes(tag)}
+                                onChange={() => handleTopicToggle(tag)}
+                                className={styles.topicCheckbox}
+                              />
+                              <span className={styles.topicText}>{tag}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </details>
                     ))}
                   </div>
                 </div>
