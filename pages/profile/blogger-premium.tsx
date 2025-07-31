@@ -7,6 +7,7 @@ import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopu
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
+import { MAIN_CATEGORIES } from '../../lib/categories-tags';
 import styles from '../../styles/BloggerProfilePremium.module.css';
 
 interface UserInfo {
@@ -75,7 +76,7 @@ const BloggerProfilePremium: React.FC = () => {
   const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
-  
+
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
 
   useEffect(() => {
@@ -231,7 +232,7 @@ const BloggerProfilePremium: React.FC = () => {
       try {
         const draft = JSON.parse(savedDraft);
         const { savedAt, ...draftFormData } = draft;
-        
+
         // Only add draft if it has meaningful content
         if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
           const draftSubmission: BlogSubmission = {
@@ -384,7 +385,21 @@ const BloggerProfilePremium: React.FC = () => {
     setEditingBlog(null);
   };
 
-  
+  const handleTopicChange = (category: string, isChecked: boolean) => {
+    setUserInfo(prev => {
+      if (!prev) return prev;
+
+      let updatedTopics = [...prev.topics];
+      if (isChecked) {
+        updatedTopics = [...updatedTopics, category];
+      } else {
+        updatedTopics = updatedTopics.filter(topic => topic !== category);
+      }
+
+      return { ...prev, topics: updatedTopics };
+    });
+  };
+
 
   if (isLoading) {
     return (
@@ -718,6 +733,40 @@ const BloggerProfilePremium: React.FC = () => {
                 />
                 <small className={styles.hint}>Pro accounts get extended bio length (500 characters)</small>
               </div>
+
+              <div className={styles.formGroup}>
+                <label>Blog Topics / Niche</label>
+                <small className={styles.hint}>Select topics that best describe your blog content</small>
+                <div className={styles.topicsSection}>
+                  <div className={styles.checkboxGrid}>
+                    {MAIN_CATEGORIES.map(category => (
+                      <label key={category} className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          checked={userInfo.topics?.includes(category) || false}
+                          onChange={(e) => handleTopicChange(category, e.target.checked)}
+                          className={styles.checkbox}
+                        />
+                        <span className={styles.checkboxText}>{category}</span>
+                      </label>
+                    ))}
+                  </div>
+
+                  {userInfo.topics && userInfo.topics.length > 0 && (
+                    <div className={styles.selectedTopics}>
+                      <h4>Selected Topics:</h4>
+                      <div className={styles.topicTags}>
+                        {userInfo.topics.map(topic => (
+                          <span key={topic} className={styles.topicTag}>
+                            {topic}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <button className={styles.saveButton} onClick={handleSaveSettings}>
                 Save Changes
               </button>
@@ -745,7 +794,7 @@ const BloggerProfilePremium: React.FC = () => {
                     <li>✅ Custom profile themes (coming soon)</li>
                   </ul>
                   <p>More Pro features coming soon... Feel free to make suggestions</p>
-                  
+
                 </div>
                 <div className={styles.billingInfo}>
                   <p><strong>Next billing date:</strong> February 15, 2024</p>
@@ -934,7 +983,7 @@ const BloggerProfilePremium: React.FC = () => {
         onClose={() => setShowBugReportPopup(false)}
       />
 
-      
+
     </Layout>
   );
 };
