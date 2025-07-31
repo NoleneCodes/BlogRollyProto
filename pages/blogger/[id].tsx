@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -16,6 +15,15 @@ interface BloggerProfile {
   joinedDate: string;
   topics: string[];
   isPro?: boolean;
+  socialLinks?: {
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+    youtube?: string;
+    tiktok?: string;
+    github?: string;
+    website?: string;
+  };
 }
 
 interface BlogPost {
@@ -53,7 +61,7 @@ const PublicBloggerProfile: React.FC = () => {
     try {
       // Mock data - in production this would fetch from your API/Supabase
       // This would query your database for the blogger and their approved, active posts
-      
+
       // Create different mock profiles based on blogger ID
       const mockProfiles: { [key: string]: BloggerProfile } = {
         'blogger_1': {
@@ -65,7 +73,16 @@ const PublicBloggerProfile: React.FC = () => {
           blogUrl: 'https://mindfulproductivity.com',
           joinedDate: '2024-01-15',
           topics: ['Productivity', 'Wellness', 'Personal Growth'],
-          isPro: true
+          isPro: true,
+          socialLinks: {
+            twitter: 'https://twitter.com/sarahjohnson',
+            linkedin: 'https://linkedin.com/in/sarah-johnson-productivity',
+            instagram: 'https://instagram.com/mindfulproductivity',
+            youtube: '',
+            tiktok: '',
+            github: '',
+            website: 'https://sarahjohnson.me'
+          }
         },
         'blogger_2': {
           id: bloggerId,
@@ -243,6 +260,10 @@ const PublicBloggerProfile: React.FC = () => {
     );
   }
 
+  const handleTopicFilter = (topic: string) => {
+    router.push(`/blogroll?tag=${encodeURIComponent(topic)}`);
+  };
+
   return (
     <Layout title={`${blogger.displayName} - Blogrolly`}>
       <div className={styles.profileContainer}>
@@ -256,18 +277,18 @@ const PublicBloggerProfile: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           <div className={styles.profileInfo}>
             <h1 className={styles.displayName}>{blogger.displayName}</h1>
             <div className={styles.blogInfo}>
               <span className={styles.blogLabel}>Blog:</span>
               <h2 className={styles.blogName}>{blogger.blogName}</h2>
             </div>
-            
+
             {blogger.bio && (
               <p className={styles.bio}>{blogger.bio}</p>
             )}
-            
+
             {blogger.isPro && (
               <div className={styles.profileMeta}>
                 <div className={styles.metaItem}>
@@ -284,9 +305,93 @@ const PublicBloggerProfile: React.FC = () => {
                     ))}
                   </div>
                 </div>
+                {blogger.socialLinks && Object.entries(blogger.socialLinks).some(([_, url]) => url) && (
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Connect:</span>
+                    <div className={styles.socialLinks}>
+                      {blogger.socialLinks.twitter && (
+                        <a 
+                          href={blogger.socialLinks.twitter} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="Twitter"
+                        >
+                          🐦
+                        </a>
+                      )}
+                      {blogger.socialLinks.linkedin && (
+                        <a 
+                          href={blogger.socialLinks.linkedin} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="LinkedIn"
+                        >
+                          💼
+                        </a>
+                      )}
+                      {blogger.socialLinks.instagram && (
+                        <a 
+                          href={blogger.socialLinks.instagram} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="Instagram"
+                        >
+                          📷
+                        </a>
+                      )}
+                      {blogger.socialLinks.youtube && (
+                        <a 
+                          href={blogger.socialLinks.youtube} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="YouTube"
+                        >
+                          🎥
+                        </a>
+                      )}
+                      {blogger.socialLinks.tiktok && (
+                        <a 
+                          href={blogger.socialLinks.tiktok} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="TikTok"
+                        >
+                          🎵
+                        </a>
+                      )}
+                      {blogger.socialLinks.github && (
+                        <a 
+                          href={blogger.socialLinks.github} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="GitHub"
+                        >
+                          💻
+                        </a>
+                      )}
+                      {blogger.socialLinks.website && (
+                        <a 
+                          href={blogger.socialLinks.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="Personal Website"
+                        >
+                          🌐
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
-            
+
             <div className={styles.profileActions}>
               <a 
                 href={blogger.blogUrl} 
@@ -305,7 +410,7 @@ const PublicBloggerProfile: React.FC = () => {
             <h3>Published on Blogrolly ({blogPosts.length})</h3>
             <p>These are {blogger.displayName.split(' ')[0]}'s featured blog posts on Blogrolly</p>
           </div>
-          
+
           {blogPosts.length > 0 ? (
             <div className={styles.blogrollGrid}>
               {blogPosts.map((post) => (

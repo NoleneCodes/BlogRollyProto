@@ -116,6 +116,40 @@
   font-weight: 500;
 }
 
+.topicTag:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.socialLinks {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #374151;
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.socialLink:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
 .profileActions {
   display: flex;
   gap: 1rem;

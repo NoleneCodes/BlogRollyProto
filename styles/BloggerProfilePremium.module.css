@@ -985,22 +985,68 @@
 }
 
 .editTopicsButton {
-  background: transparent;
-  color: #c42142;
-  border: 2px solid #c42142;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 8px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  align-self: flex-start;
-  font-size: 0.9rem;
+  font-size: 14px;
+  transition: background-color 0.2s;
 }
 
 .editTopicsButton:hover {
-  background: #c42142;
-  color: white;
-  transform: translateY(-1px);
+  background: #2563eb;
+}
+
+.socialLinksGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.socialLinkItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.socialLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.socialIcon {
+  font-size: 16px;
+}
+
+.socialInput {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.socialInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.socialInput::placeholder {
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .socialLinksGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .hint {
