@@ -134,20 +134,20 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: #f3f4f6;
-  color: #374151;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 1.2rem;
+  color: #6b7280;
   transition: all 0.2s ease;
-  border: 2px solid transparent;
 }
 
 .socialLink:hover {
-  background: #3b82f6;
+  background: #c42142;
   color: white;
+  border-color: #c42142;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .profileActions {

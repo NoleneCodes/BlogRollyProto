@@ -4,6 +4,7 @@ import Layout from '../../components/Layout';
 import BlogCard from '../../components/BlogCard';
 import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 import styles from '../../styles/PublicBloggerProfile.module.css';
+import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
 interface BloggerProfile {
   id: string;
@@ -315,7 +316,7 @@ const PublicBloggerProfile: React.FC = () => {
                           className={styles.socialLink}
                           title="Twitter"
                         >
-                          🐦
+                          <FaTwitter />
                         </a>
                       )}
                       {blogger.socialLinks.linkedin && (
@@ -326,7 +327,7 @@ const PublicBloggerProfile: React.FC = () => {
                           className={styles.socialLink}
                           title="LinkedIn"
                         >
-                          💼
+                          <FaLinkedin />
                         </a>
                       )}
                       {blogger.socialLinks.instagram && (
@@ -337,7 +338,7 @@ const PublicBloggerProfile: React.FC = () => {
                           className={styles.socialLink}
                           title="Instagram"
                         >
-                          📷
+                          <FaInstagram />
                         </a>
                       )}
                       {blogger.socialLinks.youtube && (
@@ -348,7 +349,7 @@ const PublicBloggerProfile: React.FC = () => {
                           className={styles.socialLink}
                           title="YouTube"
                         >
-                          🎥
+                          <FaYoutube />
                         </a>
                       )}
                       {blogger.socialLinks.tiktok && (
@@ -359,7 +360,7 @@ const PublicBloggerProfile: React.FC = () => {
                           className={styles.socialLink}
                           title="TikTok"
                         >
-                          🎵
+                          <FaTiktok />
                         </a>
                       )}
                       {blogger.socialLinks.github && (
@@ -370,7 +371,7 @@ const PublicBloggerProfile: React.FC = () => {
                           className={styles.socialLink}
                           title="GitHub"
                         >
-                          💻
+                          <FaGithub />
                         </a>
                       )}
                     </div>

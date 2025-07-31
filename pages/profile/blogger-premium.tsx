@@ -2,13 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
-import PremiumBlogCard from '../../components/PremiumBlogCard';
-import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
-import ContactSupportPopup from '../../components/ContactSupportPopup';
-import BugReportModal from '../../components/BugReportModal';
-import HowItWorksPopup from '../../components/HowItWorksPopup';
-import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
 import styles from '../../styles/BloggerProfilePremium.module.css';
+import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
 interface UserInfo {
   id: string;
@@ -833,7 +828,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <div className={styles.socialLinksGrid}>
                   <div className={styles.socialLinkItem}>
                     <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>🐦</span>
+                      <span className={styles.socialIcon}><FaTwitter /></span>
                       Twitter/X
                     </label>
                     <input
@@ -846,7 +841,7 @@ const BloggerProfilePremium: React.FC = () => {
                   </div>
                   <div className={styles.socialLinkItem}>
                     <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>💼</span>
+                      <span className={styles.socialIcon}><FaLinkedin /></span>
                       LinkedIn
                     </label>
                     <input
@@ -859,7 +854,7 @@ const BloggerProfilePremium: React.FC = () => {
                   </div>
                   <div className={styles.socialLinkItem}>
                     <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>📷</span>
+                      <span className={styles.socialIcon}><FaInstagram /></span>
                       Instagram
                     </label>
                     <input
@@ -872,7 +867,7 @@ const BloggerProfilePremium: React.FC = () => {
                   </div>
                   <div className={styles.socialLinkItem}>
                     <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>🎥</span>
+                      <span className={styles.socialIcon}><FaYoutube /></span>
                       YouTube
                     </label>
                     <input
@@ -885,7 +880,7 @@ const BloggerProfilePremium: React.FC = () => {
                   </div>
                   <div className={styles.socialLinkItem}>
                     <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>🎵</span>
+                      <span className={styles.socialIcon}><FaTiktok /></span>
                       TikTok
                     </label>
                     <input
@@ -898,7 +893,7 @@ const BloggerProfilePremium: React.FC = () => {
                   </div>
                   <div className={styles.socialLinkItem}>
                     <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>💻</span>
+                      <span className={styles.socialIcon}><FaGithub /></span>
                       GitHub
                     </label>
                     <input
