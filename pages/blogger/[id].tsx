@@ -22,7 +22,6 @@ interface BloggerProfile {
     youtube?: string;
     tiktok?: string;
     github?: string;
-    website?: string;
   };
 }
 
@@ -80,8 +79,7 @@ const PublicBloggerProfile: React.FC = () => {
             instagram: 'https://instagram.com/mindfulproductivity',
             youtube: '',
             tiktok: '',
-            github: '',
-            website: 'https://sarahjohnson.me'
+            github: ''
           }
         },
         'blogger_2': {
@@ -373,17 +371,6 @@ const PublicBloggerProfile: React.FC = () => {
                           title="GitHub"
                         >
                           💻
-                        </a>
-                      )}
-                      {blogger.socialLinks.website && (
-                        <a 
-                          href={blogger.socialLinks.website} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className={styles.socialLink}
-                          title="Personal Website"
-                        >
-                          🌐
                         </a>
                       )}
                     </div>

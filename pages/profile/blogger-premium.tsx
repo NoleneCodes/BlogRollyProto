@@ -84,8 +84,7 @@ const BloggerProfilePremium: React.FC = () => {
     instagram: '',
     youtube: '',
     tiktok: '',
-    github: '',
-    website: ''
+    github: ''
   });
 
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
@@ -115,8 +114,7 @@ const BloggerProfilePremium: React.FC = () => {
           instagram: '',
           youtube: '',
           tiktok: '',
-          github: 'https://github.com/problogger',
-          website: 'https://problogger.com'
+          github: 'https://github.com/problogger'
         });
 
         // Mock pro blog submissions (unlimited)
@@ -908,19 +906,6 @@ const BloggerProfilePremium: React.FC = () => {
                       value={socialLinks.github}
                       onChange={(e) => handleSocialLinkChange('github', e.target.value)}
                       placeholder="https://github.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}>🌐</span>
-                      Personal Website
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.website}
-                      onChange={(e) => handleSocialLinkChange('website', e.target.value)}
-                      placeholder="https://yourwebsite.com"
                       className={styles.socialInput}
                     />
                   </div>
