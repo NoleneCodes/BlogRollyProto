@@ -400,6 +400,15 @@ const BloggerProfilePremium: React.FC = () => {
     );
   };
 
+  const handleRemoveTopic = (topicToRemove: string) => {
+    if (userInfo) {
+      setUserInfo(prev => prev ? { 
+        ...prev, 
+        topics: prev.topics.filter(topic => topic !== topicToRemove) 
+      } : null);
+    }
+  };
+
   const handleSaveTopics = () => {
     if (userInfo) {
       setUserInfo(prev => prev ? { ...prev, topics: selectedTopics } : null);
@@ -769,6 +778,14 @@ const BloggerProfilePremium: React.FC = () => {
                       userInfo.topics.map(topic => (
                         <span key={topic} className={styles.topicTag}>
                           {topic}
+                          <button 
+                            type="button"
+                            className={styles.topicRemove}
+                            onClick={() => handleRemoveTopic(topic)}
+                            title={`Remove ${topic}`}
+                          >
+                            ×
+                          </button>
                         </span>
                       ))
                     ) : (
