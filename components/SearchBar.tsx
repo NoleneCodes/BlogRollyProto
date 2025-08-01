@@ -270,7 +270,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <label className={styles.filterGroupLabel}>✍️ Author</label>
               <input
                 type="text"
-                placeholder="Search by author name..."
+                placeholder="Search by author name or topics they write about..."
                 value={filters.author}
                 onChange={(e) => {
                   const newFilters = {...filters, author: e.target.value};
