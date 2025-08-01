@@ -29,6 +29,7 @@ interface BlogData {
   image: File | null;
   imagePreview: string | null;
   imageDescription: string;
+  urlChangeReason?: string;
 }
 
 
@@ -50,6 +51,8 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
   const [tagInput, setTagInput] = useState('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
+  const [urlChangeReason, setUrlChangeReason] = useState('');
+  const [originalUrl] = useState(blog.url); // Store original URL to detect changes
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Check premium status
@@ -169,6 +172,18 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     return Object.values(TAGS).flat();
   };
 
+  const urlChangeReasons = [
+    'Fixing broken or incorrect URL',
+    'Updating to match content changes',
+    'SEO optimization',
+    'Rebranding or domain change',
+    'Correcting typos in URL',
+    'Moving content to better location',
+    'Compliance with site guidelines',
+    'User experience improvement',
+    'Other (please specify in comments)'
+  ];
+
   const filteredTags = getAllTags().filter(tag => 
     tag.toLowerCase().includes(tagInput.toLowerCase()) && 
     !editForm.tags.includes(tag)
@@ -179,7 +194,21 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       alert('Please provide an image description for the new image. This is used for accessibility and SEO.');
       return;
     }
-    onSave(blog.id, editForm);
+
+    // Check if URL has changed and reason is required
+    const urlHasChanged = editForm.url !== originalUrl;
+    if (urlHasChanged && isPremium && !urlChangeReason.trim()) {
+      alert('Please select a reason for changing the blog URL.');
+      return;
+    }
+
+    // Include URL change reason in the save data
+    const saveData = {
+      ...editForm,
+      urlChangeReason: urlHasChanged ? urlChangeReason : undefined
+    };
+
+    onSave(blog.id, saveData);
   };
 
   return (
@@ -264,6 +293,43 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             disabled={!isPremium}
             style={!isPremium ? { backgroundColor: '#f9fafb', color: '#6b7280', cursor: 'not-allowed' } : { backgroundColor: '#f0fdf4', border: '2px solid #10b981' }}
           />
+          
+          {/* URL Change Reason Dropdown - Only show if URL has changed and user is premium */}
+          {isPremium && editForm.url !== originalUrl && (
+            <div style={{ marginTop: '0.75rem' }}>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '0.5rem', 
+                fontWeight: '500', 
+                color: '#374151',
+                fontSize: '0.875rem' 
+              }}>
+                Reason for URL Change *
+              </label>
+              <select
+                value={urlChangeReason}
+                onChange={(e) => setUrlChangeReason(e.target.value)}
+                className={styles.editSelect}
+                required
+                style={{ backgroundColor: '#fef3c7', border: '2px solid #f59e0b' }}
+              >
+                <option value="">Select a reason for changing the URL</option>
+                {urlChangeReasons.map(reason => (
+                  <option key={reason} value={reason}>{reason}</option>
+                ))}
+              </select>
+              <small style={{ 
+                color: '#92400e', 
+                fontSize: '0.75rem', 
+                marginTop: '0.25rem', 
+                display: 'block',
+                fontWeight: '500'
+              }}>
+                ⚠️ This change will be logged for review purposes
+              </small>
+            </div>
+          )}
+
           {!isPremium && (
             <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
               URL editing is only available to Pro subscribers. 
