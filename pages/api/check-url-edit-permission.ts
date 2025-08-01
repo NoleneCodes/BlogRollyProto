@@ -36,7 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ 
       canEditUrl: isPremium,
       isPremium,
-      tier: tier || 'free'
+      tier: tier || 'free',
+      note: 'This permission is for editing individual blog post URLs, not the main blog domain'
     });
     
   } catch (error) {
