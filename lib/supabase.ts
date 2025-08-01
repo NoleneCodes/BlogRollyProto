@@ -67,8 +67,6 @@ export interface BloggerProfile {
   blog_description?: string;
   categories: string[];
   social_links?: Record<string, string>;
-  monetization_methods?: string[];
-  audience_size?: string;
   is_verified: boolean; // Blog ownership verification
   stripe_customer_id?: string;
   subscription_status?: 'active' | 'canceled' | 'past_due';
