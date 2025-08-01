@@ -802,6 +802,87 @@ export const BlogStatusHelpers = {
     };
 
     return labels[reason];
+  },
+
+  // Get blog review details for email notifications
+  getBlogReviewDetails: async (blogSubmissionId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('blog_reviews')
+        .select(`
+          *,
+          blog_submissions!inner(
+            title,
+            blogger_id,
+            blogger_profiles!inner(
+              user_id,
+              users!inner(
+                email,
+                user_profiles!inner(
+                  first_name
+                )
+              )
+            )
+          )
+        `)
+        .eq('blog_submission_id', blogSubmissionId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        console.error('Error fetching blog review details:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in getBlogReviewDetails:', error);
+      return { success: false, error: 'Failed to fetch blog review details' };
+    }
+  },
+
+  // Send rejection email using blog review data
+  sendRejectionEmailFromReview: async (blogSubmissionId: string) => {
+    try {
+      const reviewResult = await supabaseHelpers.getBlogReviewDetails(blogSubmissionId);
+      
+      if (!reviewResult.success || !reviewResult.data) {
+        throw new Error('Failed to get blog review details');
+      }
+
+      const review = reviewResult.data;
+      const submission = review.blog_submissions;
+      const blogger = submission.blogger_profiles;
+      const user = blogger.users;
+      const profile = user.user_profiles;
+
+      if (review.action !== 'rejected') {
+        throw new Error('Blog review is not a rejection');
+      }
+
+      // Import email service
+      const { emailService } = await import('./email-templates');
+      
+      // Get human-readable rejection reason
+      const rejectionReasonLabel = supabaseHelpers.getRejectionReasonLabel(review.rejection_reason!);
+      
+      // Send email with review data
+      await emailService.sendBlogStatusEmail(
+        user.email,
+        profile.first_name,
+        submission.title,
+        '', // blog URL not needed for rejection
+        'rejected',
+        rejectionReasonLabel,
+        review.rejection_note || undefined
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error sending rejection email from review:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
   }
 };
 

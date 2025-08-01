@@ -1,6 +1,7 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { emailService } from '../../../lib/email-templates';
+import { supabaseHelpers } from '../../../lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -8,17 +9,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { email, firstName, blogTitle, rejectionReason, rejectionNote } = req.body;
+    const { email, firstName, blogTitle, rejectionReason, rejectionNote, blogSubmissionId } = req.body;
     
+    // If blogSubmissionId is provided, use actual blog review data
+    if (blogSubmissionId) {
+      const result = await supabaseHelpers.sendRejectionEmailFromReview(blogSubmissionId);
+      
+      if (!result.success) {
+        return res.status(500).json({ error: result.error });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Blog rejected email sent successfully using review data',
+        data: result
+      });
+    }
+    
+    // Fallback to manual test data
     if (!email || !firstName || !blogTitle || !rejectionReason) {
-      return res.status(400).json({ error: 'Email, firstName, blogTitle, and rejectionReason are required' });
+      return res.status(400).json({ error: 'Email, firstName, blogTitle, and rejectionReason are required (or provide blogSubmissionId for real data)' });
     }
 
-    const result = await emailService.sendBlogStatusEmail(email, firstName, blogTitle, '', 'rejected', rejectionReason, rejectionNote);
+    // Convert rejection reason to human-readable label if it's a code
+    const reasonLabel = rejectionReason.includes('_') ? 
+      supabaseHelpers.getRejectionReasonLabel(rejectionReason) : 
+      rejectionReason;
+
+    const result = await emailService.sendBlogStatusEmail(email, firstName, blogTitle, '', 'rejected', reasonLabel, rejectionNote);
     
     return res.status(200).json({
       success: true,
-      message: 'Blog rejected email sent successfully',
+      message: 'Test blog rejected email sent successfully',
       data: result
     });
   } catch (error) {
