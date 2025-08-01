@@ -441,7 +441,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <div className={styles.loadingTags}>Loading available tags...</div>
             ) : (
               <div className={styles.modernTagCategories}>
-                {Object.entries(getFilteredTagCategories()).map(([categoryName, categoryTags]) => (
+                {Object.entries(getFilteredTagCategories())
+                  .filter(([categoryName, categoryTags]) => categoryTags.length > 0)
+                  .map(([categoryName, categoryTags]) => (
                   <details key={categoryName} className={styles.modernTagCategory}>
                     <summary className={styles.modernTagCategoryTitle}>
                       <span className={styles.categoryIcon}>🏷️</span>
