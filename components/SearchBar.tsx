@@ -16,19 +16,22 @@ interface SearchBarProps {
   placeholder?: string;
   showAdvancedFilters?: boolean;
   className?: string;
+  showFilters?: boolean;
+  onFiltersChange?: (filters: any) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
   placeholder = "Search blogs, topics, or authors...",
   showAdvancedFilters = true,
-  className = ""
+  className = "",
+  showFilters = false,
+  onFiltersChange
 }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchHistory, setSearchHistory] = useState<any[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     category: '',
     dateRange: '',
@@ -94,18 +97,22 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleTagAdd = (tag: string) => {
     if (!filters.tags.includes(tag)) {
-      setFilters({
+      const newFilters = {
         ...filters,
         tags: [...filters.tags, tag]
-      });
+      };
+      setFilters(newFilters);
+      onFiltersChange?.(newFilters);
     }
   };
 
   const handleTagRemove = (tag: string) => {
-    setFilters({
+    const newFilters = {
       ...filters,
       tags: filters.tags.filter(t => t !== tag)
-    });
+    };
+    setFilters(newFilters);
+    onFiltersChange?.(newFilters);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -154,16 +161,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
             Ask Rolly
           </button>
         </div>
-        
-        {showAdvancedFilters && (
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={styles.filtersToggle}
-            title="Advanced filters"
-          >
-            ⚙️
-          </button>
-        )}
       </div>
 
       {/* Search Suggestions Dropdown */}
@@ -229,7 +226,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <div className={styles.filterRow}>
             <select
               value={filters.category}
-              onChange={(e) => setFilters({...filters, category: e.target.value})}
+              onChange={(e) => {
+                const newFilters = {...filters, category: e.target.value};
+                setFilters(newFilters);
+                onFiltersChange?.(newFilters);
+              }}
               className={styles.filterSelect}
             >
               <option value="">All Categories</option>
@@ -240,7 +241,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
             
             <select
               value={filters.dateRange}
-              onChange={(e) => setFilters({...filters, dateRange: e.target.value})}
+              onChange={(e) => {
+                const newFilters = {...filters, dateRange: e.target.value};
+                setFilters(newFilters);
+                onFiltersChange?.(newFilters);
+              }}
               className={styles.filterSelect}
             >
               <option value="">Any time</option>
@@ -253,7 +258,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
               type="text"
               placeholder="Author name..."
               value={filters.author}
-              onChange={(e) => setFilters({...filters, author: e.target.value})}
+              onChange={(e) => {
+                const newFilters = {...filters, author: e.target.value};
+                setFilters(newFilters);
+                onFiltersChange?.(newFilters);
+              }}
               className={styles.filterInput}
             />
           </div>

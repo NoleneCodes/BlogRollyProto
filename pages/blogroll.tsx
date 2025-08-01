@@ -107,6 +107,13 @@ const Blogroll: NextPage = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[] | AISearchResult[]>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [searchFilters, setSearchFilters] = useState({
+    category: '',
+    dateRange: '',
+    author: '',
+    tags: [] as string[]
+  });
 
   useEffect(() => {
     if (q && typeof q === 'string') {
@@ -223,12 +230,35 @@ const Blogroll: NextPage = () => {
       </div>
 
       {/* Search Bar */}
-      <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
         <SearchBar
           onSearch={handleNewSearch}
           placeholder="Search blogs, topics, or authors..."
-          showAdvancedFilters={true}
+          showAdvancedFilters={false}
+          showFilters={showAdvancedFilters}
+          onFiltersChange={setSearchFilters}
         />
+        <button
+          onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+          style={{
+            background: showAdvancedFilters ? '#c42142' : '#f8fafc',
+            color: showAdvancedFilters ? 'white' : '#64748b',
+            border: `2px solid ${showAdvancedFilters ? '#c42142' : '#e2e8f0'}`,
+            borderRadius: '8px',
+            padding: '0.75rem',
+            cursor: 'pointer',
+            fontSize: '1.2rem',
+            transition: 'all 0.2s ease',
+            minWidth: '48px',
+            height: '48px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          title="Advanced filters"
+        >
+          ⚙️
+        </button>
       </div>
 
       {/* Search Results Info */}
