@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         views,
         clicks,
         user_id,
-        user_profiles!inner(
+        users!inner(
           username,
           first_name,
           surname,
@@ -80,10 +80,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Author search
     if (author && typeof author === 'string') {
       query = query.or(`
-        user_profiles.username.ilike.%${author}%,
-        user_profiles.first_name.ilike.%${author}%,
-        user_profiles.surname.ilike.%${author}%,
-        user_profiles.display_name.ilike.%${author}%,
+        users.username.ilike.%${author}%,
+        users.first_name.ilike.%${author}%,
+        users.surname.ilike.%${author}%,
+        users.display_name.ilike.%${author}%,
         blogger_profiles.categories.cs.{${author}}
       `);
     }
@@ -151,9 +151,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       image: blog.image_url,
       category: blog.category,
       tags: blog.tags,
-      author: blog.user_profiles.display_name || 
-              `${blog.user_profiles.first_name} ${blog.user_profiles.surname}`,
-      authorUsername: blog.user_profiles.username,
+      author: blog.users.display_name || 
+              `${blog.users.first_name} ${blog.users.surname}`,
+      authorUsername: blog.users.username,
       blogName: blog.blogger_profiles.blog_name,
       isVerified: blog.blogger_profiles.is_verified,
       readTime: Math.ceil((blog.description?.length || 0) / 200), // Estimate
