@@ -242,6 +242,25 @@ export const supabaseDB = {
 
   // Blog Submissions
   insertBlogSubmission: async (submissionData: BlogSubmission) => {
+    // If this is adult content, validate blogger age verification first
+    if (submissionData.has_adult_content) {
+      const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('age_verified')
+        .eq('user_id', submissionData.user_id)
+        .single();
+
+      if (profileError || !profile?.age_verified) {
+        return { 
+          data: null, 
+          error: { 
+            message: 'Age verification required to submit adult content. Please verify your age in profile settings.',
+            code: 'AGE_VERIFICATION_REQUIRED'
+          } 
+        };
+      }
+    }
+
     const { data, error } = await supabase
       .from('blog_submissions')
       .insert([submissionData])
@@ -471,25 +490,80 @@ export const supabaseDB = {
 
   // Age-Gated Content
   getAge18PlusContent: async (userId: string) => {
-    // First check if user has confirmed 18+
+    // Check if user is both age verified AND has confirmed 18+ access
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
-      .select('has_confirmed_18_plus')
+      .select('age_verified, has_confirmed_18_plus')
       .eq('user_id', userId)
       .single();
 
-    if (profileError || !profile?.has_confirmed_18_plus) {
-      return { data: [], error: { message: 'Age verification required for 18+ content' } };
+    if (profileError) {
+      return { data: [], error: { message: 'Unable to verify user age status' } };
+    }
+
+    if (!profile?.age_verified) {
+      return { data: [], error: { message: 'Age verification required to view adult content' } };
+    }
+
+    if (!profile?.has_confirmed_18_plus) {
+      return { data: [], error: { message: '18+ confirmation required to view adult content' } };
     }
 
     const { data, error } = await supabase
       .from('blog_submissions')
-      .select('*')
+      .select(`
+        *,
+        adult_blog_submissions(*)
+      `)
       .eq('has_adult_content', true)
-      .eq('status', 'live')
+      .eq('status', 'approved')
       .eq('is_live', true);
 
     return { data, error };
+  },
+
+  // Validate if blogger can submit adult content
+  canBloggerSubmitAdultContent: async (userId: string) => {
+    const { data: profile, error } = await supabase
+      .from('user_profiles')
+      .select('age_verified, role')
+      .eq('user_id', userId)
+      .single();
+
+    if (error) {
+      return { canSubmit: false, error: { message: 'Unable to verify blogger status' } };
+    }
+
+    const canSubmit = profile?.age_verified === true && profile?.role === 'blogger';
+    
+    return { 
+      canSubmit, 
+      error: canSubmit ? null : { 
+        message: canSubmit ? null : 'Age verification required to submit adult content' 
+      }
+    };
+  },
+
+  // Validate if user can view adult content
+  canUserViewAdultContent: async (userId: string) => {
+    const { data: profile, error } = await supabase
+      .from('user_profiles')
+      .select('age_verified, has_confirmed_18_plus')
+      .eq('user_id', userId)
+      .single();
+
+    if (error) {
+      return { canView: false, error: { message: 'Unable to verify user age status' } };
+    }
+
+    const canView = profile?.age_verified === true && profile?.has_confirmed_18_plus === true;
+    
+    return { 
+      canView, 
+      needsAgeVerification: !profile?.age_verified,
+      needs18PlusConfirmation: profile?.age_verified && !profile?.has_confirmed_18_plus,
+      error: null
+    };
   },
 
   // Email Queue Management

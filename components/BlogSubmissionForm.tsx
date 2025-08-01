@@ -359,6 +359,20 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     if (!formData.postUrl.trim()) newErrors.postUrl = 'Post URL is required';
     if (!validateUrl(formData.postUrl)) newErrors.postUrl = 'Invalid URL format';
 
+    // Additional validation for adult content
+    if (formData.hasAdultContent) {
+      try {
+        const authResponse = await fetch('/api/auth-check');
+        const authData = await authResponse.json();
+        
+        if (!authData.userProfile?.age_verified) {
+          newErrors.hasAdultContent = 'Age verification required to submit adult content. Please verify your age in profile settings.';
+        }
+      } catch (error) {
+        newErrors.hasAdultContent = 'Unable to verify age status. Please try again.';
+      }
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
@@ -725,8 +739,9 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
               This content includes adult themes or material (18+ only)
             </span>
           </label>
+          {errors.hasAdultContent && <span className={styles.error}>{errors.hasAdultContent}</span>}
           <small className={styles.hint}>
-            Adult content will be filtered out for users under 18
+            Adult content requires age verification for both submission and viewing. Only age-verified users (18+) can submit and view this content.
           </small>
         </div>
 
