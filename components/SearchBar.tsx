@@ -224,14 +224,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {showFilters && (
         <div className={styles.filtersPanel}>
           <div className={styles.filtersHeader}>
-            <h3 className={styles.filtersTitle}>🔍 Discover Your Perfect Content</h3>
+            <h3 className={styles.filtersTitle}>Discover Your Perfect Content</h3>
             <p className={styles.filtersSubtitle}>Find exactly what you're looking for with our smart filters</p>
           </div>
 
           {/* Quick Filters Row */}
           <div className={styles.quickFiltersRow}>
             <div className={styles.filterGroup}>
-              <label className={styles.filterGroupLabel}>📂 Category</label>
+              <label className={styles.filterGroupLabel}>Category</label>
               <select
                 value={filters.category}
                 onChange={(e) => {
@@ -259,7 +259,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </div>
             
             <div className={styles.filterGroup}>
-              <label className={styles.filterGroupLabel}>📅 Time Period</label>
+              <label className={styles.filterGroupLabel}>Time Period</label>
               <select
                 value={filters.dateRange}
                 onChange={(e) => {
@@ -277,7 +277,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             </div>
             
             <div className={styles.filterGroup}>
-              <label className={styles.filterGroupLabel}>✍️ Author</label>
+              <label className={styles.filterGroupLabel}>Author</label>
               <input
                 type="text"
                 placeholder="Search by author name or topics they write about..."
@@ -296,7 +296,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {filters.tags.length > 0 && (
             <div className={styles.selectedTagsSection}>
               <div className={styles.selectedTagsHeader}>
-                <span className={styles.selectedTagsLabel}>🏷️ Active Filters</span>
+                <span className={styles.selectedTagsLabel}>Active Filters</span>
                 <button
                   type="button"
                   onClick={() => {
@@ -330,7 +330,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           {/* Tags Filter Section */}
           <div className={styles.modernTagsSection}>
             <div className={styles.tagsSectionHeader}>
-              <h4 className={styles.tagsSectionTitle}>🎯 Filter by Topics & Themes</h4>
+              <h4 className={styles.tagsSectionTitle}>Filter by Topics & Themes</h4>
               <p className={styles.tagsSectionSubtitle}>Choose from our curated collection of topics to find content that matches your interests</p>
             </div>
             
