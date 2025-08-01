@@ -119,6 +119,8 @@ const Blogroll: NextPage = () => {
     author: '',
     tags: [] as string[]
   });
+    const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (q && typeof q === 'string') {
@@ -149,19 +151,33 @@ const Blogroll: NextPage = () => {
     if (!query.trim()) return;
 
     setIsSearching(true);
-    setIsSearchActive(true);
-
     try {
-      let results: SearchResult[] | AISearchResult[];
+      const params = new URLSearchParams();
+      params.append('q', query);
+      params.append('type', searchType);
 
-      if (searchType === 'ai') {
-        results = await performAISearch(query, mockBlogs);
-      } else {
-        results = performKeywordSearch(query, mockBlogs);
+      // Add filters to search
+      if (searchFilters.category) {
+        params.append('category', searchFilters.category);
+      }
+      if (searchFilters.author) {
+        params.append('author', searchFilters.author);
+      }
+      if (searchFilters.dateRange) {
+        params.append('dateRange', searchFilters.dateRange);
+      }
+      if (searchFilters.tags.length > 0) {
+        params.append('tags', searchFilters.tags.join(','));
       }
 
-      setSearchResults(results);
+      const response = await fetch(`/api/blogs/search?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Search failed');
+      }
 
+      const data = await response.json();
+      setSearchResults(data.results);
+      setIsSearchActive(true);
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
@@ -299,6 +315,24 @@ const Blogroll: NextPage = () => {
     }
   };
 
+    const fetchBlogs = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Replace with actual API endpoint to fetch blogs from database
+      const response = await fetch('/api/blogs');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch blogs: ${response.status}`);
+      }
+      const data = await response.json();
+      setBlogs(data); // Assuming API returns an array of blog posts
+    } catch (err: any) {
+      console.error("Failed to fetch blogs", err);
+      setError(err.message || "Failed to fetch blogs");
+    } finally {
+      setLoading(false);
+    }
+  };
   let filteredBlogs = blogs;
 
   // Apply category filter

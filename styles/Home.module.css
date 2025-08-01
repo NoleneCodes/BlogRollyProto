@@ -940,3 +940,34 @@
     flex-direction: column;
   }
 }
+
+.retryButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.retryButton:hover {
+  background: #a91d3a;
+}
+
+.loadingContainer {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 2rem;
+  color: #c42142;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  margin: 1rem 0;
+}

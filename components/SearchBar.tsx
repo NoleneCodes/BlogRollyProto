@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/SearchBar.module.css';
@@ -40,43 +39,39 @@ const SearchBar: React.FC<SearchBarProps> = ({
     author: '',
     tags: [] as string[]
   });
-  
+
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [tagsInUse, setTagsInUse] = useState<Record<string, string[]>>({});
+  const [loadingTags, setLoadingTags] = useState(false);
 
-  // Get all unique tags that are actually used in blog listings
-  const getUsedTags = () => {
-    const usedTags = new Set<string>();
-    blogs.forEach(blog => {
-      if (blog.tags && Array.isArray(blog.tags)) {
-        blog.tags.forEach((tag: string) => {
-          if (tag && tag.trim()) {
-            usedTags.add(tag.trim());
-          }
-        });
+  // Fetch tags currently in use from database
+  const fetchTagsInUse = async () => {
+    try {
+      setLoadingTags(true);
+      const response = await fetch('/api/blogs/tags-in-use');
+      if (response.ok) {
+        const data = await response.json();
+        setTagsInUse(data.tagCategories);
       }
-    });
-    return usedTags;
+    } catch (error) {
+      console.error('Error fetching tags in use:', error);
+      // Fallback to empty object
+      setTagsInUse({});
+    } finally {
+      setLoadingTags(false);
+    }
   };
 
-  // Filter tag categories to only show tags that are used
+  useEffect(() => {
+    if (showAdvancedFilters) {
+      fetchTagsInUse();
+    }
+  }, [showAdvancedFilters]);
+
   const getFilteredTagCategories = () => {
-    const usedTags = getUsedTags();
-    const filteredCategories: { [key: string]: string[] } = {};
-
-    Object.entries(TAGS).forEach(([categoryName, tags]) => {
-      const availableTags = tags.filter(tag => 
-        tag !== 'Other' && usedTags.has(tag)
-      );
-      
-      // Only include category if it has available tags
-      if (availableTags.length > 0) {
-        filteredCategories[categoryName] = availableTags;
-      }
-    });
-
-    return filteredCategories;
+    return tagsInUse;
   };
 
   useEffect(() => {
@@ -97,7 +92,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    
+
     if (value.trim()) {
       setSuggestions(getSearchSuggestions(value));
       setShowSuggestions(true);
@@ -109,10 +104,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleSearch = (searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
-    
+
     saveSearchToHistory(query, searchType);
     setSearchHistory(getSearchHistory());
-    
+
     if (onSearch) {
       onSearch(query, searchType);
     } else {
@@ -127,7 +122,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       });
       router.push(`/blogroll?${searchParams.toString()}`);
     }
-    
+
     setShowSuggestions(false);
   };
 
@@ -176,7 +171,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           placeholder={placeholder}
           className={styles.searchInput}
         />
-        
+
         <div className={styles.searchButtons}>
           <button
             onClick={() => handleSearch('keyword')}
@@ -237,7 +232,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ))}
             </div>
           )}
-          
+
           {/* Search Suggestions */}
           {suggestions.length > 0 && (
             <div className={styles.suggestionSection}>
@@ -274,7 +269,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   const newFilters = {...filters, category: e.target.value};
                   setFilters(newFilters);
                   onFiltersChange?.(newFilters);
-                  
+
                   // Update URL to match the behavior of the removed dropdown
                   if (!onSearch) {
                     // Update URL directly like the removed dropdown did
@@ -293,7 +288,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 ))}
               </select>
             </div>
-            
+
             <div className={styles.filterGroup}>
               <label className={styles.filterGroupLabel}>Time Period</label>
               <select
@@ -311,7 +306,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 <option value="year">Past year</option>
               </select>
             </div>
-            
+
             <div className={styles.filterGroup}>
               <label className={styles.filterGroupLabel}>Author</label>
               <input
@@ -362,43 +357,47 @@ const SearchBar: React.FC<SearchBarProps> = ({
               </div>
             </div>
           )}
-          
+
           {/* Tags Filter Section */}
           <div className={styles.modernTagsSection}>
             <div className={styles.tagsSectionHeader}>
               <h4 className={styles.tagsSectionTitle}>Filter by Topics & Themes</h4>
               <p className={styles.tagsSectionSubtitle}>Choose from our curated collection of topics to find content that matches your interests</p>
             </div>
-            
+
             {/* Tag Categories */}
             <div className={styles.modernTagCategories}>
-              {Object.entries(getFilteredTagCategories()).map(([categoryName, tags]) => (
-                <details key={categoryName} className={styles.modernTagCategory}>
-                  <summary className={styles.modernTagCategoryTitle}>
-                    {categoryName}
-                    <span className={styles.tagCount}>({tags.length})</span>
-                  </summary>
-                  <div className={styles.modernTagCategoryContent}>
-                    <div className={styles.modernTagGrid}>
-                      {tags.map(tag => (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() => handleTagAdd(tag)}
-                          disabled={filters.tags.includes(tag)}
-                          className={`${styles.modernTagButton} ${filters.tags.includes(tag) ? styles.modernTagButtonSelected : ''}`}
-                        >
-                          {tag}
-                        </button>
-                      ))}
+              {loadingTags ? (
+                <div className={styles.loadingTags}>Loading available tags...</div>
+              ) : (
+                Object.entries(getFilteredTagCategories()).map(([categoryName, tags]) => (
+                  <details key={categoryName} className={styles.modernTagCategory}>
+                    <summary className={styles.modernTagCategoryTitle}>
+                      {categoryName}
+                      <span className={styles.tagCount}>({tags.length})</span>
+                    </summary>
+                    <div className={styles.modernTagCategoryContent}>
+                      <div className={styles.modernTagGrid}>
+                        {tags.map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => handleTagAdd(tag)}
+                            disabled={filters.tags.includes(tag)}
+                            className={`${styles.modernTagButton} ${filters.tags.includes(tag) ? styles.modernTagButtonSelected : ''}`}
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </details>
-              ))}
+                  </details>
+                ))
+              )}
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

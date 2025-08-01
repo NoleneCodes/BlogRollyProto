@@ -1,4 +1,3 @@
-
 .searchContainer {
   position: relative;
   width: 100%;
@@ -389,13 +388,16 @@
 }
 
 .tagCount {
-  margin-left: auto;
-  font-size: 0.75rem;
-  background: #e2e8f0;
-  color: #64748b;
-  padding: 2px 8px;
-  border-radius: 12px;
+  color: #8b5cf6;
   font-weight: 500;
+  margin-left: auto;
+}
+
+.loadingTags {
+  text-align: center;
+  padding: 1rem;
+  color: #666;
+  font-style: italic;
 }
 
 .modernTagCategoryContent {
