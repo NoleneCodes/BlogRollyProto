@@ -405,12 +405,46 @@ export const supabaseDB = {
   },
 
   toggleBlogLiveStatus: async (submissionId: string, userId: string, isLive: boolean) => {
-    // Check tier limits first if trying to make live
-    if (isLive) {
-      const limitsCheck = await supabaseDB.checkUserTierLimits(userId);
-      if (limitsCheck.error || !limitsCheck.data?.canAddMore) {
-        return { data: null, error: { message: 'User has reached their live post limit' } };
+    try {
+      // The database triggers will handle all constraint checking
+      const { data, error } = await supabase
+        .from('blog_submissions')
+        .update({ 
+          is_live: isLive,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', submissionId)
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        // Check if it's a constraint violation
+        if (error.message.includes('domain not verified') || 
+            error.message.includes('not approved') || 
+            error.message.includes('tier limit exceeded')) {
+          return { data: null, error: { message: error.message } };
+        }
+        throw error;
       }
+
+      return { data, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message || 'Failed to update live status' } };
+    }
+  },
+
+  // Check if a blog submission can go live
+  checkBlogLiveEligibility: async (submissionId: string) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('can_blog_submission_go_live', { submission_id: submissionId });
+
+      if (error) throw error;
+
+      return { data: { canGoLive: data }, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message || 'Failed to check live eligibility' } };
     }
 
     const { data, error } = await supabase
