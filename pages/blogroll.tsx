@@ -7,6 +7,7 @@ import SearchBar from "../components/SearchBar";
 import styles from "../styles/Home.module.css";
 import blogCardStyles from "../styles/BlogCard.module.css";
 import { performKeywordSearch, performAISearch, SearchResult, AISearchResult } from "../lib/searchUtils";
+import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 
 interface BlogPost {
   id: string;
@@ -88,10 +89,16 @@ const mockBlogs: BlogPost[] = [
   }
 ];
 
+// Get popular tags from centralized file
+const POPULAR_TAGS = [
+  ...TAGS['Themes & Topics'].slice(0, 20),
+  ...TAGS['Vibe / Tone'].slice(0, 8)
+].filter(tag => tag !== 'Other');
+
 const Blogroll: NextPage = () => {
   const router = useRouter();
   const { q, type, tag, category } = router.query;
-  
+
   const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
   const [filter, setFilter] = useState<string>("all");
   const [tagFilter, setTagFilter] = useState<string>("");
@@ -128,21 +135,21 @@ const Blogroll: NextPage = () => {
 
   const performSearch = async (query: string, searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
-    
+
     setIsSearching(true);
     setIsSearchActive(true);
-    
+
     try {
       let results: SearchResult[] | AISearchResult[];
-      
+
       if (searchType === 'ai') {
         results = await performAISearch(query, mockBlogs);
       } else {
         results = performKeywordSearch(query, mockBlogs);
       }
-      
+
       setSearchResults(results);
-      
+
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
@@ -189,20 +196,22 @@ const Blogroll: NextPage = () => {
   };
 
   let filteredBlogs = blogs;
-  
+
   // Apply category filter
   if (filter !== "all") {
     filteredBlogs = filteredBlogs.filter(blog => blog.category === filter);
   }
-  
+
   // Apply tag filter
   if (tagFilter) {
     filteredBlogs = filteredBlogs.filter(blog => 
       blog.tags.some(blogTag => blogTag.toLowerCase() === tagFilter.toLowerCase())
     );
   }
-  
+
   const displayBlogs = isSearchActive ? searchResults : filteredBlogs;
+
+  const CATEGORIES = MAIN_CATEGORIES.filter(category => category !== 'Other');
 
   return (
     <Layout title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}>
@@ -302,12 +311,10 @@ const Blogroll: NextPage = () => {
             }}
             className={blogCardStyles.filterSelect}
           >
-            <option value="all">All Categories</option>
-            <option value="Lifestyle">Lifestyle</option>
-            <option value="Health & Wellness">Health & Wellness</option>
-            <option value="Food & Drink">Food & Drink</option>
-            <option value="Tech & Digital Life">Tech & Digital Life</option>
-            <option value="Creative Expression">Creative Expression</option>
+            <option value="">All Categories</option>
+              {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
           </select>
         </div>
       )}
@@ -323,7 +330,7 @@ const Blogroll: NextPage = () => {
               showAuthor={true}
               showSaveButton={true}
             />
-            
+
             {/* AI Search Additional Info */}
             {isSearchActive && searchType === 'ai' && 'aiRelevanceReason' in blog && (
               <div style={{
