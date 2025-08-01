@@ -238,6 +238,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   const newFilters = {...filters, category: e.target.value};
                   setFilters(newFilters);
                   onFiltersChange?.(newFilters);
+                  
+                  // Update URL to match the behavior of the removed dropdown
+                  if (!onSearch) {
+                    // Update URL directly like the removed dropdown did
+                    const newParams = new URLSearchParams();
+                    if (e.target.value) {
+                      newParams.set('category', e.target.value);
+                    }
+                    router.push(`/blogroll${newParams.toString() ? '?' + newParams.toString() : ''}`);
+                  }
                 }}
                 className={styles.modernFilterSelect}
               >

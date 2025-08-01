@@ -428,28 +428,7 @@ const Blogroll: NextPage = () => {
         </div>
       )}
 
-      {/* Filters - Only show when not searching */}
-      {!isSearchActive && (
-        <div className={blogCardStyles.filterSection}>
-          <select 
-            value={filter} 
-            onChange={(e) => {
-              setFilter(e.target.value);
-              const newParams = new URLSearchParams();
-              if (e.target.value !== "all") {
-                newParams.set('category', e.target.value);
-              }
-              router.push(`/blogroll${newParams.toString() ? '?' + newParams.toString() : ''}`);
-            }}
-            className={blogCardStyles.filterSelect}
-          >
-            <option value="">All Categories</option>
-              {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-          </select>
-        </div>
-      )}
+      
 
       {/* Blog Grid */}
       <div className={blogCardStyles.blogGrid}>
