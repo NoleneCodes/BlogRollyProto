@@ -141,6 +141,26 @@ export interface UserTierLimits {
 
 
 
+// Survey Feedback Table
+export interface SurveyFeedback {
+  id: string;
+  user_id: string; // FK to User
+  blogger_experience: string;
+  primary_goal: string;
+  audience_size: string;
+  content_frequency: string;
+  discovery_methods: string[];
+  challenges_faced: string;
+  platforms_used: string[];
+  current_monetization_methods: string[];
+  community_interest: string;
+  additional_features?: string;
+  feedback?: string;
+  submitted_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // Email Notifications Queue
 export interface EmailQueue {
   id: string;
@@ -588,6 +608,42 @@ export const supabaseDB = {
       `)
       .eq('user_id', userId)
       .single();
+    return { data, error };
+  },
+
+  // Survey Feedback Functions
+  insertSurveyFeedback: async (surveyData: Omit<SurveyFeedback, 'id' | 'created_at' | 'updated_at' | 'submitted_at'>) => {
+    const { data, error } = await supabase
+      .from('survey_feedback')
+      .insert([surveyData])
+      .select();
+    return { data, error };
+  },
+
+  getUserSurveyFeedback: async (userId: string) => {
+    const { data, error } = await supabase
+      .from('survey_feedback')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    return { data, error };
+  },
+
+  getAllSurveyFeedback: async () => {
+    const { data, error } = await supabase
+      .from('survey_feedback')
+      .select(`
+        *,
+        user_profiles!inner(first_name, surname, username)
+      `)
+      .order('submitted_at', { ascending: false });
+    return { data, error };
+  },
+
+  getSurveyAnalytics: async () => {
+    const { data, error } = await supabase
+      .from('survey_feedback')
+      .select('blogger_experience, audience_size, content_frequency, community_interest, current_monetization_methods, platforms_used, discovery_methods');
     return { data, error };
   }
 };
