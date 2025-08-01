@@ -71,6 +71,75 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }, [showAdvancedFilters]);
 
   const getFilteredTagCategories = () => {
+    // If we have blogs data and active filters, filter tags based on filtered blogs
+    if (blogs && blogs.length > 0 && (filters.category || filters.author || filters.dateRange)) {
+      let filteredBlogs = blogs;
+
+      // Apply current filters to get relevant blogs
+      if (filters.category) {
+        filteredBlogs = filteredBlogs.filter(blog => blog.category === filters.category);
+      }
+
+      if (filters.author && filters.author.trim()) {
+        const authorQuery = filters.author.toLowerCase().trim();
+        filteredBlogs = filteredBlogs.filter(blog => {
+          const authorMatch = blog.author.toLowerCase().includes(authorQuery);
+          const displayNameMatch = blog.bloggerDisplayName?.toLowerCase().includes(authorQuery);
+          const topicsMatch = blog.bloggerTopics?.some((topic: string) => 
+            topic.toLowerCase().includes(authorQuery)
+          );
+          return authorMatch || displayNameMatch || topicsMatch;
+        });
+      }
+
+      if (filters.dateRange) {
+        const now = new Date();
+        let cutoffDate = new Date();
+
+        switch (filters.dateRange) {
+          case 'week':
+            cutoffDate.setDate(now.getDate() - 7);
+            break;
+          case 'month':
+            cutoffDate.setMonth(now.getMonth() - 1);
+            break;
+          case 'year':
+            cutoffDate.setFullYear(now.getFullYear() - 1);
+            break;
+          default:
+            cutoffDate = new Date(0);
+        }
+
+        filteredBlogs = filteredBlogs.filter(blog => {
+          const blogDate = new Date(blog.dateAdded);
+          return blogDate >= cutoffDate;
+        });
+      }
+
+      // Extract tags from filtered blogs and organize by category
+      const availableTags = new Set<string>();
+      filteredBlogs.forEach(blog => {
+        if (blog.tags && Array.isArray(blog.tags)) {
+          blog.tags.forEach(tag => availableTags.add(tag));
+        }
+      });
+
+      // Organize available tags by category (from TAGS structure)
+      const categorizedTags: Record<string, string[]> = {};
+      
+      Object.entries(TAGS).forEach(([categoryName, categoryTags]) => {
+        const matchingTags = categoryTags.filter(tag => 
+          tag !== 'Other' && availableTags.has(tag)
+        );
+        if (matchingTags.length > 0) {
+          categorizedTags[categoryName] = matchingTags;
+        }
+      });
+
+      return categorizedTags;
+    }
+
+    // Fallback to all tags in use from database
     return tagsInUse;
   };
 
