@@ -189,7 +189,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     !editForm.tags.includes(tag)
   );
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (imageChanged && !editForm.imageDescription.trim()) {
       alert('Please provide an image description for the new image. This is used for accessibility and SEO.');
       return;
@@ -200,6 +200,31 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     if (urlHasChanged && isPremium && !urlChangeReason.trim()) {
       alert('Please select a reason for changing the blog URL.');
       return;
+    }
+
+    // Validate that the new URL is from the verified domain if URL has changed
+    if (urlHasChanged && isPremium) {
+      try {
+        const response = await fetch('/api/validate-blog-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user?.access_token}`
+          },
+          body: JSON.stringify({ postUrl: editForm.url })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.valid) {
+          alert(result.error || 'The new URL must be from your verified domain.');
+          return;
+        }
+      } catch (error) {
+        console.error('Domain validation error:', error);
+        alert('Unable to validate domain. Please try again.');
+        return;
+      }
     }
 
     // Include URL change reason in the save data
@@ -287,6 +312,31 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             type="url"
             value={editForm.url}
             onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
+            onBlur={async (e) => {
+              // Real-time validation when user finishes editing URL
+              if (isPremium && e.target.value !== originalUrl && e.target.value.trim()) {
+                try {
+                  const response = await fetch('/api/validate-blog-url', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${user?.access_token}`
+                    },
+                    body: JSON.stringify({ postUrl: e.target.value })
+                  });
+
+                  const result = await response.json();
+
+                  if (!response.ok || !result.valid) {
+                    // Reset to original URL if validation fails
+                    setEditForm(prev => ({ ...prev, url: originalUrl }));
+                    alert(result.error || 'The URL must be from your verified domain.');
+                  }
+                } catch (error) {
+                  console.error('URL validation error:', error);
+                }
+              }
+            }}
             className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''} ${isPremium ? styles.proInput : ''}`}
             placeholder={isPremium ? "https://yourblog.com/post-url" : "Upgrade to Pro to edit URLs"}
             readOnly={!isPremium}
