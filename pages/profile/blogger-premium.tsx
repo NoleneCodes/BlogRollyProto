@@ -40,7 +40,6 @@ interface BlogSubmission {
   image?: string;
   imageDescription?: string;
   ctr?: number;
-  avgTimeOnPage?: number;
   bounceRate?: number;
   tags?: string[];
 }
@@ -133,7 +132,6 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Comprehensive analysis of how AI is transforming enterprise software development.',
             image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=200&fit=crop',
             ctr: 8.2,
-            avgTimeOnPage: 4.5,
             bounceRate: 24.8,
             tags: ['AI', 'Enterprise', 'Software Development', 'Future Tech']
           },
@@ -150,7 +148,6 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Deep dive into architectural patterns for building scalable SaaS applications.',
             image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop',
             ctr: 8.0,
-            avgTimeOnPage: 6.2,
             bounceRate: 18.5,
             tags: ['SaaS', 'Architecture', 'Scalability']
           },
@@ -167,7 +164,6 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Essential strategies for leading and managing distributed teams effectively.',
             image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop',
             ctr: 7.5,
-            avgTimeOnPage: 5.1,
             bounceRate: 28.3,
             tags: ['Leadership', 'Remote Work', 'Team Management']
           },
@@ -184,7 +180,6 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'How product managers can leverage ML to build better products.',
             image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=200&fit=crop',
             ctr: 8.9,
-            avgTimeOnPage: 7.3,
             bounceRate: 15.2
           },
           {
@@ -200,7 +195,6 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Proven growth strategies that helped startups scale from 0 to millions.',
             image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
             ctr: 7.6,
-            avgTimeOnPage: 4.8,
             bounceRate: 32.1
           },
           {
@@ -215,7 +209,6 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'How DevOps culture is evolving and what it means for engineering teams.',
             image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=200&fit=crop',
             ctr: 0,
-            avgTimeOnPage: 0,
             bounceRate: 0
           }
         ]);
@@ -269,7 +262,6 @@ const BloggerProfilePremium: React.FC = () => {
             image: null,
             imageDescription: draftFormData.imageDescription || '',
             ctr: 0,
-            avgTimeOnPage: 0,
             bounceRate: 0
           };
 
@@ -367,7 +359,6 @@ const BloggerProfilePremium: React.FC = () => {
       image: formData.image ? URL.createObjectURL(formData.image) : null,
       imageDescription: formData.imageDescription,
       ctr: 0,
-      avgTimeOnPage: 0,
       bounceRate: 0
     };
     setBlogSubmissions(prev => [newSubmission, ...prev]);

@@ -96,10 +96,9 @@ export interface BlogSubmission {
   status: 'draft' | 'submitted' | 'pending' | 'approved' | 'rejected' | 'live' | 'inactive';
   has_adult_content: boolean;
   is_live: boolean;
-  views: number;
-  clicks: number;
-  ctr: number;
-  avg_time_on_page: number;
+  views?: number;
+  clicks?: number;
+  ctr?: number;
   bounce_rate: number;
   submitted_at?: string;
   reviewed_at?: string;
