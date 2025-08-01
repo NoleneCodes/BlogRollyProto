@@ -139,8 +139,23 @@ const SearchBar: React.FC<SearchBarProps> = ({
       return categorizedTags;
     }
 
-    // Fallback to all tags in use from database
-    return tagsInUse;
+    // Combine database tags with all categories from TAGS structure
+    const combinedCategories: Record<string, string[]> = {};
+    
+    // Start with all categories from TAGS structure
+    Object.entries(TAGS).forEach(([categoryName, categoryTags]) => {
+      const availableTags = categoryTags.filter(tag => tag !== 'Other');
+      if (availableTags.length > 0) {
+        combinedCategories[categoryName] = availableTags;
+      }
+    });
+    
+    // If we have database tags for "Themes & Topics", prioritize those
+    if (tagsInUse['Themes & Topics'] && tagsInUse['Themes & Topics'].length > 0) {
+      combinedCategories['Themes & Topics'] = tagsInUse['Themes & Topics'];
+    }
+
+    return combinedCategories;
   };
 
   useEffect(() => {
