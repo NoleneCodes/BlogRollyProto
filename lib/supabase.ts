@@ -864,11 +864,11 @@ export const supabaseDB = {
   },
 
   // Update a blog submission
-  static async updateBlogSubmission(
+  updateBlogSubmission: async (
     submissionId: string, 
     userId: string, 
     updates: Partial<BlogSubmission>
-  ): Promise<{ data: BlogSubmission | null; error: any }> {
+  ) => {
     const { data, error } = await supabase
       .from('blog_submissions')
       .update({
@@ -881,15 +881,15 @@ export const supabaseDB = {
       .single();
 
     return { data, error };
-  }
+  },
 
   // Update blog URL with automatic deactivation and re-approval
-  static async updateBlogUrl(
+  updateBlogUrl: async (
     submissionId: string,
     userId: string,
     newUrl: string,
     changeReason: string
-  ): Promise<{ data: BlogSubmission | null; error: any; requiresReapproval: boolean }> {
+  ) => {
     // First get the current submission to check if URL is actually changing
     const { data: currentSubmission, error: fetchError } = await supabase
       .from('blog_submissions')
