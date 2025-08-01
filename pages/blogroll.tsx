@@ -371,7 +371,7 @@ const Blogroll: NextPage = () => {
         <SearchBar
           onSearch={handleNewSearch}
           placeholder="Search blogs, topics, or authors..."
-          showAdvancedFilters={false}
+          showAdvancedFilters={showAdvancedFilters}
           showFilters={showAdvancedFilters}
           onFiltersChange={handleFiltersChange}
           blogs={blogs}

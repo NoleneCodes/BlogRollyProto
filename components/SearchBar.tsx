@@ -250,6 +250,143 @@ const SearchBar: React.FC<SearchBarProps> = ({
           )}
         </div>
       )}
+
+      {/* Advanced Filters Panel */}
+      {showAdvancedFilters && (
+        <div className={styles.filtersPanel}>
+          <div className={styles.filtersHeader}>
+            <h3 className={styles.filtersTitle}>Advanced Filters</h3>
+            <p className={styles.filtersSubtitle}>Narrow down your search with specific criteria</p>
+          </div>
+
+          <div className={styles.quickFiltersRow}>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterGroupLabel}>Category</label>
+              <select
+                value={filters.category}
+                onChange={(e) => {
+                  const newFilters = { ...filters, category: e.target.value };
+                  setFilters(newFilters);
+                  onFiltersChange?.(newFilters);
+                }}
+                className={styles.modernFilterSelect}
+              >
+                <option value="">All Categories</option>
+                {MAIN_CATEGORIES.filter(cat => cat !== 'Other').map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <label className={styles.filterGroupLabel}>Date Range</label>
+              <select
+                value={filters.dateRange}
+                onChange={(e) => {
+                  const newFilters = { ...filters, dateRange: e.target.value };
+                  setFilters(newFilters);
+                  onFiltersChange?.(newFilters);
+                }}
+                className={styles.modernFilterSelect}
+              >
+                <option value="">Any Time</option>
+                <option value="week">Last Week</option>
+                <option value="month">Last Month</option>
+                <option value="year">Last Year</option>
+              </select>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <label className={styles.filterGroupLabel}>Author</label>
+              <input
+                type="text"
+                value={filters.author}
+                onChange={(e) => {
+                  const newFilters = { ...filters, author: e.target.value };
+                  setFilters(newFilters);
+                  onFiltersChange?.(newFilters);
+                }}
+                placeholder="Search by author name..."
+                className={styles.modernFilterInput}
+              />
+            </div>
+          </div>
+
+          {/* Selected Tags Section */}
+          {filters.tags.length > 0 && (
+            <div className={styles.selectedTagsSection}>
+              <div className={styles.selectedTagsHeader}>
+                <span className={styles.selectedTagsLabel}>Selected Tags ({filters.tags.length})</span>
+                <button
+                  onClick={() => {
+                    const newFilters = { ...filters, tags: [] };
+                    setFilters(newFilters);
+                    onFiltersChange?.(newFilters);
+                  }}
+                  className={styles.clearAllTagsButton}
+                >
+                  Clear All
+                </button>
+              </div>
+              <div className={styles.selectedTagsContainer}>
+                {filters.tags.map(tag => (
+                  <div key={tag} className={styles.modernSelectedTag}>
+                    {tag}
+                    <button
+                      onClick={() => handleTagRemove(tag)}
+                      className={styles.modernTagRemoveButton}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tags Section */}
+          <div className={styles.modernTagsSection}>
+            <div className={styles.tagsSectionHeader}>
+              <h4 className={styles.tagsSectionTitle}>Filter by Topics & Themes</h4>
+              <p className={styles.tagsSectionSubtitle}>
+                Select tags to find blogs that match your interests
+              </p>
+            </div>
+
+            {loadingTags ? (
+              <div className={styles.loadingTags}>Loading available tags...</div>
+            ) : (
+              <div className={styles.modernTagCategories}>
+                {Object.entries(getFilteredTagCategories()).map(([categoryName, categoryTags]) => (
+                  <details key={categoryName} className={styles.modernTagCategory}>
+                    <summary className={styles.modernTagCategoryTitle}>
+                      <span className={styles.categoryIcon}>🏷️</span>
+                      {categoryName}
+                      <span className={styles.tagCount}>({categoryTags.length})</span>
+                    </summary>
+                    <div className={styles.modernTagCategoryContent}>
+                      <div className={styles.modernTagGrid}>
+                        {categoryTags.map(tag => (
+                          <button
+                            key={tag}
+                            onClick={() => handleTagAdd(tag)}
+                            disabled={filters.tags.includes(tag)}
+                            className={`${styles.modernTagButton} ${
+                              filters.tags.includes(tag) ? styles.modernTagButtonSelected : ''
+                            }`}
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
