@@ -339,13 +339,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
               {Object.entries(TAGS).map(([categoryName, tags]) => (
                 <details key={categoryName} className={styles.modernTagCategory}>
                   <summary className={styles.modernTagCategoryTitle}>
-                    <span className={styles.categoryIcon}>
-                      {categoryName === 'Themes & Topics' && '💡'}
-                      {categoryName === 'Structure / Format' && '📝'}
-                      {categoryName === 'Vibe / Tone' && '🎨'}
-                      {categoryName === 'Intended Audience' && '👥'}
-                      {categoryName === 'Content Filters' && '⚡'}
-                    </span>
                     {categoryName}
                     <span className={styles.tagCount}>({tags.filter(tag => tag !== 'Other').length})</span>
                   </summary>
