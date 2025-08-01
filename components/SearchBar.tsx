@@ -3,16 +3,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/SearchBar.module.css';
 import { getSearchSuggestions, saveSearchToHistory, getSearchHistory } from '../lib/searchUtils';
+import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 
-// Popular tags/themes for filtering
+// Get popular tags from the centralized file - combine themes & topics and take the most relevant ones
 const POPULAR_TAGS = [
-  'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Personal Finance',
-  'Tech for Good', 'Entrepreneurship', 'Creative Writing', 'Minimalist Living',
-  'Sustainable Living', 'Digital Marketing', 'Fitness', 'Cooking', 'Travel',
-  'Book Reviews', 'Photography', 'Gardening', 'Fashion', 'Beauty & Skincare',
-  'Parenting', 'Relationships', 'Career Advice', 'Home Projects', 'Art',
-  'Music', 'Film Criticism', 'Health & Wellness', 'Spiritual Practices'
-];
+  ...TAGS['Themes & Topics'].slice(0, 20),
+  ...TAGS['Vibe / Tone'].slice(0, 8)
+].filter(tag => tag !== 'Other');
 
 interface SearchBarProps {
   onSearch?: (query: string, searchType: 'keyword' | 'ai') => void;
@@ -233,11 +230,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
               className={styles.filterSelect}
             >
               <option value="">All Categories</option>
-              <option value="Lifestyle">Lifestyle</option>
-              <option value="Health & Wellness">Health & Wellness</option>
-              <option value="Food & Drink">Food & Drink</option>
-              <option value="Tech & Digital Life">Tech & Digital Life</option>
-              <option value="Creative Expression">Creative Expression</option>
+              {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
             </select>
             
             <select
