@@ -60,9 +60,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    // Check if URL is already taken by another submission
+    const { supabaseDB } = await import('../../lib/supabase');
+    const availability = await supabaseDB.checkBlogPostUrlAvailability(postUrl);
+    
+    if (!availability.isAvailable) {
+      return res.status(400).json({ 
+        error: availability.error || 'This blog post URL is already taken',
+        valid: false,
+        isDuplicate: true
+      });
+    }
+
     return res.status(200).json({ 
       valid: true,
-      message: 'Blog post URL is valid for your verified domain'
+      message: 'Blog post URL is valid and available'
     });
 
   } catch (error) {

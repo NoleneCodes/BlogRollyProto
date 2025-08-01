@@ -274,10 +274,34 @@ export const supabaseDB = {
       }
     }
 
+    // Check if URL is already taken
+    const availability = await supabaseDB.checkBlogPostUrlAvailability(submissionData.url);
+    if (!availability.isAvailable) {
+      return { 
+        data: null, 
+        error: { 
+          message: availability.error || 'This blog post URL is already submitted',
+          code: 'DUPLICATE_URL'
+        } 
+      };
+    }
+
     const { data, error } = await supabase
       .from('blog_submissions')
       .insert([submissionData])
       .select();
+
+    // Handle duplicate key error gracefully
+    if (error && error.code === '23505') {
+      return { 
+        data: null, 
+        error: { 
+          message: 'This blog post URL is already taken by another submission',
+          code: 'DUPLICATE_URL'
+        } 
+      };
+    }
+
     return { data, error };
   },
 
@@ -883,6 +907,65 @@ export const supabaseDB = {
     return { data, error };
   },
 
+  // Check if a blog domain URL is already taken
+  checkBlogDomainAvailability: async (blogUrl: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('blogger_profiles')
+        .select('id, user_id')
+        .eq('blog_url', blogUrl)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // No rows found - URL is available
+        return { isAvailable: true, error: null };
+      }
+
+      if (error) {
+        return { isAvailable: false, error: error.message };
+      }
+
+      // URL is taken
+      return { isAvailable: false, error: 'This blog domain is already registered by another blogger' };
+    } catch (error: any) {
+      return { isAvailable: false, error: error.message };
+    }
+  },
+
+  // Check if a blog post URL is already taken
+  checkBlogPostUrlAvailability: async (postUrl: string, excludeSubmissionId?: string) => {
+    try {
+      let query = supabase
+        .from('blog_submissions')
+        .select('id, user_id, title')
+        .eq('url', postUrl);
+
+      if (excludeSubmissionId) {
+        query = query.neq('id', excludeSubmissionId);
+      }
+
+      const { data, error } = await query.single();
+
+      if (error && error.code === 'PGRST116') {
+        // No rows found - URL is available
+        return { isAvailable: true, error: null };
+      }
+
+      if (error) {
+        return { isAvailable: false, error: error.message };
+      }
+
+      // URL is taken
+      return { 
+        isAvailable: false, 
+        error: 'This blog post URL is already submitted by another user',
+        existingSubmission: data
+      };
+    } catch (error: any) {
+      return { isAvailable: false, error: error.message };
+    }
+  },
+
   // Update blog URL with automatic deactivation and re-approval
   updateBlogUrl: async (
     submissionId: string,
@@ -904,6 +987,18 @@ export const supabaseDB = {
 
     const urlChanged = currentSubmission.url !== newUrl;
 
+    // If URL is changing, check if the new URL is available
+    if (urlChanged) {
+      const availability = await supabaseDB.checkBlogPostUrlAvailability(newUrl, submissionId);
+      if (!availability.isAvailable) {
+        return { 
+          data: null, 
+          error: availability.error || 'URL not available', 
+          requiresReapproval: false 
+        };
+      }
+    }
+
     // Update the submission (trigger will handle deactivation if URL changed)
     const { data, error } = await supabase
       .from('blog_submissions')
@@ -917,6 +1012,15 @@ export const supabaseDB = {
       .eq('user_id', userId)
       .select('*')
       .single();
+
+    // Handle duplicate key error gracefully
+    if (error && error.code === '23505') {
+      return { 
+        data: null, 
+        error: 'This blog post URL is already taken by another submission', 
+        requiresReapproval: false 
+      };
+    }
 
     return { 
       data, 
