@@ -1,4 +1,3 @@
-
 // Email template imports
 import { welcomeReaderTemplate } from './user-onboarding/welcomeReader';
 import { welcomeBloggerTemplate } from './user-onboarding/welcomeBlogger';
@@ -32,7 +31,7 @@ export const emailTemplates = {
   //  User Onboarding
   welcomeReader: welcomeReaderTemplate,
   welcomeBlogger: welcomeBloggerTemplate,
-  
+
   // Blog Submission Workflow
   blogSubmissionReceived: blogSubmissionReceivedTemplate,
   blogApproved: blogApprovedTemplate,
@@ -70,42 +69,42 @@ export const emailService = {
       const template = userType === 'reader' ? emailTemplates.welcomeReader : emailTemplates.welcomeBlogger;
       const html = template.template(firstName);
       const subject = template.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send welcome email error:', error);
       throw error;
     }
   },
-  
+
   //  Blog Submission Workflow
   sendBlogSubmissionReceived: async (email: string, firstName: string, blogTitle: string) => {
     try {
       const html = emailTemplates.blogSubmissionReceived.template(firstName, blogTitle);
       const subject = emailTemplates.blogSubmissionReceived.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send blog submission received email error:', error);
@@ -117,26 +116,26 @@ export const emailService = {
     try {
       const template = status === 'approved' ? emailTemplates.blogApproved : emailTemplates.blogRejected;
       let html: string;
-      
+
       if (status === 'approved') {
         html = template.template(firstName, blogTitle, blogUrl);
       } else {
         html = template.template(firstName, blogTitle, rejectionReason!, rejectionNote);
       }
-      
+
       const subject = template.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send blog status email error:', error);
@@ -149,18 +148,18 @@ export const emailService = {
     try {
       const html = emailTemplates.blogUrlChanged.template(firstName, blogTitle, oldUrl, newUrl);
       const subject = emailTemplates.blogUrlChanged.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send blog URL changed email error:', error);
@@ -172,18 +171,18 @@ export const emailService = {
     try {
       const html = emailTemplates.blogDeactivated.template(firstName, blogTitle, reason);
       const subject = emailTemplates.blogDeactivated.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send blog deactivated email error:', error);
@@ -196,18 +195,18 @@ export const emailService = {
     try {
       const html = emailTemplates.passwordReset.template(firstName, resetLink);
       const subject = emailTemplates.passwordReset.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send password reset email error:', error);
@@ -220,18 +219,18 @@ export const emailService = {
     try {
       const html = emailTemplates.bugReportReceived.template(firstName, reportId);
       const subject = emailTemplates.bugReportReceived.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send bug report thank you email error:', error);
@@ -244,18 +243,18 @@ export const emailService = {
     try {
       const html = emailTemplates.supportRequestReceived.template(firstName, ticketId, supportMessage, estimatedResponse);
       const subject = emailTemplates.supportRequestReceived.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send support request received email error:', error);
@@ -267,7 +266,7 @@ export const emailService = {
     try {
       const html = emailTemplates.supportRequestReply.template(firstName, ticketId, originalMessage, supportReply);
       const subject = emailTemplates.supportRequestReply.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: `${RESEND_CONFIG.fromName} Support <support@blogrolly.com>`,
         to: email,
@@ -275,11 +274,11 @@ export const emailService = {
         html,
         reply_to: 'support@blogrolly.com'
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send support request reply email error:', error);
@@ -292,18 +291,18 @@ export const emailService = {
     try {
       const html = emailTemplates.premiumWelcome.template(firstName);
       const subject = emailTemplates.premiumWelcome.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send premium welcome email error:', error);
@@ -315,18 +314,18 @@ export const emailService = {
     try {
       const html = emailTemplates.paymentSuccessful.template(firstName, amount, planName, invoiceUrl, nextBillingDate);
       const subject = emailTemplates.paymentSuccessful.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send payment successful email error:', error);
@@ -338,26 +337,26 @@ export const emailService = {
     try {
       const template = noticeType === 'first' ? emailTemplates.paymentFailedFirstNotice : emailTemplates.paymentFailedFinalNotice;
       let html: string;
-      
+
       if (noticeType === 'first') {
         html = template.template(firstName, planName, amount, retryDate!);
       } else {
         html = template.template(firstName, planName, amount, delistDate!);
       }
-      
+
       const subject = template.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send payment failed notice email error:', error);
@@ -369,18 +368,18 @@ export const emailService = {
     try {
       const html = emailTemplates.blogDelistedPayment.template(firstName, blogCount, amount);
       const subject = emailTemplates.blogDelistedPayment.subject;
-      
+
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,
         to: email,
         subject,
         html
       });
-      
+
       if (error) {
         throw new Error(`Resend SDK error: ${error.message}`);
       }
-      
+
       return data;
     } catch (error) {
       console.error('Send blog delisted payment email error:', error);
@@ -411,11 +410,11 @@ export const emailService = {
           tags: tags
         })
       });
-      
+
       if (!response.ok) {
         throw new Error(`Mailchimp API error: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error('Add to Mailchimp audience error:', error);

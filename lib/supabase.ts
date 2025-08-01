@@ -861,6 +861,68 @@ export const supabaseDB = {
     console.error('Error updating blog post URL:', error);
     return { data: null, error: error.message };
   }
+  },
+
+  // Update a blog submission
+  static async updateBlogSubmission(
+    submissionId: string, 
+    userId: string, 
+    updates: Partial<BlogSubmission>
+  ): Promise<{ data: BlogSubmission | null; error: any }> {
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', submissionId)
+      .eq('user_id', userId)
+      .select('*')
+      .single();
+
+    return { data, error };
+  }
+
+  // Update blog URL with automatic deactivation and re-approval
+  static async updateBlogUrl(
+    submissionId: string,
+    userId: string,
+    newUrl: string,
+    changeReason: string
+  ): Promise<{ data: BlogSubmission | null; error: any; requiresReapproval: boolean }> {
+    // First get the current submission to check if URL is actually changing
+    const { data: currentSubmission, error: fetchError } = await supabase
+      .from('blog_submissions')
+      .select('url, status, is_live')
+      .eq('id', submissionId)
+      .eq('user_id', userId)
+      .single();
+
+    if (fetchError || !currentSubmission) {
+      return { data: null, error: fetchError || 'Submission not found', requiresReapproval: false };
+    }
+
+    const urlChanged = currentSubmission.url !== newUrl;
+
+    // Update the submission (trigger will handle deactivation if URL changed)
+    const { data, error } = await supabase
+      .from('blog_submissions')
+      .update({
+        url: newUrl,
+        url_change_reason: changeReason,
+        updated_at: new Date().toISOString(),
+        // The database trigger will handle setting status and is_live if URL changed
+      })
+      .eq('id', submissionId)
+      .eq('user_id', userId)
+      .select('*')
+      .single();
+
+    return { 
+      data, 
+      error, 
+      requiresReapproval: urlChanged && (currentSubmission.status === 'approved' || currentSubmission.is_live)
+    };
   }
 };
 
@@ -932,8 +994,7 @@ export const BlogStatusHelpers = {
           )
         `)
         .eq('blog_submission_id', blogSubmissionId)
-        .order('created_at', { ascending: false })
-        .limit(1)
+        .order('created_at', { ascending: false })        .limit(1)
         .single();
 
       if (error) {

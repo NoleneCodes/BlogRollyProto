@@ -227,13 +227,55 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       }
     }
 
-    // Include URL change reason in the save data
-    const saveData = {
-      ...editForm,
-      urlChangeReason: urlHasChanged ? urlChangeReason : undefined
-    };
+    // Handle URL changes with automatic deactivation
+    if (urlHasChanged && isPremium) {
+      try {
+        const response = await fetch('/api/blogs/update-url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user?.access_token}`
+          },
+          body: JSON.stringify({
+            submissionId: blog.id,
+            newUrl: editForm.url,
+            changeReason: urlChangeReason
+          })
+        });
 
-    onSave(blog.id, saveData);
+        const result = await response.json();
+
+        if (!response.ok) {
+          alert(result.error || 'Failed to update URL');
+          return;
+        }
+
+        if (result.requiresReapproval) {
+          alert('Your blog URL has been updated successfully. Since the URL changed, your blog has been deactivated and will need to go through the approval process again. You will be notified once it has been reviewed.');
+        }
+
+        // Update the form with the response data
+        onSave(blog.id, {
+          ...editForm,
+          urlChangeReason: urlHasChanged ? urlChangeReason : undefined,
+          // Include the updated status from the response
+          status: result.data?.status,
+          isLive: result.data?.is_live
+        });
+      } catch (error) {
+        console.error('URL update error:', error);
+        alert('Failed to update URL. Please try again.');
+        return;
+      }
+    } else {
+      // Regular save for non-URL changes
+      const saveData = {
+        ...editForm,
+        urlChangeReason: urlHasChanged ? urlChangeReason : undefined
+      };
+
+      onSave(blog.id, saveData);
+    }
   };
 
   return (
