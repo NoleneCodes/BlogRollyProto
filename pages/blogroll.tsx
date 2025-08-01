@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { IoSettingsOutline } from "react-icons/io5";
 import Layout from "../components/Layout";
 import BlogCard from "../components/BlogCard";
 import SearchBar from "../components/SearchBar";
@@ -257,7 +258,7 @@ const Blogroll: NextPage = () => {
           }}
           title="Advanced filters"
         >
-          ⚙️
+          <IoSettingsOutline size={20} />
         </button>
       </div>
 
