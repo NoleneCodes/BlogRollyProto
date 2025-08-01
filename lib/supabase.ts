@@ -62,7 +62,7 @@ export interface ReaderProfile {
 export interface BloggerProfile {
   id: string;
   user_id: string; // FK to User
-  blog_url: string;
+  blog_url: string; // Main blog domain URL - not changeable after signup
   blog_name: string;
   blog_description?: string;
   categories: string[];
