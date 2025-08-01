@@ -107,6 +107,7 @@ export interface BlogSubmission {
   live_at?: string;
   created_at: string;
   updated_at: string;
+  url_change_reason?: string;
 }
 
 // Adult Content Separate Table (for 18+ posts)
@@ -141,6 +142,18 @@ export interface UserTierLimits {
   updated_at: string;
 }
 
+// Types for URL change tracking
+export interface BlogPostUrlChange {
+  id: string;
+  blog_submission_id: string;
+  user_id: string;
+  old_url: string;
+  new_url: string;
+  change_reason: string;
+  changed_by: string;
+  changed_at: string;
+  created_at: string;
+}
 
 
 // Survey Feedback Table
@@ -535,7 +548,7 @@ export const supabaseDB = {
     }
 
     const canSubmit = profile?.age_verified === true && profile?.role === 'blogger';
-    
+
     return { 
       canSubmit, 
       error: canSubmit ? null : { 
@@ -557,7 +570,7 @@ export const supabaseDB = {
     }
 
     const canView = profile?.age_verified === true && profile?.has_confirmed_18_plus === true;
-    
+
     return { 
       canView, 
       needsAgeVerification: !profile?.age_verified,
@@ -774,11 +787,11 @@ export const supabaseDB = {
     let query = supabase
       .from('user_tier_limits_stripe_status')
       .select('*');
-    
+
     if (userId) {
       query = query.eq('user_id', userId);
     }
-    
+
     const { data, error } = await query;
     return { data, error };
   },
@@ -806,6 +819,48 @@ export const supabaseDB = {
     } catch (error: any) {
       return { isValid: false, error: { message: error.message || 'Failed to validate tier limits' } };
     }
+  },
+
+  // Get URL change history for a blog post
+  getBlogPostUrlChanges: async (blogSubmissionId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('blog_post_url_changes')
+        .select(`
+        *,
+        changed_by_user:users!changed_by(email)
+      `)
+        .eq('blog_submission_id', blogSubmissionId)
+        .order('changed_at', { ascending: false });
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error: any) {
+      console.error('Error fetching URL change history:', error);
+      return { data: null, error: error.message };
+    }
+  },
+
+  // Update blog post URL with reason
+  updateBlogPostUrl: async (blogSubmissionId: string, newUrl: string, reason: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('blog_submissions')
+        .update({ 
+          url: newUrl,
+          url_change_reason: reason,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', blogSubmissionId)
+        .select()
+        .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error: any) {
+    console.error('Error updating blog post URL:', error);
+    return { data: null, error: error.message };
+  }
   }
 };
 
@@ -897,7 +952,7 @@ export const BlogStatusHelpers = {
   sendRejectionEmailFromReview: async (blogSubmissionId: string) => {
     try {
       const reviewResult = await supabaseHelpers.getBlogReviewDetails(blogSubmissionId);
-      
+
       if (!reviewResult.success || !reviewResult.data) {
         throw new Error('Failed to get blog review details');
       }
@@ -914,10 +969,10 @@ export const BlogStatusHelpers = {
 
       // Import email service
       const { emailService } = await import('./email-templates');
-      
+
       // Get human-readable rejection reason
       const rejectionReasonLabel = supabaseHelpers.getRejectionReasonLabel(review.rejection_reason!);
-      
+
       // Send email with review data
       await emailService.sendBlogStatusEmail(
         user.email,
