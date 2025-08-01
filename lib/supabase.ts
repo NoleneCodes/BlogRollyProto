@@ -755,6 +755,57 @@ export const supabaseDB = {
       .from('survey_feedback')
       .select('blogger_experience, audience_size, content_frequency, community_interest, current_monetization_methods, platforms_used, discovery_methods');
     return { data, error };
+  },
+
+  // Tier Limits Stripe Consistency Functions
+  checkTierLimitsStripeConsistency: async () => {
+    const { data, error } = await supabase
+      .rpc('check_tier_limits_stripe_consistency');
+    return { data, error };
+  },
+
+  fixTierLimitsStripeInconsistencies: async () => {
+    const { data, error } = await supabase
+      .rpc('fix_tier_limits_stripe_inconsistencies');
+    return { data, error };
+  },
+
+  getTierLimitsStripeStatus: async (userId?: string) => {
+    let query = supabase
+      .from('user_tier_limits_stripe_status')
+      .select('*');
+    
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
+    
+    const { data, error } = await query;
+    return { data, error };
+  },
+
+  // Validate tier limits against Stripe status
+  validateUserTierLimits: async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_tier_limits_stripe_status')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) return { isValid: false, error };
+
+      return { 
+        isValid: data.tier_stripe_consistent,
+        tierLimitsTier: data.tier_limits_tier,
+        profileTier: data.profile_tier,
+        hasActiveSubscription: data.has_active_subscription,
+        stripeCustomerId: data.stripe_customer_id,
+        subscriptionStatus: data.subscription_status,
+        error: null
+      };
+    } catch (error: any) {
+      return { isValid: false, error: { message: error.message || 'Failed to validate tier limits' } };
+    }
   }
 };
 
