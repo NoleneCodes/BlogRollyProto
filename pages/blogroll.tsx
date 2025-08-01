@@ -239,11 +239,11 @@ const Blogroll: NextPage = () => {
     }
 
     setBlogs(filteredResults);
-    
+
     // If there are active filters, show as search active
     const hasActiveFilters = filters.category || filters.author || filters.tags?.length > 0 || filters.dateRange;
     setIsSearchActive(hasActiveFilters);
-    
+
     if (hasActiveFilters) {
       setSearchResults(filteredResults.map(blog => ({ ...blog, relevanceScore: 1, matchType: 'filter' as const })));
     } else {
@@ -334,6 +334,7 @@ const Blogroll: NextPage = () => {
           showAdvancedFilters={false}
           showFilters={showAdvancedFilters}
           onFiltersChange={handleFiltersChange}
+          blogs={blogs}
         />
         <button
           onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
@@ -428,7 +429,7 @@ const Blogroll: NextPage = () => {
         </div>
       )}
 
-      
+
 
       {/* Blog Grid */}
       <div className={blogCardStyles.blogGrid}>

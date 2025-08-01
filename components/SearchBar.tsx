@@ -18,6 +18,7 @@ interface SearchBarProps {
   className?: string;
   showFilters?: boolean;
   onFiltersChange?: (filters: any) => void;
+  blogs?: any[]; // Blog data to filter available tags
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -26,7 +27,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   showAdvancedFilters = true,
   className = "",
   showFilters = false,
-  onFiltersChange
+  onFiltersChange,
+  blogs = []
 }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -42,6 +44,40 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Get all unique tags that are actually used in blog listings
+  const getUsedTags = () => {
+    const usedTags = new Set<string>();
+    blogs.forEach(blog => {
+      if (blog.tags && Array.isArray(blog.tags)) {
+        blog.tags.forEach((tag: string) => {
+          if (tag && tag.trim()) {
+            usedTags.add(tag.trim());
+          }
+        });
+      }
+    });
+    return usedTags;
+  };
+
+  // Filter tag categories to only show tags that are used
+  const getFilteredTagCategories = () => {
+    const usedTags = getUsedTags();
+    const filteredCategories: { [key: string]: string[] } = {};
+
+    Object.entries(TAGS).forEach(([categoryName, tags]) => {
+      const availableTags = tags.filter(tag => 
+        tag !== 'Other' && usedTags.has(tag)
+      );
+      
+      // Only include category if it has available tags
+      if (availableTags.length > 0) {
+        filteredCategories[categoryName] = availableTags;
+      }
+    });
+
+    return filteredCategories;
+  };
 
   useEffect(() => {
     setSearchHistory(getSearchHistory());
@@ -336,15 +372,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
             
             {/* Tag Categories */}
             <div className={styles.modernTagCategories}>
-              {Object.entries(TAGS).map(([categoryName, tags]) => (
+              {Object.entries(getFilteredTagCategories()).map(([categoryName, tags]) => (
                 <details key={categoryName} className={styles.modernTagCategory}>
                   <summary className={styles.modernTagCategoryTitle}>
                     {categoryName}
-                    <span className={styles.tagCount}>({tags.filter(tag => tag !== 'Other').length})</span>
+                    <span className={styles.tagCount}>({tags.length})</span>
                   </summary>
                   <div className={styles.modernTagCategoryContent}>
                     <div className={styles.modernTagGrid}>
-                      {tags.filter(tag => tag !== 'Other').map(tag => (
+                      {tags.map(tag => (
                         <button
                           key={tag}
                           type="button"
