@@ -19,6 +19,7 @@ interface BlogPost {
   authorProfile: string;
   bloggerId: string;
   bloggerDisplayName: string;
+  bloggerTopics?: string[];
   description: string;
   category: string;
   tags: string[];
@@ -41,6 +42,7 @@ const mockBlogs: BlogPost[] = [
     authorProfile: "/blogger/sarah-johnson",
     bloggerId: "sarah-johnson",
     bloggerDisplayName: "Sarah Johnson",
+    bloggerTopics: ["Productivity", "Self-Care", "Wellness", "Lifestyle"],
     description: "Discover the science-backed strategies for creating a morning routine that sticks. From optimizing your sleep schedule to choosing the right activities, this comprehensive guide covers everything you need to know about starting your day right and maintaining consistency over time.",
     category: "Lifestyle",
     tags: ["Morning Routine", "Productivity", "Self-Care"],
@@ -60,6 +62,7 @@ const mockBlogs: BlogPost[] = [
     authorProfile: "/blogger/alex-chen",
     bloggerId: "alex-chen",
     bloggerDisplayName: "Alex Chen",
+    bloggerTopics: ["Mental Health", "Tech Industry", "Developer Life", "Burnout Prevention"],
     description: "An honest look at burnout, stress, and finding balance in the fast-paced world of technology.",
     category: "Health & Wellness",
     tags: ["Mental Health", "Tech", "Burnout Recovery"],
@@ -78,6 +81,7 @@ const mockBlogs: BlogPost[] = [
     authorProfile: "/blogger/maria-rodriguez",
     bloggerId: "maria-rodriguez",
     bloggerDisplayName: "Maria Rodriguez",
+    bloggerTopics: ["Cooking", "Healthy Living", "Time Management", "Family Meals"],
     description: "Quick and delicious meals that don't compromise on flavor or nutrition.",
     category: "Food & Drink",
     tags: ["Cooking", "Quick Meals", "Healthy Eating"],
@@ -171,12 +175,104 @@ const Blogroll: NextPage = () => {
     router.push(`/blogroll?${searchParams.toString()}`);
   };
 
+  const handleFiltersChange = (filters: any) => {
+    setSearchFilters(filters);
+    // Apply filters immediately
+    applyAdvancedFilters(filters);
+  };
+
+  const applyAdvancedFilters = (filters: any) => {
+    let filteredResults = mockBlogs;
+
+    // Apply category filter
+    if (filters.category) {
+      filteredResults = filteredResults.filter(blog => blog.category === filters.category);
+    }
+
+    // Apply author filter (search by name, display name, or topics)
+    if (filters.author && filters.author.trim()) {
+      const authorQuery = filters.author.toLowerCase().trim();
+      filteredResults = filteredResults.filter(blog => {
+        const authorMatch = blog.author.toLowerCase().includes(authorQuery);
+        const displayNameMatch = blog.bloggerDisplayName?.toLowerCase().includes(authorQuery);
+        const topicsMatch = blog.bloggerTopics?.some((topic: string) => 
+          topic.toLowerCase().includes(authorQuery)
+        );
+        return authorMatch || displayNameMatch || topicsMatch;
+      });
+    }
+
+    // Apply tags filter
+    if (filters.tags && filters.tags.length > 0) {
+      filteredResults = filteredResults.filter(blog =>
+        filters.tags.some((filterTag: string) =>
+          blog.tags.some((blogTag: string) => 
+            blogTag.toLowerCase().includes(filterTag.toLowerCase())
+          )
+        )
+      );
+    }
+
+    // Apply date range filter
+    if (filters.dateRange) {
+      const now = new Date();
+      let cutoffDate = new Date();
+
+      switch (filters.dateRange) {
+        case 'week':
+          cutoffDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          cutoffDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          cutoffDate.setFullYear(now.getFullYear() - 1);
+          break;
+        default:
+          cutoffDate = new Date(0);
+      }
+
+      filteredResults = filteredResults.filter(blog => {
+        const blogDate = new Date(blog.dateAdded);
+        return blogDate >= cutoffDate;
+      });
+    }
+
+    setBlogs(filteredResults);
+    
+    // If there are active filters, show as search active
+    const hasActiveFilters = filters.category || filters.author || filters.tags?.length > 0 || filters.dateRange;
+    setIsSearchActive(hasActiveFilters);
+    
+    if (hasActiveFilters) {
+      setSearchResults(filteredResults.map(blog => ({ ...blog, relevanceScore: 1, matchType: 'filter' as const })));
+    } else {
+      setIsSearchActive(false);
+      setSearchResults([]);
+      setBlogs(mockBlogs); // Reset to original blogs
+    }
+  };
+
   const clearSearch = () => {
     router.push('/blogroll');
   };
 
   const clearFilters = () => {
     router.push('/blogroll');
+  };
+
+  const clearAdvancedFilters = () => {
+    const emptyFilters = {
+      category: '',
+      dateRange: '',
+      author: '',
+      tags: [] as string[]
+    };
+    setSearchFilters(emptyFilters);
+    setIsSearchActive(false);
+    setSearchResults([]);
+    setBlogs(mockBlogs);
+    setShowAdvancedFilters(false);
   };
 
   const toggleSave = (blogId: string) => {
@@ -237,7 +333,7 @@ const Blogroll: NextPage = () => {
           placeholder="Search blogs, topics, or authors..."
           showAdvancedFilters={false}
           showFilters={showAdvancedFilters}
-          onFiltersChange={setSearchFilters}
+          onFiltersChange={handleFiltersChange}
         />
         <button
           onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
@@ -271,14 +367,19 @@ const Blogroll: NextPage = () => {
             ) : (
               <>
                 <p>
-                  {searchResults.length > 0 
-                    ? `Found ${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for "${searchQuery}"` 
-                    : `No results found for "${searchQuery}"`
-                  }
+                  {searchQuery ? (
+                    searchResults.length > 0 
+                      ? `Found ${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for "${searchQuery}"` 
+                      : `No results found for "${searchQuery}"`
+                  ) : (
+                    searchResults.length > 0
+                      ? `Showing ${searchResults.length} filtered result${searchResults.length !== 1 ? 's' : ''}`
+                      : 'No results match your filters'
+                  )}
                   {searchType === 'ai' && ' (AI Search)'}
                 </p>
                 <button 
-                  onClick={clearSearch}
+                  onClick={searchQuery ? clearSearch : clearAdvancedFilters}
                   style={{
                     background: 'transparent',
                     color: '#c42142',
@@ -290,7 +391,7 @@ const Blogroll: NextPage = () => {
                     marginLeft: '10px'
                   }}
                 >
-                  Clear Search
+                  {searchQuery ? 'Clear Search' : 'Clear Filters'}
                 </button>
               </>
             )}
