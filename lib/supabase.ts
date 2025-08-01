@@ -66,12 +66,16 @@ export interface BloggerProfile {
   blog_name: string;
   blog_description?: string;
   categories: string[];
-  social_links?: Record<string, string>;
-  is_verified: boolean; // Blog ownership verification
+  social_links: Record<string, string>;
+  is_verified: boolean;
   stripe_customer_id?: string;
   subscription_status?: 'active' | 'canceled' | 'past_due';
   subscription_end_date?: string;
-  
+  domain_verification_status: 'pending' | 'verified' | 'failed' | 'expired';
+  domain_verification_token?: string;
+  domain_verification_method: 'txt_record' | 'html_file' | 'meta_tag';
+  domain_verified_at?: string;
+  domain_last_check?: string;
   created_at: string;
   updated_at: string;
 }
@@ -229,7 +233,7 @@ export const supabaseDB = {
     if (confirmed18Plus !== undefined) {
       updateData.has_confirmed_18_plus = confirmed18Plus;
     }
-    
+
     const { data, error } = await supabase
       .from('user_profiles')
       .update(updateData)
@@ -292,7 +296,7 @@ export const supabaseDB = {
   // Admin/Moderation Functions
   updateSubmissionStatus: async (submissionId: string, status: BlogStatus, reviewerId: string) => {
     const updateData: any = { status };
-    
+
     if (status === 'approved') {
       updateData.approved_at = new Date().toISOString();
       updateData.reviewed_at = new Date().toISOString();
@@ -388,9 +392,9 @@ export const supabaseDB = {
       .select('*')
       .eq('user_id', userId)
       .single();
-    
+
     if (error) return { data: null, error };
-    
+
     return { 
       data: { 
         canAddMore: data.current_live_posts < data.max_live_posts,
@@ -419,7 +423,7 @@ export const supabaseDB = {
       .eq('id', submissionId)
       .eq('user_id', userId)
       .select();
-    
+
     return { data, error };
   },
 
@@ -452,7 +456,7 @@ export const supabaseDB = {
       .eq('has_adult_content', true)
       .eq('status', 'live')
       .eq('is_live', true);
-    
+
     return { data, error };
   },
 
@@ -474,7 +478,7 @@ export const supabaseDB = {
     return { data, error };
   },
 
-  
+
 
   // User management for webhooks
   getUserByEmail: async (email: string) => {
@@ -523,9 +527,9 @@ export const supabaseDB = {
       `)
       .eq('user_id', userId)
       .single();
-    
+
     if (error) return { isPremium: false, error };
-    
+
     // Check if user has pro tier AND active subscription
     const hasPro = data?.tier === 'pro';
     const bloggerProfile = data?.blogger_profiles?.[0];
@@ -533,10 +537,10 @@ export const supabaseDB = {
     const hasValidEndDate = bloggerProfile?.subscription_end_date 
       ? new Date(bloggerProfile.subscription_end_date) > new Date() 
       : false;
-    
+
     // User is premium only if they have pro tier AND active subscription
     const isPremium = hasPro && hasActiveSubscription && hasValidEndDate;
-    
+
     return { 
       isPremium, 
       error: null,
@@ -560,33 +564,33 @@ export const supabaseDB = {
       `)
       .eq('user_id', userId)
       .single();
-    
+
     if (error) return { synced: false, error };
-    
+
     const currentTier = data?.tier;
     const bloggerProfile = data?.blogger_profiles?.[0];
     const subscriptionStatus = bloggerProfile?.subscription_status;
     const subscriptionEndDate = bloggerProfile?.subscription_end_date;
-    
+
     // Determine correct tier based on Stripe status
     let correctTier: UserTier = 'free';
-    
+
     if (subscriptionStatus === 'active' && subscriptionEndDate) {
       const endDate = new Date(subscriptionEndDate);
       if (endDate > new Date()) {
         correctTier = 'pro';
       }
     }
-    
+
     // If tier doesn't match Stripe status, update it
     if (currentTier !== correctTier) {
       const { error: updateError } = await supabase
         .from('user_profiles')
         .update({ tier: correctTier })
         .eq('user_id', userId);
-      
+
       if (updateError) return { synced: false, error: updateError };
-      
+
       return { 
         synced: true, 
         error: null, 
@@ -595,7 +599,7 @@ export const supabaseDB = {
         newTier: correctTier
       };
     }
-    
+
     return { synced: true, error: null, changed: false, tier: currentTier };
   },
 

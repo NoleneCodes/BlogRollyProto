@@ -3,6 +3,7 @@ import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
 import styles from '../styles/BlogSubmissionForm.module.css';
 import SubmissionGuidelinesPopup from './SubmissionGuidelinesPopup';
+import DomainVerificationModal from './DomainVerificationModal';
 
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
@@ -83,6 +84,72 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           >
             Sign Up as Blogger
           </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Check domain verification status for existing bloggers
+  const [domainVerificationStatus, setDomainVerificationStatus] = useState<'loading' | 'verified' | 'pending' | 'failed' | null>(null);
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+
+  useEffect(() => {
+    if (isBlogger && !isSignupMode) {
+      checkDomainVerification();
+    }
+  }, [isBlogger, isSignupMode]);
+
+  const checkDomainVerification = async () => {
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      
+      if (data.bloggerProfile) {
+        setDomainVerificationStatus(data.bloggerProfile.domain_verification_status || 'pending');
+      }
+    } catch (error) {
+      console.error('Failed to check domain verification:', error);
+      setDomainVerificationStatus('pending');
+    }
+  };
+
+  // Show domain verification requirement if not verified
+  if (isBlogger && !isSignupMode && domainVerificationStatus && domainVerificationStatus !== 'verified') {
+    return (
+      <div className={styles.formContainer}>
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem',
+          backgroundColor: '#fef3cd',
+          borderRadius: '8px',
+          border: '1px solid #fbbf24'
+        }}>
+          <h3 style={{ color: '#d97706', marginBottom: '1rem' }}>
+            Domain Verification Required
+          </h3>
+          <p style={{ color: '#92400e', marginBottom: '1.5rem' }}>
+            You must verify ownership of your blog domain before you can submit content for approval. 
+            This ensures that only legitimate blog owners can submit posts to BlogRolly.
+          </p>
+          <button
+            onClick={() => setShowDomainVerification(true)}
+            style={{
+              background: '#c42142',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
+            Verify Your Domain
+          </button>
+          {domainVerificationStatus === 'failed' && (
+            <p style={{ color: '#dc2626', marginTop: '1rem', fontSize: '0.875rem' }}>
+              Previous verification attempt failed. Please try again.
+            </p>
+          )}
         </div>
       </div>
     );
@@ -574,6 +641,20 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         isOpen={showSubmissionGuidelinesPopup}
         onClose={() => setShowSubmissionGuidelinesPopup(false)}
       />
+
+      {/* Domain Verification Modal */}
+      {showDomainVerification && (
+        <DomainVerificationModal
+          isOpen={showDomainVerification}
+          onClose={() => setShowDomainVerification(false)}
+          blogUrl={formData.postUrl || 'https://example.com'}
+          verificationToken="blogrolly-verify-placeholder"
+          onVerificationComplete={() => {
+            setDomainVerificationStatus('verified');
+            setShowDomainVerification(false);
+          }}
+        />
+      )}
     </div>
   );
 };
