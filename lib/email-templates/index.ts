@@ -144,10 +144,25 @@ export const emailService = {
   },
 
   //  Blog Management
-  sendBlogUrlChangedEmail: async (email: string, firstName: string, blogTitle: string, oldUrl: string, newUrl: string) => {
+  sendBlogUrlChangedEmail: async (
+    email: string, 
+    bloggerName: string, 
+    blogTitle: string, 
+    newUrl: string, 
+    changeReason: string,
+    reapprovalRequired: boolean = false,
+    oldUrl?: string
+  ) => {
     try {
-      const html = emailTemplates.blogUrlChanged.template(firstName, blogTitle, oldUrl, newUrl);
-      const subject = emailTemplates.blogUrlChanged.subject;
+      const html = emailTemplates.blogUrlChanged({
+        bloggerName,
+        blogTitle,
+        oldUrl,
+        newUrl,
+        changeReason,
+        reapprovalRequired
+      });
+      const subject = `Blog URL Updated${reapprovalRequired ? ' - Re-approval Required' : ''}`;
 
       const { data, error } = await resend.emails.send({
         from: RESEND_CONFIG.fromEmail,

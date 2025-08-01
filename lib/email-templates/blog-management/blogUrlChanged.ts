@@ -1,16 +1,3 @@
-export const blogUrlChangedTemplate = {
-  subject: 'Blog URL Updated Successfully',
-  template: (firstName: string, blogTitle: string, oldUrl: string, newUrl: string) => `
-    <h1>Blog URL Updated</h1>
-    <p>Hi ${firstName},</p>
-    <p>Your blog URL for "<strong>${blogTitle}</strong>" has been successfully updated.</p>
-    <p><strong>Previous URL:</strong> ${oldUrl}</p>
-    <p><strong>New URL:</strong> ${newUrl}</p>
-    <p>Please note that all previously approved posts from your old URL will need to be re-reviewed for the new URL.</p>
-    <p>You can now submit new posts using your updated blog URL.</p>
-    <p>The BlogRolly Team</p>
-  `
-};
 interface BlogUrlChangedTemplateProps {
   bloggerName: string;
   blogTitle: string;
@@ -51,29 +38,29 @@ export const blogUrlChangedTemplate = ({
         <div class="header">
           <h1>Blog URL Updated</h1>
         </div>
-        
+
         <div class="content">
           <p>Hi ${bloggerName},</p>
-          
+
           <p>Your blog post URL has been successfully updated:</p>
-          
+
           <h3>${blogTitle}</h3>
-          
+
           ${oldUrl ? `
             <p><strong>Previous URL:</strong></p>
             <div class="url-box">${oldUrl}</div>
           ` : ''}
-          
+
           <p><strong>New URL:</strong></p>
           <div class="url-box">${newUrl}</div>
-          
+
           <p><strong>Reason for change:</strong> ${changeReason}</p>
-          
+
           ${reapprovalRequired ? `
             <div class="alert">
               <h4>⚠️ Re-approval Required</h4>
               <p>Since your blog URL has changed, your blog post has been automatically deactivated and will need to go through our approval process again. This ensures that all content meets our guidelines and that the new URL is accessible.</p>
-              
+
               <p><strong>What happens next:</strong></p>
               <ul>
                 <li>Your blog post is now in "Pending" status</li>
@@ -81,7 +68,7 @@ export const blogUrlChangedTemplate = ({
                 <li>You'll receive an email notification once the review is complete</li>
                 <li>If approved, your blog will be reactivated automatically</li>
               </ul>
-              
+
               <p>This process typically takes 1-2 business days.</p>
             </div>
           ` : `
@@ -90,12 +77,12 @@ export const blogUrlChangedTemplate = ({
               <p>Your blog URL has been updated and remains active. No further action is required.</p>
             </div>
           `}
-          
+
           <p>If you have any questions about this change or the approval process, please don't hesitate to contact our support team.</p>
-          
+
           <a href="https://blogrolly.com/profile/blogger" class="btn">View Your Blog Dashboard</a>
         </div>
-        
+
         <div class="footer">
           <p>Best regards,<br>The BlogRolly Team</p>
           <p>This email was sent because you updated a blog URL on BlogRolly.</p>
