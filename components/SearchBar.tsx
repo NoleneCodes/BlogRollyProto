@@ -149,7 +149,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             onClick={() => handleSearch('ai')}
             className={styles.aiSearchButton}
             disabled={!query.trim()}
-            title="AI-powered search that understands your questions"
+            title="AI-powered search that understands your questions and provides relevant results (Coming Soon)"
           >
             Ask Rolly
           </button>
