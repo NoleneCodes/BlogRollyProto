@@ -185,87 +185,297 @@
 }
 
 .filtersPanel {
-  margin-top: 8px;
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #e1e5e9;
-  border-radius: 8px;
-}
-
-.filterRow {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.filterSelect,
-.filterInput {
-  flex: 1;
-  min-width: 150px;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  background: white;
-}
-
-.filterSelect:focus,
-.filterInput:focus {
-  outline: none;
-  border-color: #c42142;
-  box-shadow: 0 0 0 2px rgba(196, 33, 66, 0.1);
-}
-
-.tagsFilterSection {
   margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
+  padding: 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
-.filterLabel {
-  display: block;
-  font-size: 14px;
+.filtersPanel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #c42142, #e94a3f, #f97316, #eab308);
+  border-radius: 16px 16px 0 0;
+}
+
+.filtersHeader {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.filtersTitle {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+}
+
+.filtersSubtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.quickFiltersRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filterGroupLabel {
+  font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 8px;
-}
-
-.selectedTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.selectedTag {
-  background: #c42142;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 16px;
-  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.tagRemoveButton {
+.modernFilterSelect,
+.modernFilterInput {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  background: white;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modernFilterSelect:focus,
+.modernFilterInput:focus {
+  outline: none;
+  border-color: #c42142;
+  box-shadow: 0 0 0 4px rgba(196, 33, 66, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.modernFilterInput::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.selectedTagsSection {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+}
+
+.selectedTagsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.selectedTagsLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.clearAllTagsButton {
+  background: transparent;
+  color: #c42142;
+  border: 1px solid #c42142;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearAllTagsButton:hover {
+  background: #c42142;
+  color: white;
+}
+
+.selectedTagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modernTagsSection {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tagsSectionHeader {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.tagsSectionTitle {
+  margin: 0 0 8px 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.tagsSectionSubtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.modernTagCategories {
+  display: grid;
+  gap: 16px;
+}
+
+.modernTagCategory {
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.modernTagCategory:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.modernTagCategory[open] {
+  border-color: #c42142;
+  background: white;
+}
+
+.modernTagCategoryTitle {
+  padding: 16px;
+  font-weight: 700;
+  font-size: 0.975rem;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+}
+
+.modernTagCategoryTitle:hover {
+  color: #c42142;
+  background: rgba(196, 33, 66, 0.05);
+}
+
+.categoryIcon {
+  font-size: 1.125rem;
+}
+
+.tagCount {
+  margin-left: auto;
+  font-size: 0.75rem;
+  background: #e2e8f0;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.modernTagCategoryContent {
+  padding: 0 16px 16px 16px;
+}
+
+.modernTagGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.modernTagButton {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border: 2px solid #e2e8f0;
+  color: #374151;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.modernTagButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c42142, #a01835);
+  color: white;
+  border-color: #c42142;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.3);
+}
+
+.modernTagButtonSelected {
+  background: linear-gradient(135deg, #c42142, #a01835) !important;
+  color: white !important;
+  border-color: #c42142 !important;
+  box-shadow: 0 2px 8px rgba(196, 33, 66, 0.3);
+  cursor: not-allowed;
+}
+
+.modernSelectedTag {
+  background: linear-gradient(135deg, #c42142, #a01835);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(196, 33, 66, 0.3);
+  transition: all 0.2s ease;
+}
+
+.modernSelectedTag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.4);
+}
+
+.modernTagRemoveButton {
   background: none;
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
   padding: 0;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.tagRemoveButton:hover {
-  background: rgba(255, 255, 255, 0.2);
+.modernTagRemoveButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .tagsSubLabel {
@@ -327,12 +537,41 @@
     padding: 12px;
   }
 
-  .filterRow {
-    flex-direction: column;
+  .filtersPanel {
+    padding: 16px;
+    margin-top: 12px;
   }
 
-  .filterSelect,
-  .filterInput {
-    min-width: 100%;
+  .filtersTitle {
+    font-size: 1.1rem;
+  }
+
+  .quickFiltersRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .modernTagGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 6px;
+  }
+
+  .modernTagButton {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
+
+  .modernTagCategoryTitle {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .selectedTagsContainer {
+    gap: 6px;
+  }
+
+  .modernSelectedTag {
+    font-size: 0.7rem;
+    padding: 6px 10px;
   }
 }

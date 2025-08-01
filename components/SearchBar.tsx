@@ -223,64 +223,90 @@ const SearchBar: React.FC<SearchBarProps> = ({
       {/* Advanced Filters */}
       {showFilters && (
         <div className={styles.filtersPanel}>
-          <div className={styles.filterRow}>
-            <select
-              value={filters.category}
-              onChange={(e) => {
-                const newFilters = {...filters, category: e.target.value};
-                setFilters(newFilters);
-                onFiltersChange?.(newFilters);
-              }}
-              className={styles.filterSelect}
-            >
-              <option value="">All Categories</option>
-              {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-            
-            <select
-              value={filters.dateRange}
-              onChange={(e) => {
-                const newFilters = {...filters, dateRange: e.target.value};
-                setFilters(newFilters);
-                onFiltersChange?.(newFilters);
-              }}
-              className={styles.filterSelect}
-            >
-              <option value="">Any time</option>
-              <option value="week">Past week</option>
-              <option value="month">Past month</option>
-              <option value="year">Past year</option>
-            </select>
-            
-            <input
-              type="text"
-              placeholder="Author name..."
-              value={filters.author}
-              onChange={(e) => {
-                const newFilters = {...filters, author: e.target.value};
-                setFilters(newFilters);
-                onFiltersChange?.(newFilters);
-              }}
-              className={styles.filterInput}
-            />
+          <div className={styles.filtersHeader}>
+            <h3 className={styles.filtersTitle}>🔍 Discover Your Perfect Content</h3>
+            <p className={styles.filtersSubtitle}>Find exactly what you're looking for with our smart filters</p>
           </div>
-          
-          {/* Tags Filter Section */}
-          <div className={styles.tagsFilterSection}>
-            <label className={styles.filterLabel}>Filter by Tags/Themes:</label>
+
+          {/* Quick Filters Row */}
+          <div className={styles.quickFiltersRow}>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterGroupLabel}>📂 Category</label>
+              <select
+                value={filters.category}
+                onChange={(e) => {
+                  const newFilters = {...filters, category: e.target.value};
+                  setFilters(newFilters);
+                  onFiltersChange?.(newFilters);
+                }}
+                className={styles.modernFilterSelect}
+              >
+                <option value="">All Categories</option>
+                {MAIN_CATEGORIES.filter(category => category !== 'Other').map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+            </div>
             
-            {/* Selected Tags */}
-            {filters.tags.length > 0 && (
-              <div className={styles.selectedTags}>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterGroupLabel}>📅 Time Period</label>
+              <select
+                value={filters.dateRange}
+                onChange={(e) => {
+                  const newFilters = {...filters, dateRange: e.target.value};
+                  setFilters(newFilters);
+                  onFiltersChange?.(newFilters);
+                }}
+                className={styles.modernFilterSelect}
+              >
+                <option value="">Any time</option>
+                <option value="week">Past week</option>
+                <option value="month">Past month</option>
+                <option value="year">Past year</option>
+              </select>
+            </div>
+            
+            <div className={styles.filterGroup}>
+              <label className={styles.filterGroupLabel}>✍️ Author</label>
+              <input
+                type="text"
+                placeholder="Search by author name..."
+                value={filters.author}
+                onChange={(e) => {
+                  const newFilters = {...filters, author: e.target.value};
+                  setFilters(newFilters);
+                  onFiltersChange?.(newFilters);
+                }}
+                className={styles.modernFilterInput}
+              />
+            </div>
+          </div>
+
+          {/* Selected Tags Display */}
+          {filters.tags.length > 0 && (
+            <div className={styles.selectedTagsSection}>
+              <div className={styles.selectedTagsHeader}>
+                <span className={styles.selectedTagsLabel}>🏷️ Active Filters</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newFilters = {...filters, tags: []};
+                    setFilters(newFilters);
+                    onFiltersChange?.(newFilters);
+                  }}
+                  className={styles.clearAllTagsButton}
+                >
+                  Clear All
+                </button>
+              </div>
+              <div className={styles.selectedTagsContainer}>
                 {filters.tags.map(tag => (
-                  <span key={tag} className={styles.selectedTag}>
+                  <span key={tag} className={styles.modernSelectedTag}>
                     {tag}
                     <button
                       type="button"
                       onClick={() => handleTagRemove(tag)}
-                      className={styles.tagRemoveButton}
+                      className={styles.modernTagRemoveButton}
                       title={`Remove ${tag} filter`}
                     >
                       ×
@@ -288,24 +314,48 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   </span>
                 ))}
               </div>
-            )}
+            </div>
+          )}
+          
+          {/* Tags Filter Section */}
+          <div className={styles.modernTagsSection}>
+            <div className={styles.tagsSectionHeader}>
+              <h4 className={styles.tagsSectionTitle}>🎯 Filter by Topics & Themes</h4>
+              <p className={styles.tagsSectionSubtitle}>Choose from our curated collection of topics to find content that matches your interests</p>
+            </div>
             
-            {/* Popular Tags Selection */}
-            <div className={styles.popularTags}>
-              <p className={styles.tagsSubLabel}>Popular tags:</p>
-              <div className={styles.tagsGrid}>
-                {POPULAR_TAGS.slice(0, 15).map(tag => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => handleTagAdd(tag)}
-                    className={`${styles.tagButton} ${filters.tags.includes(tag) ? styles.tagButtonSelected : ''}`}
-                    disabled={filters.tags.includes(tag)}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
+            {/* Tag Categories */}
+            <div className={styles.modernTagCategories}>
+              {Object.entries(TAGS).map(([categoryName, tags]) => (
+                <details key={categoryName} className={styles.modernTagCategory}>
+                  <summary className={styles.modernTagCategoryTitle}>
+                    <span className={styles.categoryIcon}>
+                      {categoryName === 'Themes & Topics' && '💡'}
+                      {categoryName === 'Structure / Format' && '📝'}
+                      {categoryName === 'Vibe / Tone' && '🎨'}
+                      {categoryName === 'Intended Audience' && '👥'}
+                      {categoryName === 'Content Filters' && '⚡'}
+                    </span>
+                    {categoryName}
+                    <span className={styles.tagCount}>({tags.filter(tag => tag !== 'Other').length})</span>
+                  </summary>
+                  <div className={styles.modernTagCategoryContent}>
+                    <div className={styles.modernTagGrid}>
+                      {tags.filter(tag => tag !== 'Other').map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => handleTagAdd(tag)}
+                          disabled={filters.tags.includes(tag)}
+                          className={`${styles.modernTagButton} ${filters.tags.includes(tag) ? styles.modernTagButtonSelected : ''}`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </details>
+              ))}
             </div>
           </div>
         </div>
