@@ -215,7 +215,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   };
 
   const handleTagAdd = (tag: string) => {
-    if (formData.tags.length < 10 && !formData.tags.includes(tag)) {
+    if (formData.tags.length < 4 && !formData.tags.includes(tag)) {
       setFormData(prev => ({ ...prev, tags: [...prev.tags, tag] }));
     }
     setTagInput('');
@@ -453,7 +453,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Tags
-            <span className={styles.optional}>(Up to 10 tags)</span>
+            <span className={styles.optional}>(Up to 4 tags)</span>
           </label>
 
           <div className={styles.tagsContainer}>
@@ -471,7 +471,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             ))}
           </div>
 
-          {formData.tags.length < 10 && (
+          {formData.tags.length < 4 && (
             <div className={styles.tagInputContainer}>
               <input
                 type="text"
@@ -511,7 +511,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
                       key={tag}
                       type="button"
                       onClick={() => handleTagAdd(tag)}
-                      disabled={formData.tags.includes(tag) || formData.tags.length >= 10}
+                      disabled={formData.tags.includes(tag) || formData.tags.length >= 4}
                       className={`${styles.tagCategoryTag} ${formData.tags.includes(tag) ? styles.tagSelected : ''}`}
                     >
                       {tag}
