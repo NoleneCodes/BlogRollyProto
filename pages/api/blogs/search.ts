@@ -44,13 +44,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .eq('status', 'live')
       .eq('is_live', true);
 
-    // Text search
+    // Text search - use simple ILIKE search since search_vector doesn't exist
     if (q && typeof q === 'string') {
-      if (type === 'keyword') {
-        query = query.textSearch('search_vector', q.split(' ').join(' & '));
-      } else {
-        // For AI search, we'll use a broader text search for now
-        query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
+      const searchTerm = q.trim();
+      if (searchTerm) {
+        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
       }
     }
 
@@ -104,22 +102,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
       console.error('Search error:', error);
-      return res.status(500).json({ error: 'Search failed' });
-    }
-
-    // Log search analytics
-    if (q) {
-      await supabase.from('search_analytics').insert({
-        search_query: q as string,
-        search_type: type as string,
-        results_count: count || 0,
-        filters_used: {
+      
+      // Return empty results instead of crashing
+      return res.status(200).json({
+        results: [],
+        total: 0,
+        query: q || '',
+        error: 'Search temporarily unavailable. Please try again.',
+        filters: {
           category: category || null,
           tags: tags ? (tags as string).split(',') : [],
           author: author || null,
           dateRange: dateRange || null
         }
       });
+    }
+
+    // Log search analytics (don't let this crash the search)
+    if (q) {
+      try {
+        await supabase.from('search_analytics').insert({
+          search_query: q as string,
+          search_type: type as string,
+          results_count: count || 0,
+          filters_used: {
+            category: category || null,
+            tags: tags ? (tags as string).split(',') : [],
+            author: author || null,
+            dateRange: dateRange || null
+          }
+        });
+      } catch (analyticsError) {
+        console.warn('Failed to log search analytics:', analyticsError);
+        // Continue with the search response
+      }
     }
 
     // Transform data to match frontend expectations

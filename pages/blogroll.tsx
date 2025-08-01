@@ -176,7 +176,13 @@ const Blogroll: NextPage = () => {
       }
 
       const data = await response.json();
-      setSearchResults(data.results);
+      // Handle API errors gracefully
+      if (data.error) {
+        console.warn('Search API returned error:', data.error);
+        setSearchResults([]);
+      } else {
+        setSearchResults(data.results || []);
+      }
       setIsSearchActive(true);
     } catch (error) {
       console.error('Search error:', error);
