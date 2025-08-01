@@ -157,4 +157,41 @@ export class DomainVerificationService {
       return url.replace(/^https?:\/\//, '').split('/')[0];
     }
   }
+
+  /**
+   * Validates that a blog post URL belongs to the blogger's verified domain
+   */
+  static validatePostUrlMatchesBlogDomain(postUrl: string, blogDomainUrl: string): { isValid: boolean; error?: string } {
+    try {
+      const postDomain = this.extractDomain(postUrl);
+      const blogDomain = this.extractDomain(blogDomainUrl);
+      
+      // Remove www. prefix for comparison
+      const normalizePostDomain = postDomain.replace(/^www\./, '');
+      const normalizeBlogDomain = blogDomain.replace(/^www\./, '');
+      
+      if (normalizePostDomain !== normalizeBlogDomain) {
+        return {
+          isValid: false,
+          error: `Blog post URL must be from your verified domain (${blogDomain}). The URL you provided is from ${postDomain}.`
+        };
+      }
+
+      // Ensure the post URL has a path (not just the domain)
+      const postUrlObj = new URL(postUrl);
+      if (postUrlObj.pathname === '/' || postUrlObj.pathname === '') {
+        return {
+          isValid: false,
+          error: 'Blog post URL must include a specific path to the post (e.g., /blog/my-post-title).'
+        };
+      }
+
+      return { isValid: true };
+    } catch (error) {
+      return {
+        isValid: false,
+        error: 'Invalid URL format. Please provide a valid HTTPS URL.'
+      };
+    }
+  }
 }

@@ -296,21 +296,55 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     }));
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setFormData(prev => ({ ...prev, postUrl: url }));
 
-    if (url && !validateUrl(url)) {
+    if (!url) {
+      setErrors(prev => ({ ...prev, postUrl: '' }));
+      return;
+    }
+
+    if (!validateUrl(url)) {
       setErrors(prev => ({ 
         ...prev, 
         postUrl: 'URL must start with https:// and contain a path (e.g., /blog/my-post)' 
       }));
-    } else {
+      return;
+    }
+
+    // Validate domain matches blogger's verified domain
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      
+      if (data.bloggerProfile?.blog_url) {
+        const { DomainVerificationService } = await import('../lib/domainVerification');
+        const domainValidation = DomainVerificationService.validatePostUrlMatchesBlogDomain(
+          url, 
+          data.bloggerProfile.blog_url
+        );
+        
+        if (!domainValidation.isValid) {
+          setErrors(prev => ({ 
+            ...prev, 
+            postUrl: domainValidation.error || 'Blog post must be from your verified domain' 
+          }));
+          return;
+        }
+      }
+      
       setErrors(prev => ({ ...prev, postUrl: '' }));
+    } catch (error) {
+      console.error('Domain validation error:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        postUrl: 'Unable to validate domain. Please try again.' 
+      }));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate required fields
@@ -328,6 +362,40 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      // Final server-side validation before submission
+      try {
+        const authResponse = await fetch('/api/auth-check');
+        const authData = await authResponse.json();
+        
+        if (authData.session?.access_token) {
+          const validationResponse = await fetch('/api/validate-blog-url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authData.session.access_token}`
+            },
+            body: JSON.stringify({ postUrl: formData.postUrl })
+          });
+
+          const validationData = await validationResponse.json();
+
+          if (!validationData.valid) {
+            setErrors(prev => ({ 
+              ...prev, 
+              postUrl: validationData.error || 'Blog post URL validation failed' 
+            }));
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('URL validation error:', error);
+        setErrors(prev => ({ 
+          ...prev, 
+          postUrl: 'Unable to validate blog URL. Please try again.' 
+        }));
+        return;
+      }
+
       onSubmit?.(formData);
       // Clear draft after successful submission
       localStorage.removeItem('blogSubmissionDraft');
