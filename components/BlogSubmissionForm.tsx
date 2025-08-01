@@ -362,8 +362,37 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Final server-side validation before submission
       try {
+        // Upload image if it's a file
+        let imageUrl = '';
+        let imageType = 'url';
+        let imageFilePath = '';
+
+        if (formData.image) {
+          const imageFormData = new FormData();
+          imageFormData.append('image', formData.image);
+
+          const uploadResponse = await fetch('/api/upload-image', {
+            method: 'POST',
+            body: imageFormData
+          });
+
+          const uploadData = await uploadResponse.json();
+
+          if (!uploadResponse.ok) {
+            setErrors(prev => ({ 
+              ...prev, 
+              image: uploadData.error || 'Failed to upload image' 
+            }));
+            return;
+          }
+
+          imageUrl = uploadData.imageUrl;
+          imageType = 'upload';
+          imageFilePath = uploadData.filePath;
+        }
+
+        // Final server-side validation before submission
         const authResponse = await fetch('/api/auth-check');
         const authData = await authResponse.json();
         
@@ -387,18 +416,25 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             return;
           }
         }
+
+        // Add image data to form submission
+        const submissionData = {
+          ...formData,
+          imageUrl,
+          imageType,
+          imageFilePath
+        };
+
+        onSubmit?.(submissionData);
+        // Clear draft after successful submission
+        localStorage.removeItem('blogSubmissionDraft');
       } catch (error) {
-        console.error('URL validation error:', error);
+        console.error('Submission error:', error);
         setErrors(prev => ({ 
           ...prev, 
-          postUrl: 'Unable to validate blog URL. Please try again.' 
+          image: 'Failed to process image upload. Please try again.' 
         }));
-        return;
       }
-
-      onSubmit?.(formData);
-      // Clear draft after successful submission
-      localStorage.removeItem('blogSubmissionDraft');
     }
   };
 

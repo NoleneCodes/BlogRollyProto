@@ -83,25 +83,24 @@ export interface BloggerProfile {
 // Blog Content Tables
 export interface BlogSubmission {
   id: string;
-  user_id: string; // FK to User (blogger)
+  user_id: string;
   title: string;
   description: string;
   url: string;
   image_url?: string;
+  image_description?: string; // Alt text for accessibility and SEO
+  image_type?: 'url' | 'upload'; // Whether image is external URL or uploaded file
+  image_file_path?: string; // Path/reference for uploaded images
   category: string;
   tags: string[];
-  status: BlogStatus;
-  has_adult_content: boolean; // 18+ flag
-  is_live: boolean; // Whether the post is currently live (for tier limits)
-
-  // Analytics
+  status: 'draft' | 'submitted' | 'pending' | 'approved' | 'rejected' | 'live' | 'inactive';
+  has_adult_content: boolean;
+  is_live: boolean;
   views: number;
   clicks: number;
-  ctr?: number;
-  avg_time_on_page?: number;
-  bounce_rate?: number;
-
-  // Timestamps
+  ctr: number;
+  avg_time_on_page: number;
+  bounce_rate: number;
   submitted_at?: string;
   reviewed_at?: string;
   approved_at?: string;
