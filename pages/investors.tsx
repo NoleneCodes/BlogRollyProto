@@ -1,8 +1,58 @@
 import type { NextPage } from "next";
+import { useState } from "react";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
 
 const Investors: NextPage = () => {
+  const [investorForm, setInvestorForm] = useState({
+    name: '',
+    email: '',
+    company: '',
+    investmentRange: '',
+    investorType: '',
+    interests: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInvestorForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Here you would typically send the data to your backend API
+      console.log('Investor form submitted:', investorForm);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setSubmitStatus('success');
+      setInvestorForm({
+        name: '',
+        email: '',
+        company: '',
+        investmentRange: '',
+        investorType: '',
+        interests: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting investor form:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Layout title="Investors - BlogRolly">
       <div className={styles.hero}>
@@ -109,6 +159,149 @@ const Investors: NextPage = () => {
             <a href="#" className={styles.submitButton}>Schedule Call</a>
           </div>
         </div>
+      </div>
+
+      <div className={styles.investorSignupSection}>
+        <h2>Express Your Interest</h2>
+        <p>Join our investor community and be part of reshaping content discovery</p>
+
+        {submitStatus === 'success' && (
+          <div className={styles.successMessage}>
+            <h3>✅ Thank you for your interest!</h3>
+            <p>We've received your information and will be in touch soon to discuss opportunities.</p>
+          </div>
+        )}
+
+        {submitStatus === 'error' && (
+          <div className={styles.errorMessage}>
+            <h3>❌ Submission Error</h3>
+            <p>There was an issue submitting your information. Please try again or contact us directly.</p>
+          </div>
+        )}
+
+        {submitStatus !== 'success' && (
+          <form onSubmit={handleSubmit} className={styles.investorForm}>
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="name">Full Name *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={investorForm.name}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="email">Email Address *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={investorForm.email}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                />
+              </div>
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="company">Company/Fund Name</label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={investorForm.company}
+                  onChange={handleInputChange}
+                  className={styles.formInput}
+                  placeholder="Optional"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="investmentRange">Investment Range *</label>
+                <select
+                  id="investmentRange"
+                  name="investmentRange"
+                  value={investorForm.investmentRange}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formSelect}
+                >
+                  <option value="">Select range</option>
+                  <option value="under-10k">Under $10K</option>
+                  <option value="10k-50k">$10K - $50K</option>
+                  <option value="50k-100k">$50K - $100K</option>
+                  <option value="100k-500k">$100K - $500K</option>
+                  <option value="500k-1m">$500K - $1M</option>
+                  <option value="over-1m">Over $1M</option>
+                  <option value="strategic">Strategic Partnership</option>
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="investorType">Investor Type *</label>
+                <select
+                  id="investorType"
+                  name="investorType"
+                  value={investorForm.investorType}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formSelect}
+                >
+                  <option value="">Select type</option>
+                  <option value="angel">Angel Investor</option>
+                  <option value="vc">Venture Capital</option>
+                  <option value="fund">Investment Fund</option>
+                  <option value="strategic">Strategic Investor</option>
+                  <option value="family-office">Family Office</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="interests">Areas of Interest</label>
+                <input
+                  type="text"
+                  id="interests"
+                  name="interests"
+                  value={investorForm.interests}
+                  onChange={handleInputChange}
+                  className={styles.formInput}
+                  placeholder="e.g., Creator Economy, SaaS, Media Tech"
+                />
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="message">Message (Optional)</label>
+              <textarea
+                id="message"
+                name="message"
+                value={investorForm.message}
+                onChange={handleInputChange}
+                className={styles.formTextarea}
+                rows={4}
+                placeholder="Tell us about your investment thesis, relevant experience, or questions about BlogRolly..."
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              className={styles.investorSubmitButton}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Express Interest'}
+            </button>
+          </form>
+        )}
       </div>
 
       <div className={styles.contactSection}>
