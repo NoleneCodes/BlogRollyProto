@@ -1,7 +1,6 @@
-
 export const linkedinVerificationResultTemplate = (investorName: string, approved: boolean, rejectionReason?: string) => {
   const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investor/dashboard`;
-  
+
   const rejectionReasons = {
     'incomplete_profile': 'Your LinkedIn profile appears to be incomplete or missing key professional information',
     'insufficient_experience': 'Your profile does not demonstrate sufficient investment or relevant professional experience',
@@ -12,11 +11,11 @@ export const linkedinVerificationResultTemplate = (investorName: string, approve
     'privacy_settings': 'Your LinkedIn profile privacy settings prevent us from reviewing your qualifications',
     'other': 'Your profile does not meet our investor verification requirements'
   };
-  
+
   const rejectionMessage = rejectionReason && rejectionReasons[rejectionReason as keyof typeof rejectionReasons] 
     ? rejectionReasons[rejectionReason as keyof typeof rejectionReasons]
     : 'Your profile does not meet our investor verification requirements';
-  
+
   return {
     subject: `LinkedIn Verification ${approved ? 'Approved' : 'Rejected'} - BlogRolly Investors`,
     html: `
@@ -40,10 +39,10 @@ export const linkedinVerificationResultTemplate = (investorName: string, approve
               <h1>BlogRolly</h1>
               <p>LinkedIn Verification Update</p>
             </div>
-            
+
             <div class="content">
               <h2>Hello ${investorName},</h2>
-              
+
               ${approved ? `
                 <div class="success-section">
                   <h3>✅ LinkedIn Verification Approved!</h3>
@@ -57,7 +56,7 @@ export const linkedinVerificationResultTemplate = (investorName: string, approve
                     <li>Investment opportunities and documentation</li>
                   </ul>
                 </div>
-                
+
                 <div style="text-align: center;">
                   <a href="${dashboardUrl}" class="dashboard-button">Access Your Investor Dashboard</a>
                 </div>
@@ -79,10 +78,10 @@ export const linkedinVerificationResultTemplate = (investorName: string, approve
                   <p>If you believe this is an error or would like to resubmit after updating your profile, please contact our investor relations team at <a href="mailto:investors@blogrolly.com">investors@blogrolly.com</a></p>
                 </div>
               `}
-              
+
               <p>If you have any questions, please don't hesitate to reach out to our investor relations team.</p>
             </div>
-            
+
             <div class="footer">
               <p>Best regards,<br>BlogRolly Investor Relations Team</p>
               <p><a href="mailto:investors@blogrolly.com">investors@blogrolly.com</a></p>
@@ -123,14 +122,14 @@ What you can do:
 - Ensure your profile clearly demonstrates your qualifications as an investor
 - Contact our team if you believe this decision was made in error
 
-If you believe this is an error or would like to resubmit after updating your profile, please contact our investor relations team at investors@blogrolly.com
+If you believe this is an error or would like to resubmit after updating your profile, please contact our investor relations team at invest@blogrolly.com
 `}
 
 If you have any questions, please don't hesitate to reach out to our investor relations team.
 
 Best regards,
 BlogRolly Investor Relations Team
-investors@blogrolly.com
+invest@blogrolly.com
     `
   };
 };

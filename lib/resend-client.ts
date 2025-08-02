@@ -1,4 +1,3 @@
-
 import { Resend } from 'resend';
 
 if (!process.env.RESEND_API_KEY) {
@@ -112,11 +111,12 @@ export const sendInvestorWelcomeEmail = async (email: string, name: string, veri
     const template = investorWelcomeTemplate(name, verificationToken);
 
     const { data, error } = await resend.emails.send({
-      from: 'BlogRolly Investor Relations <investors@blogrolly.com>',
+      from: INVESTOR_EMAIL_CONFIG.fromEmail,
       to: [email],
       subject: template.subject,
       html: template.html,
       text: template.text,
+      reply_to: INVESTOR_EMAIL_CONFIG.replyTo,
     });
 
     if (error) {
@@ -166,11 +166,12 @@ export const sendLinkedInVerificationResult = async (email: string, name: string
     const template = linkedinVerificationResultTemplate(name, approved, rejectionReason);
 
     const { data, error } = await resend.emails.send({
-      from: 'BlogRolly Investor Relations <investors@blogrolly.com>',
+      from: INVESTOR_EMAIL_CONFIG.fromEmail,
       to: [email],
       subject: template.subject,
       html: template.html,
       text: template.text,
+      reply_to: INVESTOR_EMAIL_CONFIG.replyTo,
     });
 
     if (error) {

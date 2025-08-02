@@ -74,7 +74,7 @@ export const investorWelcomeTemplate = (investorName: string, verificationToken:
           </div>
           
           <div class="footer">
-            <p>Questions? Reply to this email or contact us at <a href="mailto:investors@blogrolly.com" style="color: #c42142;">investors@blogrolly.com</a></p>
+            <p>Questions? Reply to this email or contact us at <a href="mailto:invest@blogrolly.com" style="color: #c42142;">invest@blogrolly.com</a></p>
             
             <div class="social-links">
               <a href="https://x.com/BlogRolly">Twitter</a> | 
@@ -109,7 +109,7 @@ Your investor dashboard includes:
 - Investment opportunity notifications
 - Community discussions with fellow investors
 
-Questions? Contact us at investors@blogrolly.com
+Questions? Contact us at invest@blogrolly.com
 
 Best regards,
 The BlogRolly Team
