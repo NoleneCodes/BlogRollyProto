@@ -753,8 +753,242 @@ const LinkedInVerifications = () => {
   );
 };
 
-export default function AdminDashboard() {
-  const [currentView, setCurrentView] = useState('blog-manager');
+const AdminDashboard = () => {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('submissions');
+  const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
+  const [filter, setFilter] = useState<BlogStatus | 'all'>('all');
+  const [tierFilter, setTierFilter] = useState<'all' | 'free' | 'pro'>('all');
+  const [dateFilter, setDateFilter] = useState<'all' | 'newest' | 'oldest'>('all');
+  const [loading, setLoading] = useState(true);
+  const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
+  const [showManager, setShowManager] = useState(false);
+  const [editingPost, setEditingPost] = useState<InternalBlogPost | null>(null);
+  const [mode, setMode] = useState<'create' | 'edit'>('create');
+  const [testEmail, setTestEmail] = useState('');
+  const [testFirstName, setTestFirstName] = useState('');
+  const [emailTestLoading, setEmailTestLoading] = useState(false);
+  const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
+
+  const testEmailTemplates = [
+    { name: 'Welcome Blogger', endpoint: '/api/test-email/welcome-blogger' },
+    { name: 'Welcome Reader', endpoint: '/api/test-email/welcome-reader' },
+    { name: 'Blog Submission Received', endpoint: '/api/test-email/blog-submission-received' },
+    { name: 'Blog Approved', endpoint: '/api/test-email/blog-approved' },
+    { name: 'Blog Rejected', endpoint: '/api/test-email/blog-rejected' },
+    { name: 'Payment Successful', endpoint: '/api/test-email/payment-successful' },
+    { name: 'Payment Failed First Notice', endpoint: '/api/test-email/payment-failed-first' },
+    { name: 'Blog Delisted Payment', endpoint: '/api/test-email/blog-delisted-payment' },
+    { name: 'Bug Report Received', endpoint: '/api/test-email/bug-report-received' },
+    { name: 'Support Request Received', endpoint: '/api/test-email/support-request-received' },
+    { name: 'Support Request Reply', endpoint: '/api/test-email/support-request-reply' },
+    { name: 'Password Reset', endpoint: '/api/test-email/password-reset' }
+  ];
+
+  useEffect(() => {
+    loadSubmissions();
+    loadBlogPosts();
+  }, []);
+
+  const loadSubmissions = async () => {
+    try {
+      setLoading(true);
+      const { data: submissionsData, error } = await supabase
+        .from('blog_submissions')
+        .select(`
+          *,
+          blogger_profiles (
+            display_name,
+            email,
+            tier
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const submissionsWithReview = submissionsData?.map(submission => ({
+        ...submission,
+        blogger_name: submission.blogger_profiles?.display_name || 'Unknown',
+        blogger_email: submission.blogger_profiles?.email || 'unknown@email.com',
+        blogger_tier: submission.blogger_profiles?.tier || 'free',
+        review_count: 0,
+        last_reviewed_at: null
+      })) || [];
+
+      setSubmissions(submissionsWithReview);
+    } catch (error) {
+      console.error('Failed to load submissions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadBlogPosts = () => {
+    const posts = getAllInternalBlogPosts();
+    setBlogPosts(posts);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+
+  const handleAddNew = () => {
+    setEditingPost(null);
+    setMode('create');
+    setShowManager(true);
+  };
+
+  const handleEdit = (post: InternalBlogPost) => {
+    setEditingPost(post);
+    setMode('edit');
+    setShowManager(true);
+  };
+
+  const handleCloseManager = () => {
+    setShowManager(false);
+    setEditingPost(null);
+    loadBlogPosts();
+  };
+
+  const handleDelete = (postId: string) => {
+    if (confirm('Are you sure you want to delete this blog post?')) {
+      const success = deleteInternalBlogPost(postId);
+      if (success) {
+        loadBlogPosts();
+        alert('Blog post deleted successfully!');
+      } else {
+        alert('Failed to delete blog post.');
+      }
+    }
+  };
+
+  const sendTestEmail = async (template: any) => {
+    if (!testEmail) {
+      alert('Please enter a test email address first.');
+      return;
+    }
+
+    setEmailTestLoading(true);
+    try {
+      const response = await fetch(template.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: testEmail,
+          firstName: testFirstName || 'Test User'
+        }),
+      });
+
+      const result = await response.json();
+      const testResult = {
+        template: template.name,
+        success: response.ok,
+        result: result,
+        timestamp: new Date().toLocaleString()
+      };
+
+      setEmailTestResults(prev => [testResult, ...prev]);
+
+      if (response.ok) {
+        alert(`Test email "${template.name}" sent successfully to ${testEmail}!`);
+      } else {
+        alert(`Failed to send test email "${template.name}": ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Test email error:', error);
+      alert(`Network error sending test email "${template.name}"`);
+    } finally {
+      setEmailTestLoading(false);
+    }
+  };
+
+  const sendAllTestEmails = async () => {
+    if (!testEmail) {
+      alert('Please enter a test email address first.');
+      return;
+    }
+
+    setEmailTestLoading(true);
+    setEmailTestResults([]);
+
+    for (const template of testEmailTemplates) {
+      try {
+        const response = await fetch(template.endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: testEmail,
+            firstName: testFirstName || 'Test User'
+          }),
+        });
+
+        const result = await response.json();
+        const testResult = {
+          template: template.name,
+          success: response.ok,
+          result: result,
+          timestamp: new Date().toLocaleString()
+        };
+
+        setEmailTestResults(prev => [testResult, ...prev]);
+        
+        // Small delay between emails to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`Test email error for ${template.name}:`, error);
+        const testResult = {
+          template: template.name,
+          success: false,
+          result: { error: 'Network error' },
+          timestamp: new Date().toLocaleString()
+        };
+        setEmailTestResults(prev => [testResult, ...prev]);
+      }
+    }
+
+    setEmailTestLoading(false);
+    alert(`All test emails completed! Check results below.`);
+  };
+
+  // Filter submissions based on current filters
+  const filteredSubmissions = submissions.filter(submission => {
+    if (filter !== 'all' && submission.status !== filter) return false;
+    if (tierFilter !== 'all' && submission.blogger_tier !== tierFilter) return false;
+    return true;
+  });
+
+  // Sort submissions based on date filter
+  const sortedSubmissions = [...filteredSubmissions].sort((a, b) => {
+    if (dateFilter === 'newest') {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    } else if (dateFilter === 'oldest') {
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    }
+    return 0; // Default order
+  });
+
+  if (loading) {
+    return (
+      <Layout title="Admin Dashboard - BlogRolly">
+        <div className={styles.adminDashboard}>
+          <div className={styles.loading}>
+            <h2>Loading admin dashboard...</h2>
+            <p>Please wait while we load your data.</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout title="Admin Dashboard - BlogRolly">
