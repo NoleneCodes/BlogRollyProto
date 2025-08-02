@@ -662,6 +662,113 @@ const LinkedInVerifications = () => {
                     onChange={(e) => setSelectedRejectionReason(e.target.value)}
                   />
                   <span>Insufficient investment experience</span>
+                  <small>Profile lacks relevant investment or business background</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="unverified_identity"
+                    checked={selectedRejectionReason === 'unverified_identity'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Identity verification failed</span>
+                  <small>Unable to verify profile belongs to the applicant</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="fake_profile"
+                    checked={selectedRejectionReason === 'fake_profile'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Suspicious or fake profile</span>
+                  <small>Profile appears to be inauthentic</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="privacy_settings"
+                    checked={selectedRejectionReason === 'privacy_settings'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Privacy settings too restrictive</span>
+                  <small>Profile privacy prevents proper verification</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="other"
+                    checked={selectedRejectionReason === 'other'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Other reason</span>
+                  <small>Specify custom rejection reason</small>
+                </label>
+
+                {selectedRejectionReason === 'other' && (
+                  <div className={styles.customReasonInput}>
+                    <textarea
+                      value={customRejectionReason}
+                      onChange={(e) => setCustomRejectionReason(e.target.value)}
+                      placeholder="Please provide a specific reason for rejection..."
+                      className={styles.rejectionTextarea}
+                      rows={3}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.rejectionActions}>
+                <button 
+                  className={styles.confirmRejectButton}
+                  onClick={handleSubmitRejection}
+                  disabled={!selectedRejectionReason || (selectedRejectionReason === 'other' && !customRejectionReason.trim())}
+                >
+                  Confirm Rejection
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => {
+                    setShowRejectionModal(false);
+                    setSelectedRejectionReason('');
+                    setCustomRejectionReason('');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function AdminDashboard() {
+  const [currentView, setCurrentView] = useState('blog-manager');
+
+  return (
+    <Layout title="Admin Dashboard - BlogRolly">
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="insufficient_experience"
+                    checked={selectedRejectionReason === 'insufficient_experience'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Insufficient investment experience</span>
                   <small>Profile does not demonstrate relevant investment background</small>
                 </label>
 
