@@ -21,6 +21,13 @@ export const INVESTOR_EMAIL_CONFIG = {
   replyTo: 'invest@blogrolly.com'
 };
 
+// Support-specific email configuration
+export const SUPPORT_EMAIL_CONFIG = {
+  fromEmail: 'BlogRolly Support <support@blogrolly.com>',
+  fromName: 'BlogRolly Support',
+  replyTo: 'support@blogrolly.com'
+};
+
 // Test function to verify Resend client is working
 export const testResendConnection = async () => {
   try {
@@ -100,6 +107,34 @@ export const sendInvestorEmail = async (emailData: {
     return { success: true, data };
   } catch (error) {
     console.error('❌ Investor email sending failed:', error);
+    throw error;
+  }
+};
+
+// Helper function specifically for support emails
+export const sendSupportEmail = async (emailData: {
+  to: string | string[];
+  subject: string;
+  html: string;
+}) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: SUPPORT_EMAIL_CONFIG.fromEmail,
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailData.html,
+      reply_to: SUPPORT_EMAIL_CONFIG.replyTo,
+    });
+
+    if (error) {
+      console.error('Resend support email error:', error);
+      throw new Error(`Failed to send support email: ${error.message}`);
+    }
+
+    console.log('✅ Support email sent successfully:', data?.id);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ Support email sending failed:', error);
     throw error;
   }
 };

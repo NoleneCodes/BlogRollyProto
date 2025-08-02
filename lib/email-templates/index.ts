@@ -60,7 +60,7 @@ export const emailTemplates = {
 };
 
 // Email service functions with Resend SDK
-import { resend, RESEND_CONFIG, sendEmail } from '../resend-client';
+import { resend, RESEND_CONFIG, INVESTOR_EMAIL_CONFIG, SUPPORT_EMAIL_CONFIG } from '../resend-client';
 
 export const emailService = {
   //  User Onboarding
@@ -260,7 +260,7 @@ export const emailService = {
       const subject = emailTemplates.supportRequestReceived.subject;
 
       const { data, error } = await resend.emails.send({
-        from: RESEND_CONFIG.fromEmail,
+        from: SUPPORT_EMAIL_CONFIG.fromEmail,
         to: email,
         subject,
         html
@@ -283,11 +283,11 @@ export const emailService = {
       const subject = emailTemplates.supportRequestReply.subject;
 
       const { data, error } = await resend.emails.send({
-        from: `${RESEND_CONFIG.fromName} Support <support@blogrolly.com>`,
+        from: SUPPORT_EMAIL_CONFIG.fromEmail,
         to: email,
         subject,
         html,
-        reply_to: 'support@blogrolly.com'
+        reply_to: SUPPORT_EMAIL_CONFIG.replyTo
       });
 
       if (error) {
