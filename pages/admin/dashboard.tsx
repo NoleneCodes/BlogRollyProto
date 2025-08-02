@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import BlogPostManager from '../../components/BlogPostManager';
 import { getAllInternalBlogPosts, deleteInternalBlogPost, InternalBlogPost } from '../../lib/internalBlogData';
 import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
-import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, SupportRequest } from '../../lib/supportRequestData';
+import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, addEmailToThread, SupportRequest } from '../../lib/supportRequestData';
 import { BlogSubmission, BlogStatus, RejectionReason, BlogStatusHelpers } from '../../lib/supabase';
 import { supabase } from '../../lib/supabase';
 import styles from '../../styles/AdminDashboard.module.css';
@@ -879,9 +879,15 @@ const SupportRequests = () => {
   const handleSubmitResponse = () => {
     if (!selectedSupportRequest || !adminResponse.trim()) return;
 
-    const success = updateSupportRequestStatus(selectedSupportRequest.id, 'responded');
-    if (success) {
-      // In a real implementation, you'd also save the admin response
+    // Add the admin response to the email thread
+    const emailSuccess = addEmailToThread(selectedSupportRequest.id, {
+      from: 'admin',
+      sender: 'support@blogrolly.com',
+      content: adminResponse
+    });
+
+    if (emailSuccess) {
+      // In a real implementation, you'd also send the actual email here
       const updatedRequests = getAllSupportRequests();
       setSupportRequestsData(updatedRequests);
       setShowResponseModal(false);
@@ -1069,12 +1075,74 @@ const SupportRequests = () => {
                 <div className={styles.metaItem}>
                   <strong>Submitted:</strong> {new Date(selectedSupportRequest.submittedAt).toLocaleString()}
                 </div>
+                <div className={styles.metaItem}>
+                  <strong>Messages:</strong> {selectedSupportRequest.emailThread?.length || 0}
+                </div>
               </div>
 
               <div className={styles.supportRequestSection}>
-                <h5>Message</h5>
-                <p>{selectedSupportRequest.message}</p>
+                <h5>Email Conversation</h5>
+                <div className={styles.emailThread}>
+                  {selectedSupportRequest.emailThread?.map((message, index) => (
+                    <div 
+                      key={message.id} 
+                      className={`${styles.emailMessage} ${message.from === 'admin' ? styles.adminMessage : styles.userMessage}`}
+                    >
+                      <div className={styles.messageHeader}>
+                        <span className={styles.messageSender}>
+                          {message.from === 'admin' ? '🛠️ Support Team' : '👤 User'}: {message.sender}
+                        </span>
+                        <span className={styles.messageTime}>
+                          {new Date(message.timestamp).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className={styles.messageContent}>
+                        {message.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              {/* Resolution Analysis */}
+              {selectedSupportRequest.emailThread && selectedSupportRequest.emailThread.length > 1 && (
+                <div className={styles.supportRequestSection}>
+                  <h5>Resolution Analysis</h5>
+                  <div className={styles.resolutionAnalysis}>
+                    {(() => {
+                      const lastMessage = selectedSupportRequest.emailThread[selectedSupportRequest.emailThread.length - 1];
+                      const userResponses = selectedSupportRequest.emailThread.filter(msg => msg.from === 'user');
+                      const adminResponses = selectedSupportRequest.emailThread.filter(msg => msg.from === 'admin');
+                      
+                      return (
+                        <div className={styles.resolutionDetails}>
+                          <p><strong>Admin Responses:</strong> {adminResponses.length}</p>
+                          <p><strong>User Responses:</strong> {userResponses.length}</p>
+                          <p><strong>Last Message From:</strong> {lastMessage.from === 'admin' ? 'Support Team' : 'User'}</p>
+                          <p><strong>Last Activity:</strong> {new Date(lastMessage.timestamp).toLocaleString()}</p>
+                          
+                          {lastMessage.from === 'user' && adminResponses.length > 0 && (
+                            <div className={styles.resolutionSuggestion}>
+                              <p>💡 <strong>Suggestion:</strong> User responded after support team. Review their message to determine if:</p>
+                              <ul>
+                                <li>Issue is resolved (consider closing)</li>
+                                <li>Additional assistance needed</li>
+                                <li>Follow-up questions remain</li>
+                              </ul>
+                            </div>
+                          )}
+                          
+                          {lastMessage.from === 'admin' && (
+                            <div className={styles.resolutionSuggestion}>
+                              <p>⏳ <strong>Status:</strong> Waiting for user response to latest support message.</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className={styles.modalActions}>
@@ -1087,6 +1155,19 @@ const SupportRequests = () => {
               >
                 Respond to Request
               </button>
+              {selectedSupportRequest.status !== 'closed' && (
+                <button 
+                  className={styles.resolveButton}
+                  onClick={() => {
+                    if (confirm('Are you sure you want to close this support request? This should only be done when the issue is fully resolved.')) {
+                      handleStatusChange(selectedSupportRequest.id, 'closed');
+                      setShowViewModal(false);
+                    }
+                  }}
+                >
+                  Mark as Resolved
+                </button>
+              )}
               <button 
                 className={styles.cancelButton}
                 onClick={() => setShowViewModal(false)}

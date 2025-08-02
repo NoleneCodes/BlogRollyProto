@@ -1542,6 +1542,105 @@
   font-size: 1.5rem;
 }
 
+.emailThread {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 1rem;
+  background: #f9fafb;
+}
+
+.emailMessage {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 4px solid #d1d5db;
+}
+
+.emailMessage.userMessage {
+  background: #f3f4f6;
+  border-left-color: #3b82f6;
+}
+
+.emailMessage.adminMessage {
+  background: #ecfdf5;
+  border-left-color: #10b981;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.messageSender {
+  font-weight: 600;
+  color: #374151;
+}
+
+.messageTime {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.messageContent {
+  color: #1f2937;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.resolutionAnalysis {
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.resolutionDetails p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.resolutionSuggestion {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #fef3c7;
+  border-radius: 4px;
+  border-left: 4px solid #f59e0b;
+}
+
+.resolutionSuggestion p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.resolutionSuggestion ul {
+  margin: 0.5rem 0 0 1rem;
+  font-size: 0.85rem;
+}
+
+.resolutionSuggestion li {
+  margin: 0.25rem 0;
+}
+
+.resolveButton {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.resolveButton:hover {
+  background: #059669;
+}
+
 .closeButton {
   background: none;
   border: none;
