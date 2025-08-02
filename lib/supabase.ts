@@ -1000,7 +1000,7 @@ export const supabaseDB = {
     }
 
     // Update the submission (trigger will handle deactivation if URL changed)
-    const { data, error }await supabase
+    const { data, error } = await supabase
       .from('blog_submissions')
       .update({
         url: newUrl,
