@@ -1566,16 +1566,81 @@ const AdminDashboard: React.FC = () => {
 
         {activeTab === 'manager' && (
           <div className={styles.tabContent}>
-            <div className={styles.managerHeader}>
-              <h2>Internal Blog Posts</h2>
-              <button 
-                onClick={() => alert('Blog manager functionality coming soon!')}
-                className={styles.primaryButton}
-              >
-                Add New Post
-              </button>
-            </div>
-            <p>Blog management tools will be available here.</p>
+            {!showManager ? (
+              <>
+                <div className={styles.managerHeader}>
+                  <h2>Internal Blog Posts</h2>
+                  <button 
+                    onClick={handleAddNew}
+                    className={styles.primaryButton}
+                  >
+                    Add New Post
+                  </button>
+                </div>
+
+                <div className={styles.blogPostsGrid}>
+                  {blogPosts.length === 0 ? (
+                    <div className={styles.emptyState}>
+                      <h3>No blog posts found</h3>
+                      <p>Start by creating your first internal blog post.</p>
+                    </div>
+                  ) : (
+                    blogPosts.map((post) => (
+                      <div key={post.id} className={styles.blogPostCard}>
+                        <div className={styles.blogPostHeader}>
+                          <h3>{post.title}</h3>
+                          <div className={styles.blogPostActions}>
+                            <button 
+                              className={styles.editButton}
+                              onClick={() => handleEdit(post)}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              className={styles.deleteButton}
+                              onClick={() => handleDelete(post.id)}
+                            >
+                              Delete
+                            </button>
+                            <a 
+                              href={`/blog/post/${post.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={styles.viewButton}
+                            >
+                              View
+                            </a>
+                          </div>
+                        </div>
+
+                        <p className={styles.blogPostDescription}>
+                          {post.description}
+                        </p>
+
+                        <div className={styles.blogPostMeta}>
+                          <span>Category: {post.category}</span>
+                          <span>Author: {post.author}</span>
+                          <span>Published: {new Date(post.publishDate).toLocaleDateString()}</span>
+                          <span>Status: {post.isPublished ? 'Published' : 'Draft'}</span>
+                        </div>
+
+                        <div className={styles.blogPostTags}>
+                          {post.tags.map((tag, index) => (
+                            <span key={index} className={styles.tag}>{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <BlogPostManager
+                onClose={handleCloseManager}
+                existingPost={editingPost}
+                mode={mode}
+              />
+            )}
           </div>
         )}
 
