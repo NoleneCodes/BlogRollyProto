@@ -372,6 +372,235 @@ const BugReports = () => {
   );
 };
 
+const LinkedInVerifications = () => {
+  const [verifications, setVerifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedVerification, setSelectedVerification] = useState<any>(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+
+  useEffect(() => {
+    loadVerifications();
+  }, []);
+
+  const loadVerifications = async () => {
+    try {
+      // In a real implementation, you'd fetch from your database
+      // For now, I'll create mock data that would come from supabase
+      const mockVerifications = [
+        {
+          id: '1',
+          name: 'John Smith',
+          email: 'john.smith@investment.com',
+          linkedin_url: 'https://linkedin.com/in/johnsmith-investor',
+          linkedin_verification_token: 'token123',
+          verification_status: 'pending_linkedin',
+          created_at: '2025-01-24T10:00:00Z'
+        },
+        {
+          id: '2',
+          name: 'Sarah Johnson',
+          email: 'sarah.j@venture.com',
+          linkedin_url: 'https://linkedin.com/in/sarahjohnson-vc',
+          linkedin_verification_token: 'token456',
+          verification_status: 'pending_linkedin',
+          created_at: '2025-01-24T11:30:00Z'
+        }
+      ];
+      
+      setVerifications(mockVerifications.filter(v => v.verification_status === 'pending_linkedin'));
+    } catch (error) {
+      console.error('Failed to load LinkedIn verifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveLinkedIn = async (verificationToken: string, approved: boolean) => {
+    try {
+      const response = await fetch('/api/investor/approve-linkedin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          verificationToken,
+          approved
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`LinkedIn verification ${approved ? 'approved' : 'rejected'} successfully!`);
+        loadVerifications(); // Refresh the list
+        setShowViewModal(false);
+      } else {
+        alert(`Failed to ${approved ? 'approve' : 'reject'} verification: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error processing LinkedIn verification:', error);
+      alert('Network error occurred. Please try again.');
+    }
+  };
+
+  const handleViewVerification = (verification: any) => {
+    setSelectedVerification(verification);
+    setShowViewModal(true);
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.sectionContent}>
+        <div className={styles.sectionHeader}>
+          <h2>LinkedIn Verifications</h2>
+          <p>Loading pending verifications...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.sectionContent}>
+      <div className={styles.sectionHeader}>
+        <h2>LinkedIn Verifications</h2>
+        <p>Review and approve investor LinkedIn profiles</p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>{verifications.length}</h3>
+          <p>Pending Reviews</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>24hr</h3>
+          <p>Avg Review Time</p>
+        </div>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>LinkedIn Profile</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {verifications.map((verification) => (
+              <tr key={verification.id}>
+                <td><strong>{verification.name}</strong></td>
+                <td>{verification.email}</td>
+                <td>
+                  <a 
+                    href={verification.linkedin_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.linkedinLink}
+                  >
+                    View Profile
+                  </a>
+                </td>
+                <td>{new Date(verification.created_at).toLocaleDateString()}</td>
+                <td>
+                  <div className={styles.verificationActions}>
+                    <button 
+                      className={styles.approveButton}
+                      onClick={() => handleApproveLinkedIn(verification.linkedin_verification_token, true)}
+                    >
+                      ✓ Approve
+                    </button>
+                    <button 
+                      className={styles.rejectButton}
+                      onClick={() => handleApproveLinkedIn(verification.linkedin_verification_token, false)}
+                    >
+                      ✗ Reject
+                    </button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleViewVerification(verification)}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {verifications.length === 0 && (
+          <div className={styles.emptyState}>
+            <h3>No pending LinkedIn verifications</h3>
+            <p>All investor LinkedIn profiles have been reviewed.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Verification View Modal */}
+      {showViewModal && selectedVerification && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>LinkedIn Verification Details</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.verificationDetails}>
+              <div className={styles.verificationSection}>
+                <h5>Investor Information</h5>
+                <p><strong>Name:</strong> {selectedVerification.name}</p>
+                <p><strong>Email:</strong> {selectedVerification.email}</p>
+                <p><strong>Submitted:</strong> {new Date(selectedVerification.created_at).toLocaleString()}</p>
+              </div>
+
+              <div className={styles.verificationSection}>
+                <h5>LinkedIn Profile</h5>
+                <p><strong>URL:</strong> <a href={selectedVerification.linkedin_url} target="_blank" rel="noopener noreferrer">{selectedVerification.linkedin_url}</a></p>
+                <p><em>Please review the LinkedIn profile to verify:</em></p>
+                <ul>
+                  <li>Profile belongs to a legitimate investor or investment professional</li>
+                  <li>Profile shows relevant investment experience</li>
+                  <li>Profile appears complete and professional</li>
+                  <li>Name matches the registration information</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.approveButton}
+                onClick={() => handleApproveLinkedIn(selectedVerification.linkedin_verification_token, true)}
+              >
+                ✓ Approve Verification
+              </button>
+              <button 
+                className={styles.rejectButton}
+                onClick={() => handleApproveLinkedIn(selectedVerification.linkedin_verification_token, false)}
+              >
+                ✗ Reject Verification
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const SupportRequests = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'critical' | 'high' | 'medium' | 'low'>('all');
@@ -1178,6 +1407,12 @@ const AdminDashboard: React.FC = () => {
             Blog Manager
           </button>
           <button 
+            className={`${styles.tabButton} ${activeTab === 'linkedin-verifications' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('linkedin-verifications')}
+          >
+            LinkedIn Verifications
+          </button>
+          <button 
             className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('bug-reports')}
           >
@@ -1344,6 +1579,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
+        {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
         {activeTab === 'bug-reports' && <BugReports />}
         {activeTab === 'support-requests' && <SupportRequests />}
         {activeTab === 'stats' && (

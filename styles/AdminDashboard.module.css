@@ -1570,28 +1570,77 @@
 }
 
 .testError {
-  background-color: #f8d7da;
   border-left: 4px solid #dc3545;
 }
 
-.testResultHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+.testResultDetails {
+  margin-top: 0.5rem;
+  font-family: monospace;
+  background: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 4px;
+  overflow-x: auto;
 }
 
-.testStatus {
+/* LinkedIn Verification Styles */
+.verificationActions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.verificationActions button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
   font-weight: 500;
 }
 
-.testResultDetails {
-  font-family: monospace;
-  font-size: 12px;
-  color: #666;
-  background: rgba(0,0,0,0.05);
-  padding: 8px;
-  border-radius: 3px;
-  max-height: 100px;
+.linkedinLink {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.linkedinLink:hover {
+  text-decoration: underline;
+}
+
+.verificationDetails {
+  max-height: 60vh;
   overflow-y: auto;
+}
+
+.verificationSection {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.verificationSection:last-child {
+  border-bottom: none;
+}
+
+.verificationSection h5 {
+  margin: 0 0 0.75rem 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.verificationSection p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.verificationSection ul {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.verificationSection li {
+  margin: 0.25rem 0;
+  line-height: 1.4;
 }
