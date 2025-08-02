@@ -415,7 +415,7 @@ const LinkedInVerifications = () => {
     }
   };
 
-  const handleApproveLinkedIn = async (verificationToken: string, approved: boolean) => {
+  const handleApproveLinkedIn = async (verificationToken: string, approved: boolean, rejectionReason?: string) => {
     try {
       const response = await fetch('/api/investor/approve-linkedin', {
         method: 'POST',
@@ -424,7 +424,8 @@ const LinkedInVerifications = () => {
         },
         body: JSON.stringify({
           verificationToken,
-          approved
+          approved,
+          rejectionReason
         }),
       });
 
@@ -514,7 +515,36 @@ const LinkedInVerifications = () => {
                     </button>
                     <button 
                       className={styles.rejectButton}
-                      onClick={() => handleApproveLinkedIn(verification.linkedin_verification_token, false)}
+                      onClick={() => {
+                        const reason = prompt(
+                          'Please select a rejection reason:\n\n' +
+                          '1. incomplete_profile - Incomplete LinkedIn profile\n' +
+                          '2. insufficient_experience - Insufficient investment experience\n' +
+                          '3. unverified_identity - Unable to verify identity\n' +
+                          '4. inappropriate_content - Inappropriate content\n' +
+                          '5. fake_profile - Profile appears fake\n' +
+                          '6. no_investment_background - No investment background\n' +
+                          '7. privacy_settings - Privacy settings prevent review\n' +
+                          '8. other - Other reasons\n\n' +
+                          'Enter the reason code (1-8) or type custom reason:'
+                        );
+                        
+                        if (reason) {
+                          const reasonMap: { [key: string]: string } = {
+                            '1': 'incomplete_profile',
+                            '2': 'insufficient_experience',
+                            '3': 'unverified_identity',
+                            '4': 'inappropriate_content',
+                            '5': 'fake_profile',
+                            '6': 'no_investment_background',
+                            '7': 'privacy_settings',
+                            '8': 'other'
+                          };
+                          
+                          const rejectionReason = reasonMap[reason] || reason;
+                          handleApproveLinkedIn(verification.linkedin_verification_token, false, rejectionReason);
+                        }
+                      }}
                     >
                       ✗ Reject
                     </button>
@@ -583,7 +613,36 @@ const LinkedInVerifications = () => {
               </button>
               <button 
                 className={styles.rejectButton}
-                onClick={() => handleApproveLinkedIn(selectedVerification.linkedin_verification_token, false)}
+                onClick={() => {
+                  const reason = prompt(
+                    'Please select a rejection reason:\n\n' +
+                    '1. incomplete_profile - Incomplete LinkedIn profile\n' +
+                    '2. insufficient_experience - Insufficient investment experience\n' +
+                    '3. unverified_identity - Unable to verify identity\n' +
+                    '4. inappropriate_content - Inappropriate content\n' +
+                    '5. fake_profile - Profile appears fake\n' +
+                    '6. no_investment_background - No investment background\n' +
+                    '7. privacy_settings - Privacy settings prevent review\n' +
+                    '8. other - Other reasons\n\n' +
+                    'Enter the reason code (1-8) or type custom reason:'
+                  );
+                  
+                  if (reason) {
+                    const reasonMap: { [key: string]: string } = {
+                      '1': 'incomplete_profile',
+                      '2': 'insufficient_experience',
+                      '3': 'unverified_identity',
+                      '4': 'inappropriate_content',
+                      '5': 'fake_profile',
+                      '6': 'no_investment_background',
+                      '7': 'privacy_settings',
+                      '8': 'other'
+                    };
+                    
+                    const rejectionReason = reasonMap[reason] || reason;
+                    handleApproveLinkedIn(selectedVerification.linkedin_verification_token, false, rejectionReason);
+                  }
+                }}
               >
                 ✗ Reject Verification
               </button>

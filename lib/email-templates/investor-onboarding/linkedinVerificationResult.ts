@@ -1,6 +1,21 @@
 
-export const linkedinVerificationResultTemplate = (investorName: string, approved: boolean) => {
+export const linkedinVerificationResultTemplate = (investorName: string, approved: boolean, rejectionReason?: string) => {
   const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investor/dashboard`;
+  
+  const rejectionReasons = {
+    'incomplete_profile': 'Your LinkedIn profile appears to be incomplete or missing key professional information',
+    'insufficient_experience': 'Your profile does not demonstrate sufficient investment or relevant professional experience',
+    'unverified_identity': 'We were unable to verify that the LinkedIn profile belongs to you',
+    'inappropriate_content': 'Your LinkedIn profile contains content that does not align with our investor criteria',
+    'fake_profile': 'The LinkedIn profile appears to be fake or suspicious',
+    'no_investment_background': 'Your profile does not show any background in investments, venture capital, or related fields',
+    'privacy_settings': 'Your LinkedIn profile privacy settings prevent us from reviewing your qualifications',
+    'other': 'Your profile does not meet our investor verification requirements'
+  };
+  
+  const rejectionMessage = rejectionReason && rejectionReasons[rejectionReason as keyof typeof rejectionReasons] 
+    ? rejectionReasons[rejectionReason as keyof typeof rejectionReasons]
+    : 'Your profile does not meet our investor verification requirements';
   
   return {
     subject: `LinkedIn Verification ${approved ? 'Approved' : 'Rejected'} - BlogRolly Investors`,
@@ -50,13 +65,18 @@ export const linkedinVerificationResultTemplate = (investorName: string, approve
                 <div class="error-section">
                   <h3>❌ LinkedIn Verification Not Approved</h3>
                   <p>Unfortunately, we were unable to verify your LinkedIn profile at this time.</p>
-                  <p>This could be due to:</p>
+                  <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                    <strong>Reason for rejection:</strong><br>
+                    ${rejectionMessage}
+                  </div>
+                  <p><strong>What you can do:</strong></p>
                   <ul>
-                    <li>Incomplete LinkedIn profile</li>
-                    <li>Insufficient investment experience demonstrated</li>
-                    <li>Profile does not match our investor criteria</li>
+                    <li>Update your LinkedIn profile with more comprehensive professional information</li>
+                    <li>Add details about your investment experience or relevant background</li>
+                    <li>Ensure your profile clearly demonstrates your qualifications as an investor</li>
+                    <li>Contact our team if you believe this decision was made in error</li>
                   </ul>
-                  <p>If you believe this is an error, please contact our investor relations team at <a href="mailto:investors@blogrolly.com">investors@blogrolly.com</a></p>
+                  <p>If you believe this is an error or would like to resubmit after updating your profile, please contact our investor relations team at <a href="mailto:investors@blogrolly.com">investors@blogrolly.com</a></p>
                 </div>
               `}
               
@@ -94,12 +114,16 @@ Access Your Investor Dashboard: ${dashboardUrl}
 
 Unfortunately, we were unable to verify your LinkedIn profile at this time.
 
-This could be due to:
-- Incomplete LinkedIn profile
-- Insufficient investment experience demonstrated
-- Profile does not match our investor criteria
+Reason for rejection:
+${rejectionMessage}
 
-If you believe this is an error, please contact our investor relations team at investors@blogrolly.com
+What you can do:
+- Update your LinkedIn profile with more comprehensive professional information
+- Add details about your investment experience or relevant background
+- Ensure your profile clearly demonstrates your qualifications as an investor
+- Contact our team if you believe this decision was made in error
+
+If you believe this is an error or would like to resubmit after updating your profile, please contact our investor relations team at investors@blogrolly.com
 `}
 
 If you have any questions, please don't hesitate to reach out to our investor relations team.

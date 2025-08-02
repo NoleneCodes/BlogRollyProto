@@ -8,10 +8,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { verificationToken, approved } = req.body;
+    const { verificationToken, approved, rejectionReason } = req.body;
 
     if (!verificationToken || typeof approved !== 'boolean') {
       return res.status(400).json({ error: 'Verification token and approval status are required' });
+    }
+
+    if (!approved && !rejectionReason) {
+      return res.status(400).json({ error: 'Rejection reason is required when rejecting verification' });
     }
 
     // Find investor by LinkedIn verification token
@@ -46,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Send notification email
     try {
       const { sendLinkedInVerificationResult } = await import('../../../lib/resend-client');
-      await sendLinkedInVerificationResult(investor.email, investor.name, approved);
+      await sendLinkedInVerificationResult(investor.email, investor.name, approved, rejectionReason);
     } catch (emailError) {
       console.error('LinkedIn result email failed:', emailError);
     }

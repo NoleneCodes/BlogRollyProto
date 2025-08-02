@@ -160,10 +160,10 @@ export const sendLinkedInVerificationRequest = async (investorEmail: string, inv
 };
 
 // Send LinkedIn verification result to investor
-export const sendLinkedInVerificationResult = async (email: string, name: string, approved: boolean) => {
+export const sendLinkedInVerificationResult = async (email: string, name: string, approved: boolean, rejectionReason?: string) => {
   try {
     const { linkedinVerificationResultTemplate } = await import('./email-templates/investor-onboarding/linkedinVerificationResult');
-    const template = linkedinVerificationResultTemplate(name, approved);
+    const template = linkedinVerificationResultTemplate(name, approved, rejectionReason);
 
     const { data, error } = await resend.emails.send({
       from: 'BlogRolly Investor Relations <investors@blogrolly.com>',
