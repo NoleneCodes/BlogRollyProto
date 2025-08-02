@@ -120,7 +120,14 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
   if (!isVisible) return null;
 
   // Debug logging
-  console.log('BlogEditForm - isPro:', isPremium, 'pathname:', window.location.pathname);
+  console.log('BlogEditForm - isPremium:', isPremium, 'pathname:', window.location.pathname);
+  console.log('BlogEditForm - URL comparison:', {
+    originalUrl,
+    currentUrl: editForm.url,
+    urlChanged: editForm.url !== originalUrl,
+    urlChangeReason,
+    showDropdown: isPremium !== null && isPremium && editForm.url !== originalUrl && editForm.url.trim() !== ''
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -198,7 +205,14 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     // Check if URL has changed and reason is required
     const urlHasChanged = editForm.url !== originalUrl;
     if (urlHasChanged && isPremium && !urlChangeReason.trim()) {
-      alert('Please select a reason for changing the blog URL.');
+      alert('Please select a reason for changing the blog URL. This is required for tracking purposes.');
+      console.log('URL change validation failed:', {
+        urlHasChanged,
+        isPremium,
+        urlChangeReason,
+        originalUrl,
+        newUrl: editForm.url
+      });
       return;
     }
 
@@ -387,7 +401,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           />
           
           {/* URL Change Reason Dropdown - Only show if URL has changed and user is premium */}
-          {isPremium && editForm.url !== originalUrl && (
+          {isPremium !== null && isPremium && editForm.url !== originalUrl && editForm.url.trim() !== '' && (
             <div style={{ marginTop: '0.75rem' }}>
               <label style={{ 
                 display: 'block', 
@@ -400,14 +414,22 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
               </label>
               <select
                 value={urlChangeReason}
-                onChange={(e) => setUrlChangeReason(e.target.value)}
+                onChange={(e) => {
+                  console.log('URL change reason selected:', e.target.value);
+                  setUrlChangeReason(e.target.value);
+                }}
                 className={styles.editSelect}
                 required
-                style={{ backgroundColor: '#fef3c7', border: '2px solid #f59e0b' }}
+                style={{ 
+                  backgroundColor: '#fef3c7', 
+                  border: '2px solid #f59e0b',
+                  minHeight: '40px',
+                  padding: '8px 12px'
+                }}
               >
-                <option value="">Select a reason for changing the URL</option>
-                {urlChangeReasons.map(reason => (
-                  <option key={reason} value={reason}>{reason}</option>
+                <option value="" disabled>Select a reason for changing the URL</option>
+                {urlChangeReasons.map((reason, index) => (
+                  <option key={`reason-${index}`} value={reason}>{reason}</option>
                 ))}
               </select>
               <small style={{ 
@@ -418,6 +440,15 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
                 fontWeight: '500'
               }}>
                 ⚠️ This change will be logged for review purposes
+              </small>
+              {/* Debug info */}
+              <small style={{ 
+                color: '#6b7280', 
+                fontSize: '0.7rem', 
+                display: 'block',
+                marginTop: '0.25rem'
+              }}>
+                Debug: isPremium={String(isPremium)}, urlChanged={String(editForm.url !== originalUrl)}, selectedReason="{urlChangeReason}"
               </small>
             </div>
           )}
