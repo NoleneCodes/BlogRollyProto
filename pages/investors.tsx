@@ -1,9 +1,12 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
 
 const Investors: NextPage = () => {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'signup' | 'login'>('signup');
   const [investorForm, setInvestorForm] = useState({
     name: '',
     email: '',
@@ -11,10 +14,17 @@ const Investors: NextPage = () => {
     investmentRange: '',
     investorType: '',
     interests: '',
-    message: ''
+    message: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -24,30 +34,95 @@ const Investors: NextPage = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setSubmitMessage('');
     
     try {
-      // Here you would typically send the data to your backend API
-      console.log('Investor form submitted:', investorForm);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setSubmitStatus('success');
-      setInvestorForm({
-        name: '',
-        email: '',
-        company: '',
-        investmentRange: '',
-        investorType: '',
-        interests: '',
-        message: ''
+      // Validate passwords match
+      if (investorForm.password !== investorForm.confirmPassword) {
+        setSubmitStatus('error');
+        setSubmitMessage('Passwords do not match');
+        return;
+      }
+
+      if (investorForm.password.length < 8) {
+        setSubmitStatus('error');
+        setSubmitMessage('Password must be at least 8 characters long');
+        return;
+      }
+
+      const response = await fetch('/api/investor/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(investorForm)
       });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setSubmitMessage(data.message);
+        setInvestorForm({
+          name: '',
+          email: '',
+          company: '',
+          investmentRange: '',
+          investorType: '',
+          interests: '',
+          message: '',
+          password: '',
+          confirmPassword: ''
+        });
+      } else {
+        setSubmitStatus('error');
+        setSubmitMessage(data.error || 'Signup failed');
+      }
     } catch (error) {
-      console.error('Error submitting investor form:', error);
+      console.error('Error submitting investor signup:', error);
       setSubmitStatus('error');
+      setSubmitMessage('Network error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setSubmitMessage('');
+    
+    try {
+      const response = await fetch('/api/investor/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginForm)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store token in localStorage
+        localStorage.setItem('investorToken', data.token);
+        localStorage.setItem('investorData', JSON.stringify(data.investor));
+        
+        // Redirect to investor dashboard
+        router.push('/investor/dashboard');
+      } else {
+        setSubmitStatus('error');
+        setSubmitMessage(data.error || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Error during investor login:', error);
+      setSubmitStatus('error');
+      setSubmitMessage('Network error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -162,25 +237,44 @@ const Investors: NextPage = () => {
       </div>
 
       <div className={styles.investorSignupSection}>
-        <h2>Express Your Interest</h2>
-        <p>Join our investor community and be part of reshaping content discovery</p>
+        <h2>Join Our Investor Community</h2>
+        <p>Create your exclusive investor account to access our dashboard and investment opportunities</p>
+
+        {/* Tab Navigation */}
+        <div className={styles.tabNavigation}>
+          <button 
+            type="button"
+            className={`${styles.tabButton} ${activeTab === 'signup' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('signup')}
+          >
+            Create Account
+          </button>
+          <button 
+            type="button"
+            className={`${styles.tabButton} ${activeTab === 'login' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('login')}
+          >
+            Sign In
+          </button>
+        </div>
 
         {submitStatus === 'success' && (
           <div className={styles.successMessage}>
-            <h3>✅ Thank you for your interest!</h3>
-            <p>We've received your information and will be in touch soon to discuss opportunities.</p>
+            <h3>✅ Success!</h3>
+            <p>{submitMessage}</p>
           </div>
         )}
 
         {submitStatus === 'error' && (
           <div className={styles.errorMessage}>
-            <h3>❌ Submission Error</h3>
-            <p>There was an issue submitting your information. Please try again or contact us directly.</p>
+            <h3>❌ Error</h3>
+            <p>{submitMessage}</p>
           </div>
         )}
 
-        {submitStatus !== 'success' && (
-          <form onSubmit={handleSubmit} className={styles.investorForm}>
+        {/* Signup Form */}
+        {activeTab === 'signup' && submitStatus !== 'success' && (
+          <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
             <div className={styles.formRow}>
               <div className={styles.formGroup}>
                 <label htmlFor="name">Full Name *</label>
@@ -293,12 +387,82 @@ const Investors: NextPage = () => {
               />
             </div>
 
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
+                <label htmlFor="password">Password *</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={investorForm.password}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                  minLength={8}
+                  placeholder="Minimum 8 characters"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="confirmPassword">Confirm Password *</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={investorForm.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                  placeholder="Confirm your password"
+                />
+              </div>
+            </div>
+
             <button 
               type="submit" 
               className={styles.investorSubmitButton}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Express Interest'}
+              {isSubmitting ? 'Creating Account...' : 'Create Investor Account'}
+            </button>
+          </form>
+        )}
+
+        {/* Login Form */}
+        {activeTab === 'login' && (
+          <form onSubmit={handleLoginSubmit} className={styles.investorForm}>
+            <div className={styles.formGroup}>
+              <label htmlFor="loginEmail">Email Address</label>
+              <input
+                type="email"
+                id="loginEmail"
+                name="email"
+                value={loginForm.email}
+                onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
+                required
+                className={styles.formInput}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="loginPassword">Password</label>
+              <input
+                type="password"
+                id="loginPassword"
+                name="password"
+                value={loginForm.password}
+                onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
+                required
+                className={styles.formInput}
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              className={styles.investorSubmitButton}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Signing In...' : 'Access Investor Dashboard'}
             </button>
           </form>
         )}

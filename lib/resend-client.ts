@@ -104,3 +104,30 @@ export const sendInvestorEmail = async (emailData: {
     throw error;
   }
 };
+
+// Send investor welcome email with verification
+export const sendInvestorWelcomeEmail = async (email: string, name: string, verificationToken: string) => {
+  try {
+    const { investorWelcomeTemplate } = await import('./email-templates/investor-onboarding/investorWelcome');
+    const template = investorWelcomeTemplate(name, verificationToken);
+
+    const { data, error } = await resend.emails.send({
+      from: 'BlogRolly Investor Relations <investors@blogrolly.com>',
+      to: [email],
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    });
+
+    if (error) {
+      console.error('❌ Investor welcome email error:', error);
+      throw new Error(`Failed to send investor welcome email: ${error.message}`);
+    }
+
+    console.log('✅ Investor welcome email sent successfully:', data?.id);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ Investor welcome email sending failed:', error);
+    throw error;
+  }
+};
