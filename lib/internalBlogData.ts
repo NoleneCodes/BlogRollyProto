@@ -2,18 +2,27 @@ export interface InternalBlogPost {
   id: string;
   title: string;
   author: string;
-  authorProfile?: string;
+  authorProfile: string;
   bloggerId: string;
   bloggerDisplayName: string;
   description: string;
   category: string;
   tags: string[];
-  slug: string; // For internal URL like /blog/post/slug
-  imageUrl?: string;
-  readTime?: string;
+  slug: string;
+  imageUrl: string;
+  imageDescription?: string;
+  readTime: string;
   publishDate: string;
   isPublished: boolean;
-  content?: string; // Full blog content
+  content: string;
+  contentImages?: ContentImage[];
+}
+
+export interface ContentImage {
+  id: string;
+  url: string;
+  description: string;
+  position: number;
 }
 
 // Sample internal blog posts

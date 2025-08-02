@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styles from '../styles/BlogCard.module.css';
 
@@ -17,6 +16,7 @@ interface InternalBlogPost {
   readTime?: string;
   publishDate: string;
   isPublished: boolean;
+  imageDescription?: string;
 }
 
 interface InternalBlogCardProps {
@@ -55,11 +55,12 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
     <div className={`${styles.blogCard} ${compact ? styles.compact : ''}`}>
       <div className={styles.imageContainer}>
         {blog.imageUrl && (
-          <img 
-            src={blog.imageUrl} 
-            alt={blog.title}
-            className={styles.blogImage}
-          />
+          <div className={styles.blogImage}>
+            <img 
+              src={blog.imageUrl} 
+              alt={blog.imageDescription || blog.title} 
+            />
+          </div>
         )}
         <div className={styles.categoryTag}>
           <span>{blog.category}</span>
