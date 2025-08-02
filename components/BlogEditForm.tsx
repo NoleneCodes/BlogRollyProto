@@ -121,6 +121,10 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
 
   // Debug logging
   console.log('BlogEditForm - isPremium:', isPremium, 'pathname:', window.location.pathname);
+  console.log('BlogEditForm - Auth state:', {
+    user: user ? { id: user.id, email: user.email, hasToken: !!user.access_token } : null,
+    hasAccessToken: !!user?.access_token
+  });
   console.log('BlogEditForm - URL comparison:', {
     originalUrl,
     currentUrl: editForm.url,
@@ -218,12 +222,18 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
 
     // Validate that the new URL is from the verified domain if URL has changed
     if (urlHasChanged && isPremium) {
+      if (!user?.access_token) {
+        console.error('No access token available for validation');
+        alert('Authentication error. Please refresh the page and try again.');
+        return;
+      }
+
       try {
         const response = await fetch('/api/validate-blog-url', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user?.access_token}`
+            'Authorization': `Bearer ${user.access_token}`
           },
           body: JSON.stringify({ postUrl: editForm.url })
         });
@@ -243,12 +253,18 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
 
     // Handle URL changes with automatic deactivation
     if (urlHasChanged && isPremium) {
+      if (!user?.access_token) {
+        console.error('No access token available for URL update');
+        alert('Authentication error. Please refresh the page and try again.');
+        return;
+      }
+
       try {
         const response = await fetch('/api/blogs/update-url', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user?.access_token}`
+            'Authorization': `Bearer ${user.access_token}`
           },
           body: JSON.stringify({
             submissionId: blog.id,
@@ -371,12 +387,18 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             onBlur={async (e) => {
               // Real-time validation when user finishes editing URL
               if (isPremium && e.target.value !== originalUrl && e.target.value.trim()) {
+                if (!user?.access_token) {
+                  console.error('No access token available for URL validation');
+                  alert('Authentication error. Please refresh the page and try again.');
+                  return;
+                }
+
                 try {
                   const response = await fetch('/api/validate-blog-url', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${user?.access_token}`
+                      'Authorization': `Bearer ${user.access_token}`
                     },
                     body: JSON.stringify({ postUrl: e.target.value })
                   });
@@ -390,6 +412,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
                   }
                 } catch (error) {
                   console.error('URL validation error:', error);
+                  alert('Unable to validate URL. Please try again.');
                 }
               }
             }}

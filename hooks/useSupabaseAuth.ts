@@ -6,6 +6,7 @@ interface User {
   id: string;
   email: string;
   user_metadata: any;
+  access_token?: string;
 }
 
 interface AuthState {
@@ -35,7 +36,10 @@ export const useSupabaseAuth = () => {
           });
         } else if (session?.user) {
           setAuthState({
-            user: session.user,
+            user: {
+              ...session.user,
+              access_token: session.access_token
+            },
             loading: false,
             error: null
           });
@@ -65,7 +69,10 @@ export const useSupabaseAuth = () => {
           
           if (session?.user) {
             setAuthState({
-              user: session.user,
+              user: {
+                ...session.user,
+                access_token: session.access_token
+              },
               loading: false,
               error: null
             });
