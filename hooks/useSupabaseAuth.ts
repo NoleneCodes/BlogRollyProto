@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabaseAuth } from '../lib/supabase';
 
@@ -66,7 +65,7 @@ export const useSupabaseAuth = () => {
       async (event, session) => {
         try {
           console.log('Auth state change:', event, session?.user?.email);
-          
+
           if (session?.user) {
             setAuthState({
               user: {
@@ -101,15 +100,15 @@ export const useSupabaseAuth = () => {
 
   const signUp = async (email: string, password: string, metadata: any) => {
     setAuthState(prev => ({ ...prev, loading: true, error: null }));
-    
+
     try {
       const { data, error } = await supabaseAuth.signUp(email, password, metadata);
-      
+
       if (error) {
         setAuthState(prev => ({ ...prev, loading: false, error: error.message }));
         return { error };
       }
-      
+
       return { data, error: null };
     } catch (err) {
       const errorMessage = 'Sign up failed';
@@ -120,15 +119,15 @@ export const useSupabaseAuth = () => {
 
   const signIn = async (email: string, password: string) => {
     setAuthState(prev => ({ ...prev, loading: true, error: null }));
-    
+
     try {
       const { data, error } = await supabaseAuth.signIn(email, password);
-      
+
       if (error) {
         setAuthState(prev => ({ ...prev, loading: false, error: error.message }));
         return { error };
       }
-      
+
       return { data, error: null };
     } catch (err) {
       const errorMessage = 'Sign in failed';
@@ -139,7 +138,7 @@ export const useSupabaseAuth = () => {
 
   const signOut = async () => {
     setAuthState(prev => ({ ...prev, loading: true }));
-    
+
     try {
       await supabaseAuth.signOut();
       setAuthState({

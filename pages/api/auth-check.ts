@@ -1,48 +1,71 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Check for Repl Auth headers first (for development)
-    const userId = req.headers['x-replit-user-id'] as string;
-    const userName = req.headers['x-replit-user-name'] as string;
-    const userRoles = req.headers['x-replit-user-roles'] as string;
+    const authHeader = req.headers.authorization;
 
-    if (userId && userName) {
-      return res.status(200).json({
-        isAuthenticated: true,
-        userId,
-        userName,
-        userRoles
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ 
+        authenticated: false, 
+        error: 'No authorization header' 
       });
     }
 
-    // Check if there's a session cookie or token
-    const authCookie = req.cookies['auth-token'] || req.headers.authorization;
+    const token = authHeader.split(' ')[1];
 
-    // For development/testing, you can simulate being authenticated
-    // Remove this and implement proper auth check in production
-    const isAuthenticated = false; // Change to true for testing authenticated state
+    // Verify the JWT token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    if (isAuthenticated || authCookie) {
-      return res.status(200).json({
-        isAuthenticated: true,
-        userId: 'test-user-id',
-        userRoles: 'reader'
-      });
-    } else {
-      return res.status(200).json({
-        isAuthenticated: false
+    if (error || !user) {
+      return res.status(401).json({ 
+        authenticated: false, 
+        error: 'Invalid or expired token' 
       });
     }
+
+    // Get user profile
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select(`
+        *,
+        blogger_profiles(
+          stripe_customer_id,
+          subscription_status,
+          subscription_end_date
+        )
+      `)
+      .eq('user_id', user.id)
+      .single();
+
+    if (profileError) {
+      return res.status(500).json({ 
+        authenticated: false, 
+        error: 'Failed to load user profile' 
+      });
+    }
+
+    return res.status(200).json({
+      authenticated: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: profile.first_name,
+        surname: profile.surname,
+        role: profile.role,
+        tier: profile.tier,
+        isAuthenticated: true
+      }
+    });
+
   } catch (error) {
     console.error('Auth check error:', error);
-    return res.status(500).json({
-      isAuthenticated: false,
-      error: 'Authentication check failed'
+    return res.status(500).json({ 
+      authenticated: false, 
+      error: 'Authentication check failed' 
     });
   }
 }
