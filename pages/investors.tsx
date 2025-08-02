@@ -16,7 +16,8 @@ const Investors: NextPage = () => {
     interests: '',
     message: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    linkedinUrl: ''
   });
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -39,7 +40,7 @@ const Investors: NextPage = () => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
     setSubmitMessage('');
-    
+
     try {
       // Validate passwords match
       if (investorForm.password !== investorForm.confirmPassword) {
@@ -76,7 +77,8 @@ const Investors: NextPage = () => {
           interests: '',
           message: '',
           password: '',
-          confirmPassword: ''
+          confirmPassword: '',
+          linkedinUrl: ''
         });
       } else {
         setSubmitStatus('error');
@@ -96,7 +98,7 @@ const Investors: NextPage = () => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
     setSubmitMessage('');
-    
+
     try {
       const response = await fetch('/api/investor/login', {
         method: 'POST',
@@ -112,7 +114,7 @@ const Investors: NextPage = () => {
         // Store token in localStorage
         localStorage.setItem('investorToken', data.token);
         localStorage.setItem('investorData', JSON.stringify(data.investor));
-        
+
         // Redirect to investor dashboard
         router.push('/investor/dashboard');
       } else {
@@ -366,6 +368,20 @@ const Investors: NextPage = () => {
                 />
               </div>
             </div>
+            
+            <div className={styles.formGroup}>
+                <label htmlFor="linkedinUrl">LinkedIn URL *</label>
+                <input
+                  type="url"
+                  id="linkedinUrl"
+                  name="linkedinUrl"
+                  value={investorForm.linkedinUrl}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                  placeholder="LinkedIn Profile URL (e.g., https://linkedin.com/in/yourname)"
+                />
+              </div>
 
             <button 
               type="submit" 

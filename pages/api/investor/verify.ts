@@ -32,12 +32,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Verify the account
+    // Verify the email and move to LinkedIn verification step
     const { error: updateError } = await supabase
       .from('investor_users')
       .update({ 
         is_verified: true, 
         verification_token: null,
+        verification_status: 'pending_linkedin',
         updated_at: new Date().toISOString()
       })
       .eq('id', investor.id);
@@ -49,11 +50,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json({
       success: true,
-      message: 'Email verified successfully! You can now log in to your investor dashboard.',
+      message: 'Email verified successfully! Please complete LinkedIn verification to access your investor dashboard.',
       investor: {
         email: investor.email,
         name: investor.name
-      }
+      },
+      nextStep: 'linkedin_verification'
     });
 
   } catch (error) {

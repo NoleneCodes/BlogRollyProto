@@ -131,3 +131,57 @@ export const sendInvestorWelcomeEmail = async (email: string, name: string, veri
     throw error;
   }
 };
+
+// Send LinkedIn verification request to admin
+export const sendLinkedInVerificationRequest = async (investorEmail: string, investorName: string, linkedinUrl: string) => {
+  try {
+    const { linkedinVerificationRequestTemplate } = await import('./email-templates/investor-onboarding/linkedinVerificationRequest');
+    const template = linkedinVerificationRequestTemplate(investorName, investorEmail, linkedinUrl);
+
+    const { data, error } = await resend.emails.send({
+      from: 'BlogRolly Investor System <noreply@blogrolly.com>',
+      to: ['admin@blogrolly.com'], // Send to admin email
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    });
+
+    if (error) {
+      console.error('❌ LinkedIn verification request email error:', error);
+      throw new Error(`Failed to send LinkedIn verification request: ${error.message}`);
+    }
+
+    console.log('✅ LinkedIn verification request sent successfully:', data?.id);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ LinkedIn verification request failed:', error);
+    throw error;
+  }
+};
+
+// Send LinkedIn verification result to investor
+export const sendLinkedInVerificationResult = async (email: string, name: string, approved: boolean) => {
+  try {
+    const { linkedinVerificationResultTemplate } = await import('./email-templates/investor-onboarding/linkedinVerificationResult');
+    const template = linkedinVerificationResultTemplate(name, approved);
+
+    const { data, error } = await resend.emails.send({
+      from: 'BlogRolly Investor Relations <investors@blogrolly.com>',
+      to: [email],
+      subject: template.subject,
+      html: template.html,
+      text: template.text,
+    });
+
+    if (error) {
+      console.error('❌ LinkedIn verification result email error:', error);
+      throw new Error(`Failed to send LinkedIn verification result: ${error.message}`);
+    }
+
+    console.log('✅ LinkedIn verification result sent successfully:', data?.id);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ LinkedIn verification result sending failed:', error);
+    throw error;
+  }
+};

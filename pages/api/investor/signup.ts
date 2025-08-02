@@ -18,7 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       investorType,
       interests,
       message,
-      password
+      password,
+      linkedinUrl
     } = req.body;
 
     // Validate required fields
@@ -60,7 +61,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         message: message || null,
         password_hash: passwordHash,
         verification_token: verificationToken,
-        is_verified: false
+        linkedin_url: linkedinUrl || null,
+        is_verified: false,
+        linkedin_verified: false,
+        verification_status: 'pending_email'
       }])
       .select()
       .single();

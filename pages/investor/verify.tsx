@@ -22,10 +22,17 @@ const InvestorVerify = () => {
           setVerificationStatus('success');
           setMessage(data.message);
           
-          // Redirect to login after 3 seconds
-          setTimeout(() => {
-            router.push('/investors');
-          }, 3000);
+          // If LinkedIn verification is required, redirect there
+          if (data.nextStep === 'linkedin_verification') {
+            setTimeout(() => {
+              router.push(`/investor/linkedin-verification?email=${encodeURIComponent(data.investor.email)}`);
+            }, 3000);
+          } else {
+            // Otherwise redirect to login
+            setTimeout(() => {
+              router.push('/investors');
+            }, 3000);
+          }
         } else {
           setVerificationStatus('error');
           setMessage(data.error || 'Verification failed');
@@ -57,12 +64,12 @@ const InvestorVerify = () => {
               <div className={styles.successIcon}>✅</div>
               <h1>Email Verified Successfully!</h1>
               <p>{message}</p>
-              <p>You will be redirected to the sign-in page in a few seconds...</p>
+              <p>Redirecting to LinkedIn verification...</p>
               <button 
-                onClick={() => router.push('/investors')}
+                onClick={() => router.push('/investor/linkedin-verification')}
                 className={styles.primaryButton}
               >
-                Go to Sign In
+                Continue to LinkedIn Verification
               </button>
             </div>
           )}

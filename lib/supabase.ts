@@ -1028,7 +1028,7 @@ export const supabaseDB = {
       requiresReapproval: urlChanged && (currentSubmission.status === 'approved' || currentSubmission.is_live)
     };
   },
-  
+
   // Bug Reports Functions
   createBugReport: async (bugData: {
     title: string;
@@ -1419,4 +1419,25 @@ export interface EmailTemplateData {
     dateRejected: string;
     resubmissionUrl: string;
   };
+}
+
+export interface InvestorUser {
+  id: string;
+  email: string;
+  name: string;
+  company?: string;
+  investment_range: string;
+  investor_type: string;
+  interests?: string;
+  message?: string;
+  password_hash: string;
+  is_verified: boolean;
+  verification_token?: string;
+  linkedin_url?: string;
+  linkedin_verified: boolean;
+  linkedin_verification_token?: string;
+  verification_status: 'pending_email' | 'pending_linkedin' | 'fully_verified' | 'rejected';
+  created_at: string;
+  updated_at: string;
+  last_login?: string;
 }

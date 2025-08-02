@@ -1,4 +1,3 @@
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../../lib/supabase';
 import bcrypt from 'bcryptjs';
@@ -18,22 +17,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find investor by email
+    // Check if investor exists and is fully verified
     const { data: investor, error: findError } = await supabase
       .from('investor_users')
-      .select('*')
+      .select('id, email, name, company, investor_type, password_hash, is_verified, linkedin_verified, verification_status')
       .eq('email', email)
       .single();
 
     if (findError || !investor) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ error: 'Invalid email or password' });
     }
 
-    // Check if account is verified
     if (!investor.is_verified) {
-      return res.status(401).json({ 
-        error: 'Please verify your email address before logging in. Check your inbox for the verification link.' 
-      });
+      return res.status(400).json({ error: 'Please verify your email before logging in' });
+    }
+
+    if (investor.verification_status === 'pending_linkedin') {
+      return res.status(400).json({ error: 'Please complete LinkedIn verification before accessing the dashboard' });
+    }
+
+    if (investor.verification_status === 'rejected') {
+      return res.status(400).json({ error: 'Your account verification was rejected. Please contact support.' });
+    }
+
+    if (investor.verification_status !== 'fully_verified') {
+      return res.status(400).json({ error: 'Account verification is still pending. Please wait for approval.' });
     }
 
     // Verify password
