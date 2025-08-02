@@ -23,7 +23,7 @@ const ContactSupportPopup: React.FC<ContactSupportPopupProps> = ({ isOpen, onClo
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
