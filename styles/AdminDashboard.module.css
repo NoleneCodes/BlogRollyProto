@@ -1405,6 +1405,113 @@
   color: #16a34a;
 }
 
+.priorityBadge.priorityCritical {
+  background-color: #fef2f2;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.priorityCritical {
+  background: #dc2626;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.supportRequestActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.supportRequestDetails {
+  padding: 1rem 0;
+}
+
+.supportRequestHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.supportRequestHeader h4 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+.supportRequestBadges {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.supportRequestMeta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.metaItem {
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.metaItem strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.supportRequestSection {
+  margin-bottom: 1.5rem;
+}
+
+.supportRequestSection h5 {
+  margin: 0 0 0.75rem 0;
+  color: #374151;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.supportRequestSection p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.responseForm {
+  padding: 1rem 0;
+}
+
+.responseTextarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.responseTextarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 .statusBadge.statusPending {
   background-color: #fef3c7;
   color: #d97706;
