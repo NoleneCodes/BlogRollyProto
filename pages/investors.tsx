@@ -423,7 +423,7 @@ const Investors: NextPage = () => {
 
         <div className={styles.contactItem}>
           <span className={styles.contactIcon}>📧</span>
-          <span>Email: <a href="mailto:hello@blogrolly.com">hello@blogrolly.com</a></span>
+          <span>Email: <a href="mailto:invest@blogrolly.com">invest@blogrolly.com</a></span>
         </div>
 
         <div className={styles.contactItem}>
