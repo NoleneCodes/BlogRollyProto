@@ -758,19 +758,392 @@ export default function AdminDashboard() {
 
   return (
     <Layout title="Admin Dashboard - BlogRolly">
-                </label>
+      <div className={styles.adminDashboard}>
+        <div className={styles.header}>
+          <h1>Admin Dashboard</h1>
+          <button 
+            onClick={handleSignOut}
+            className={styles.signOutButton}
+          >
+            Sign Out
+          </button>
+        </div>
 
-                <label className={styles.reasonOption}>
-                  <input
-                    type="radio"
-                    name="rejectionReason"
-                    value="insufficient_experience"
-                    checked={selectedRejectionReason === 'insufficient_experience'}
-                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
-                  />
-                  <span>Insufficient investment experience</span>
-                  <small>Profile does not demonstrate relevant investment background</small>
-                </label>
+        <div className={styles.tabNavigation}>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'submissions' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('submissions')}
+          >
+            Blog Submissions
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'manager' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('manager')}
+          >
+            Blog Manager
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'linkedin-verifications' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('linkedin-verifications')}
+          >
+            LinkedIn Verifications
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('bug-reports')}
+          >
+            Bug Reports
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'support-requests' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('support-requests')}
+          >
+            Support Requests
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('stats')}
+          >
+            Stats
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'email-testing' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('email-testing')}
+          >
+            Email Testing
+          </button>
+        </div>
+
+        {activeTab === 'submissions' && (
+          <div className={styles.tabContent}>
+            <div className={styles.controls}>
+              <div className={styles.filterSection}>
+                <label htmlFor="status-filter">Filter by Status:</label>
+                <select 
+                  id="status-filter"
+                  value={filter} 
+                  onChange={(e) => setFilter(e.target.value as BlogStatus | 'all')}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Submissions</option>
+                  <option value="pending">Pending Review</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="live">Live</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div className={styles.filterSection}>
+                <label htmlFor="tier-filter">Filter by Tier:</label>
+                <select 
+                  id="tier-filter"
+                  value={tierFilter} 
+                  onChange={(e) => setTierFilter(e.target.value as 'all' | 'free' | 'pro')}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">All Tiers</option>
+                  <option value="free">Free Members</option>
+                  <option value="pro">Pro Members</option>
+                </select>
+              </div>
+
+              <div className={styles.filterSection}>
+                <label htmlFor="date-filter">Sort by Date:</label>
+                <select 
+                  id="date-filter"
+                  value={dateFilter} 
+                  onChange={(e) => setDateFilter(e.target.value as 'all' | 'newest' | 'oldest')}
+                  className={styles.filterSelect}
+                >
+                  <option value="all">Default Order</option>
+                  <option value="newest">Most Recent First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+              </div>
+
+              <div className={styles.stats}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>{submissions.length}</span>
+                  <span className={styles.statLabel}>Total</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>
+                    {submissions.filter(s => s.status === 'pending').length}
+                  </span>
+                  <span className={styles.statLabel}>Pending</span>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.submissionsGrid}>
+              {submissions.length === 0 ? (
+                <div className={styles.emptyState}>
+                  <h3>No submissions found</h3>
+                  <p>No blog submissions match your current filter.</p>
+                </div>
+              ) : (
+                submissions.map((submission) => (
+                  <div key={submission.id} className={styles.submissionCard}>
+                    <div className={styles.submissionHeader}>
+                      <h3 className={styles.submissionTitle}>{submission.title}</h3>
+                      <div className={styles.badges}>
+                        <span className={`${styles.statusBadge} ${styles[submission.status]}`}>
+                          {BlogStatusHelpers.getStatusLabel(submission.status)}
+                        </span>
+                        <span className={`${styles.tierBadge} ${styles[submission.blogger_tier]}`}>
+                          {submission.blogger_tier.toUpperCase()}
+                        </span>
+                        {submission.has_adult_content && (
+                          <span className={styles.adultBadge}>18+</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className={styles.submissionMeta}>
+                      <p><strong>Blogger:</strong> {submission.blogger_name} ({submission.blogger_email})</p>
+                      <p><strong>Category:</strong> {submission.category}</p>
+                      <p><strong>URL:</strong> <a href={submission.url} target="_blank" rel="noopener noreferrer">{submission.url}</a></p>
+                      <p><strong>Submitted:</strong> {new Date(submission.submitted_at || submission.created_at).toLocaleDateString()}</p>
+                    </div>
+
+                    <div className={styles.submissionDescription}>
+                      <p>{submission.description}</p>
+                    </div>
+
+                    <div className={styles.submissionTags}>
+                      {submission.tags.map((tag, index) => (
+                        <span key={index} className={styles.tag}>{tag}</span>
+                      ))}
+                    </div>
+
+                    {submission.status === 'pending' && (
+                      <div className={styles.actionButtons}>
+                        <button 
+                          className={styles.approveButton}
+                          onClick={() => alert('Approve functionality coming soon!')}
+                        >
+                          ✓ Approve
+                        </button>
+                        <button 
+                          className={styles.rejectButton}
+                          onClick={() => alert('Reject functionality coming soon!')}
+                        >
+                          ✗ Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'manager' && (
+          <div className={styles.tabContent}>
+            {!showManager ? (
+              <>
+                <div className={styles.managerHeader}>
+                  <h2>Internal Blog Posts</h2>
+                  <button 
+                    onClick={handleAddNew}
+                    className={styles.primaryButton}
+                  >
+                    Add New Post
+                  </button>
+                </div>
+
+                <div className={styles.blogPostsGrid}>
+                  {blogPosts.length === 0 ? (
+                    <div className={styles.emptyState}>
+                      <h3>No blog posts found</h3>
+                      <p>Start by creating your first internal blog post.</p>
+                    </div>
+                  ) : (
+                    blogPosts.map((post) => (
+                      <div key={post.id} className={styles.blogPostCard}>
+                        <div className={styles.blogPostHeader}>
+                          <h3>{post.title}</h3>
+                          <div className={styles.blogPostActions}>
+                            <button 
+                              className={styles.editButton}
+                              onClick={() => handleEdit(post)}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              className={styles.deleteButton}
+                              onClick={() => handleDelete(post.id)}
+                            >
+                              Delete
+                            </button>
+                            <a 
+                              href={`/blog/post/${post.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={styles.viewButton}
+                            >
+                              View
+                            </a>
+                          </div>
+                        </div>
+
+                        <p className={styles.blogPostDescription}>
+                          {post.description}
+                        </p>
+
+                        <div className={styles.blogPostMeta}>
+                          <span>Category: {post.category}</span>
+                          <span>Author: {post.author}</span>
+                          <span>Published: {new Date(post.publishDate).toLocaleDateString()}</span>
+                          <span>Status: {post.isPublished ? 'Published' : 'Draft'}</span>
+                        </div>
+
+                        <div className={styles.blogPostTags}>
+                          {post.tags.map((tag, index) => (
+                            <span key={index} className={styles.tag}>{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <BlogPostManager
+                onClose={handleCloseManager}
+                existingPost={editingPost}
+                mode={mode}
+              />
+            )}
+          </div>
+        )}
+
+        {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
+        {activeTab === 'bug-reports' && <BugReports />}
+        {activeTab === 'support-requests' && <SupportRequests />}
+        {activeTab === 'stats' && (
+          <div className={styles.tabContent}>
+            <div className={styles.sectionHeader}>
+              <h2>Dashboard Overview</h2>
+              <p>Overview of BlogRolly performance and metrics</p>
+            </div>
+
+            <div className={styles.statsCardsGrid}>
+              <div className={styles.statsMainCard}>
+                <div className={styles.cardHeader}>
+                  <h3>Platform Statistics</h3>
+                  <p>Current user metrics and platform health</p>
+                </div>
+                <div className={styles.statsGrid}>
+                  <div className={styles.statCard}>
+                    <h3>1,247</h3>
+                    <p>Total Users</p>
+                  </div>
+                  <div className={styles.statCard}>
+                    <h3>342</h3>
+                    <p>Active Bloggers</p>
+                  </div>
+                  <div className={styles.statCard}>
+                    <h3>905</h3>
+                    <p>Readers</p>
+                  </div>
+                  <div className={styles.statCard}>
+                    <h3>89</h3>
+                    <p>Premium Members</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'email-testing' && (
+          <div className={styles.tabContent}>
+            <div className={styles.sectionHeader}>
+              <h2>Email Template Testing</h2>
+              <p>Test all email templates to ensure they work correctly</p>
+            </div>
+
+            <div className={styles.emailTestingForm}>
+              <div className={styles.formGroup}>
+                <label htmlFor="test-email">Test Email Address:</label>
+                <input
+                  id="test-email"
+                  type="email"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                  placeholder="your-email@example.com"
+                  className={styles.emailInput}
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="test-first-name">First Name (for personalization):</label>
+                <input
+                  id="test-first-name"
+                  type="text"
+                  value={testFirstName}
+                  onChange={(e) => setTestFirstName(e.target.value)}
+                  placeholder="John"
+                  className={styles.emailInput}
+                />
+              </div>
+
+              <button
+                onClick={sendAllTestEmails}
+                disabled={emailTestLoading || !testEmail}
+                className={styles.primaryButton}
+                style={{ marginBottom: '20px' }}
+              >
+                {emailTestLoading ? 'Sending All Tests...' : 'Send All Test Emails'}
+              </button>
+
+              <h3>Individual Email Tests</h3>
+              <div className={styles.emailTestGrid}>
+                {testEmailTemplates.map((template, index) => (
+                  <div key={index} className={styles.emailTestItem}>
+                    <span className={styles.emailTestName}>{template.name}</span>
+                    <button
+                      onClick={() => sendTestEmail(template)}
+                      disabled={emailTestLoading || !testEmail}
+                      className={styles.actionButton}
+                    >
+                      Send Test
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {emailTestResults.length > 0 && (
+                <div className={styles.emailTestResults}>
+                  <h3>Test Results</h3>
+                  <div className={styles.resultsContainer}>
+                    {emailTestResults.map((result, index) => (
+                      <div 
+                        key={index}
+                        className={`${styles.testResult} ${result.success ? styles.testSuccess : styles.testError}`}
+                      >
+                        <div className={styles.testResultHeader}>
+                          <strong>{result.template}</strong> - {result.timestamp}
+                          <span className={styles.testStatus}>
+                            {result.success ? '✅ Success' : '❌ Failed'}
+                          </span>
+                        </div>
+                        <div className={styles.testResultDetails}>
+                          <small>{JSON.stringify(result.result, null, 2)}</small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
 
                 <label className={styles.reasonOption}>
                   <input
