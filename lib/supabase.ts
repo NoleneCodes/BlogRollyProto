@@ -1000,7 +1000,7 @@ export const supabaseDB = {
     }
 
     // Update the submission (trigger will handle deactivation if URL changed)
-    const { data, error } = await supabase
+    const { data, error }await supabase
       .from('blog_submissions')
       .update({
         url: newUrl,
@@ -1027,6 +1027,250 @@ export const supabaseDB = {
       error, 
       requiresReapproval: urlChanged && (currentSubmission.status === 'approved' || currentSubmission.is_live)
     };
+  },
+  
+  // Bug Reports Functions
+  createBugReport: async (bugData: {
+    title: string;
+    description: string;
+    stepsToReproduce?: string;
+    expectedBehavior?: string;
+    actualBehavior?: string;
+    browser?: string;
+    operatingSystem?: string;
+    additionalInfo?: string;
+    images?: string[];
+    priority?: 'high' | 'medium' | 'low';
+    reporter: string;
+  }) => {
+    try {
+      // Generate ID in format #BUG-001
+      const { data: countData } = await supabase
+        .from('bug_reports')
+        .select('id', { count: 'exact' });
+
+      const count = countData?.length || 0;
+      const id = `#BUG-${String(count + 1).padStart(3, '0')}`;
+
+      // Determine priority based on title/description keywords if not provided
+      let priority = bugData.priority || 'medium';
+      if (!bugData.priority) {
+        const priorityKeywords = {
+          high: ['crash', 'error', 'broken', 'not working', 'fails', 'login', 'payment'],
+          medium: ['display', 'layout', 'search', 'upload', 'slow'],
+          low: ['typo', 'suggestion', 'improvement', 'minor']
+        };
+
+        const text = (bugData.title + ' ' + bugData.description).toLowerCase();
+
+        if (priorityKeywords.high.some(keyword => text.includes(keyword))) {
+          priority = 'high';
+        } else if (priorityKeywords.low.some(keyword => text.includes(keyword))) {
+          priority = 'low';
+        }
+      }
+
+      const { data, error } = await supabase
+        .from('bug_reports')
+        .insert({
+          id,
+          title: bugData.title,
+          description: bugData.description,
+          steps_to_reproduce: bugData.stepsToReproduce,
+          expected_behavior: bugData.expectedBehavior,
+          actual_behavior: bugData.actualBehavior,
+          browser: bugData.browser,
+          operating_system: bugData.operatingSystem,
+          additional_info: bugData.additionalInfo,
+          images: bugData.images || [],
+          priority,
+          reporter: bugData.reporter
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating bug report:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in createBugReport:', error);
+      return { success: false, error: 'Failed to create bug report' };
+    }
+  },
+
+  getAllBugReports: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bug_reports')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching bug reports:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in getAllBugReports:', error);
+      return { success: false, error: 'Failed to fetch bug reports' };
+    }
+  },
+
+  getBugReportById: async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('bug_reports')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching bug report:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in getBugReportById:', error);
+      return { success: false, error: 'Failed to fetch bug report' };
+    }
+  },
+
+  updateBugReportStatus: async (id: string, status: 'open' | 'in-progress' | 'resolved') => {
+    try {
+      const { data, error } = await supabase
+        .from('bug_reports')
+        .update({ status })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating bug report status:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in updateBugReportStatus:', error);
+      return { success: false, error: 'Failed to update bug report status' };
+    }
+  },
+
+  // Support Requests Functions
+  createSupportRequest: async (requestData: {
+    subject: string;
+    priority: 'low' | 'medium' | 'high' | 'critical';
+    message: string;
+    email?: string;
+    userEmail: string;
+  }) => {
+    try {
+      // Generate ID in format SUP-001
+      const { data: countData } = await supabase
+        .from('support_requests')
+        .select('id', { count: 'exact' });
+
+      const count = countData?.length || 0;
+      const id = `SUP-${String(count + 1).padStart(3, '0')}`;
+
+      const { data, error } = await supabase
+        .from('support_requests')
+        .insert({
+          id,
+          subject: requestData.subject,
+          priority: requestData.priority,
+          message: requestData.message,
+          email: requestData.email,
+          user_email: requestData.userEmail
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating support request:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in createSupportRequest:', error);
+      return { success: false, error: 'Failed to create support request' };
+    }
+  },
+
+  getAllSupportRequests: async () => {
+    try {
+      const { data, error } = await supabase
+        .from('support_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching support requests:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in getAllSupportRequests:', error);
+      return { success: false, error: 'Failed to fetch support requests' };
+    }
+  },
+
+  getSupportRequestById: async (id: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('support_requests')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching support request:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in getSupportRequestById:', error);
+      return { success: false, error: 'Failed to fetch support request' };
+    }
+  },
+
+  updateSupportRequestStatus: async (id: string, status: 'open' | 'responded' | 'closed', adminResponse?: string, adminResponder?: string) => {
+    try {
+      const updateData: any = { status };
+
+      if (adminResponse) {
+        updateData.admin_response = adminResponse;
+      }
+
+      if (adminResponder) {
+        updateData.admin_responder = adminResponder;
+      }
+
+      const { data, error } = await supabase
+        .from('support_requests')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating support request:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error in updateSupportRequestStatus:', error);
+      return { success: false, error: 'Failed to update support request' };
+    }
   }
 };
 

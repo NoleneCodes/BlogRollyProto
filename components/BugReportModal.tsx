@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { addBugReport } from '../lib/bugReportData';
+import { createBugReport } from '../lib/supabase';
 import styles from '../styles/BugReportModal.module.css';
 
 interface BugReportModalProps {
@@ -124,18 +124,27 @@ const BugReportModal: React.FC<BugReportModalProps> = ({
       const reportData = {
         ...formData,
         reporter: 'user@example.com', // This should come from authenticated user
-        images: imageBase64Array
+        images: imageBase64Array,
+        stepsToReproduce: formData.stepsToReproduce,
+        expectedBehavior: formData.expectedBehavior,
+        actualBehavior: formData.actualBehavior,
+        additionalInfo: formData.additionalInfo
       };
       
-      // Save bug report
-      const savedReport = addBugReport(reportData);
-      console.log('Bug report saved:', savedReport);
+      // Save bug report to database
+      const result = await createBugReport(reportData);
+      
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      
+      console.log('Bug report saved:', result.data);
       
       alert('Bug report submitted successfully! Thank you for helping us improve BlogRolly.');
       
       // Call success callback if provided
       if (onSubmitSuccess) {
-        onSubmitSuccess(savedReport.id);
+        onSubmitSuccess(result.data.id);
       }
       
       // Reset form and close modal
