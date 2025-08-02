@@ -377,6 +377,9 @@ const LinkedInVerifications = () => {
   const [loading, setLoading] = useState(true);
   const [selectedVerification, setSelectedVerification] = useState<any>(null);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [selectedRejectionReason, setSelectedRejectionReason] = useState<RejectionReason | ''>('');
+  const [customRejectionReason, setCustomRejectionReason] = useState('');
 
   useEffect(() => {
     loadVerifications();
@@ -406,7 +409,7 @@ const LinkedInVerifications = () => {
           created_at: '2025-01-24T11:30:00Z'
         }
       ];
-      
+
       setVerifications(mockVerifications.filter(v => v.verification_status === 'pending_linkedin'));
     } catch (error) {
       console.error('Failed to load LinkedIn verifications:', error);
@@ -447,6 +450,24 @@ const LinkedInVerifications = () => {
   const handleViewVerification = (verification: any) => {
     setSelectedVerification(verification);
     setShowViewModal(true);
+  };
+
+  const handleRejectVerification = (verification: any) => {
+    setSelectedVerification(verification);
+    setShowRejectionModal(true);
+  };
+
+  const handleSubmitRejection = async () => {
+    if (!selectedVerification) return;
+
+    let rejectionReason = selectedRejectionReason;
+
+    if (selectedRejectionReason === 'other') {
+      rejectionReason = customRejectionReason;
+    }
+
+    await handleApproveLinkedIn(selectedVerification.linkedin_verification_token, false, rejectionReason);
+    setShowRejectionModal(false);
   };
 
   if (loading) {
@@ -515,36 +536,7 @@ const LinkedInVerifications = () => {
                     </button>
                     <button 
                       className={styles.rejectButton}
-                      onClick={() => {
-                        const reason = prompt(
-                          'Please select a rejection reason:\n\n' +
-                          '1. incomplete_profile - Incomplete LinkedIn profile\n' +
-                          '2. insufficient_experience - Insufficient investment experience\n' +
-                          '3. unverified_identity - Unable to verify identity\n' +
-                          '4. inappropriate_content - Inappropriate content\n' +
-                          '5. fake_profile - Profile appears fake\n' +
-                          '6. no_investment_background - No investment background\n' +
-                          '7. privacy_settings - Privacy settings prevent review\n' +
-                          '8. other - Other reasons\n\n' +
-                          'Enter the reason code (1-8) or type custom reason:'
-                        );
-                        
-                        if (reason) {
-                          const reasonMap: { [key: string]: string } = {
-                            '1': 'incomplete_profile',
-                            '2': 'insufficient_experience',
-                            '3': 'unverified_identity',
-                            '4': 'inappropriate_content',
-                            '5': 'fake_profile',
-                            '6': 'no_investment_background',
-                            '7': 'privacy_settings',
-                            '8': 'other'
-                          };
-                          
-                          const rejectionReason = reasonMap[reason] || reason;
-                          handleApproveLinkedIn(verification.linkedin_verification_token, false, rejectionReason);
-                        }
-                      }}
+                      onClick={() => handleRejectVerification(verification)}
                     >
                       ✗ Reject
                     </button>
@@ -613,36 +605,7 @@ const LinkedInVerifications = () => {
               </button>
               <button 
                 className={styles.rejectButton}
-                onClick={() => {
-                  const reason = prompt(
-                    'Please select a rejection reason:\n\n' +
-                    '1. incomplete_profile - Incomplete LinkedIn profile\n' +
-                    '2. insufficient_experience - Insufficient investment experience\n' +
-                    '3. unverified_identity - Unable to verify identity\n' +
-                    '4. inappropriate_content - Inappropriate content\n' +
-                    '5. fake_profile - Profile appears fake\n' +
-                    '6. no_investment_background - No investment background\n' +
-                    '7. privacy_settings - Privacy settings prevent review\n' +
-                    '8. other - Other reasons\n\n' +
-                    'Enter the reason code (1-8) or type custom reason:'
-                  );
-                  
-                  if (reason) {
-                    const reasonMap: { [key: string]: string } = {
-                      '1': 'incomplete_profile',
-                      '2': 'insufficient_experience',
-                      '3': 'unverified_identity',
-                      '4': 'inappropriate_content',
-                      '5': 'fake_profile',
-                      '6': 'no_investment_background',
-                      '7': 'privacy_settings',
-                      '8': 'other'
-                    };
-                    
-                    const rejectionReason = reasonMap[reason] || reason;
-                    handleApproveLinkedIn(selectedVerification.linkedin_verification_token, false, rejectionReason);
-                  }
-                }}
+                onClick={() => handleRejectVerification(selectedVerification)}
               >
                 ✗ Reject Verification
               </button>
@@ -651,6 +614,158 @@ const LinkedInVerifications = () => {
                 onClick={() => setShowViewModal(false)}
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rejection Reason Modal */}
+      {showRejectionModal && selectedVerification && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>Reject LinkedIn Verification</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowRejectionModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.rejectionReasonForm}>
+              <div className={styles.rejectionSection}>
+                <h5>Investor: {selectedVerification.name}</h5>
+                <p>Please select a reason for rejecting this LinkedIn verification:</p>
+              </div>
+
+              <div className={styles.rejectionReasons}>
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="incomplete_profile"
+                    checked={selectedRejectionReason === 'incomplete_profile'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Incomplete LinkedIn profile</span>
+                  <small>Profile is missing key professional information</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="insufficient_experience"
+                    checked={selectedRejectionReason === 'insufficient_experience'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Insufficient investment experience</span>
+                  <small>Profile does not demonstrate relevant investment background</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="unverified_identity"
+                    checked={selectedRejectionReason === 'unverified_identity'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Unable to verify identity</span>
+                  <small>Cannot confirm the profile belongs to the applicant</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="inappropriate_content"
+                    checked={selectedRejectionReason === 'inappropriate_content'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Inappropriate content</span>
+                  <small>Profile contains content not aligned with investor criteria</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="fake_profile"
+                    checked={selectedRejectionReason === 'fake_profile'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Suspicious or fake profile</span>
+                  <small>Profile appears to be fake or suspicious</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="no_investment_background"
+                    checked={selectedRejectionReason === 'no_investment_background'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>No investment background</span>
+                  <small>No evidence of investment or venture capital experience</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="privacy_settings"
+                    checked={selectedRejectionReason === 'privacy_settings'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Privacy settings prevent review</span>
+                  <small>Profile privacy settings limit our ability to verify</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="other"
+                    checked={selectedRejectionReason === 'other'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Other reason</span>
+                  <small>Specify a custom reason below</small>
+                </label>
+
+                {selectedRejectionReason === 'other' && (
+                  <div className={styles.customReasonInput}>
+                    <label htmlFor="customReason">Custom rejection reason:</label>
+                    <textarea
+                      id="customReason"
+                      value={customRejectionReason}
+                      onChange={(e) => setCustomRejectionReason(e.target.value)}
+                      placeholder="Please explain the specific reason for rejection..."
+                      rows={3}
+                      className={styles.customReasonTextarea}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.rejectButton}
+                onClick={handleSubmitRejection}
+                disabled={!selectedRejectionReason || (selectedRejectionReason === 'other' && !customRejectionReason.trim())}
+              >
+                Confirm Rejection
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setShowRejectionModal(false)}
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -1201,7 +1316,7 @@ const AdminDashboard: React.FC = () => {
         filteredSubmissions = filteredSubmissions.sort((a, b) => {
           const dateA = new Date(a.submitted_at || a.created_at);
           const dateB = new Date(b.submitted_at || b.created_at);
-          
+
           if (dateFilter === 'newest') {
             return dateB.getTime() - dateA.getTime(); // Most recent first
           } else {
@@ -1382,13 +1497,13 @@ const AdminDashboard: React.FC = () => {
 
     setEmailTestLoading(true);
     setEmailTestResults([]);
-    
+
     for (const template of testEmailTemplates) {
       await sendTestEmail(template);
       // Small delay between emails to avoid rate limiting
       await new Promise(resolve => setTimeout(resolve, 500));
     }
-    
+
     setEmailTestLoading(false);
   };
 
@@ -1761,7 +1876,7 @@ const AdminDashboard: React.FC = () => {
                   className={styles.emailInput}
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="test-first-name">First Name (for personalization):</label>
                 <input
@@ -1773,7 +1888,7 @@ const AdminDashboard: React.FC = () => {
                   className={styles.emailInput}
                 />
               </div>
-              
+
               <button
                 onClick={sendAllTestEmails}
                 disabled={emailTestLoading || !testEmail}
@@ -1794,8 +1909,7 @@ const AdminDashboard: React.FC = () => {
                       className={styles.actionButton}
                     >
                       Send Test
-                    </button>
-                  </div>
+                    </button                  </div>
                 ))}
               </div>
 
