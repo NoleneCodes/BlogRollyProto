@@ -75,12 +75,28 @@ const InvestorDashboard = () => {
         </header>
 
         <div className={styles.dashboardGrid}>
-          {/* Pitch Deck Section */}
+          {/* Founder Bio Section */}
           <div className={styles.dashboardCard}>
-            <h2>📈 Pitch Deck & Financials</h2>
+            <h2>👤 Meet the Founder</h2>
+            <div className={styles.founderBio}>
+              <h3>Nolene – Why Me, Why Now</h3>
+              <p>Hi, I'm Nolene, the founder of BlogRolly.</p>
+              <p>As a researcher, and solo builder, I've lived the silence that fell over the open web. I've seen incredible creators publish great content—only for it to disappear into the void.</p>
+              <p>I started BlogRolly because I believe in digital sovereignty and the power of long-form thought. I want to make the web feel interconnected again not just performative and feed-based.</p>
+              <p>With a background in [briefly list highlights, e.g. regulatory systems, content strategy, tech upskilling], I've bootstrapped the MVP with no outside funding and designed a product informed by both cultural insight and user empathy.</p>
+              <p><strong>I'm building BlogRolly not to go viral but to last.</strong></p>
+            </div>
+          </div>
+
+          {/* Interactive Pitch Deck Section */}
+          <div className={styles.dashboardCard}>
+            <h2>📈 Interactive Pitch Deck</h2>
             <p>Access our comprehensive pitch deck, financial projections, and market analysis.</p>
-            <div className={styles.comingSoon}>
-              <span>Interactive Pitch Deck Coming Soon</span>
+            <div className={styles.pitchDeckCarousel}>
+              <div className={styles.carouselPlaceholder}>
+                <p>Pitch deck slides coming soon...</p>
+                <p>Stay tuned for our interactive presentation covering market opportunity, business model, and growth strategy.</p>
+              </div>
             </div>
           </div>
 
@@ -157,6 +173,42 @@ const InvestorDashboard = () => {
               </div>
             </div>
             <button className={styles.secondaryButton}>Join Community Forum</button>
+          </div>
+
+          {/* Downloadables Section */}
+          <div className={styles.dashboardCard}>
+            <h2>📄 Downloadables</h2>
+            <p>Access key documents and reports about BlogRolly.</p>
+            <div className={styles.downloadsList}>
+              <div className={styles.downloadItem}>
+                <div className={styles.downloadInfo}>
+                  <h4>One-Pager PDF</h4>
+                  <p>A quick overview of BlogRolly's mission, product, and market thesis</p>
+                </div>
+                <div className={styles.downloadCta}>
+                  <span className={styles.comingSoonSmall}>Coming Soon</span>
+                </div>
+              </div>
+              <div className={styles.downloadItem}>
+                <div className={styles.downloadInfo}>
+                  <h4>Market Deep Dive PDF</h4>
+                  <p>A short report on the rising creator economy, SEO/content tool gaps, and "indie web" resurgence</p>
+                </div>
+                <div className={styles.downloadCta}>
+                  <span className={styles.comingSoonSmall}>Coming Soon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule Call Section */}
+          <div className={styles.dashboardCard}>
+            <h2>📅 Schedule a Call</h2>
+            <p>Book a 15-minute call with our founder to discuss vision, strategy, or potential partnership.</p>
+            <div className={styles.calendlySection}>
+              <p>Let's talk vision, strategy, or potential partnership.</p>
+              <button className={styles.actionButton}>Schedule Call with Nolene</button>
+            </div>
           </div>
         </div>
 
