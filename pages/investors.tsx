@@ -6,7 +6,7 @@ import styles from "../styles/Home.module.css";
 
 const Investors: NextPage = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'signup' | 'login'>('signup');
+  const [activeTab, setActiveTab] = useState<'signup' | 'login' | null>(null);
   const [investorForm, setInvestorForm] = useState({
     name: '',
     email: '',
@@ -192,7 +192,19 @@ const Investors: NextPage = () => {
           </div>
         )}
 
-        {/* Signup Form */}
+        {/* Show instruction when no tab is selected */}
+        {activeTab === null && submitStatus === 'idle' && (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '2rem', 
+            color: '#6b7280',
+            fontSize: '1.1rem' 
+          }}>
+            Please select an option above to get started
+          </div>
+        )}
+
+        {/* Signup Form - Only show after clicking Create Account tab */}
         {activeTab === 'signup' && submitStatus !== 'success' && (
           <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
             <div className={styles.formRow}>
