@@ -27,8 +27,17 @@ class ErrorBoundary extends Component<Props, State> {
     console.error('Error caught by boundary:', error, errorInfo);
     this.setState({ error, errorInfo });
     
-    // TODO: Send error to logging service
-    // reportError(error, errorInfo);
+    // Send error to tracking service
+    import('../lib/error-tracking').then(({ errorTracker }) => {
+      errorTracker.captureError(error, {
+        component: 'ErrorBoundary',
+        action: 'component_crash',
+        metadata: {
+          componentStack: errorInfo.componentStack,
+          errorBoundary: true,
+        },
+      });
+    });
   }
 
   handleRetry = () => {
