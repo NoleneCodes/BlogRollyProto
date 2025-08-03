@@ -4,6 +4,31 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: [env.REPLIT_DOMAINS?.split(",")[0]],
+  
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: true,
+  
+  // Image optimization
+  images: {
+    domains: ['yllryygbuyxgbrujdrte.supabase.co'],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: false,
+  },
+  
+  // Bundle optimization
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+  
+  // Build optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
   async headers() {
     return [
       {
@@ -36,11 +61,27 @@ const nextConfig: NextConfig = {
           {
             key: 'Content-Security-Policy',
             value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.stripe.com https://*.supabase.co; frame-src https://js.stripe.com;"
+          },
+          // Cache headers for static assets
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      },
+      // Specific cache headers for API routes
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300'
           }
         ]
       }
     ];
   },
+  
   /* config options here */
   sentry: {
     hideSourceMaps: true,
