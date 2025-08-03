@@ -156,37 +156,6 @@ const Investors: NextPage = () => {
         </ul>
       </div>
 
-      <div className={styles.roadmapSection}>
-        <h2>Product Roadmap – Building in Public</h2>
-
-        <div className={styles.roadmapPhase}>
-          <h3>MVP Launch – Aug 2025</h3>
-          <ul className={styles.featureList}>
-            <li>• Blogger directory submissions (searchable)</li>
-            <li>• Reader onboarding + interest-based exploration</li>
-            <li>• Early engagement tools (save, follow)</li>
-            <li>• SEO-friendly profiles</li>
-          </ul>
-        </div>
-
-        <div className={styles.roadmapPhase}>
-          <h3>Phase 2 – Sept–Dec 2025</h3>
-          <ul className={styles.featureList}>
-            <li>• Blogger analytics dashboard</li>
-            <li>• Value-based curated tagging and categories (Blog Collections)</li>
-          </ul>
-        </div>
-
-        <div className={styles.roadmapPhase}>
-          <h3>Vision – 2026 and beyond</h3>
-          <ul className={styles.featureList}>
-            <li>• Dymaic AI-assisted blog collections directly addressing search queries</li>
-            <li>• Monetisation layers for advocates (Affiliate Programs)</li>
-            <li>• Indie press tools (newsletter/blogger events)</li>
-          </ul>
-        </div>
-      </div>
-
       <div className={styles.investorSignupSection}>
         <h2>Join Our Investor Community</h2>
         <p>Create your exclusive investor account to access our dashboard and investment opportunities</p>
@@ -431,6 +400,37 @@ const Investors: NextPage = () => {
             </button>
           </form>
         )}
+      </div>
+
+      <div className={styles.roadmapSection}>
+        <h2>Product Roadmap – Building in Public</h2>
+
+        <div className={styles.roadmapPhase}>
+          <h3>MVP Launch – Aug 2025</h3>
+          <ul className={styles.featureList}>
+            <li>• Blogger directory submissions (searchable)</li>
+            <li>• Reader onboarding + interest-based exploration</li>
+            <li>• Early engagement tools (save, follow)</li>
+            <li>• SEO-friendly profiles</li>
+          </ul>
+        </div>
+
+        <div className={styles.roadmapPhase}>
+          <h3>Phase 2 – Sept–Dec 2025</h3>
+          <ul className={styles.featureList}>
+            <li>• Blogger analytics dashboard</li>
+            <li>• Value-based curated tagging and categories (Blog Collections)</li>
+          </ul>
+        </div>
+
+        <div className={styles.roadmapPhase}>
+          <h3>Vision – 2026 and beyond</h3>
+          <ul className={styles.featureList}>
+            <li>• Dymaic AI-assisted blog collections directly addressing search queries</li>
+            <li>• Monetisation layers for advocates (Affiliate Programs)</li>
+            <li>• Indie press tools (newsletter/blogger events)</li>
+          </ul>
+        </div>
       </div>
 
       <div className={styles.contactSection}>
