@@ -1,4 +1,6 @@
 
+import { NextApiRequest } from 'next';
+
 interface SecurityEvent {
   type: 'rate_limit' | 'auth_attempt' | 'suspicious_request' | 'error';
   ip: string;

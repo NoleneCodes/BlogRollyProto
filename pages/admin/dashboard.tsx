@@ -7,6 +7,7 @@ import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } 
 import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, addEmailToThread, SupportRequest } from '../../lib/supportRequestData';
 import { BlogSubmission, BlogStatus, RejectionReason, BlogStatusHelpers } from '../../lib/supabase';
 import { supabase } from '../../lib/supabase';
+import { securityLogger } from '../../lib/security-logger';
 import styles from '../../styles/AdminDashboard.module.css';
 
 interface AdminUser {
@@ -900,6 +901,236 @@ const SupportRequests = () => {
 
   const sortedAndFilteredData = getSortedAndFilteredData();
 
+  // Security monitoring component
+const SecurityMonitoring = () => {
+  const [securityEvents, setSecurityEvents] = useState<any[]>([]);
+  const [eventTypeFilter, setEventTypeFilter] = useState<'all' | 'rate_limit' | 'auth_attempt' | 'suspicious_request' | 'error'>('all');
+  const [timeFilter, setTimeFilter] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
+  const [suspiciousIPs, setSuspiciousIPs] = useState<string[]>([]);
+
+  useEffect(() => {
+    loadSecurityData();
+    // Refresh every 30 seconds
+    const interval = setInterval(loadSecurityData, 30000);
+    return () => clearInterval(interval);
+  }, [eventTypeFilter, timeFilter]);
+
+  const loadSecurityData = () => {
+    // Get recent security events
+    const events = securityLogger.getRecentEvents(eventTypeFilter === 'all' ? undefined : eventTypeFilter, 100);
+    
+    // Filter by time
+    const now = new Date();
+    const filteredEvents = events.filter(event => {
+      const eventTime = new Date(event.timestamp);
+      const hoursDiff = (now.getTime() - eventTime.getTime()) / (1000 * 60 * 60);
+      
+      switch (timeFilter) {
+        case '24h': return hoursDiff <= 24;
+        case '7d': return hoursDiff <= 168; // 7 * 24
+        case '30d': return hoursDiff <= 720; // 30 * 24
+        default: return true;
+      }
+    });
+
+    setSecurityEvents(filteredEvents);
+    setSuspiciousIPs(securityLogger.getSuspiciousIPs());
+  };
+
+  const getEventTypeClass = (type: string) => {
+    switch (type) {
+      case 'rate_limit': return styles.eventRateLimit;
+      case 'auth_attempt': return styles.eventAuthAttempt;
+      case 'suspicious_request': return styles.eventSuspicious;
+      case 'error': return styles.eventError;
+      default: return '';
+    }
+  };
+
+  const getEventTypeIcon = (type: string) => {
+    switch (type) {
+      case 'rate_limit': return '🚦';
+      case 'auth_attempt': return '🔐';
+      case 'suspicious_request': return '⚠️';
+      case 'error': return '❌';
+      default: return '📋';
+    }
+  };
+
+  const blockSuspiciousIP = async (ip: string) => {
+    // In a real implementation, you would add this IP to a blocklist
+    // For now, we'll just show an alert
+    if (confirm(`Block IP address ${ip}? This will prevent all requests from this IP.`)) {
+      alert(`IP ${ip} has been blocked. (This is a demo - implement actual IP blocking in production)`);
+    }
+  };
+
+  return (
+    <div className={styles.sectionContent}>
+      <div className={styles.sectionHeader}>
+        <h2>Security Monitoring</h2>
+        <p>Monitor suspicious activities and security events</p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>{securityEvents.filter(e => e.type === 'rate_limit').length}</h3>
+          <p>Rate Limit Events</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{securityEvents.filter(e => e.type === 'suspicious_request').length}</h3>
+          <p>Suspicious Requests</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{suspiciousIPs.length}</h3>
+          <p>Flagged IPs</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{securityEvents.filter(e => e.type === 'auth_attempt').length}</h3>
+          <p>Auth Attempts</p>
+        </div>
+      </div>
+
+      {suspiciousIPs.length > 0 && (
+        <div className={styles.suspiciousIPsSection}>
+          <h3>🚨 Suspicious IP Addresses</h3>
+          <div className={styles.suspiciousIPsList}>
+            {suspiciousIPs.map((ip, index) => (
+              <div key={index} className={styles.suspiciousIPItem}>
+                <span className={styles.ipAddress}>{ip}</span>
+                <div className={styles.ipActions}>
+                  <button 
+                    className={styles.blockButton}
+                    onClick={() => blockSuspiciousIP(ip)}
+                  >
+                    Block IP
+                  </button>
+                  <button 
+                    className={styles.whitelistButton}
+                    onClick={() => alert(`IP ${ip} whitelisted (demo)`)}
+                  >
+                    Whitelist
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className={styles.tableFilters}>
+        <div className={styles.filterGroup}>
+          <label htmlFor="event-type-filter">Event Type:</label>
+          <select 
+            id="event-type-filter"
+            value={eventTypeFilter} 
+            onChange={(e) => setEventTypeFilter(e.target.value as any)}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Events</option>
+            <option value="rate_limit">Rate Limits</option>
+            <option value="auth_attempt">Auth Attempts</option>
+            <option value="suspicious_request">Suspicious Requests</option>
+            <option value="error">Errors</option>
+          </select>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label htmlFor="time-filter">Time Range:</label>
+          <select 
+            id="time-filter"
+            value={timeFilter} 
+            onChange={(e) => setTimeFilter(e.target.value as any)}
+            className={styles.filterSelect}
+          >
+            <option value="24h">Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+
+        <div className={styles.resultsInfo}>
+          Showing {securityEvents.length} security events
+        </div>
+
+        <button 
+          className={styles.refreshButton}
+          onClick={loadSecurityData}
+        >
+          🔄 Refresh
+        </button>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>IP Address</th>
+              <th>User Agent</th>
+              <th>Details</th>
+              <th>Timestamp</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {securityEvents.map((event, index) => (
+              <tr key={index}>
+                <td>
+                  <span className={`${styles.eventTypeBadge} ${getEventTypeClass(event.type)}`}>
+                    {getEventTypeIcon(event.type)} {event.type.replace('_', ' ').toUpperCase()}
+                  </span>
+                </td>
+                <td>
+                  <span className={styles.ipAddress}>{event.ip}</span>
+                  {suspiciousIPs.includes(event.ip) && (
+                    <span className={styles.suspiciousFlag}>🚨</span>
+                  )}
+                </td>
+                <td>
+                  <span className={styles.userAgent}>
+                    {event.userAgent ? event.userAgent.substring(0, 50) + '...' : 'Unknown'}
+                  </span>
+                </td>
+                <td>
+                  <div className={styles.eventDetails}>
+                    {typeof event.details === 'object' ? JSON.stringify(event.details, null, 2) : event.details}
+                  </div>
+                </td>
+                <td>{new Date(event.timestamp).toLocaleString()}</td>
+                <td>
+                  <div className={styles.securityActions}>
+                    <button 
+                      className={styles.blockButton}
+                      onClick={() => blockSuspiciousIP(event.ip)}
+                    >
+                      Block
+                    </button>
+                    <button 
+                      className={styles.investigateButton}
+                      onClick={() => alert(`Investigating IP ${event.ip} (demo)`)}
+                    >
+                      Investigate
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {securityEvents.length === 0 && (
+          <div className={styles.emptyState}>
+            <h3>No security events found</h3>
+            <p>No security events match your current filters.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
   return (
     <div className={styles.sectionContent}>
       <div className={styles.sectionHeader}>
@@ -1530,6 +1761,12 @@ const AdminDashboard = () => {
           >
             Email Testing
           </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'security' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('security')}
+          >
+            Security
+          </button>
         </div>
 
         {activeTab === 'submissions' && (
@@ -1776,6 +2013,8 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'security' && <SecurityMonitoring />}
 
         {activeTab === 'email-testing' && (
           <div className={styles.tabContent}>
