@@ -1238,6 +1238,320 @@ const SupportRequests = () => {
   );
 };
 
+// Sentry monitoring component
+const SentryMonitoring = () => {
+  const [sentryStats, setSentryStats] = useState<any>({
+    recentErrors: [],
+    errorCount24h: 0,
+    userAffected: 0,
+    performanceScore: 0,
+    isConfigured: false
+  });
+  const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadSentryData();
+    // Refresh every 5 minutes
+    const interval = setInterval(loadSentryData, 300000);
+    return () => clearInterval(interval);
+  }, [timeRange]);
+
+  const loadSentryData = async () => {
+    setLoading(true);
+    try {
+      // Check if Sentry is configured
+      const isConfigured = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
+      
+      if (!isConfigured) {
+        setSentryStats(prev => ({ ...prev, isConfigured: false }));
+        setLoading(false);
+        return;
+      }
+
+      // In a real implementation, you would fetch from Sentry API
+      // For now, we'll simulate some data
+      const mockData = {
+        recentErrors: [
+          {
+            id: '1',
+            title: 'TypeError: Cannot read property of undefined',
+            culprit: 'components/BlogSubmissionForm.tsx',
+            count: 12,
+            userCount: 8,
+            firstSeen: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+            lastSeen: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+            level: 'error',
+            project: 'blogrolly-frontend'
+          },
+          {
+            id: '2',
+            title: 'Network Error: Failed to fetch',
+            culprit: 'lib/supabase.ts',
+            count: 5,
+            userCount: 4,
+            firstSeen: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+            lastSeen: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+            level: 'error',
+            project: 'blogrolly-frontend'
+          },
+          {
+            id: '3',
+            title: 'Stripe payment processing failed',
+            culprit: 'pages/api/stripe/checkout.ts',
+            count: 2,
+            userCount: 2,
+            firstSeen: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+            lastSeen: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+            level: 'error',
+            project: 'blogrolly-backend'
+          }
+        ],
+        errorCount24h: 19,
+        userAffected: 14,
+        performanceScore: 87,
+        isConfigured: true
+      };
+
+      setSentryStats(mockData);
+    } catch (error) {
+      console.error('Failed to load Sentry data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getErrorLevelClass = (level: string) => {
+    switch (level) {
+      case 'error': return styles.errorLevelError;
+      case 'warning': return styles.errorLevelWarning;
+      case 'info': return styles.errorLevelInfo;
+      default: return '';
+    }
+  };
+
+  const getErrorLevelIcon = (level: string) => {
+    switch (level) {
+      case 'error': return '🔴';
+      case 'warning': return '🟡';
+      case 'info': return '🔵';
+      default: return '⚪';
+    }
+  };
+
+  const openSentryDashboard = () => {
+    if (sentryStats.isConfigured) {
+      // In a real implementation, you'd construct the actual Sentry URL
+      window.open('https://sentry.io/organizations/your-org/projects/', '_blank');
+    } else {
+      alert('Sentry is not configured. Please set NEXT_PUBLIC_SENTRY_DSN in your environment variables.');
+    }
+  };
+
+  const resolveError = (errorId: string) => {
+    // In a real implementation, you'd call Sentry API to resolve the error
+    alert(`Resolving error ${errorId} (demo - implement Sentry API integration)`);
+  };
+
+  if (!sentryStats.isConfigured) {
+    return (
+      <div className={styles.sectionContent}>
+        <div className={styles.sectionHeader}>
+          <h2>Error Tracking (Sentry)</h2>
+          <p>Sentry error tracking is not configured</p>
+        </div>
+
+        <div className={styles.configurationRequired}>
+          <div className={styles.configCard}>
+            <h3>🔧 Setup Required</h3>
+            <p>To enable error tracking, you need to configure Sentry:</p>
+            <ol>
+              <li>Create a Sentry account at <a href="https://sentry.io" target="_blank" rel="noopener noreferrer">sentry.io</a></li>
+              <li>Create a new project for BlogRolly</li>
+              <li>Copy your DSN from the project settings</li>
+              <li>Add <code>NEXT_PUBLIC_SENTRY_DSN</code> to your environment variables</li>
+              <li>Restart your application</li>
+            </ol>
+            <button 
+              className={styles.primaryButton}
+              onClick={() => window.open('https://sentry.io', '_blank')}
+            >
+              Go to Sentry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className={styles.sectionContent}>
+        <div className={styles.sectionHeader}>
+          <h2>Error Tracking (Sentry)</h2>
+          <p>Loading error tracking data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.sectionContent}>
+      <div className={styles.sectionHeader}>
+        <h2>Error Tracking (Sentry)</h2>
+        <p>Monitor application errors and performance metrics</p>
+        <button 
+          className={styles.primaryButton}
+          onClick={openSentryDashboard}
+        >
+          Open Full Sentry Dashboard
+        </button>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>{sentryStats.errorCount24h}</h3>
+          <p>Errors (24h)</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{sentryStats.userAffected}</h3>
+          <p>Users Affected</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{sentryStats.performanceScore}%</h3>
+          <p>Performance Score</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{sentryStats.recentErrors.length}</h3>
+          <p>Active Issues</p>
+        </div>
+      </div>
+
+      <div className={styles.tableFilters}>
+        <div className={styles.filterGroup}>
+          <label htmlFor="time-range-filter">Time Range:</label>
+          <select 
+            id="time-range-filter"
+            value={timeRange} 
+            onChange={(e) => setTimeRange(e.target.value as any)}
+            className={styles.filterSelect}
+          >
+            <option value="1h">Last Hour</option>
+            <option value="24h">Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+          </select>
+        </div>
+
+        <button 
+          className={styles.refreshButton}
+          onClick={loadSentryData}
+        >
+          🔄 Refresh
+        </button>
+      </div>
+
+      <div className={styles.sentryErrorsList}>
+        <h3>Recent Errors</h3>
+        {sentryStats.recentErrors.length === 0 ? (
+          <div className={styles.emptyState}>
+            <h3>No recent errors! 🎉</h3>
+            <p>Your application is running smoothly.</p>
+          </div>
+        ) : (
+          <div className={styles.tableContainer}>
+            <table className={styles.adminTable}>
+              <thead>
+                <tr>
+                  <th>Error</th>
+                  <th>Location</th>
+                  <th>Count</th>
+                  <th>Users</th>
+                  <th>Last Seen</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sentryStats.recentErrors.map((error: any) => (
+                  <tr key={error.id}>
+                    <td>
+                      <div className={styles.errorInfo}>
+                        <span className={`${styles.errorLevel} ${getErrorLevelClass(error.level)}`}>
+                          {getErrorLevelIcon(error.level)}
+                        </span>
+                        <div>
+                          <strong>{error.title}</strong>
+                          <div className={styles.errorProject}>{error.project}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <code className={styles.errorCulprit}>{error.culprit}</code>
+                    </td>
+                    <td>
+                      <span className={styles.errorCount}>{error.count}</span>
+                    </td>
+                    <td>
+                      <span className={styles.userCount}>{error.userCount}</span>
+                    </td>
+                    <td>
+                      <span className={styles.timestamp}>
+                        {new Date(error.lastSeen).toLocaleString()}
+                      </span>
+                    </td>
+                    <td>
+                      <div className={styles.errorActions}>
+                        <button 
+                          className={styles.actionButton}
+                          onClick={() => window.open(`https://sentry.io/organizations/your-org/issues/${error.id}/`, '_blank')}
+                        >
+                          View
+                        </button>
+                        <button 
+                          className={styles.resolveButton}
+                          onClick={() => resolveError(error.id)}
+                        >
+                          Resolve
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.sentryInsights}>
+        <h3>Insights & Recommendations</h3>
+        <div className={styles.insightsGrid}>
+          <div className={styles.insightCard}>
+            <h4>🔥 Most Frequent Error</h4>
+            <p>TypeError in BlogSubmissionForm.tsx</p>
+            <small>12 occurrences affecting 8 users</small>
+          </div>
+          <div className={styles.insightCard}>
+            <h4>📈 Error Trend</h4>
+            <p>19% increase from last week</p>
+            <small>Consider reviewing recent deployments</small>
+          </div>
+          <div className={styles.insightCard}>
+            <h4>⚡ Performance</h4>
+            <p>Average response time: 240ms</p>
+            <small>Performance score: {sentryStats.performanceScore}%</small>
+          </div>
+          <div className={styles.insightCard}>
+            <h4>🎯 Priority Focus</h4>
+            <p>Frontend error handling</p>
+            <small>Most errors originate from client-side code</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Security monitoring component
 const SecurityMonitoring = () => {
   const [securityEvents, setSecurityEvents] = useState<any[]>([]);
@@ -1767,6 +2081,12 @@ const AdminDashboard = () => {
           >
             Security
           </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'sentry' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('sentry')}
+          >
+            Error Tracking
+          </button>
         </div>
 
         {activeTab === 'submissions' && (
@@ -2098,6 +2418,8 @@ const AdminDashboard = () => {
           </div>
         )}
          {activeTab === 'security' && <SecurityMonitoring />}
+
+        {activeTab === 'sentry' && <SentryMonitoring />}
       </div>
     </Layout>
   );
