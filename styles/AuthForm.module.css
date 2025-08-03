@@ -655,12 +655,12 @@
     margin: 1rem auto;
     padding: 0 0.5rem;
   }
-  
+
   .customTopicInputContainer {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .addWordButton {
     width: 100%;
   }
@@ -728,4 +728,31 @@
   0% { outline-color: transparent; }
   50% { outline-color: #ef4444; }
   100% { outline-color: #ef4444; }
+}
+
+.authButton:hover {
+  background-color: #b91c3c;
+}
+
+.authButton.loading {
+  position: relative;
+  color: transparent;
+}
+
+.buttonSpinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff40;
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
 }

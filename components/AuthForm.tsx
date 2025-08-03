@@ -37,7 +37,11 @@ interface SignInFormData {
 const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [authMode, setAuthMode] = useState<'selection' | 'signin' | 'signup'>('selection');
   const [activeTab, setActiveTab] = useState<'reader' | 'blogger'>('reader');
 
@@ -162,7 +166,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     }
   };
 
-  const handleSignIn = async (e: React.FormEvent) => {
+    const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -279,7 +283,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     );
   }
 
-  // Sign in form
+    // Sign in form
   if (authMode === 'signin') {
     return (
       <div className={styles.container}>

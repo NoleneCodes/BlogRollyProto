@@ -40,7 +40,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
 
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth-check');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+        const response = await fetch('/api/auth-check', {
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        clearTimeout(timeoutId);
+
         if (response.ok) {
           const data = await response.json();
           if (data.authenticated) {
@@ -49,10 +60,24 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               name: data.userName,
               roles: data.userRoles ? data.userRoles.split(',') : []
             });
+          } else {
+            setUserInfo(null);
           }
+        } else if (response.status === 401) {
+          // User not authenticated, this is expected
+          setUserInfo(null);
+        } else {
+          console.warn(`Auth check returned ${response.status}`);
+          setUserInfo(null);
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.warn('Auth check timed out');
+        } else {
+          console.error('Auth check failed:', error);
+        }
+        // Fail gracefully - assume not authenticated
+        setUserInfo(null);
       } finally {
         setIsLoading(false);
       }

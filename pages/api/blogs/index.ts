@@ -1,4 +1,3 @@
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../../lib/supabase';
 import { getRateLimitMiddleware, apiRateLimit } from '../../../lib/rate-limit';
@@ -70,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Pagination
     const limitNum = parseInt(limit as string) || 50;
     const offsetNum = parseInt(offset as string) || 0;
-    
+
     query = query
       .range(offsetNum, offsetNum + limitNum - 1)
       .order('created_at', { ascending: false });
@@ -79,31 +78,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (error) {
       console.error('Blogs fetch error:', error);
-      return res.status(500).json({ error: 'Failed to fetch blogs' });
+      return res.status(500).json({ 
+        error: 'Failed to fetch blogs from the database.',
+        details: error.message,
+        code: 'DATABASE_ERROR'
+      });
+    }
+
+    if (!blogs) {
+        return res.status(404).json({
+            error: 'No blogs found matching the specified criteria.',
+            code: 'NO_BLOGS_FOUND'
+        });
     }
 
     // Transform data to match frontend expectations
-    const transformedBlogs = blogs?.map(blog => ({
-      id: blog.id,
-      title: blog.title,
-      description: blog.description,
-      url: blog.url,
-      image: blog.image_url,
-      imageDescription: blog.image_description,
-      imageType: blog.image_type,
-      imageFilePath: blog.image_file_path,
-      category: blog.category,
-      tags: blog.tags,
-      author: blog.user_profiles.display_name || 
-              `${blog.user_profiles.first_name} ${blog.user_profiles.surname}`,
-      authorUsername: blog.user_profiles.username,
-      blogName: blog.blogger_profiles.blog_name,
-      isVerified: blog.blogger_profiles.is_verified,
-      readTime: Math.ceil((blog.description?.length || 0) / 200), // Estimate
-      date: blog.created_at,
-      views: blog.views,
-      clicks: blog.clicks
-    })) || [];
+    const transformedBlogs = blogs?.map(blog => {
+      if (!blog.user_profiles || !blog.blogger_profiles) {
+        console.warn('Missing user or blogger profile for blog:', blog.id);
+        return null; // Skip this blog entry
+      }
+
+      return {
+        id: blog.id,
+        title: blog.title,
+        description: blog.description,
+        url: blog.url,
+        image: blog.image_url,
+        imageDescription: blog.image_description,
+        imageType: blog.image_type,
+        imageFilePath: blog.image_file_path,
+        category: blog.category,
+        tags: blog.tags,
+        author: blog.user_profiles.display_name || 
+                `${blog.user_profiles.first_name} ${blog.user_profiles.surname}`,
+        authorUsername: blog.user_profiles.username,
+        blogName: blog.blogger_profiles.blog_name,
+        isVerified: blog.blogger_profiles.is_verified,
+        readTime: Math.ceil((blog.description?.length || 0) / 200), // Estimate
+        date: blog.created_at,
+        views: blog.views,
+        clicks: blog.clicks
+      };
+    }).filter(blog => blog !== null) || []; // Filter out any null entries
 
     return res.status(200).json({
       blogs: transformedBlogs,
@@ -116,6 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   } catch (error) {
     console.error('Blogs API error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ 
+      error: 'Internal server error occurred while processing the request.',
+      details: error.message,
+      code: 'INTERNAL_SERVER_ERROR'
+    });
   }
 }

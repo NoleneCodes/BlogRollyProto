@@ -420,6 +420,42 @@
   border-color: #c42142 !important;
 }
 
+.errorMessage {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+  border: 1px solid #fecaca;
+}
+
+.urlInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.validationSpinner {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #c42142;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
   .formContainer {
     padding: 1rem;

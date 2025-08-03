@@ -53,6 +53,11 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     postUrl: '',
     hasAdultContent: false
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [isValidatingUrl, setIsValidatingUrl] = useState(false);
+  const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
 
   // Check if user is authenticated as a blogger (skip check during signup)
   if (!isBlogger && !isSignupMode) {
@@ -103,7 +108,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     try {
       const response = await fetch('/api/auth-check');
       const data = await response.json();
-      
+
       if (data.bloggerProfile) {
         setDomainVerificationStatus(data.bloggerProfile.domain_verification_status || 'pending');
       }
@@ -317,14 +322,14 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     try {
       const response = await fetch('/api/auth-check');
       const data = await response.json();
-      
+
       if (data.bloggerProfile?.blog_url) {
         const { DomainVerificationService } = await import('../lib/domainVerification');
         const domainValidation = DomainVerificationService.validatePostUrlMatchesBlogDomain(
           url, 
           data.bloggerProfile.blog_url
         );
-        
+
         if (!domainValidation.isValid) {
           setErrors(prev => ({ 
             ...prev, 
@@ -333,7 +338,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           return;
         }
       }
-      
+
       setErrors(prev => ({ ...prev, postUrl: '' }));
     } catch (error) {
       console.error('Domain validation error:', error);
@@ -364,7 +369,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       try {
         const authResponse = await fetch('/api/auth-check');
         const authData = await authResponse.json();
-        
+
         if (!authData.userProfile?.age_verified) {
           newErrors.hasAdultContent = 'Age verification required to submit adult content. Please verify your age in profile settings.';
         }
@@ -409,7 +414,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         // Final server-side validation before submission
         const authResponse = await fetch('/api/auth-check');
         const authData = await authResponse.json();
-        
+
         if (authData.session?.access_token) {
           const validationResponse = await fetch('/api/validate-blog-url', {
             method: 'POST',
@@ -471,6 +476,49 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     !formData.tags.includes(tag)
   );
 
+  const validateBlogUrl = async (url: string) => {
+    if (!url) {
+      setUrlValidationError(null);
+      return;
+    }
+
+    setIsValidatingUrl(true);
+    setUrlValidationError(null);
+
+    try {
+      const response = await fetch('/api/validate-blog-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postUrl: url })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.isValid) {
+        setErrors(prev => ({...prev, postUrl: result.error || 'Invalid blog URL'}));
+        setUrlValidationError(result.error || 'Invalid blog URL');
+      } else {
+        setErrors(prev => ({...prev, postUrl: ''}));
+        setUrlValidationError(null);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to validate URL. Please check your connection and try again.';
+      setErrors(prev => ({...prev, postUrl: errorMessage}));
+      setUrlValidationError(errorMessage);
+    } finally {
+      setIsValidatingUrl(false);
+    }
+  };
+
+  const debouncedValidateUrl = (url: string) => {
+    //Implement debounce logic if needed
+    validateBlogUrl(url);
+  };
+
   return (
     <div className={styles.formContainer}>
       {/* Submission Guidelines Section */}
@@ -530,6 +578,18 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
+      {submitError && (
+          <div className={styles.errorMessage} data-error-message>
+            ❌ {submitError}
+          </div>
+        )}
+
+        {submitSuccess && (
+          <div className={styles.successMessage} data-success-message>
+            ✅ Blog submitted successfully! We'll review it and get back to you soon.
+          </div>
+        )}
+
         {/* Step 1: Blog Image */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
@@ -713,13 +773,20 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           <label className={styles.label}>
             Blog Post URL *
           </label>
-          <input
-            type="url"
-            value={formData.postUrl}
-            onChange={handleUrlChange}
-            className={styles.textInput}
-            placeholder="https://yourblog.com/your-post-title"
-          />
+          <div className={styles.urlInputContainer}>
+                <input
+                  type="url"
+                  value={formData.postUrl}
+                  onChange={handleUrlChange}
+                  className={styles.textInput}
+                  placeholder="https://yourblog.com/your-post-title"
+                />
+                {isValidatingUrl && (
+                  <div className={styles.validationSpinner}>
+                    <div className={styles.spinner}></div>
+                  </div>
+                )}
+              </div>
           {errors.postUrl && <span className={styles.error}>{errors.postUrl}</span>}
           <small className={styles.hint}>
             Must start with https:// and include a path (e.g., /blog/my-post)
@@ -748,10 +815,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         {/* Submit Button */}
         <button 
           type="submit" 
-          disabled={!isFormValid()}
+          disabled={!isFormValid() || isValidatingUrl}
           className={`${styles.submitButton} ${!isFormValid() ? styles.disabled : ''}`}
         >
-          Publish to BlogRolly
+          {isSubmitting ? 'Submitting...' : 'Publish to BlogRolly'}
         </button>
       </form>
 
