@@ -192,18 +192,6 @@ const Investors: NextPage = () => {
           </div>
         )}
 
-        {/* Show instruction when no tab is selected */}
-        {activeTab === null && submitStatus === 'idle' && (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '2rem', 
-            color: '#6b7280',
-            fontSize: '1.1rem' 
-          }}>
-            Please select an option above to get started
-          </div>
-        )}
-
         {/* Signup Form - Only show after clicking Create Account tab */}
         {activeTab === 'signup' && submitStatus !== 'success' && (
           <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
