@@ -126,6 +126,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
       <Head>
         <title>{title}</title>
         <meta name="description" content="Discover and organize your favorite blogs with BlogRolly" />
+        <meta name="theme-color" content="#c42142" />
+        <meta name="msapplication-navbutton-color" content="#c42142" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="icon" href="/DigitalBR.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/DigitalBR.svg" />
         <link rel="manifest" href="/manifest.json" />
