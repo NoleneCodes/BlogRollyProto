@@ -1262,7 +1262,7 @@ const SentryMonitoring = () => {
     try {
       // Check if Sentry is configured
       const isConfigured = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
-      
+
       if (!isConfigured) {
         setSentryStats(prev => ({ ...prev, isConfigured: false }));
         setLoading(false);
@@ -1447,7 +1447,7 @@ const SentryMonitoring = () => {
           className={styles.refreshButton}
           onClick={loadSentryData}
         >
-          🔄 Refresh
+          refresh
         </button>
       </div>
 
@@ -1709,7 +1709,7 @@ const SecurityMonitoring = () => {
           className={styles.refreshButton}
           onClick={loadSecurityData}
         >
-          🔄 Refresh
+          refresh
         </button>
       </div>
 
@@ -2301,11 +2301,11 @@ const AdminDashboard = () => {
           </div>
         )}
 
-            {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
-            {activeTab === 'bug-reports' && <BugReports />}
-            {activeTab === 'support-requests' && <SupportRequests />}
-            {activeTab === 'stats' && (
-              <div className={styles.content}>
+        {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
+        {activeTab === 'bug-reports' && <BugReports />}
+        {activeTab === 'support-requests' && <SupportRequests />}
+        {activeTab === 'stats' && (
+          <div className={styles.content}>
             <div className={styles.sectionHeader}>
               <h2>Dashboard Overview</h2>
               <p>Overview of BlogRolly performance and metrics</p>
@@ -2429,8 +2429,8 @@ const AdminDashboard = () => {
         {activeTab === 'sentry' && <SentryMonitoring />}
       </div>
     </div>
-  </div>
-</Layout>
+  </Layout>
 );
+};
 
 export default AdminDashboard;
