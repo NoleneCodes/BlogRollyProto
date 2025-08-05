@@ -2426,12 +2426,11 @@ const AdminDashboard = () => {
 
         {activeTab === 'security' && <SecurityMonitoring />}
 
-            {activeTab === 'sentry' && <SentryMonitoring />}
-          </div>
-        </div>
+        {activeTab === 'sentry' && <SentryMonitoring />}
       </div>
-    </Layout>
-  );
-};
+    </div>
+  </div>
+</Layout>
+);
 
 export default AdminDashboard;
