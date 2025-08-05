@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import { initGA, trackPageView } from '../lib/analytics';
 import BugReportModal from './BugReportModal';
+import CookieConsentBanner from './CookieConsentBanner'; // Assuming this component exists
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -35,8 +36,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   }, []);
 
   useEffect(() => {
-    // Initialize Google Analytics
-    initGA();
+    // Initialize Google Analytics only if consent is given
+    // This logic should ideally be in CookieConsentBanner or a hook
+    // For now, assuming initGA() is safe to call and respects consent if implemented within it
+    if (typeof window !== 'undefined' && localStorage.getItem('cookieConsent') === 'granted') {
+      initGA();
+    }
 
     const checkAuth = async () => {
       try {
@@ -89,7 +94,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   // Track page views on route changes
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      trackPageView(url);
+      // Only track page views if consent is given
+      if (typeof window !== 'undefined' && localStorage.getItem('cookieConsent') === 'granted') {
+        trackPageView(url);
+      }
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -258,7 +266,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           isOpen={showBugReportPopup}
           onClose={() => setShowBugReportPopup(false)}
         />
-      </div>
+
+      <CookieConsentBanner />
+    </div>
     </>
   );
 };

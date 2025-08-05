@@ -4,16 +4,13 @@ import { ThemeProvider } from 'next-themes'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { initGA } from '../lib/analytics'
+import { trackPageView } from '../lib/analytics'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Initialize analytics
-    initGA();
-
-    // Track page views on route changes
+    // Track page views on route changes (only if user consented)
     const handleRouteChange = (url: string) => {
       trackPageView(url);
     };
