@@ -2032,65 +2032,73 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        <div className={styles.tabNavigation}>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'submissions' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('submissions')}
-          >
-            Blog Submissions
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'manager' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('manager')}
-          >
-            Blog Manager
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'linkedin-verifications' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('linkedin-verifications')}
-          >
-            LinkedIn Verifications
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('bug-reports')}
-          >
-            Bug Reports
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'support-requests' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('support-requests')}
-          >
-            Support Requests
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('stats')}
-          >
-            Stats
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'email-testing' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('email-testing')}
-          >
-            Email Testing
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'security' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('security')}
-          >
-            Security
-          </button>
-          <button 
-            className={`${styles.tabButton} ${activeTab === 'sentry' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('sentry')}
-          >
-            Error Tracking
-          </button>
-        </div>
+        <div className={styles.adminContainer}>
+          <div className={styles.sidebar}>
+            <div className={styles.sidebarHeader}>
+              <h3>Admin Panel</h3>
+            </div>
+            <div className={styles.sidebarNav}>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'submissions' ? styles.active : ''}`}
+                onClick={() => setActiveTab('submissions')}
+              >
+                📝 Blog Submissions
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'manager' ? styles.active : ''}`}
+                onClick={() => setActiveTab('manager')}
+              >
+                📚 Blog Manager
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'linkedin-verifications' ? styles.active : ''}`}
+                onClick={() => setActiveTab('linkedin-verifications')}
+              >
+                💼 LinkedIn Verifications
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'bug-reports' ? styles.active : ''}`}
+                onClick={() => setActiveTab('bug-reports')}
+              >
+                🐛 Bug Reports
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'support-requests' ? styles.active : ''}`}
+                onClick={() => setActiveTab('support-requests')}
+              >
+                🎧 Support Requests
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'stats' ? styles.active : ''}`}
+                onClick={() => setActiveTab('stats')}
+              >
+                📊 Stats
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'email-testing' ? styles.active : ''}`}
+                onClick={() => setActiveTab('email-testing')}
+              >
+                📧 Email Testing
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'security' ? styles.active : ''}`}
+                onClick={() => setActiveTab('security')}
+              >
+                🔒 Security
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'sentry' ? styles.active : ''}`}
+                onClick={() => setActiveTab('sentry')}
+              >
+                🚨 Error Tracking
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.main}>
 
         {activeTab === 'submissions' && (
-          <div className={styles.tabContent}>
+              <div className={styles.content}>
             <div className={styles.controls}>
               <div className={styles.filterSection}>
                 <label htmlFor="status-filter">Filter by Status:</label>
@@ -2212,11 +2220,10 @@ const AdminDashboard = () => {
                 ))
               )}
             </div>
-          </div>
-        )}
+            )}
 
-        {activeTab === 'manager' && (
-          <div className={styles.tabContent}>
+            {activeTab === 'manager' && (
+              <div className={styles.content}>
             {!showManager ? (
               <>
                 <div className={styles.managerHeader}>
@@ -2292,14 +2299,13 @@ const AdminDashboard = () => {
                 mode={mode}
               />
             )}
-          </div>
-        )}
+            )}
 
-        {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
-        {activeTab === 'bug-reports' && <BugReports />}
-        {activeTab === 'support-requests' && <SupportRequests />}
-        {activeTab === 'stats' && (
-          <div className={styles.tabContent}>
+            {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
+            {activeTab === 'bug-reports' && <BugReports />}
+            {activeTab === 'support-requests' && <SupportRequests />}
+            {activeTab === 'stats' && (
+              <div className={styles.content}>
             <div className={styles.sectionHeader}>
               <h2>Dashboard Overview</h2>
               <p>Overview of BlogRolly performance and metrics</p>
@@ -2331,11 +2337,10 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
-          </div>
-        )}
+            )}
 
-        {activeTab === 'email-testing' && (
-          <div className={styles.tabContent}>
+            {activeTab === 'email-testing' && (
+              <div className={styles.content}>
             <div className={styles.sectionHeader}>
               <h2>Email Template Testing</h2>
               <p>Test all email templates to ensure they work correctly</p>
@@ -2415,11 +2420,12 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
-          </div>
-        )}
-         {activeTab === 'security' && <SecurityMonitoring />}
+            )}
+            {activeTab === 'security' && <SecurityMonitoring />}
 
-        {activeTab === 'sentry' && <SentryMonitoring />}
+            {activeTab === 'sentry' && <SentryMonitoring />}
+          </div>
+        </div>
       </div>
     </Layout>
   );
