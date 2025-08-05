@@ -2220,7 +2220,8 @@ const AdminDashboard = () => {
                 ))
               )}
             </div>
-          )}
+          </div>
+        )}
 
         {activeTab === 'manager' && (
           <div className={styles.content}>
@@ -2430,6 +2431,7 @@ const AdminDashboard = () => {
 
         {activeTab === 'sentry' && <SentryMonitoring />}
         </div>
+      </div>
       </div>
     </Layout>
   );
