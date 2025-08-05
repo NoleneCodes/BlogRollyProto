@@ -3,9 +3,26 @@ import type { AppProps } from 'next/app'
 import { ThemeProvider } from 'next-themes'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { initGA, trackPageView } from '../lib/analytics'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
   useEffect(() => {
+    // Initialize Google Analytics
+    initGA();
+
+    // Track page views on route changes
+    const handleRouteChange = (url: string) => {
+      trackPageView(url);
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    
+    // Track initial page load
+    trackPageView(window.location.pathname + window.location.search);
+
     // Preload critical resources
     if (typeof window !== 'undefined') {
       // Stabilize development environment
@@ -27,7 +44,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         });
       }
     }
-  }, []);
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <ErrorBoundary>
