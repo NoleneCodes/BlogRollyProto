@@ -22,7 +22,25 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
+    esmExternals: true,
   },
+  
+  // Dev server optimization
+  ...(process.env.NODE_ENV === 'development' && {
+    onDemandEntries: {
+      maxInactiveAge: 25 * 1000,
+      pagesBufferLength: 2,
+    },
+    webpack: (config, { dev, isServer }) => {
+      if (dev && !isServer) {
+        config.watchOptions = {
+          poll: 1000,
+          aggregateTimeout: 300,
+        };
+      }
+      return config;
+    },
+  }),
   
   // Build optimizations
   compiler: {
