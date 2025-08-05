@@ -4,13 +4,13 @@ import { ThemeProvider } from 'next-themes'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { initGA, trackPageView } from '../lib/analytics'
+import { initGA } from '../lib/analytics'
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Initialize Google Analytics
+    // Initialize analytics
     initGA();
 
     // Track page views on route changes
@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
-    
+
     // Track initial page load
     trackPageView(window.location.pathname + window.location.search);
 
@@ -36,7 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           originalError(...args);
         };
       }
-      
+
       // Remove unused service workers
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(registrations => {
