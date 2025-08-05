@@ -2098,7 +2098,7 @@ const AdminDashboard = () => {
           <div className={styles.main}>
 
         {activeTab === 'submissions' && (
-              <div className={styles.content}>
+          <div className={styles.content}>
             <div className={styles.controls}>
               <div className={styles.filterSection}>
                 <label htmlFor="status-filter">Filter by Status:</label>
@@ -2431,6 +2431,7 @@ const AdminDashboard = () => {
         {activeTab === 'sentry' && <SentryMonitoring />}
         </div>
       </div>
+        </div>
     </Layout>
   );
 };
