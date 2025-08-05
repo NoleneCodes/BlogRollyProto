@@ -2220,7 +2220,6 @@ const AdminDashboard = () => {
                 ))
               )}
             </div>
-            )}
 
             {activeTab === 'manager' && (
               <div className={styles.content}>
@@ -2299,7 +2298,8 @@ const AdminDashboard = () => {
                 mode={mode}
               />
             )}
-            )}
+          </div>
+        )}
 
             {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
             {activeTab === 'bug-reports' && <BugReports />}
@@ -2337,10 +2337,11 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
-            )}
+          </div>
+        )}
 
-            {activeTab === 'email-testing' && (
-              <div className={styles.content}>
+        {activeTab === 'email-testing' && (
+          <div className={styles.content}>
             <div className={styles.sectionHeader}>
               <h2>Email Template Testing</h2>
               <p>Test all email templates to ensure they work correctly</p>
@@ -2420,8 +2421,10 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
-            )}
-            {activeTab === 'security' && <SecurityMonitoring />}
+          </div>
+        )}
+
+        {activeTab === 'security' && <SecurityMonitoring />}
 
             {activeTab === 'sentry' && <SentryMonitoring />}
           </div>
