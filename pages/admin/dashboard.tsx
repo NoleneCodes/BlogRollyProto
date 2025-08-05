@@ -2305,7 +2305,7 @@ const AdminDashboard = () => {
         {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
         {activeTab === 'bug-reports' && <BugReports />}
         {activeTab === 'support-requests' && <SupportRequests />}
-        
+
         {activeTab === 'stats' && (
           <div className={styles.content}>
             <div className={styles.sectionHeader}>
@@ -2431,7 +2431,6 @@ const AdminDashboard = () => {
         {activeTab === 'sentry' && <SentryMonitoring />}
         </div>
       </div>
-        </div>
     </Layout>
   );
 };
