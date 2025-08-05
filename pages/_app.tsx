@@ -24,14 +24,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (typeof window !== 'undefined') {
       // Stabilize development environment
       if (process.env.NODE_ENV === 'development') {
-        // Disable automatic refresh on certain development warnings
-        const originalError = console.error;
-        console.error = (...args) => {
-          if (args[0]?.includes?.('Fast Refresh')) {
-            return;
-          }
-          originalError(...args);
-        };
+        // Development mode - no console overrides
+        console.log('Development server initialized');
       }
 
       // Remove unused service workers
