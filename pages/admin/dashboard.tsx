@@ -2220,9 +2220,10 @@ const AdminDashboard = () => {
                 ))
               )}
             </div>
+          )}
 
-            {activeTab === 'manager' && (
-              <div className={styles.content}>
+        {activeTab === 'manager' && (
+          <div className={styles.content}>
             {!showManager ? (
               <>
                 <div className={styles.managerHeader}>
@@ -2304,6 +2305,7 @@ const AdminDashboard = () => {
         {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
         {activeTab === 'bug-reports' && <BugReports />}
         {activeTab === 'support-requests' && <SupportRequests />}
+        
         {activeTab === 'stats' && (
           <div className={styles.content}>
             <div className={styles.sectionHeader}>
@@ -2427,10 +2429,10 @@ const AdminDashboard = () => {
         {activeTab === 'security' && <SecurityMonitoring />}
 
         {activeTab === 'sentry' && <SentryMonitoring />}
+        </div>
       </div>
-    </div>
-  </Layout>
-);
+    </Layout>
+  );
 };
 
 export default AdminDashboard;
