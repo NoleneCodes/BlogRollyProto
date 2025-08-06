@@ -3,37 +3,26 @@ import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: [env.REPLIT_DOMAINS?.split(",")[0]],
-  
-  // Performance optimizations
-  compress: true,
+  // Basic configuration only in development to prevent reload loops
   poweredByHeader: false,
-  generateEtags: true,
   
   // Image optimization
   images: {
     domains: ['yllryygbuyxgbrujdrte.supabase.co'],
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60,
     dangerouslyAllowSVG: false,
   },
   
-  // Bundle optimization
-  experimental: {
-    optimizeCss: true,
-    scrollRestoration: true,
-    esmExternals: true,
-  },
-  
-  // Dev server optimization - DISABLED to prevent constant reloading
-  // ...(process.env.NODE_ENV === 'development' && {
-  //   webpack optimizations disabled due to Fast Refresh reload loop
-  // }),
-  
-  // Build optimizations
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
+  // Build optimizations only for production
+  ...(process.env.NODE_ENV === 'production' && {
+    compress: true,
+    generateEtags: true,
+    experimental: {
+      optimizeCss: true,
+    },
+    compiler: {
+      removeConsole: true,
+    },
+  }),
   
   async headers() {
     return [
