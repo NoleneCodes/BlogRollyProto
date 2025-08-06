@@ -1798,6 +1798,8 @@ const AdminDashboard = () => {
   const [testFirstName, setTestFirstName] = useState('');
   const [emailTestLoading, setEmailTestLoading] = useState(false);
   const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
+  const [discordTestLoading, setDiscordTestLoading] = useState(false);
+  const [discordTestResult, setDiscordTestResult] = useState<any>(null);
 
   const testEmailTemplates = [
     { name: 'Welcome Blogger', endpoint: '/api/test-email/welcome-blogger' },
@@ -2326,6 +2328,43 @@ const AdminDashboard = () => {
     }
   };
 
+  const sendDiscordTest = async () => {
+    setDiscordTestLoading(true);
+    setDiscordTestResult(null);
+
+    try {
+      const response = await fetch('/api/test-discord', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      setDiscordTestResult({
+        success: response.ok,
+        result: result,
+        timestamp: new Date().toLocaleString()
+      });
+
+      if (response.ok) {
+        alert('Discord test alert sent successfully! Check your Discord channel.');
+      } else {
+        alert(`Discord test failed: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Discord test error:', error);
+      setDiscordTestResult({
+        success: false,
+        result: { error: 'Network error' },
+        timestamp: new Date().toLocaleString()
+      });
+      alert('Network error sending Discord test');
+    } finally {
+      setDiscordTestLoading(false);
+    }
+  };
+
   const sendAllTestEmails = async () => {
     if (!testEmail) {
       alert('Please enter a test email address first.');
@@ -2810,6 +2849,38 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               )}
+
+              {/* Discord Webhook Testing Section */}
+              <div className={styles.discordTestSection} style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid #e5e7eb' }}>
+                <h3>Discord Webhook Testing</h3>
+                <p>Test the Discord webhook integration for admin notifications</p>
+                
+                <button
+                  onClick={sendDiscordTest}
+                  disabled={discordTestLoading}
+                  className={styles.primaryButton}
+                  style={{ marginBottom: '20px' }}
+                >
+                  {discordTestLoading ? 'Sending Discord Test...' : 'Send Discord Test Alert'}
+                </button>
+
+                {discordTestResult && (
+                  <div className={styles.discordTestResults}>
+                    <h4>Discord Test Result</h4>
+                    <div className={`${styles.testResult} ${discordTestResult.success ? styles.testSuccess : styles.testError}`}>
+                      <div className={styles.testResultHeader}>
+                        <strong>Discord Webhook Test</strong> - {discordTestResult.timestamp}
+                        <span className={styles.testStatus}>
+                          {discordTestResult.success ? '✅ Success' : '❌ Failed'}
+                        </span>
+                      </div>
+                      <div className={styles.testResultDetails}>
+                        <small>{JSON.stringify(discordTestResult.result, null, 2)}</small>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
