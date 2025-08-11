@@ -1,4 +1,3 @@
-
 // Google Analytics configuration
 declare global {
   interface Window {
@@ -12,10 +11,10 @@ export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 // Check if user has consented to analytics cookies
 export const hasAnalyticsConsent = (): boolean => {
   if (typeof window === 'undefined') return false;
-  
+
   const consent = localStorage.getItem('cookieConsent');
   if (!consent) return false;
-  
+
   try {
     const parsedConsent = JSON.parse(consent);
     return parsedConsent.analytics === true;
@@ -26,32 +25,15 @@ export const hasAnalyticsConsent = (): boolean => {
 
 // Initialize Google Analytics (only call this after user consent)
 export const initGA = () => {
-  if (typeof window !== 'undefined' && GA_MEASUREMENT_ID && hasAnalyticsConsent()) {
-    // Initialize dataLayer
-    window.dataLayer = window.dataLayer || [];
-    
-    // Add Google Analytics script to head (only if not already added)
-    if (!document.querySelector(`script[src*="gtag/js?id=${GA_MEASUREMENT_ID}"]`)) {
-      const script1 = document.createElement('script')
-      script1.async = true
-      script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
-      document.head.appendChild(script1)
-
-      const script2 = document.createElement('script')
-      script2.innerHTML = `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${GA_MEASUREMENT_ID}', {
-          anonymize_ip: true,
-          allow_google_signals: false,
-          allow_ad_personalization_signals: false
-        });
-      `
-      document.head.appendChild(script2)
-    }
+  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  if (measurementId && measurementId !== 'G-XXXXXXXXXX') {
+    // Initialize Google Analytics
+    (window as any).gtag('config', measurementId, {
+      page_title: document.title,
+      page_location: window.location.href,
+    });
   }
-}
+};
 
 // Track page views (only if user consented)
 export const trackPageView = (url: string) => {
