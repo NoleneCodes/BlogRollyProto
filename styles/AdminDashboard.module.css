@@ -2259,6 +2259,164 @@
   padding: 0.25rem 0.5rem;
 }
 
+/* Sentry Monitoring Styles */
+.configurationRequired {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.configCard {
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 500px;
+}
+
+.configCard h3 {
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.configCard ol {
+  text-align: left;
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.configCard li {
+  margin-bottom: 0.5rem;
+}
+
+.configCard code {
+  background: #e5e7eb;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.sentryErrorsList {
+  margin-top: 2rem;
+}
+
+.sentryErrorsList h3 {
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.errorInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.errorLevel {
+  font-size: 1rem;
+}
+
+.errorProject {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.errorCulprit {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: #374151;
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.errorCount, .userCount {
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.errorActions {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.errorActions button {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.resolveButton {
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.resolveButton:hover {
+  background: #059669;
+}
+
+.errorLevelError {
+  color: #dc2626;
+}
+
+.errorLevelWarning {
+  color: #d97706;
+}
+
+.errorLevelInfo {
+  color: #2563eb;
+}
+
+.sentryInsights {
+  margin-top: 2rem;
+}
+
+.sentryInsights h3 {
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.insightsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.insightCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.insightCard h4 {
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.insightCard p {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #111827;
+}
+
+.insightCard small {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .adminDashboard {
