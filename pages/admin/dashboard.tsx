@@ -1262,7 +1262,7 @@ const SentryMonitoring = () => {
     try {
       // Check if Sentry is configured
       const isConfigured = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
-
+      
       if (!isConfigured) {
         setSentryStats(prev => ({ ...prev, isConfigured: false }));
         setLoading(false);
@@ -1447,7 +1447,7 @@ const SentryMonitoring = () => {
           className={styles.refreshButton}
           onClick={loadSentryData}
         >
-          refresh
+          🔄 Refresh
         </button>
       </div>
 
@@ -1709,7 +1709,7 @@ const SecurityMonitoring = () => {
           className={styles.refreshButton}
           onClick={loadSecurityData}
         >
-          refresh
+          🔄 Refresh
         </button>
       </div>
 
@@ -1798,8 +1798,6 @@ const AdminDashboard = () => {
   const [testFirstName, setTestFirstName] = useState('');
   const [emailTestLoading, setEmailTestLoading] = useState(false);
   const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
-  const [discordTestLoading, setDiscordTestLoading] = useState(false);
-  const [discordTestResult, setDiscordTestResult] = useState<any>(null);
 
   const testEmailTemplates = [
     { name: 'Welcome Blogger', endpoint: '/api/test-email/welcome-blogger' },
@@ -1847,396 +1845,9 @@ const AdminDashboard = () => {
         last_reviewed_at: null
       })) || [];
 
-      // Add mock data for testing purposes when no real data exists
-      if (submissionsWithReview.length === 0) {
-        const mockSubmissions: BlogSubmissionWithReview[] = [
-          {
-            id: 'mock-1',
-            user_id: 'user-1',
-            title: 'The Future of Remote Work: 10 Trends Shaping 2025',
-            description: 'An in-depth analysis of how remote work is evolving and what trends will dominate the workplace in 2025. From AI-powered collaboration tools to virtual reality offices.',
-            url: 'https://techinsights.blog/remote-work-trends-2025',
-            image_url: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=250&fit=crop',
-            image_description: 'Modern office workspace with laptops and technology',
-            category: 'Tech',
-            tags: ['remote work', 'technology', 'future of work', 'AI', 'productivity'],
-            status: 'pending',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-25T10:30:00Z',
-            created_at: '2025-01-25T10:30:00Z',
-            updated_at: '2025-01-25T10:30:00Z',
-            blogger_name: 'Sarah Chen',
-            blogger_email: 'sarah.chen@techinsights.blog',
-            blogger_tier: 'pro',
-            review_count: 0,
-            last_reviewed_at: null
-          },
-          {
-            id: 'mock-9',
-            user_id: 'user-9',
-            title: '15 Quick Breakfast Recipes for Busy Mornings',
-            description: 'Start your day right with these nutritious and delicious breakfast recipes that take less than 10 minutes to prepare.',
-            url: 'https://quickbreakfast.blog/15-quick-recipes',
-            image_url: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&h=250&fit=crop',
-            image_description: 'Colorful breakfast spread with fruits and toast',
-            category: 'Food',
-            tags: ['breakfast', 'quick recipes', 'healthy eating', 'meal prep', 'nutrition'],
-            status: 'pending',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-25T11:45:00Z',
-            created_at: '2025-01-25T11:45:00Z',
-            updated_at: '2025-01-25T11:45:00Z',
-            blogger_name: 'Chef Maria',
-            blogger_email: 'maria@quickbreakfast.blog',
-            blogger_tier: 'free',
-            review_count: 0,
-            last_reviewed_at: null
-          },
-          {
-            id: 'mock-10',
-            user_id: 'user-10',
-            title: 'Building Your First E-commerce Store: A Complete Guide',
-            description: 'Everything you need to know about starting an online store, from choosing platforms to marketing strategies.',
-            url: 'https://ecommerceguide.com/first-store-guide',
-            image_url: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=250&fit=crop',
-            image_description: 'Online shopping cart interface on laptop screen',
-            category: 'Business',
-            tags: ['e-commerce', 'online business', 'entrepreneurship', 'shopify', 'marketing'],
-            status: 'approved',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-24T14:20:00Z',
-            approved_at: '2025-01-25T09:15:00Z',
-            created_at: '2025-01-24T14:20:00Z',
-            updated_at: '2025-01-25T09:15:00Z',
-            blogger_name: 'Ryan Mitchell',
-            blogger_email: 'ryan@ecommerceguide.com',
-            blogger_tier: 'pro',
-            review_count: 1,
-            last_reviewed_at: '2025-01-25T09:15:00Z'
-          },
-          {
-            id: 'mock-11',
-            user_id: 'user-11',
-            title: 'Photography Tips: Mastering Natural Light',
-            description: 'Learn professional photography techniques for capturing stunning photos using only natural light sources.',
-            url: 'https://photographyessentials.co/natural-light-tips',
-            image_url: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=400&h=250&fit=crop',
-            image_description: 'Camera with natural lighting setup',
-            category: 'Art',
-            tags: ['photography', 'natural light', 'portrait photography', 'techniques', 'camera tips'],
-            status: 'rejected',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-23T09:30:00Z',
-            rejected_at: '2025-01-24T16:45:00Z',
-            created_at: '2025-01-23T09:30:00Z',
-            updated_at: '2025-01-24T16:45:00Z',
-            blogger_name: 'Lisa Park',
-            blogger_email: 'lisa@photographyessentials.co',
-            blogger_tier: 'free',
-            review_count: 1,
-            last_reviewed_at: '2025-01-24T16:45:00Z'
-          },
-          {
-            id: 'mock-12',
-            user_id: 'user-12',
-            title: 'Travel Hacks: How to Pack Light and Smart',
-            description: 'Expert tips for minimalist travel packing that will save you money and stress on your next adventure.',
-            url: 'https://smarttravel.blog/packing-light-guide',
-            image_url: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=250&fit=crop',
-            image_description: 'Organized travel suitcase with folded clothes',
-            category: 'Travel',
-            tags: ['travel', 'packing', 'minimalism', 'travel tips', 'budget travel'],
-            status: 'live',
-            has_adult_content: false,
-            is_live: true,
-            views: 2156,
-            clicks: 187,
-            ctr: 0.0867,
-            bounce_rate: 0.24,
-            submitted_at: '2025-01-20T12:15:00Z',
-            approved_at: '2025-01-21T08:30:00Z',
-            live_at: '2025-01-21T08:30:00Z',
-            created_at: '2025-01-20T12:15:00Z',
-            updated_at: '2025-01-21T08:30:00Z',
-            blogger_name: 'Adventure Alex',
-            blogger_email: 'alex@smarttravel.blog',
-            blogger_tier: 'pro',
-            review_count: 1,
-            last_reviewed_at: '2025-01-21T08:30:00Z'
-          },
-          {
-            id: 'mock-13',
-            user_id: 'user-13',
-            title: 'Understanding Personal Finance: Budget Basics',
-            description: 'A beginner-friendly guide to creating and maintaining a personal budget that actually works.',
-            url: 'https://moneywise101.com/budget-basics',
-            image_url: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=250&fit=crop',
-            image_description: 'Calculator and financial planning documents',
-            category: 'Finance',
-            tags: ['personal finance', 'budgeting', 'money management', 'savings', 'financial planning'],
-            status: 'pending',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-25T07:20:00Z',
-            created_at: '2025-01-25T07:20:00Z',
-            updated_at: '2025-01-25T07:20:00Z',
-            blogger_name: 'Financial Frank',
-            blogger_email: 'frank@moneywise101.com',
-            blogger_tier: 'free',
-            review_count: 0,
-            last_reviewed_at: null
-          },
-          {
-            id: 'mock-2',
-            user_id: 'user-2',
-            title: 'Mindful Morning Routines for Better Mental Health',
-            description: 'Discover science-backed morning practices that can improve your mental well-being, reduce anxiety, and set a positive tone for your entire day.',
-            url: 'https://wellnessjourney.com/mindful-morning-routines',
-            image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=250&fit=crop',
-            image_description: 'Peaceful morning scene with coffee and journal',
-            category: 'Lifestyle',
-            tags: ['mental health', 'morning routine', 'mindfulness', 'wellness', 'self-care'],
-            status: 'approved',
-            has_adult_content: false,
-            is_live: true,
-            views: 1247,
-            clicks: 89,
-            ctr: 0.0714,
-            bounce_rate: 0.32,
-            submitted_at: '2025-01-24T09:15:00Z',
-            approved_at: '2025-01-24T14:22:00Z',
-            live_at: '2025-01-24T14:22:00Z',
-            created_at: '2025-01-24T09:15:00Z',
-            updated_at: '2025-01-24T14:22:00Z',
-            blogger_name: 'Maya Rodriguez',
-            blogger_email: 'maya@wellnessjourney.com',
-            blogger_tier: 'free',
-            review_count: 1,
-            last_reviewed_at: '2025-01-24T14:22:00Z'
-          },
-          {
-            id: 'mock-3',
-            user_id: 'user-3',
-            title: 'Cryptocurrency Investment Guide for Beginners',
-            description: 'A comprehensive beginner\'s guide to cryptocurrency investing, covering basics, risk management, and practical strategies for new investors.',
-            url: 'https://cryptobeginners101.com/investment-guide',
-            image_url: 'https://images.unsplash.com/photo-1640161704729-cbe966a08476?w=400&h=250&fit=crop',
-            image_description: 'Bitcoin and cryptocurrency concept with digital graphics',
-            category: 'Finance',
-            tags: ['cryptocurrency', 'investing', 'bitcoin', 'finance', 'beginners guide'],
-            status: 'rejected',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-23T16:45:00Z',
-            rejected_at: '2025-01-24T11:10:00Z',
-            created_at: '2025-01-23T16:45:00Z',
-            updated_at: '2025-01-24T11:10:00Z',
-            blogger_name: 'Alex Thompson',
-            blogger_email: 'alex@cryptobeginners101.com',
-            blogger_tier: 'free',
-            review_count: 1,
-            last_reviewed_at: '2025-01-24T11:10:00Z'
-          },
-          {
-            id: 'mock-4',
-            user_id: 'user-4',
-            title: 'Plant-Based Nutrition: Complete Protein Sources',
-            description: 'Everything you need to know about getting complete proteins from plant-based sources. Includes meal plans, recipes, and nutritional breakdowns.',
-            url: 'https://plantpowereats.com/complete-proteins',
-            image_url: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=250&fit=crop',
-            image_description: 'Colorful array of plant-based foods and vegetables',
-            category: 'Health',
-            tags: ['plant-based', 'nutrition', 'protein', 'vegan', 'healthy eating'],
-            status: 'live',
-            has_adult_content: false,
-            is_live: true,
-            views: 892,
-            clicks: 67,
-            ctr: 0.0751,
-            bounce_rate: 0.28,
-            submitted_at: '2025-01-22T13:20:00Z',
-            approved_at: '2025-01-22T17:45:00Z',
-            live_at: '2025-01-22T17:45:00Z',
-            created_at: '2025-01-22T13:20:00Z',
-            updated_at: '2025-01-22T17:45:00Z',
-            blogger_name: 'Jordan Kim',
-            blogger_email: 'jordan@plantpowereats.com',
-            blogger_tier: 'pro',
-            review_count: 1,
-            last_reviewed_at: '2025-01-22T17:45:00Z'
-          },
-          {
-            id: 'mock-5',
-            user_id: 'user-5',
-            title: 'Digital Marketing Strategies for Small Businesses',
-            description: 'Practical, budget-friendly digital marketing strategies that small business owners can implement immediately to grow their online presence.',
-            url: 'https://smallbizmarketing.co/digital-strategies',
-            image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop',
-            image_description: 'Digital marketing analytics dashboard on computer screen',
-            category: 'Business',
-            tags: ['digital marketing', 'small business', 'social media', 'SEO', 'entrepreneurship'],
-            status: 'pending',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-25T08:12:00Z',
-            created_at: '2025-01-25T08:12:00Z',
-            updated_at: '2025-01-25T08:12:00Z',
-            blogger_name: 'Emily Foster',
-            blogger_email: 'emily@smallbizmarketing.co',
-            blogger_tier: 'free',
-            review_count: 0,
-            last_reviewed_at: null
-          },
-          {
-            id: 'mock-6',
-            user_id: 'user-6',
-            title: 'Sustainable Fashion: Building an Ethical Wardrobe',
-            description: 'A comprehensive guide to sustainable fashion, including how to identify ethical brands, care for clothes to make them last longer, and build a capsule wardrobe.',
-            url: 'https://ethicalstyle.blog/sustainable-wardrobe-guide',
-            image_url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&h=250&fit=crop',
-            image_description: 'Sustainable clothing hanging on wooden hangers',
-            category: 'Lifestyle',
-            tags: ['sustainable fashion', 'ethical clothing', 'environment', 'minimalism', 'conscious living'],
-            status: 'approved',
-            has_adult_content: false,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-21T15:30:00Z',
-            approved_at: '2025-01-22T09:15:00Z',
-            created_at: '2025-01-21T15:30:00Z',
-            updated_at: '2025-01-22T09:15:00Z',
-            blogger_name: 'Ava Martinez',
-            blogger_email: 'ava@ethicalstyle.blog',
-            blogger_tier: 'pro',
-            review_count: 1,
-            last_reviewed_at: '2025-01-22T09:15:00Z'
-          },
-          {
-            id: 'mock-7',
-            user_id: 'user-7',
-            title: 'Home Workout Routines: No Equipment Needed',
-            description: 'Effective workout routines you can do at home without any equipment. Includes beginner to advanced exercises with video demonstrations.',
-            url: 'https://homefitness.guide/no-equipment-workouts',
-            image_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=250&fit=crop',
-            image_description: 'Person doing bodyweight exercises at home',
-            category: 'Health',
-            tags: ['fitness', 'home workouts', 'bodyweight exercises', 'health', 'no equipment'],
-            status: 'inactive',
-            has_adult_content: false,
-            is_live: false,
-            views: 567,
-            clicks: 34,
-            ctr: 0.0600,
-            bounce_rate: 0.41,
-            submitted_at: '2025-01-20T11:45:00Z',
-            approved_at: '2025-01-20T16:20:00Z',
-            live_at: '2025-01-20T16:20:00Z',
-            created_at: '2025-01-20T11:45:00Z',
-            updated_at: '2025-01-24T10:30:00Z',
-            blogger_name: 'Marcus Johnson',
-            blogger_email: 'marcus@homefitness.guide',
-            blogger_tier: 'free',
-            review_count: 1,
-            last_reviewed_at: '2025-01-20T16:20:00Z'
-          },
-          {
-            id: 'mock-8',
-            user_id: 'user-8',
-            title: 'Adult Content Warning: Relationship Intimacy Guide',
-            description: 'A mature, educational guide to improving intimacy in relationships. Contains adult themes and is intended for readers 18+.',
-            url: 'https://relationshipwellness.com/intimacy-guide',
-            image_url: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=250&fit=crop',
-            image_description: 'Romantic couple silhouette at sunset',
-            category: 'Lifestyle',
-            tags: ['relationships', 'intimacy', 'adult content', 'couples', 'wellness'],
-            status: 'pending',
-            has_adult_content: true,
-            is_live: false,
-            views: 0,
-            clicks: 0,
-            ctr: 0,
-            bounce_rate: 0,
-            submitted_at: '2025-01-25T14:20:00Z',
-            created_at: '2025-01-25T14:20:00Z',
-            updated_at: '2025-01-25T14:20:00Z',
-            blogger_name: 'Dr. Lisa Chen',
-            blogger_email: 'dr.lisa@relationshipwellness.com',
-            blogger_tier: 'pro',
-            review_count: 0,
-            last_reviewed_at: null
-          }
-        ];
-
-        setSubmissions(mockSubmissions);
-      } else {
-        setSubmissions(submissionsWithReview);
-      }
+      setSubmissions(submissionsWithReview);
     } catch (error) {
       console.error('Failed to load submissions:', error);
-      // Fallback to mock data if there's an error loading from database
-      const mockSubmissions: BlogSubmissionWithReview[] = [
-        {
-          id: 'mock-1',
-          user_id: 'user-1',
-          title: 'The Future of Remote Work: 10 Trends Shaping 2025',
-          description: 'An in-depth analysis of how remote work is evolving and what trends will dominate the workplace in 2025.',
-          url: 'https://techinsights.blog/remote-work-trends-2025',
-          image_url: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=250&fit=crop',
-          category: 'Tech',
-          tags: ['remote work', 'technology', 'future of work'],
-          status: 'pending',
-          has_adult_content: false,
-          is_live: false,
-          views: 0,
-          clicks: 0,
-          ctr: 0,
-          bounce_rate: 0,
-          submitted_at: '2025-01-25T10:30:00Z',
-          created_at: '2025-01-25T10:30:00Z',
-          updated_at: '2025-01-25T10:30:00Z',
-          blogger_name: 'Sarah Chen',
-          blogger_email: 'sarah.chen@techinsights.blog',
-          blogger_tier: 'pro',
-          review_count: 0,
-          last_reviewed_at: null
-        }
-      ];
-      setSubmissions(mockSubmissions);
     } finally {
       setLoading(false);
     }
@@ -2325,43 +1936,6 @@ const AdminDashboard = () => {
       alert(`Network error sending test email "${template.name}"`);
     } finally {
       setEmailTestLoading(false);
-    }
-  };
-
-  const sendDiscordTest = async () => {
-    setDiscordTestLoading(true);
-    setDiscordTestResult(null);
-
-    try {
-      const response = await fetch('/api/test-discord', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const result = await response.json();
-      setDiscordTestResult({
-        success: response.ok,
-        result: result,
-        timestamp: new Date().toLocaleString()
-      });
-
-      if (response.ok) {
-        alert('Discord test alert sent successfully! Check your Discord channel.');
-      } else {
-        alert(`Discord test failed: ${result.error || 'Unknown error'}`);
-      }
-    } catch (error) {
-      console.error('Discord test error:', error);
-      setDiscordTestResult({
-        success: false,
-        result: { error: 'Network error' },
-        timestamp: new Date().toLocaleString()
-      });
-      alert('Network error sending Discord test');
-    } finally {
-      setDiscordTestLoading(false);
     }
   };
 
@@ -2458,73 +2032,65 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        <div className={styles.adminContainer}>
-          <div className={styles.sidebar}>
-            <div className={styles.sidebarHeader}>
-              <h3>Admin Panel</h3>
-            </div>
-            <div className={styles.sidebarNav}>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'submissions' ? styles.active : ''}`}
-                onClick={() => setActiveTab('submissions')}
-              >
-                📝 Blog Submissions
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'manager' ? styles.active : ''}`}
-                onClick={() => setActiveTab('manager')}
-              >
-                📚 Blog Manager
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'linkedin-verifications' ? styles.active : ''}`}
-                onClick={() => setActiveTab('linkedin-verifications')}
-              >
-                💼 LinkedIn Verifications
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'bug-reports' ? styles.active : ''}`}
-                onClick={() => setActiveTab('bug-reports')}
-              >
-                🐛 Bug Reports
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'support-requests' ? styles.active : ''}`}
-                onClick={() => setActiveTab('support-requests')}
-              >
-                🎧 Support Requests
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'stats' ? styles.active : ''}`}
-                onClick={() => setActiveTab('stats')}
-              >
-                📊 Stats
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'email-testing' ? styles.active : ''}`}
-                onClick={() => setActiveTab('email-testing')}
-              >
-                📧 Email Testing
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'security' ? styles.active : ''}`}
-                onClick={() => setActiveTab('security')}
-              >
-                🔒 Security
-              </button>
-              <button 
-                className={`${styles.navItem} ${activeTab === 'sentry' ? styles.active : ''}`}
-                onClick={() => setActiveTab('sentry')}
-              >
-                🚨 Error Tracking
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.main}>
+        <div className={styles.tabNavigation}>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'submissions' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('submissions')}
+          >
+            Blog Submissions
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'manager' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('manager')}
+          >
+            Blog Manager
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'linkedin-verifications' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('linkedin-verifications')}
+          >
+            LinkedIn Verifications
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('bug-reports')}
+          >
+            Bug Reports
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'support-requests' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('support-requests')}
+          >
+            Support Requests
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'stats' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('stats')}
+          >
+            Stats
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'email-testing' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('email-testing')}
+          >
+            Email Testing
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'security' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('security')}
+          >
+            Security
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'sentry' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('sentry')}
+          >
+            Error Tracking
+          </button>
+        </div>
 
         {activeTab === 'submissions' && (
-          <div className={styles.content}>
+          <div className={styles.tabContent}>
             <div className={styles.controls}>
               <div className={styles.filterSection}>
                 <label htmlFor="status-filter">Filter by Status:</label>
@@ -2650,7 +2216,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'manager' && (
-          <div className={styles.content}>
+          <div className={styles.tabContent}>
             {!showManager ? (
               <>
                 <div className={styles.managerHeader}>
@@ -2732,9 +2298,8 @@ const AdminDashboard = () => {
         {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
         {activeTab === 'bug-reports' && <BugReports />}
         {activeTab === 'support-requests' && <SupportRequests />}
-
         {activeTab === 'stats' && (
-          <div className={styles.content}>
+          <div className={styles.tabContent}>
             <div className={styles.sectionHeader}>
               <h2>Dashboard Overview</h2>
               <p>Overview of BlogRolly performance and metrics</p>
@@ -2770,7 +2335,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'email-testing' && (
-          <div className={styles.content}>
+          <div className={styles.tabContent}>
             <div className={styles.sectionHeader}>
               <h2>Email Template Testing</h2>
               <p>Test all email templates to ensure they work correctly</p>
@@ -2849,47 +2414,12 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               )}
-
-              {/* Discord Webhook Testing Section */}
-              <div className={styles.discordTestSection} style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid #e5e7eb' }}>
-                <h3>Discord Webhook Testing</h3>
-                <p>Test the Discord webhook integration for admin notifications</p>
-                
-                <button
-                  onClick={sendDiscordTest}
-                  disabled={discordTestLoading}
-                  className={styles.primaryButton}
-                  style={{ marginBottom: '20px' }}
-                >
-                  {discordTestLoading ? 'Sending Discord Test...' : 'Send Discord Test Alert'}
-                </button>
-
-                {discordTestResult && (
-                  <div className={styles.discordTestResults}>
-                    <h4>Discord Test Result</h4>
-                    <div className={`${styles.testResult} ${discordTestResult.success ? styles.testSuccess : styles.testError}`}>
-                      <div className={styles.testResultHeader}>
-                        <strong>Discord Webhook Test</strong> - {discordTestResult.timestamp}
-                        <span className={styles.testStatus}>
-                          {discordTestResult.success ? '✅ Success' : '❌ Failed'}
-                        </span>
-                      </div>
-                      <div className={styles.testResultDetails}>
-                        <small>{JSON.stringify(discordTestResult.result, null, 2)}</small>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         )}
-
-        {activeTab === 'security' && <SecurityMonitoring />}
+         {activeTab === 'security' && <SecurityMonitoring />}
 
         {activeTab === 'sentry' && <SentryMonitoring />}
-        </div>
-      </div>
       </div>
     </Layout>
   );

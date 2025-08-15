@@ -116,7 +116,12 @@ const Cookies: NextPage = () => {
               <td style={{ border: '1px solid #ddd', padding: '12px' }}>Collects data on user behavior</td>
               <td style={{ border: '1px solid #ddd', padding: '12px' }}>2 years</td>
             </tr>
-            
+            <tr>
+              <td style={{ border: '1px solid #ddd', padding: '12px' }}>umami-*</td>
+              <td style={{ border: '1px solid #ddd', padding: '12px' }}>Umami Analytics</td>
+              <td style={{ border: '1px solid #ddd', padding: '12px' }}>Privacy-focused analytics</td>
+              <td style={{ border: '1px solid #ddd', padding: '12px' }}>1 year</td>
+            </tr>
           </tbody>
         </table>
 

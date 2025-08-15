@@ -15,7 +15,6 @@
     "@types/formidable": "^3.4.5",
     "bcryptjs": "^3.0.2",
     "chart.js": "^4.5.0",
-    "critters": "^0.0.23",
     "formidable": "^3.5.4",
     "helmet": "^8.1.0",
     "isomorphic-dompurify": "^2.26.0",
@@ -35,7 +34,6 @@
     "@types/react-dom": "^19.0.4",
     "eslint": "^9.23.0",
     "eslint-config-next": "^15.2.3",
-    "typescript": "^5.8.2",
-    "webpack-bundle-analyzer": "^4.10.2"
+    "typescript": "^5.8.2"
   }
 }

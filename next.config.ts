@@ -3,27 +3,7 @@ import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
-  // Basic configuration only in development to prevent reload loops
-  poweredByHeader: false,
-
-  // Image optimization
-  images: {
-    domains: ['yllryygbuyxgbrujdrte.supabase.co'],
-    dangerouslyAllowSVG: false,
-  },
-
-  // Build optimizations only for production
-  ...(process.env.NODE_ENV === 'production' && {
-    compress: true,
-    generateEtags: true,
-    experimental: {
-      optimizeCss: true,
-    },
-    compiler: {
-      removeConsole: true,
-    },
-  }),
-
+  allowedDevOrigins: [env.REPLIT_DOMAINS?.split(",")[0]],
   async headers() {
     return [
       {
@@ -55,28 +35,12 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: http:; connect-src 'self' https://www.google-analytics.com https://*.supabase.co wss://*.supabase.co; frame-src https://js.stripe.com;"
-          },
-          // Cache headers for static assets
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable'
-          }
-        ]
-      },
-      // Specific cache headers for API routes
-      {
-        source: '/api/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, s-maxage=60, stale-while-revalidate=300'
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.stripe.com https://*.supabase.co; frame-src https://js.stripe.com;"
           }
         ]
       }
     ];
   },
-
   /* config options here */
   sentry: {
     hideSourceMaps: true,
@@ -91,6 +55,6 @@ const sentryWebpackPluginOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
 };
 
-export default process.env.NEXT_PUBLIC_SENTRY_DSN
+export default process.env.NEXT_PUBLIC_SENTRY_DSN 
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;

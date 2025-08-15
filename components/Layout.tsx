@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import { initGA, trackPageView } from '../lib/analytics';
 import BugReportModal from './BugReportModal';
-import CookieConsentBanner from './CookieConsentBanner'; // Assuming this component exists
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -36,12 +35,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   }, []);
 
   useEffect(() => {
-    // Initialize Google Analytics only if consent is given
-    // This logic should ideally be in CookieConsentBanner or a hook
-    // For now, assuming initGA() is safe to call and respects consent if implemented within it
-    if (typeof window !== 'undefined' && localStorage.getItem('cookieConsent') === 'granted') {
-      initGA();
-    }
+    // Initialize Google Analytics
+    initGA();
 
     const checkAuth = async () => {
       try {
@@ -94,10 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   // Track page views on route changes
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      // Only track page views if consent is given
-      if (typeof window !== 'undefined' && localStorage.getItem('cookieConsent') === 'granted') {
-        trackPageView(url);
-      }
+      trackPageView(url);
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -134,9 +126,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
       <Head>
         <title>{title}</title>
         <meta name="description" content="Discover and organize your favorite blogs with BlogRolly" />
-        <meta name="theme-color" content="#c42142" />
-        <meta name="msapplication-navbutton-color" content="#c42142" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="icon" href="/DigitalBR.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/DigitalBR.svg" />
         <link rel="manifest" href="/manifest.json" />
@@ -266,9 +255,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           isOpen={showBugReportPopup}
           onClose={() => setShowBugReportPopup(false)}
         />
-
-      <CookieConsentBanner />
-    </div>
+      </div>
     </>
   );
 };

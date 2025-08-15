@@ -1,59 +1,63 @@
+
 // Google Analytics configuration
+// TODO: Install gtag when ready to integrate
+// TODO: Add NEXT_PUBLIC_GA_MEASUREMENT_ID to environment variables
+
 declare global {
   interface Window {
     gtag: (...args: any[]) => void
-    dataLayer: any[]
   }
 }
 
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
-// Check if user has consented to analytics cookies
-export const hasAnalyticsConsent = (): boolean => {
-  if (typeof window === 'undefined') return false;
+// Initialize Google Analytics
+export const initGA = () => {
+  if (typeof window !== 'undefined' && GA_MEASUREMENT_ID) {
+    // TODO: Implement GA initialization
+    console.log('TODO: Initialize Google Analytics', GA_MEASUREMENT_ID)
+    /*
+    // Add Google Analytics script to head
+    const script1 = document.createElement('script')
+    script1.async = true
+    script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
+    document.head.appendChild(script1)
 
-  const consent = localStorage.getItem('cookieConsent');
-  if (!consent) return false;
-
-  try {
-    const parsedConsent = JSON.parse(consent);
-    return parsedConsent.analytics === true;
-  } catch {
-    return false;
+    const script2 = document.createElement('script')
+    script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${GA_MEASUREMENT_ID}');
+    `
+    document.head.appendChild(script2)
+    */
   }
 }
 
-// Initialize Google Analytics (only call this after user consent)
-export const initGA = () => {
-  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-  if (measurementId && measurementId !== 'G-XXXXXXXXXX') {
-    // Initialize Google Analytics
-    (window as any).gtag('config', measurementId, {
-      page_title: document.title,
-      page_location: window.location.href,
-    });
-  }
-};
-
-// Track page views (only if user consented)
+// Track page views
 export const trackPageView = (url: string) => {
-  if (typeof window !== 'undefined' && window.gtag && GA_MEASUREMENT_ID && hasAnalyticsConsent()) {
+  if (typeof window !== 'undefined' && window.gtag && GA_MEASUREMENT_ID) {
+    console.log('TODO: Track page view', url)
+    /*
     window.gtag('config', GA_MEASUREMENT_ID, {
       page_location: url,
-      anonymize_ip: true
     })
+    */
   }
 }
 
-// Track custom events (only if user consented)
+// Track custom events
 export const trackEvent = (action: string, category: string, label?: string, value?: number) => {
-  if (typeof window !== 'undefined' && window.gtag && hasAnalyticsConsent()) {
+  if (typeof window !== 'undefined' && window.gtag) {
+    console.log('TODO: Track event', { action, category, label, value })
+    /*
     window.gtag('event', action, {
       event_category: category,
       event_label: label,
       value: value,
-      anonymize_ip: true
     })
+    */
   }
 }
 
