@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { supabase } from '../../lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -9,21 +10,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        authenticated: false, 
-        error: 'No authorization header' 
+      return res.status(200).json({ 
+        isAuthenticated: false
       });
     }
 
     const token = authHeader.split(' ')[1];
 
-    // Verify the JWT token with Supabase
+    // Verify the access token with Supabase
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
     if (error || !user) {
-      return res.status(401).json({ 
-        authenticated: false, 
-        error: 'Invalid or expired token' 
+      return res.status(200).json({ 
+        isAuthenticated: false
       });
     }
 
@@ -42,30 +41,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .single();
 
     if (profileError) {
-      return res.status(500).json({ 
-        authenticated: false, 
-        error: 'Failed to load user profile' 
+      return res.status(200).json({ 
+        isAuthenticated: false
       });
     }
 
     return res.status(200).json({
-      authenticated: true,
+      isAuthenticated: true,
       user: {
         id: user.id,
         email: user.email,
         firstName: profile.first_name,
         surname: profile.surname,
         role: profile.role,
-        tier: profile.tier,
-        isAuthenticated: true
+        tier: profile.tier
       }
     });
 
   } catch (error) {
     console.error('Auth check error:', error);
-    return res.status(500).json({ 
-      authenticated: false, 
-      error: 'Authentication check failed' 
+    return res.status(200).json({ 
+      isAuthenticated: false
     });
   }
 }
