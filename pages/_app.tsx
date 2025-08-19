@@ -7,12 +7,20 @@ import { useRouter } from 'next/router'
 import { trackPageView } from '../lib/analytics'
 import { Inter } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter'
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
+    // Apply font class to document root - this prevents hydration mismatches
+    if (typeof document !== 'undefined') {
+      document.documentElement.className = inter.variable;
+    }
+
     // Track page views on route changes (only if user consented)
     const handleRouteChange = (url: string) => {
       trackPageView(url);
@@ -47,9 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <main className={inter.className}>
-          <Component {...pageProps} />
-        </main>
+        <Component {...pageProps} />
       </ThemeProvider>
     </ErrorBoundary>
   )
