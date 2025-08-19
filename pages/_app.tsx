@@ -5,6 +5,9 @@ import ErrorBoundary from '../components/ErrorBoundary'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { trackPageView } from '../lib/analytics'
+import { Inter } from 'next/font/google'
+
+const inter = Inter({ subsets: ['latin'] })
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -44,7 +47,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ErrorBoundary>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <Component {...pageProps} />
+        <main className={inter.className}>
+          <Component {...pageProps} />
+        </main>
       </ThemeProvider>
     </ErrorBoundary>
   )
