@@ -1,0 +1,164 @@
+Development server initialized
+helpers.js:116  POST https://yllryygbuyxgbrujdrte.supabase.co/auth/v1/token?grant_type=refresh_token net::ERR_NAME_NOT_RESOLVED
+eval @ helpers.js:116
+_handleRequest @ fetch.js:115
+_request @ fetch.js:105
+eval @ GoTrueClient.js:1588
+await in eval
+eval @ helpers.js:206
+await in eval
+eval @ helpers.js:219
+retryable @ helpers.js:200
+_refreshAccessToken @ GoTrueClient.js:1583
+_callRefreshToken @ GoTrueClient.js:1741
+_recoverAndRefresh @ GoTrueClient.js:1683
+await in _recoverAndRefresh
+_initialize @ GoTrueClient.js:257
+await in _initialize
+eval @ GoTrueClient.js:198
+eval @ GoTrueClient.js:952
+eval @ locks.js:99Understand this error
+pages-dev-overlay-setup.js:77 TypeError: Failed to fetch
+    at eval (helpers.js:116:25)
+    at _handleRequest (fetch.js:115:24)
+    at _request (fetch.js:105:24)
+    at eval (GoTrueClient.js:1588:82)
+    at async eval (helpers.js:206:36)
+nextJsHandleConsoleError @ pages-dev-overlay-setup.js:77
+overrideMethod @ hook.js:608
+_handleRequest @ fetch.js:118
+await in _handleRequest
+_request @ fetch.js:105
+eval @ GoTrueClient.js:1588
+await in eval
+eval @ helpers.js:206
+await in eval
+eval @ helpers.js:219
+retryable @ helpers.js:200
+_refreshAccessToken @ GoTrueClient.js:1583
+_callRefreshToken @ GoTrueClient.js:1741
+_recoverAndRefresh @ GoTrueClient.js:1683
+await in _recoverAndRefresh
+_initialize @ GoTrueClient.js:257
+await in _initialize
+eval @ GoTrueClient.js:198
+eval @ GoTrueClient.js:952
+eval @ locks.js:99Understand this error
+fonts/inter-v12-latin-regular.woff2:1  GET https://eb062ed3-fe20-45a9-bb47-308074b99700-00-2ebjrcjxb04mc.picard.replit.dev:5000/fonts/inter-v12-latin-regular.woff2 net::ERR_ABORTED 404 (Not Found)Understand this error
+webpack.js:1  GET https://eb062ed3-fe20-45a9-bb47-308074b99700-00-2ebjrcjxb04mc.picard.replit.dev:5000/_next/static/webpack/146fc0594b8e0bac.webpack.hot-update.json 404 (Not Found)
+__webpack_require__.hmrM @ webpack.js:1
+Promise.then
+hotCheck @ webpack.js:1
+tryApplyUpdatesWebpack @ hot-reloader-pages.js:358
+handleSuccess @ hot-reloader-pages.js:115
+processMessage @ hot-reloader-pages.js:243
+eval @ hot-reloader-pages.js:72
+handleMessage @ websocket.js:69Understand this error
+helpers.js:116  POST https://yllryygbuyxgbrujdrte.supabase.co/auth/v1/token?grant_type=refresh_token net::ERR_NAME_NOT_RESOLVED
+eval @ helpers.js:116
+_handleRequest @ fetch.js:115
+_request @ fetch.js:105
+eval @ GoTrueClient.js:1588
+await in eval
+eval @ helpers.js:206
+await in eval
+eval @ helpers.js:219
+retryable @ helpers.js:200
+_refreshAccessToken @ GoTrueClient.js:1583
+_callRefreshToken @ GoTrueClient.js:1741
+_recoverAndRefresh @ GoTrueClient.js:1683
+await in _recoverAndRefresh
+_initialize @ GoTrueClient.js:257
+await in _initialize
+eval @ GoTrueClient.js:198
+eval @ GoTrueClient.js:952
+eval @ locks.js:99Understand this error
+ TypeError: Failed to fetch
+    at eval (webpack-internal:///(pages-dir-browser)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:116:25)
+    at _handleRequest (webpack-internal:///(pages-dir-browser)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(pages-dir-browser)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(pages-dir-browser)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1588:82)
+    at async eval (webpack-internal:///(pages-dir-browser)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:206:36)
+nextJsHandleConsoleError @ webpack-internal:///…overlay-setup.js:77
+overrideMethod @ chrome-extension://f…ld/installHook.js:1
+_handleRequest @ webpack-internal:///…le/lib/fetch.js:118
+await in _handleRequest
+_request @ webpack-internal:///…le/lib/fetch.js:105
+eval @ webpack-internal:///…oTrueClient.js:1588
+await in eval
+eval @ webpack-internal:///…/lib/helpers.js:206
+await in eval
+eval @ webpack-internal:///…/lib/helpers.js:219
+retryable @ webpack-internal:///…/lib/helpers.js:200
+_refreshAccessToken @ webpack-internal:///…oTrueClient.js:1583
+_callRefreshToken @ webpack-internal:///…oTrueClient.js:1741
+_recoverAndRefresh @ webpack-internal:///…oTrueClient.js:1683
+await in _recoverAndRefresh
+_initialize @ webpack-internal:///…GoTrueClient.js:257
+await in _initialize
+eval @ webpack-internal:///…GoTrueClient.js:198
+eval @ webpack-internal:///…GoTrueClient.js:952
+eval @ webpack-internal:///…ule/lib/locks.js:99Understand this error
+Navigated to https://eb062ed3-fe20-45a9-bb47-308074b99700-00-2ebjrcjxb04mc.picard.replit.dev:5000/about
+globals.css:30 Refused to load the stylesheet 'https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap' because it violates the following Content Security Policy directive: "style-src 'self' 'unsafe-inline'". Note that 'style-src-elem' was not explicitly set, so 'style-src' is used as a fallback.
+
+applyToTag @ injectStylesIntoStyleTag.js:158
+addStyle @ injectStylesIntoStyleTag.js:179
+modulesToDom @ injectStylesIntoStyleTag.js:71
+module.exports @ injectStylesIntoStyleTag.js:199
+eval @ globals.css:30
+(pages-dir-browser)/./styles/globals.css @ _app.js:167
+options.factory @ webpack.js:1
+__webpack_require__ @ webpack.js:1
+fn @ webpack.js:1
+eval @ _app.tsx:7
+(pages-dir-browser)/./pages/_app.tsx @ _app.js:147
+options.factory @ webpack.js:1
+__webpack_require__ @ webpack.js:1
+fn @ webpack.js:1
+eval @ next-client-pages-loader.js?absolutePagePath=private-next-pages%2F_app&page=%2F_app!:5
+eval @ route-loader.js:238
+Promise.then
+onEntrypoint @ route-loader.js:238
+register @ index.js:163
+eval @ next-client-pages-loader.js?absolutePagePath=private-next-pages%2F_app&page=%2F_app!:2
+(pages-dir-browser)/./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=private-next-pages%2F_app&page=%2F_app! @ _app.js:93
+options.factory @ webpack.js:1
+__webpack_require__ @ webpack.js:1
+__webpack_exec__ @ _app.js:173
+(anonymous) @ _app.js:174
+__webpack_require__.O @ webpack.js:1
+(anonymous) @ _app.js:175
+webpackJsonpCallback @ webpack.js:1
+(anonymous) @ _app.js:9Understand this error
+helpers.js:116  POST https://yllryygbuyxgbrujdrte.supabase.co/auth/v1/token?grant_type=refresh_token net::ERR_NAME_NOT_RESOLVED
+eval @ helpers.js:116
+_handleRequest @ fetch.js:115
+_request @ fetch.js:105
+eval @ GoTrueClient.js:1588
+eval @ helpers.js:206
+eval @ helpers.js:219
+retryable @ helpers.js:200
+_refreshAccessToken @ GoTrueClient.js:1583
+_callRefreshToken @ GoTrueClient.js:1741
+_recoverAndRefresh @ GoTrueClient.js:1683
+await in _recoverAndRefresh
+_initialize @ GoTrueClient.js:257
+await in _initialize
+eval @ GoTrueClient.js:198
+eval @ GoTrueClient.js:952
+eval @ locks.js:99Understand this error
+pages-dev-overlay-setup.js:77 TypeError: Failed to fetch
+    at eval (helpers.js:116:25)
+    at _handleRequest (fetch.js:115:24)
+    at _request (fetch.js:105:24)
+    at eval (GoTrueClient.js:1588:82)
+    at eval (helpers.js:206:42)
+    at eval (helpers.js:219:11)
+    at new Promise (<anonymous>)
+    at retryable (helpers.js:200:21)
+    at SupabaseAuthClient._refreshAccessToken (GoTrueClient.js:1583:81)
+    at SupabaseAuthClient._callRefreshToken (GoTrueClient.js:1741:48)
+    at SupabaseAuthClient._recoverAndRefresh (GoTrueClient.js:1683:50)
+    at async SupabaseAuthClient._initialize (GoTrueClient.js:257:13)
+    at async eval (GoTrueClient.js:198:24)
