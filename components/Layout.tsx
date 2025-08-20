@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import { initGA, trackPageView } from '../lib/analytics';
+import { validateSupabaseConfig, handleSupabaseError } from '../lib/supabase-check';
 import BugReportModal from './BugReportModal';
 import CookieConsentBanner from './CookieConsentBanner'; // Assuming this component exists
 import styles from '../styles/Layout.module.css';
@@ -45,6 +46,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
 
     const checkAuth = async () => {
       try {
+        // Check if Supabase is properly configured
+        if (!validateSupabaseConfig()) {
+          setUserInfo(null);
+          setIsLoading(false);
+          return;
+        }
+
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
@@ -79,7 +87,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
         if (error instanceof Error && error.name === 'AbortError') {
           console.warn('Auth check timed out');
         } else {
-          console.error('Auth check failed:', error);
+          handleSupabaseError(error);
         }
         // Fail gracefully - assume not authenticated
         setUserInfo(null);

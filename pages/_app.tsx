@@ -35,7 +35,21 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (typeof window !== 'undefined') {
       // Stabilize development environment
       if (process.env.NODE_ENV === 'development') {
-        // Development mode - no console overrides
+        // Development mode - filter noisy errors
+        const originalError = console.error;
+        console.error = (...args) => {
+          const message = args.join(' ');
+          // Filter out known development noise
+          if (
+            message.includes('ERR_NAME_NOT_RESOLVED') ||
+            message.includes('Failed to fetch') ||
+            message.includes('net::ERR_ABORTED 404') ||
+            message.includes('webpack.hot-update.json')
+          ) {
+            return; // Suppress these errors in development
+          }
+          originalError(...args);
+        };
         console.log('Development server initialized');
       }
 

@@ -5,13 +5,13 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig: NextConfig = {
   // Basic configuration only in development to prevent reload loops
   poweredByHeader: false,
-  
+
   // Image optimization
   images: {
     domains: ['yllryygbuyxgbrujdrte.supabase.co'],
     dangerouslyAllowSVG: false,
   },
-  
+
   // Build optimizations only for production
   ...(process.env.NODE_ENV === 'production' && {
     compress: true,
@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
       removeConsole: true,
     },
   }),
-  
+
   async headers() {
     return [
       {
@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.stripe.com https://*.supabase.co; frame-src https://js.stripe.com;"
+            value: 'default-src \'self\'; script-src \'self\' \'unsafe-eval\' \'unsafe-inline\' https://www.googletagmanager.com https://www.google-analytics.com; style-src \'self\' \'unsafe-inline\' https://fonts.googleapis.com; img-src \'self\' data: https:; font-src \'self\' data: https://fonts.gstatic.com; connect-src \'self\' https://www.google-analytics.com https://analytics.google.com https://*.supabase.co; frame-ancestors \'none\';'
           },
           // Cache headers for static assets
           {
@@ -76,7 +76,7 @@ const nextConfig: NextConfig = {
       }
     ];
   },
-  
+
   /* config options here */
 };
 
