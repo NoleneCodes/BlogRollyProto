@@ -37,19 +37,40 @@ function MyApp({ Component, pageProps }: AppProps) {
       if (process.env.NODE_ENV === 'development') {
         // Development mode - filter noisy errors
         const originalError = console.error;
+        const originalWarn = console.warn;
+
         console.error = (...args) => {
           const message = args.join(' ');
           // Filter out known development noise
           if (
             message.includes('ERR_NAME_NOT_RESOLVED') ||
             message.includes('Failed to fetch') ||
-            message.includes('net::ERR_ABORTED 404') ||
-            message.includes('webpack.hot-update.json')
+            message.includes('net::ERR_ABORTED') ||
+            message.includes('webpack.hot-update.json') ||
+            message.includes('supabase.co') ||
+            message.includes('GoTrueClient') ||
+            message.includes('helpers.js') ||
+            message.includes('fetch.js') ||
+            message.includes('locks.js')
           ) {
             return; // Suppress these errors in development
           }
           originalError(...args);
         };
+
+        console.warn = (...args) => {
+          const message = args.join(' ');
+          // Filter out Supabase warnings
+          if (
+            message.includes('supabase.co') ||
+            message.includes('ERR_NAME_NOT_RESOLVED') ||
+            message.includes('Failed to fetch')
+          ) {
+            return; // Suppress these warnings in development
+          }
+          originalWarn(...args);
+        };
+
         console.log('Development server initialized');
       }
 
