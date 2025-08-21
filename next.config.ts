@@ -31,44 +31,34 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Completely disable webpack development features
+  // Disable hot reloading without breaking webpack validation
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Remove all webpack plugins that cause hot reloading
+      // Remove React Fast Refresh plugin
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
-        return name !== 'ReactRefreshWebpackPlugin' && 
-               name !== 'HotModuleReplacementPlugin' &&
-               name !== 'webpack.HotModuleReplacementPlugin';
+        return name !== 'ReactRefreshWebpackPlugin';
       });
       
-      // Disable all hot reloading and watch features
-      config.watchOptions = false;
-      config.watch = false;
+      // Set proper watch options to prevent reload loops
+      config.watchOptions = {
+        ignored: ['**/node_modules/**', '**/.git/**', '**/.next/**'],
+        aggregateTimeout: 5000,
+        poll: false
+      };
       
-      // Disable module hot replacement entirely
-      config.module.rules = config.module.rules.map(rule => {
+      // Disable Fast Refresh in SWC loader
+      config.module.rules.forEach(rule => {
         if (rule.use && Array.isArray(rule.use)) {
-          rule.use = rule.use.map(use => {
+          rule.use.forEach(use => {
             if (use.loader && use.loader.includes('next-swc-loader')) {
-              return {
-                ...use,
-                options: {
-                  ...use.options,
-                  refresh: false,
-                  development: false
-                }
-              };
+              if (use.options) {
+                use.options.refresh = false;
+              }
             }
-            return use;
           });
         }
-        return rule;
       });
-      
-      // Force production-like behavior in development
-      config.mode = 'development';
-      config.devtool = false;
     }
     return config;
   },
