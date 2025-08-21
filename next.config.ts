@@ -3,7 +3,6 @@ import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
-  // Basic configuration only in development to prevent reload loops
   poweredByHeader: false,
 
   // Image optimization
@@ -23,6 +22,17 @@ const nextConfig: NextConfig = {
       removeConsole: true,
     },
   }),
+
+  // Webpack configuration to reduce hot reload issues
+  webpack: (config, { dev }) => {
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+      };
+    }
+    return config;
+  },
 
   async headers() {
     return [
