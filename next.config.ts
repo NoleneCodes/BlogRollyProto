@@ -30,76 +30,34 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Completely disable all development features
+  // Disable hot reloading without breaking webpack
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Force webpack to think we're in production mode for hot reloading purposes
-      config.mode = 'development';
-      config.devtool = false;
-      
-      // Remove ALL development-related plugins
+      // Remove React Fast Refresh plugin
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
-        return !name.includes('HotModuleReplacement') && 
-               !name.includes('ReactRefresh') &&
-               !name.includes('webpack-dev-middleware') &&
-               name !== 'ReactRefreshWebpackPlugin';
+        return name !== 'ReactRefreshWebpackPlugin';
       });
       
-      // Completely disable file watching
+      // Disable file watching properly
       config.watch = false;
-      config.watchOptions = false;
+      delete config.watchOptions;
       
-      // Remove hot reload entry points completely
-      if (config.entry && typeof config.entry === 'object') {
-        Object.keys(config.entry).forEach(key => {
-          if (Array.isArray(config.entry[key])) {
-            config.entry[key] = config.entry[key].filter(entry => 
-              typeof entry === 'string' && 
-              !entry.includes('webpack-hot-middleware') &&
-              !entry.includes('react-refresh') &&
-              !entry.includes('webpack/hot/dev-server') &&
-              !entry.includes('@next/react-refresh-utils')
-            );
-          }
-        });
-      }
-      
-      // Disable all module rules that enable hot reloading
+      // Disable Fast Refresh in SWC loader
       config.module.rules.forEach(rule => {
         if (rule.use) {
           const uses = Array.isArray(rule.use) ? rule.use : [rule.use];
           uses.forEach(use => {
             if (use && typeof use === 'object' && use.loader) {
               if (use.loader.includes('next-swc-loader')) {
-                use.options = {
-                  ...use.options,
-                  refresh: false,
-                  development: false,
-                  isServer: false
-                };
+                if (use.options) {
+                  use.options.refresh = false;
+                }
               }
             }
           });
         }
       });
-      
-      // Disable HMR optimization
-      config.optimization = {
-        ...config.optimization,
-        removeAvailableModules: false,
-        removeEmptyChunks: false,
-        splitChunks: false
-      };
-      
-      // Force disable HMR at the compiler level
-      config.externals = config.externals || [];
-      if (Array.isArray(config.externals)) {
-        config.externals.push({
-          'webpack/hot/dev-server': 'commonjs webpack/hot/dev-server',
-          'webpack/hot/only-dev-server': 'commonjs webpack/hot/only-dev-server'
-        });
-      }
     }
     return config;
   },
