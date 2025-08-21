@@ -1,11 +1,7 @@
 
-
 import type { NextConfig } from "next";
 import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
-
-// Force disable Fast Refresh via environment
-process.env.FAST_REFRESH = 'false';
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -13,10 +9,8 @@ const nextConfig: NextConfig = {
   // Completely disable React features that cause reloads
   reactStrictMode: false,
   
-  // Disable all experimental features and Fast Refresh
-  experimental: {
-    fastRefresh: false
-  },
+  // Disable all experimental features
+  experimental: {},
 
   // Image optimization
   images: {
@@ -36,36 +30,42 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Completely disable webpack hot reloading
+  // Completely disable all development features
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Remove ALL hot reloading plugins
+      // Force webpack to think we're in production mode for hot reloading purposes
+      config.mode = 'development';
+      config.devtool = false;
+      
+      // Remove ALL development-related plugins
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
         return !name.includes('HotModuleReplacement') && 
                !name.includes('ReactRefresh') &&
-               name !== 'webpack-dev-middleware';
+               !name.includes('webpack-dev-middleware') &&
+               name !== 'ReactRefreshWebpackPlugin';
       });
       
-      // Disable file watching completely
-      config.watchOptions = {
-        ignored: /./,  // Ignore everything
-        poll: false
-      };
+      // Completely disable file watching
+      config.watch = false;
+      config.watchOptions = false;
       
-      // Disable HMR entry points
+      // Remove hot reload entry points completely
       if (config.entry && typeof config.entry === 'object') {
         Object.keys(config.entry).forEach(key => {
           if (Array.isArray(config.entry[key])) {
             config.entry[key] = config.entry[key].filter(entry => 
+              typeof entry === 'string' && 
               !entry.includes('webpack-hot-middleware') &&
-              !entry.includes('react-refresh')
+              !entry.includes('react-refresh') &&
+              !entry.includes('webpack/hot/dev-server') &&
+              !entry.includes('@next/react-refresh-utils')
             );
           }
         });
       }
       
-      // Force disable Fast Refresh in all SWC configurations
+      // Disable all module rules that enable hot reloading
       config.module.rules.forEach(rule => {
         if (rule.use) {
           const uses = Array.isArray(rule.use) ? rule.use : [rule.use];
@@ -75,7 +75,8 @@ const nextConfig: NextConfig = {
                 use.options = {
                   ...use.options,
                   refresh: false,
-                  development: false
+                  development: false,
+                  isServer: false
                 };
               }
             }
@@ -83,13 +84,22 @@ const nextConfig: NextConfig = {
         }
       });
       
-      // Disable HMR completely
+      // Disable HMR optimization
       config.optimization = {
         ...config.optimization,
         removeAvailableModules: false,
         removeEmptyChunks: false,
         splitChunks: false
       };
+      
+      // Force disable HMR at the compiler level
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push({
+          'webpack/hot/dev-server': 'commonjs webpack/hot/dev-server',
+          'webpack/hot/only-dev-server': 'commonjs webpack/hot/only-dev-server'
+        });
+      }
     }
     return config;
   },
@@ -160,4 +170,3 @@ const sentryWebpackPluginOptions = {
 export default process.env.NEXT_PUBLIC_SENTRY_DSN 
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;
-
