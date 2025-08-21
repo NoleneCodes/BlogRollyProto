@@ -4,6 +4,10 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  
+  // Disable Fast Refresh to prevent reload loops
+  reactStrictMode: false,
+  swcMinify: false,
 
   // Image optimization
   images: {
@@ -23,13 +27,23 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Webpack configuration to reduce hot reload issues
+  // Webpack configuration optimized for stability
   webpack: (config, { dev }) => {
     if (dev) {
       config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
+        ignored: /node_modules/,
+        aggregateTimeout: 600,
       };
+      // Disable Fast Refresh for problematic components
+      config.module.rules.push({
+        test: /\.tsx?$/,
+        use: {
+          loader: 'next/dist/build/webpack/loaders/next-swc-loader',
+          options: {
+            refresh: false
+          }
+        }
+      });
     }
     return config;
   },
