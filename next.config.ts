@@ -1,3 +1,4 @@
+
 import type { NextConfig } from "next";
 import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
@@ -5,12 +6,13 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   
-  // Disable Fast Refresh to prevent reload loops
+  // Completely disable React Strict Mode and Fast Refresh
   reactStrictMode: false,
   
-  // Add experimental config to prevent the undefined error
+  // Minimal experimental config
   experimental: {
     optimizeCss: false,
+    esmExternals: false,
   },
 
   // Image optimization
@@ -31,18 +33,35 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Webpack configuration optimized for stability
-  webpack: (config, { dev }) => {
-    if (dev) {
+  // Minimal webpack configuration to prevent reload loops
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Completely disable hot reloading and Fast Refresh
+      config.plugins = config.plugins.filter(plugin => {
+        const name = plugin.constructor.name;
+        return name !== 'ReactRefreshWebpackPlugin' && 
+               name !== 'HotModuleReplacementPlugin';
+      });
+      
+      // Disable watch options that cause reload loops
       config.watchOptions = {
-        ignored: /node_modules/,
-        aggregateTimeout: 600,
+        ignored: ['**/node_modules/**', '**/.git/**', '**/.next/**'],
+        poll: false,
+        aggregateTimeout: 1000,
       };
       
-      // Disable Fast Refresh entirely to prevent reload loops
-      config.plugins = config.plugins.filter(plugin => 
-        plugin.constructor.name !== 'ReactRefreshWebpackPlugin'
-      );
+      // Disable module hot replacement
+      config.module.rules.forEach(rule => {
+        if (rule.use && Array.isArray(rule.use)) {
+          rule.use.forEach(use => {
+            if (use.loader && use.loader.includes('next-swc-loader')) {
+              if (use.options) {
+                use.options.refresh = false;
+              }
+            }
+          });
+        }
+      });
     }
     return config;
   },
