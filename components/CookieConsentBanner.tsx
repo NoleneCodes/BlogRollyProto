@@ -91,9 +91,9 @@ const CookieConsentBanner: React.FC = () => {
         {!showPreferences ? (
           <>
             <div className={styles.content}>
-              <h3>We Value Your Privacy</h3>
+              <h3>BlogRolly Values Your Privacy</h3>
               <p>
-                We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
+                BlogRolly uses cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
                 By clicking "Accept All", you consent to our use of cookies as described in our{' '}
                 <a href="/cookies" target="_blank" rel="noopener noreferrer">Cookie Policy</a> and{' '}
                 <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
