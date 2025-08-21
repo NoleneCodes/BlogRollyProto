@@ -4,14 +4,19 @@ import type { NextConfig } from "next";
 import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
 
+// Force disable Fast Refresh via environment
+process.env.FAST_REFRESH = 'false';
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   
   // Completely disable React features that cause reloads
   reactStrictMode: false,
   
-  // Disable all experimental features
-  experimental: {},
+  // Disable all experimental features and Fast Refresh
+  experimental: {
+    fastRefresh: false
+  },
 
   // Image optimization
   images: {
@@ -31,34 +36,60 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Disable hot reloading without breaking webpack validation
+  // Completely disable webpack hot reloading
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Remove React Fast Refresh plugin
+      // Remove ALL hot reloading plugins
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
-        return name !== 'ReactRefreshWebpackPlugin';
+        return !name.includes('HotModuleReplacement') && 
+               !name.includes('ReactRefresh') &&
+               name !== 'webpack-dev-middleware';
       });
       
-      // Set proper watch options to prevent reload loops
+      // Disable file watching completely
       config.watchOptions = {
-        ignored: ['**/node_modules/**', '**/.git/**', '**/.next/**'],
-        aggregateTimeout: 5000,
+        ignored: /./,  // Ignore everything
         poll: false
       };
       
-      // Disable Fast Refresh in SWC loader
+      // Disable HMR entry points
+      if (config.entry && typeof config.entry === 'object') {
+        Object.keys(config.entry).forEach(key => {
+          if (Array.isArray(config.entry[key])) {
+            config.entry[key] = config.entry[key].filter(entry => 
+              !entry.includes('webpack-hot-middleware') &&
+              !entry.includes('react-refresh')
+            );
+          }
+        });
+      }
+      
+      // Force disable Fast Refresh in all SWC configurations
       config.module.rules.forEach(rule => {
-        if (rule.use && Array.isArray(rule.use)) {
-          rule.use.forEach(use => {
-            if (use.loader && use.loader.includes('next-swc-loader')) {
-              if (use.options) {
-                use.options.refresh = false;
+        if (rule.use) {
+          const uses = Array.isArray(rule.use) ? rule.use : [rule.use];
+          uses.forEach(use => {
+            if (use && typeof use === 'object' && use.loader) {
+              if (use.loader.includes('next-swc-loader')) {
+                use.options = {
+                  ...use.options,
+                  refresh: false,
+                  development: false
+                };
               }
             }
           });
         }
       });
+      
+      // Disable HMR completely
+      config.optimization = {
+        ...config.optimization,
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false
+      };
     }
     return config;
   },
