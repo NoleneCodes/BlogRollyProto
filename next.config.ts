@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
   
   // Disable Fast Refresh to prevent reload loops
   reactStrictMode: false,
-  swcMinify: false,
+  
+  // Add experimental config to prevent the undefined error
+  experimental: {
+    optimizeCss: false,
+  },
 
   // Image optimization
   images: {
@@ -34,16 +38,11 @@ const nextConfig: NextConfig = {
         ignored: /node_modules/,
         aggregateTimeout: 600,
       };
-      // Disable Fast Refresh for problematic components
-      config.module.rules.push({
-        test: /\.tsx?$/,
-        use: {
-          loader: 'next/dist/build/webpack/loaders/next-swc-loader',
-          options: {
-            refresh: false
-          }
-        }
-      });
+      
+      // Disable Fast Refresh entirely to prevent reload loops
+      config.plugins = config.plugins.filter(plugin => 
+        plugin.constructor.name !== 'ReactRefreshWebpackPlugin'
+      );
     }
     return config;
   },
