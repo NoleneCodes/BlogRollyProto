@@ -19,6 +19,35 @@ function MyApp({ Component, pageProps }: AppProps) {
     // Apply font class to document root - this prevents hydration mismatches
     if (typeof document !== 'undefined') {
       document.documentElement.className = inter.variable;
+      
+      // Add PWA manifest and meta tags
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = '/manifest.json';
+      document.head.appendChild(link);
+
+      // Add theme color meta tag
+      const themeColorMeta = document.createElement('meta');
+      themeColorMeta.name = 'theme-color';
+      themeColorMeta.content = '#c42142';
+      document.head.appendChild(themeColorMeta);
+
+      // Add apple-mobile-web-app-capable
+      const appleMeta = document.createElement('meta');
+      appleMeta.name = 'apple-mobile-web-app-capable';
+      appleMeta.content = 'yes';
+      document.head.appendChild(appleMeta);
+
+      // Register service worker for PWA
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      }
     }
 
     // Track page views on route changes (only if user consented)
