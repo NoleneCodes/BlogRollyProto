@@ -30,34 +30,66 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Disable hot reloading without breaking webpack
+  // Completely disable all development features
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Remove React Fast Refresh plugin
+      // Remove all hot reload related plugins
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
-        return name !== 'ReactRefreshWebpackPlugin';
+        return !name.includes('HotModuleReplacement') && 
+               !name.includes('ReactRefresh') &&
+               name !== 'ReactRefreshWebpackPlugin';
       });
       
-      // Disable file watching properly
+      // Disable all file watching
       config.watch = false;
-      delete config.watchOptions;
+      config.watchOptions = undefined;
       
-      // Disable Fast Refresh in SWC loader
+      // Remove hot reload entries from entry points
+      if (config.entry && typeof config.entry === 'object') {
+        Object.keys(config.entry).forEach(key => {
+          if (Array.isArray(config.entry[key])) {
+            config.entry[key] = config.entry[key].filter(entry => 
+              typeof entry === 'string' && 
+              !entry.includes('webpack-hot-middleware') &&
+              !entry.includes('react-refresh') &&
+              !entry.includes('webpack/hot/dev-server') &&
+              !entry.includes('@next/react-refresh-utils')
+            );
+          }
+        });
+      }
+      
+      // Completely disable Fast Refresh in all loaders
       config.module.rules.forEach(rule => {
         if (rule.use) {
           const uses = Array.isArray(rule.use) ? rule.use : [rule.use];
           uses.forEach(use => {
             if (use && typeof use === 'object' && use.loader) {
               if (use.loader.includes('next-swc-loader')) {
-                if (use.options) {
-                  use.options.refresh = false;
-                }
+                use.options = {
+                  ...use.options,
+                  refresh: false,
+                  development: false,
+                  fastRefresh: false
+                };
               }
             }
           });
         }
       });
+      
+      // Force production-like mode
+      config.mode = 'development';
+      config.devtool = false;
+      
+      // Disable optimization that might trigger reloads
+      config.optimization = {
+        ...config.optimization,
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false
+      };
     }
     return config;
   },
