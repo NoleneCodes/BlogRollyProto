@@ -1,4 +1,5 @@
 
+
 import type { NextConfig } from "next";
 import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
@@ -6,14 +7,11 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   
-  // Completely disable React Strict Mode and Fast Refresh
+  // Completely disable React features that cause reloads
   reactStrictMode: false,
   
-  // Minimal experimental config
-  experimental: {
-    optimizeCss: false,
-    esmExternals: false,
-  },
+  // Disable all experimental features
+  experimental: {},
 
   // Image optimization
   images: {
@@ -33,35 +31,44 @@ const nextConfig: NextConfig = {
     },
   }),
 
-  // Minimal webpack configuration to prevent reload loops
+  // Completely disable webpack development features
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Completely disable hot reloading and Fast Refresh
+      // Remove all webpack plugins that cause hot reloading
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
         return name !== 'ReactRefreshWebpackPlugin' && 
-               name !== 'HotModuleReplacementPlugin';
+               name !== 'HotModuleReplacementPlugin' &&
+               name !== 'webpack.HotModuleReplacementPlugin';
       });
       
-      // Disable watch options that cause reload loops
-      config.watchOptions = {
-        ignored: ['**/node_modules/**', '**/.git/**', '**/.next/**'],
-        poll: false,
-        aggregateTimeout: 1000,
-      };
+      // Disable all hot reloading and watch features
+      config.watchOptions = false;
+      config.watch = false;
       
-      // Disable module hot replacement
-      config.module.rules.forEach(rule => {
+      // Disable module hot replacement entirely
+      config.module.rules = config.module.rules.map(rule => {
         if (rule.use && Array.isArray(rule.use)) {
-          rule.use.forEach(use => {
+          rule.use = rule.use.map(use => {
             if (use.loader && use.loader.includes('next-swc-loader')) {
-              if (use.options) {
-                use.options.refresh = false;
-              }
+              return {
+                ...use,
+                options: {
+                  ...use.options,
+                  refresh: false,
+                  development: false
+                }
+              };
             }
+            return use;
           });
         }
+        return rule;
       });
+      
+      // Force production-like behavior in development
+      config.mode = 'development';
+      config.devtool = false;
     }
     return config;
   },
@@ -132,3 +139,4 @@ const sentryWebpackPluginOptions = {
 export default process.env.NEXT_PUBLIC_SENTRY_DSN 
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;
+
