@@ -37,9 +37,9 @@ interface BloggerFormData {
   agreeToSurvey: boolean;
 }
 
-const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({ 
-  onAuthenticated, 
-  showProgressBar = true 
+const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
+  onAuthenticated,
+  showProgressBar = true
 }) => {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
@@ -82,7 +82,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   // Check if Part 1 is complete
   useEffect(() => {
     const part1Fields = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword'];
-    const part1Complete = part1Fields.every(field => 
+    const part1Complete = part1Fields.every(field =>
       bloggerForm[field as keyof BloggerFormData] !== ''
     ) && validateAge(bloggerForm.dateOfBirth) && bloggerForm.password === bloggerForm.confirmPassword;
 
@@ -94,7 +94,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     if (showProgressBar) {
       // Part 1 (required): 6 fields + 3 checkboxes = 9 items (75% of total)
       const part1Fields = ['firstName', 'surname', 'email', 'dateOfBirth', 'password', 'confirmPassword'];
-      const filledPart1Fields = part1Fields.filter(field => 
+      const filledPart1Fields = part1Fields.filter(field =>
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
       const validPassword = bloggerForm.password === bloggerForm.confirmPassword && bloggerForm.password.length >= 8;
@@ -105,7 +105,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
       // Part 2 & 3 (optional): 3 items (25% of total)
       const optionalFields = ['username', 'blogUrl', 'blogName'];
-      const filledOptionalFields = optionalFields.filter(field => 
+      const filledOptionalFields = optionalFields.filter(field =>
         bloggerForm[field as keyof BloggerFormData] !== ''
       );
       const topicsProgress = bloggerForm.topics.length > 0 ? 1 : 0;
@@ -145,39 +145,43 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       if (checked) {
         setBloggerForm(prev => ({
           ...prev,
-          topics: [...prev.topics, 'Other']
+          topics: [...(prev.topics || []), 'Other']
         }));
       } else {
         setBloggerForm(prev => ({
           ...prev,
-          topics: prev.topics.filter(t => t !== 'Other' && t !== customTopic)
+          topics: (prev.topics || []).filter(t => t !== 'Other' && t !== customTopic)
         }));
         setCustomTopic('');
       }
     } else {
       setBloggerForm(prev => ({
         ...prev,
-        topics: checked 
-          ? [...prev.topics, topic]
-          : prev.topics.filter(t => t !== topic)
+        topics: checked
+          ? [...(prev.topics || []), topic]
+          : (prev.topics || []).filter(t => t !== topic)
       }));
     }
+  };
+
+  const formatCustomInput = (value: string) => {
+    return value.trim().toLowerCase().replace(/\s+/g, '-');
   };
 
   const handleBloggerCustomTopicChange = (value: string) => {
     setCustomTopic(value);
     const validation = validateCustomInput(value);
 
-    if (validation.isValid && value.trim()) {
+    if (validation?.isValid && value.trim()) {
       const formattedTopic = formatCustomInput(value);
       setBloggerForm(prev => ({
         ...prev,
-        topics: [...prev.topics.filter(t => t !== customTopic), formattedTopic]
+        topics: [...(prev.topics || []).filter(t => t !== customTopic), formattedTopic]
       }));
     } else {
       setBloggerForm(prev => ({
         ...prev,
-        topics: prev.topics.filter(t => t !== customTopic)
+        topics: (prev.topics || []).filter(t => t !== customTopic)
       }));
     }
   };
@@ -185,16 +189,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const handleMonetizationChange = (method: string, checked: boolean) => {
     setBloggerForm(prev => ({
       ...prev,
-      monetizationMethods: checked 
-        ? [...prev.monetizationMethods, method]
-        : prev.monetizationMethods.filter(m => m !== method)
+      monetizationMethods: checked
+        ? [...(prev.monetizationMethods || []), method]
+        : (prev.monetizationMethods || []).filter(m => m !== method)
     }));
   };
 
   const handleBlogPostChange = (index: number, value: string) => {
     setBloggerForm(prev => ({
       ...prev,
-      blogPosts: prev.blogPosts.map((post, i) => i === index ? value : post)
+      blogPosts: (prev.blogPosts || []).map((post, i) => i === index ? value : post)
     }));
   };
 
@@ -263,8 +267,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       {showProgressBar && (
         <div className={styles.progressContainer}>
           <div className={styles.progressBar}>
-            <div 
-              className={styles.progressFill} 
+            <div
+              className={styles.progressFill}
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -487,7 +491,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
           <CustomCategoryInput
             selectedCategories={bloggerForm.topics}
-            onCategoryChange={(categories) => 
+            onCategoryChange={(categories) =>
               setBloggerForm(prev => ({ ...prev, topics: categories }))
             }
             maxWords={3}
@@ -500,9 +504,9 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
         <div className={styles.sectionTitle}>
           Part 3: Listings
           {!isPart1Complete && (
-            <span style={{ 
-              fontSize: '0.8rem', 
-              color: '#64748b', 
+            <span style={{
+              fontSize: '0.8rem',
+              color: '#64748b',
               fontWeight: 'normal',
               marginLeft: '0.5rem'
             }}>
@@ -541,8 +545,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
                     <p>{blog.description}</p>
                     <a href={blog.postUrl} target="_blank" rel="noopener noreferrer">{blog.postUrl}</a>
                   </div>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => removeBlog(index)}
                     className={styles.removeBlogButton}
                   >
@@ -552,8 +556,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
               ))}
 
               {submittedBlogs.length < 3 && (
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setShowBlogSubmissionPopup(true)}
                   className={styles.addBlogButton}
                 >
@@ -613,8 +617,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
               required
             />
             <span className={styles.checkboxText}>
-              I have completed the <button 
-                type="button" 
+              I have completed the <button
+                type="button"
                 onClick={() => setShowSurveyPopup(true)}
                 className={styles.linkButton}
                 style={{ textDecoration: 'underline', padding: '0' }}
@@ -639,16 +643,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <div className={styles.popupContent}>
             <div className={styles.popupHeader}>
               <h3>Add Blog Post</h3>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setShowBlogSubmissionPopup(false)}
                 className={styles.closeButton}
               >
                 ×
               </button>
             </div>
-            <BlogSubmissionForm 
-              onSubmit={handleBlogSubmission} 
+            <BlogSubmissionForm
+              onSubmit={handleBlogSubmission}
               displayName={bloggerForm.username}
               bloggerId="temp_signup"
               isBlogger={true}
