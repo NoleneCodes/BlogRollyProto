@@ -1,28 +1,29 @@
 // Supabase configuration and client setup
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Create a mock client if env vars are missing
-const createMockClient = () => ({
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-    signInWithPassword: () => Promise.resolve({ data: { user: null }, error: { message: 'Mock client' } }),
-    signUp: () => Promise.resolve({ data: { user: null }, error: { message: 'Mock client' } }),
-    signOut: () => Promise.resolve({ error: null })
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
   },
-  from: () => ({
-    select: () => Promise.resolve({ data: [], error: null }),
-    insert: () => Promise.resolve({ data: null, error: null }),
-    update: () => Promise.resolve({ data: null, error: null }),
-    delete: () => Promise.resolve({ data: null, error: null })
-  })
+  global: {
+    headers: {
+      'Cache-Control': 'max-age=300'
+    }
+  },
+  db: {
+    schema: 'public'
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  }
 })
-
-export const supabase = (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) 
-  ? createMockClient() 
-  : createClient(supabaseUrl, supabaseAnonKey)
 
 // Database Types and Enums
 export type UserRole = 'reader' | 'blogger' | 'admin' | 'moderator';
@@ -209,123 +210,44 @@ export interface EmailQueue {
 // Real Supabase authentication functions
 export const supabaseAuth = {
   signUp: async (email: string, password: string, metadata: any) => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.warn('Supabase not configured - using mock auth');
-      return { 
-        data: { 
-          user: { id: 'mock-user', email }, 
-          session: null 
-        }, 
-        error: null 
-      };
-    }
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata
-        }
-      });
-      return { data, error };
-    } catch (error: any) {
-      console.error('Auth error:', error);
-      return { data: null, error: { message: 'Authentication service unavailable' } };
-    }
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata
+      }
+    });
+    return { data, error };
   },
   signIn: async (email: string, password: string) => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.warn('Supabase not configured - using mock auth');
-      return { 
-        data: { 
-          user: { id: 'mock-user', email }, 
-          session: { access_token: 'mock-token' }
-        }, 
-        error: null 
-      };
-    }
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      return { data, error };
-    } catch (error: any) {
-      console.error('Auth error:', error);
-      return { data: null, error: { message: 'Authentication service unavailable' } };
-    }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    return { data, error };
   },
   signOut: async () => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      return { error: null };
-    }
-
-    try {
-      const { error } = await supabase.auth.signOut();
-      return { error };
-    } catch (error: any) {
-      return { error: { message: 'Sign out failed' } };
-    }
+    const { error } = await supabase.auth.signOut();
+    return { error };
   },
   getSession: async () => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      return { data: { session: null }, error: null };
-    }
-
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      return { data, error };
-    } catch (error: any) {
-      return { data: { session: null }, error: { message: 'Session check failed' } };
-    }
+    const { data, error } = await supabase.auth.getSession();
+    return { data, error };
   },
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      // Return mock subscription for development
-      return { 
-        data: { 
-          subscription: { unsubscribe: () => {} } 
-        } 
-      };
-    }
-
-    try {
-      const { data } = supabase.auth.onAuthStateChange(callback);
-      return { data };
-    } catch (error: any) {
-      console.error('Auth state change error:', error);
-      return { 
-        data: { 
-          subscription: { unsubscribe: () => {} } 
-        } 
-      };
-    }
+    const { data } = supabase.auth.onAuthStateChange(callback);
+    return { data };
   }
 };
 
 export const supabaseDB = {
   // User Management
   insertUser: async (userData: any) => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.warn('Supabase not configured - using mock database');
-      return { 
-        data: [{ ...userData, id: 'mock-user-' + Date.now() }], 
-        error: null 
-      };
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .insert([userData])
-        .select();
-      return { data, error };
-    } catch (error: any) {
-      console.error('Database error:', error);
-      return { data: null, error: { message: 'Database service unavailable' } };
-    }
+    const { data, error } = await supabase
+      .from('users')
+      .insert([userData])
+      .select();
+    return { data, error };
   },
 
   insertUserProfile: async (profileData: UserProfile) => {
