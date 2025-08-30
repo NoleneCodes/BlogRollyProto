@@ -33,19 +33,24 @@ const nextConfig: NextConfig = {
   // Completely disable all development features
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
-      // Remove all hot reload related plugins
+      // Force webpack to think we're in production mode for hot reloading purposes
+      config.mode = 'development';
+      config.devtool = false;
+      
+      // Remove ALL development-related plugins
       config.plugins = config.plugins.filter(plugin => {
         const name = plugin.constructor.name;
         return !name.includes('HotModuleReplacement') && 
                !name.includes('ReactRefresh') &&
+               !name.includes('webpack-dev-middleware') &&
                name !== 'ReactRefreshWebpackPlugin';
       });
       
-      // Disable all file watching
+      // Completely disable file watching
       config.watch = false;
-      config.watchOptions = undefined;
+      config.watchOptions = false;
       
-      // Remove hot reload entries from entry points
+      // Remove hot reload entry points completely
       if (config.entry && typeof config.entry === 'object') {
         Object.keys(config.entry).forEach(key => {
           if (Array.isArray(config.entry[key])) {
@@ -60,7 +65,7 @@ const nextConfig: NextConfig = {
         });
       }
       
-      // Completely disable Fast Refresh in all loaders
+      // Disable all module rules that enable hot reloading
       config.module.rules.forEach(rule => {
         if (rule.use) {
           const uses = Array.isArray(rule.use) ? rule.use : [rule.use];
@@ -71,7 +76,7 @@ const nextConfig: NextConfig = {
                   ...use.options,
                   refresh: false,
                   development: false,
-                  fastRefresh: false
+                  isServer: false
                 };
               }
             }
@@ -79,17 +84,22 @@ const nextConfig: NextConfig = {
         }
       });
       
-      // Force production-like mode
-      config.mode = 'development';
-      config.devtool = false;
-      
-      // Disable optimization that might trigger reloads
+      // Disable HMR optimization
       config.optimization = {
         ...config.optimization,
         removeAvailableModules: false,
         removeEmptyChunks: false,
         splitChunks: false
       };
+      
+      // Force disable HMR at the compiler level
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push({
+          'webpack/hot/dev-server': 'commonjs webpack/hot/dev-server',
+          'webpack/hot/only-dev-server': 'commonjs webpack/hot/only-dev-server'
+        });
+      }
     }
     return config;
   },
