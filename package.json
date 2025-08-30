@@ -39,3 +39,44 @@
     "webpack-bundle-analyzer": "^4.10.2"
   }
 }
+{
+  "name": "blogrolly-proto",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000 --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start --port 5000 --hostname 0.0.0.0",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@sentry/nextjs": "^10.0.0",
+    "@stripe/stripe-js": "^7.6.1",
+    "@supabase/supabase-js": "^2.53.0",
+    "@types/formidable": "^3.4.5",
+    "bcryptjs": "^3.0.2",
+    "chart.js": "^4.5.0",
+    "critters": "^0.0.23",
+    "formidable": "^3.5.4",
+    "helmet": "^8.1.0",
+    "isomorphic-dompurify": "^2.26.0",
+    "next": "^15.2.3",
+    "next-themes": "^0.4.6",
+    "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "resend": "^4.7.0",
+    "stripe": "^18.3.0",
+    "tailwindcss": "^4.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.11",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "eslint": "^9.23.0",
+    "eslint-config-next": "^15.2.3",
+    "typescript": "^5.8.2",
+    "webpack-bundle-analyzer": "^4.10.2"
+  }
+}

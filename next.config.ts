@@ -160,3 +160,17 @@ const sentryWebpackPluginOptions = {
 export default process.env.NEXT_PUBLIC_SENTRY_DSN 
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    domains: ['localhost', '0.0.0.0'],
+  },
+  experimental: {
+    optimizeCss: true,
+  },
+};
+
+export default nextConfig;
