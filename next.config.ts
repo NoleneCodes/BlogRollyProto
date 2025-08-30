@@ -1,6 +1,5 @@
 
 import type { NextConfig } from "next";
-import { env } from "process";
 import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
@@ -14,7 +13,7 @@ const nextConfig: NextConfig = {
 
   // Image optimization
   images: {
-    domains: ['yllryygbuyxgbrujdrte.supabase.co'],
+    domains: ['yllryygbuyxgbrujdrte.supabase.co', 'localhost', '0.0.0.0'],
     dangerouslyAllowSVG: false,
   },
 
@@ -146,8 +145,6 @@ const nextConfig: NextConfig = {
       }
     ];
   },
-
-  /* config options here */
 };
 
 const sentryWebpackPluginOptions = {
@@ -160,17 +157,3 @@ const sentryWebpackPluginOptions = {
 export default process.env.NEXT_PUBLIC_SENTRY_DSN 
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  images: {
-    domains: ['localhost', '0.0.0.0'],
-  },
-  experimental: {
-    optimizeCss: true,
-  },
-};
-
-export default nextConfig;
