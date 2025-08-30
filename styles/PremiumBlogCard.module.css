@@ -22,7 +22,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: #c42142;
+  background: linear-gradient(90deg, #c42142 0%, #fbbf24 100%);
 }
 
 .premiumSubmissionCard:hover {
