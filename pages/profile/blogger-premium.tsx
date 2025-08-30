@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
-import HowItWorksPopup from '../../components/HowItWorksPopup';
+import PremiumBlogCard from '../../components/PremiumBlogCard';
 import SubmissionGuidelinesPopup from '../../components/SubmissionGuidelinesPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
-import PremiumBlogCard from '../../components/PremiumBlogCard';
+import HowItWorksPopup from '../../components/HowItWorksPopup';
 import styles from '../../styles/BloggerProfilePremium.module.css';
-import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
-import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
 interface UserInfo {
   id: string;
@@ -40,6 +38,7 @@ interface BlogSubmission {
   image?: string;
   imageDescription?: string;
   ctr?: number;
+  avgTimeOnPage?: number;
   bounceRate?: number;
   tags?: string[];
 }
@@ -76,28 +75,18 @@ const BloggerProfilePremium: React.FC = () => {
   const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
   const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
-  const [showTopicEditPopup, setShowTopicEditPopup] = useState(false);
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
-  const [socialLinks, setSocialLinks] = useState({
-    twitter: '',
-    linkedin: '',
-    instagram: '',
-    youtube: '',
-    tiktok: '',
-    github: ''
-  });
-
+  
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Mock pro blogger user data
+        // Mock premium blogger user data
         setUserInfo({
-          id: 'pro-blogger-123',
-          name: 'Pro Blogger',
-          email: 'pro@example.com',
-          displayName: 'Pro Content Creator',
+          id: 'premium-blogger-123',
+          name: 'Premium Blogger',
+          email: 'premium@example.com',
+          displayName: 'Premium Content Creator',
           bio: 'Professional content creator and thought leader in tech innovation',
           joinedDate: '2023-06-15',
           blogName: 'Innovation Insights Pro',
@@ -107,17 +96,7 @@ const BloggerProfilePremium: React.FC = () => {
           tier: 'pro'
         });
 
-        // Initialize social links
-        setSocialLinks({
-          twitter: 'https://twitter.com/problogger',
-          linkedin: 'https://linkedin.com/in/problogger',
-          instagram: '',
-          youtube: '',
-          tiktok: '',
-          github: 'https://github.com/problogger'
-        });
-
-        // Mock pro blog submissions (unlimited)
+        // Mock premium blog submissions (unlimited)
         setBlogSubmissions([
           {
             id: '1',
@@ -132,6 +111,7 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Comprehensive analysis of how AI is transforming enterprise software development.',
             image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=200&fit=crop',
             ctr: 8.2,
+            avgTimeOnPage: 4.5,
             bounceRate: 24.8,
             tags: ['AI', 'Enterprise', 'Software Development', 'Future Tech']
           },
@@ -148,6 +128,7 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Deep dive into architectural patterns for building scalable SaaS applications.',
             image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop',
             ctr: 8.0,
+            avgTimeOnPage: 6.2,
             bounceRate: 18.5,
             tags: ['SaaS', 'Architecture', 'Scalability']
           },
@@ -164,6 +145,7 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Essential strategies for leading and managing distributed teams effectively.',
             image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop',
             ctr: 7.5,
+            avgTimeOnPage: 5.1,
             bounceRate: 28.3,
             tags: ['Leadership', 'Remote Work', 'Team Management']
           },
@@ -180,6 +162,7 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'How product managers can leverage ML to build better products.',
             image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=200&fit=crop',
             ctr: 8.9,
+            avgTimeOnPage: 7.3,
             bounceRate: 15.2
           },
           {
@@ -195,6 +178,7 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'Proven growth strategies that helped startups scale from 0 to millions.',
             image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
             ctr: 7.6,
+            avgTimeOnPage: 4.8,
             bounceRate: 32.1
           },
           {
@@ -209,11 +193,12 @@ const BloggerProfilePremium: React.FC = () => {
             description: 'How DevOps culture is evolving and what it means for engineering teams.',
             image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=200&fit=crop',
             ctr: 0,
+            avgTimeOnPage: 0,
             bounceRate: 0
           }
         ]);
 
-        // Mock pro blog stats
+        // Mock premium blog stats
         setBlogStats({
           totalViews: 17800,
           monthlyViews: 4250,
@@ -246,7 +231,7 @@ const BloggerProfilePremium: React.FC = () => {
       try {
         const draft = JSON.parse(savedDraft);
         const { savedAt, ...draftFormData } = draft;
-
+        
         // Only add draft if it has meaningful content
         if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
           const draftSubmission: BlogSubmission = {
@@ -262,6 +247,7 @@ const BloggerProfilePremium: React.FC = () => {
             image: null,
             imageDescription: draftFormData.imageDescription || '',
             ctr: 0,
+            avgTimeOnPage: 0,
             bounceRate: 0
           };
 
@@ -319,7 +305,7 @@ const BloggerProfilePremium: React.FC = () => {
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // Pro: 5MB limit
+      if (file.size > 5 * 1024 * 1024) { // Premium: 5MB limit
         alert('Image must be less than 5MB');
         return;
       }
@@ -359,6 +345,7 @@ const BloggerProfilePremium: React.FC = () => {
       image: formData.image ? URL.createObjectURL(formData.image) : null,
       imageDescription: formData.imageDescription,
       ctr: 0,
+      avgTimeOnPage: 0,
       bounceRate: 0
     };
     setBlogSubmissions(prev => [newSubmission, ...prev]);
@@ -397,67 +384,13 @@ const BloggerProfilePremium: React.FC = () => {
     setEditingBlog(null);
   };
 
-  const handleEditTopics = () => {
-    setSelectedTopics([...userInfo!.topics]);
-    setShowTopicEditPopup(true);
-  };
-
-  const handleTopicToggle = (topic: string) => {
-    setSelectedTopics(prev => 
-      prev.includes(topic) 
-        ? prev.filter(t => t !== topic)
-        : [...prev, topic]
-    );
-  };
-
-  const handleRemoveTopic = (topicToRemove: string) => {
-    if (userInfo) {
-      setUserInfo(prev => prev ? { 
-        ...prev, 
-        topics: prev.topics.filter(topic => topic !== topicToRemove) 
-      } : null);
-    }
-  };
-
-  const handleSaveTopics = () => {
-    if (userInfo) {
-      setUserInfo(prev => prev ? { ...prev, topics: selectedTopics } : null);
-    }
-    setShowTopicEditPopup(false);
-  };
-
-  const handleCancelTopicEdit = () => {
-    setShowTopicEditPopup(false);
-  };
-
-  const handleSocialLinkChange = (platform: string, value: string) => {
-    setSocialLinks(prev => ({
-      ...prev,
-      [platform]: value
-    }));
-  };
-
-  const handleTopicChange = (category: string, isChecked: boolean) => {
-    setUserInfo(prev => {
-      if (!prev) return prev;
-
-      let updatedTopics = [...prev.topics];
-      if (isChecked) {
-        updatedTopics = [...updatedTopics, category];
-      } else {
-        updatedTopics = updatedTopics.filter(topic => topic !== category);
-      }
-
-      return { ...prev, topics: updatedTopics };
-    });
-  };
-
+  
 
   if (isLoading) {
     return (
-      <Layout title="Pro Blogger Profile - Blogrolly">
+      <Layout title="Premium Blogger Profile - Blogrolly">
         <div className={styles.loading}>
-          <h2>Loading your pro profile...</h2>
+          <h2>Loading your premium profile...</h2>
         </div>
       </Layout>
     );
@@ -490,7 +423,7 @@ const BloggerProfilePremium: React.FC = () => {
               </div>
             </div>
             {blogStats && (
-              <div className={styles.proStatsGrid}>
+              <div className={styles.premiumStatsGrid}>
                 <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
                   <div className={styles.statCardHeader}>
                     <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
@@ -783,127 +716,8 @@ const BloggerProfilePremium: React.FC = () => {
                   rows={4}
                   maxLength={500}
                 />
-                <small className={styles.hint}>Pro accounts get extended bio length (500 characters)</small>
+                <small className={styles.hint}>Premium accounts get extended bio length (500 characters)</small>
               </div>
-
-              <div className={styles.formGroup}>
-                <label>Blog Topics / Niche</label>
-                <small className={styles.hint}>Topics that describe your blog content</small>
-                <div className={styles.topicsDisplaySection}>
-                  <div className={styles.topicTags}>
-                    {userInfo.topics && userInfo.topics.length > 0 ? (
-                      userInfo.topics.map(topic => (
-                        <span key={topic} className={styles.topicTag}>
-                          {topic}
-                          <button 
-                            type="button"
-                            className={styles.topicRemove}
-                            onClick={() => handleRemoveTopic(topic)}
-                            title={`Remove ${topic}`}
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))
-                    ) : (
-                      <span className={styles.noTopics}>No topics selected</span>
-                    )}
-                  </div>
-                  <button 
-                    type="button"
-                    className={styles.editTopicsButton} 
-                    onClick={handleEditTopics}
-                  >
-                    Edit Topics
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Social Links</label>
-                <small className={styles.hint}>Add your social media and professional links</small>
-                <div className={styles.socialLinksGrid}>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaTwitter /></span>
-                      Twitter/X
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.twitter}
-                      onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
-                      placeholder="https://twitter.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaLinkedin /></span>
-                      LinkedIn
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.linkedin}
-                      onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
-                      placeholder="https://linkedin.com/in/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaInstagram /></span>
-                      Instagram
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.instagram}
-                      onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
-                      placeholder="https://instagram.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaYoutube /></span>
-                      YouTube
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.youtube}
-                      onChange={(e) => handleSocialLinkChange('youtube', e.target.value)}
-                      placeholder="https://youtube.com/@yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaTiktok /></span>
-                      TikTok
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.tiktok}
-                      onChange={(e) => handleSocialLinkChange('tiktok', e.target.value)}
-                      placeholder="https://tiktok.com/@yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaGithub /></span>
-                      GitHub
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.github}
-                      onChange={(e) => handleSocialLinkChange('github', e.target.value)}
-                      placeholder="https://github.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                </div>
-              </div>
-
               <button className={styles.saveButton} onClick={handleSaveSettings}>
                 Save Changes
               </button>
@@ -928,10 +742,10 @@ const BloggerProfilePremium: React.FC = () => {
                     <li>✅ Priority review for submissions</li>                 
                     <li>✅ Priority support</li>
                     <li>✅ Export analytics data</li>
-                    <li>✅ Custom profile themes (coming soon)</li>
+                    <li>✅ Custom profile themes(coming soon)</li>
                   </ul>
                   <p>More Pro features coming soon... Feel free to make suggestions</p>
-
+                  
                 </div>
                 <div className={styles.billingInfo}>
                   <p><strong>Next billing date:</strong> February 15, 2024</p>
@@ -1002,7 +816,7 @@ const BloggerProfilePremium: React.FC = () => {
   };
 
   return (
-    <Layout title="Pro Blogger Profile - Blogrolly">
+    <Layout title="Premium Blogger Profile - Blogrolly">
       <div className={styles.profileContainer}>
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
@@ -1027,7 +841,8 @@ const BloggerProfilePremium: React.FC = () => {
             >
               Advanced Analytics
             </button>
-            <button className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
+            <button 
+              className={`${styles.navItem} ${styles.submitBlog} ${activeSection === 'submit' ? styles.active : ''}`}
               onClick={() => setShowBlogSubmissionForm(true)}
             >
               Submit a Blog
@@ -1119,100 +934,7 @@ const BloggerProfilePremium: React.FC = () => {
         onClose={() => setShowBugReportPopup(false)}
       />
 
-      {/* Topic Edit Popup */}
-      {showTopicEditPopup && (
-        <div className={styles.popupOverlay}>
-          <div className={styles.popupContent}>
-            <div className={styles.popupHeader}>
-              <h3>Edit Your Blog Topics</h3>
-              <button 
-                className={styles.closeButton}
-                onClick={handleCancelTopicEdit}
-              >
-                ×
-              </button>
-            </div>
-            <div className={styles.popupBody}>
-              <p className={styles.popupDescription}>
-                  Select up to 7 topics that best describe your blog content. This helps readers discover your content.
-                </p>
-
-              <div className={styles.topicSection}>
-                <h4>Main Categories</h4>
-                <div className={styles.topicGrid}>
-                  {MAIN_CATEGORIES.map(category => {
-                          const isSelected = selectedTopics.includes(category);
-                          const isDisabled = !isSelected && selectedTopics.length >= 7;
-                          return (
-                            <label 
-                              key={category} 
-                              className={`${styles.topicLabel} ${isDisabled ? styles.disabled : ''}`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => handleTopicToggle(category)}
-                                className={styles.topicCheckbox}
-                                disabled={isDisabled}
-                              />
-                              <span className={styles.topicText}>{category}</span>
-                            </label>
-                          );
-                        })}
-                </div>
-              </div>
-
-              <div className={styles.topicSection}>
-                <h4>Specific Topics & Tags</h4>
-                <div className={styles.tagCategories}>
-                  {Object.entries(TAGS).map(([categoryName, tags]) => (
-                    <details key={categoryName} className={styles.tagCategory}>
-                      <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
-                      <div className={styles.tagCategoryGrid}>
-                        {tags.filter(tag => tag !== 'Other').map(tag => {
-                            const isSelected = selectedTopics.includes(tag);
-                            const isDisabled = !isSelected && selectedTopics.length >= 5;
-                            return (
-                              <label 
-                                key={tag} 
-                                className={`${styles.topicLabel} ${isDisabled ? styles.disabled : ''}`}
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={() => handleTopicToggle(tag)}
-                                  className={styles.topicCheckbox}
-                                  disabled={isDisabled}
-                                />
-                                <span className={styles.topicText}>{tag}</span>
-                              </label>
-                            );
-                          })}
-                      </div>
-                    </details>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.popupActions}>
-                <button 
-                  className={styles.cancelButton}
-                  onClick={handleCancelTopicEdit}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className={styles.saveButton}
-                  onClick={handleSaveTopics}
-                >
-                  Save Topics ({selectedTopics.length})
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+      
     </Layout>
   );
 };

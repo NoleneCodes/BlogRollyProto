@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import styles from '../styles/ReaderProfile.module.css';
-import { createSupportRequest } from '../lib/supabase';
+import { createSupportRequest } from '../lib/supportRequestData';
 
 interface ContactSupportPopupProps {
   isOpen: boolean;
@@ -23,7 +23,7 @@ const ContactSupportPopup: React.FC<ContactSupportPopupProps> = ({ isOpen, onClo
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -38,20 +38,15 @@ const ContactSupportPopup: React.FC<ContactSupportPopupProps> = ({ isOpen, onClo
     }
 
     try {
-      // Save support request to database
-      const result = await createSupportRequest({
+      // Save support request to backend
+      const newRequest = createSupportRequest({
         subject: formData.subject.trim(),
         priority: (formData.priority as 'low' | 'medium' | 'high' | 'critical') || 'low',
         message: formData.message.trim(),
-        email: formData.email.trim() || undefined,
-        userEmail: 'user@example.com' // This should come from authenticated user
+        email: formData.email.trim() || undefined
       });
 
-      if (!result.success) {
-        throw new Error(result.error);
-      }
-
-      console.log('Support request submitted:', result.data);
+      console.log('Support request submitted:', newRequest);
       alert('Your support request has been submitted! We\'ll get back to you within 24 hours.');
       
       // Reset form

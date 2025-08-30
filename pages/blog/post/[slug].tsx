@@ -1,3 +1,4 @@
+
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Layout from '../../../components/Layout';
@@ -54,9 +55,9 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
               <span className={styles.breadcrumbSeparator}>/</span>
               <span className={styles.breadcrumbCurrent}>{post.title}</span>
             </div>
-
+            
             <h1 className={styles.blogPostTitle}>{post.title}</h1>
-
+            
             <div className={styles.blogPostMeta}>
               <span className={styles.blogPostAuthor}>
                 By {post.bloggerDisplayName || post.author}
@@ -81,26 +82,15 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
           </div>
 
           {post.imageUrl && (
-            <div className={styles.blogImage}>
-              <img 
-                src={post.imageUrl} 
-                alt={post.imageDescription || post.title} 
-              />
+            <div className={styles.blogPostImage}>
+              <img src={post.imageUrl} alt={post.title} />
             </div>
           )}
 
           <div className={styles.blogPostContent}>
             <p>{post.description}</p>
             {post.content && (
-              <div 
-                className={styles.blogContent}
-                dangerouslySetInnerHTML={{ 
-                  __html: post.content.replace(
-                    /!\[([^\]]*)\]\(([^)]+)\)/g, 
-                    '<img src="$2" alt="$1" style="max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0;" />'
-                  )
-                }} 
-              />
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
             )}
           </div>
 

@@ -77,7 +77,7 @@ const PremiumUpgradeButton: React.FC<PremiumUpgradeButtonProps> = ({
         ) : (
           <>
             <span className={styles.upgradeText}>
-              Upgrade to Pro
+              Upgrade to Premium
             </span>
             <span className={styles.priceText}>
               {price}

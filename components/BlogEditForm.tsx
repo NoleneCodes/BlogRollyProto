@@ -1,7 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
-import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
-import { CustomCategoryInput } from './CustomCategoryInput';
 import styles from '../styles/BlogEditForm.module.css';
 
 interface BlogEditFormProps {
@@ -29,10 +28,72 @@ interface BlogData {
   image: File | null;
   imagePreview: string | null;
   imageDescription: string;
-  urlChangeReason?: string;
 }
 
+const MAIN_CATEGORIES = [
+  'Lifestyle',
+  'Health & Wellness',
+  'Culture & Society',
+  'Tech & Digital Life',
+  'Creative Expression',
+  'Work & Money',
+  'Education & Learning',
+  'Relationships & Emotions',
+  'Art & Media',
+  'Home & Garden',
+  'Food & Drink',
+  'Travel & Places',
+  'Identity & Intersectionality',
+  'Spirituality & Inner Work',
+  'Opinion & Commentary',
+  'Other'
+];
 
+const TAGS = {
+  'Themes & Topics': [
+    'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
+    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
+    'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
+    'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
+    'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
+    'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
+    'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
+    'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
+    'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
+    'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
+    'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
+    'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
+    'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
+    'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
+    'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
+    'Addiction & Recovery', 'Chronic Illness', 'Other'
+  ],
+  'Structure / Format': [
+    'Listicle', 'Longform Essay', 'Personal Diary', 'Photo Essay', 'Letter',
+    'Manifesto', 'Interview', 'Tutorial', 'Poem', 'Short Story', 'Q&A',
+    'Open Thread', 'Roundup', 'Resource Guide', 'Commentary', 'Thought Piece',
+    'Audio Journal', 'Microblog', 'Illustrated Piece', 'Visual Essay',
+    'Thread Dump', 'Journal Entry', 'Other'
+  ],
+  'Vibe / Tone': [
+    'Vulnerable', 'Funny', 'Educational', 'Chill', 'Angry', 'Empowering',
+    'Comforting', 'Provocative', 'Uplifting', 'Raw & Unfiltered', 'Philosophical',
+    'Meditative', 'Sarcastic', 'Loving', 'Analytical', 'Dreamy', 'Manifesting',
+    'Deep Dive', 'Reflective', 'Activist', 'Spiritual', 'Poetic', 'Other'
+  ],
+  'Intended Audience': [
+    'For Creatives', 'For Founders', 'For Parents', 'For Coders', 'For Students',
+    'For Readers', 'For Black Women', 'For the Diaspora', 'For Queer Folks',
+    'For Neurodivergents', 'For Healers', 'For Side Hustlers', 'For Burnt-Out People',
+    'For the Culture', 'For Survivors', 'For Book Lovers', 'For Poets',
+    'For Makers', 'For Beginners', 'For the Overwhelmed', 'Other'
+  ],
+  'Content Filters': [
+    'Evergreen', 'Trending', 'Monthly Highlight', 'Seasonal', 'Archive Gem',
+    'Hot Take', 'Experimental', 'Series Part', 'Collaboration', 'Anonymous',
+    'Sponsored', 'Debut Blog', 'Staff Pick', 'Reader Pick', 'Other'
+  ]
+};
 
 const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isVisible }) => {
   const { user } = useSupabaseAuth();
@@ -51,15 +112,13 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
   const [tagInput, setTagInput] = useState('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
-  const [urlChangeReason, setUrlChangeReason] = useState('');
-  const [originalUrl] = useState(blog.url); // Store original URL to detect changes
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Check premium status
   useEffect(() => {
-    const checkProStatus = async () => {
+    const checkPremiumStatus = async () => {
       if (!user) {
-        // For the pro blogger demo page, simulate pro status
+        // For the premium blogger demo page, simulate premium status
         if (window.location.pathname.includes('blogger-premium')) {
           setIsPremium(true);
           return;
@@ -79,7 +138,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           const data = await response.json();
           setIsPremium(data.isPremium || data.tier === 'pro');
         } else {
-          // For demo purposes on pro page
+          // For demo purposes on premium page
           if (window.location.pathname.includes('blogger-premium')) {
             setIsPremium(true);
           } else {
@@ -87,8 +146,8 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
           }
         }
       } catch (error) {
-        console.error('Error checking pro status:', error);
-        // For demo purposes on pro page
+        console.error('Error checking premium status:', error);
+        // For demo purposes on premium page
         if (window.location.pathname.includes('blogger-premium')) {
           setIsPremium(true);
         } else {
@@ -97,7 +156,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       }
     };
 
-    checkProStatus();
+    checkPremiumStatus();
   }, [user]);
 
   // Handle clicking outside to close dropdown
@@ -121,17 +180,6 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
 
   // Debug logging
   console.log('BlogEditForm - isPremium:', isPremium, 'pathname:', window.location.pathname);
-  console.log('BlogEditForm - Auth state:', {
-    user: user ? { id: user.id, email: user.email, hasToken: !!user.access_token } : null,
-    hasAccessToken: !!user?.access_token
-  });
-  console.log('BlogEditForm - URL comparison:', {
-    originalUrl,
-    currentUrl: editForm.url,
-    urlChanged: editForm.url !== originalUrl,
-    urlChangeReason,
-    showDropdown: isPremium !== null && isPremium && editForm.url !== originalUrl && editForm.url.trim() !== ''
-  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -183,129 +231,17 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
     return Object.values(TAGS).flat();
   };
 
-  const urlChangeReasons = [
-    'Fixing broken or incorrect URL',
-    'Updating to match content changes',
-    'SEO optimization',
-    'Rebranding or domain change',
-    'Correcting typos in URL',
-    'Moving content to better location',
-    'Compliance with site guidelines',
-    'User experience improvement',
-    'Other (please specify in comments)'
-  ];
-
   const filteredTags = getAllTags().filter(tag => 
     tag.toLowerCase().includes(tagInput.toLowerCase()) && 
     !editForm.tags.includes(tag)
   );
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (imageChanged && !editForm.imageDescription.trim()) {
       alert('Please provide an image description for the new image. This is used for accessibility and SEO.');
       return;
     }
-
-    // Check if URL has changed and reason is required
-    const urlHasChanged = editForm.url !== originalUrl;
-    if (urlHasChanged && isPremium && !urlChangeReason.trim()) {
-      alert('Please select a reason for changing the blog URL. This is required for tracking purposes.');
-      console.log('URL change validation failed:', {
-        urlHasChanged,
-        isPremium,
-        urlChangeReason,
-        originalUrl,
-        newUrl: editForm.url
-      });
-      return;
-    }
-
-    // Validate that the new URL is from the verified domain if URL has changed
-    if (urlHasChanged && isPremium) {
-      if (!user?.access_token) {
-        console.error('No access token available for validation');
-        alert('Authentication error. Please refresh the page and try again.');
-        return;
-      }
-
-      try {
-        const response = await fetch('/api/validate-blog-url', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.access_token}`
-          },
-          body: JSON.stringify({ postUrl: editForm.url })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.valid) {
-          alert(result.error || 'The new URL must be from your verified domain.');
-          return;
-        }
-      } catch (error) {
-        console.error('Domain validation error:', error);
-        alert('Unable to validate domain. Please try again.');
-        return;
-      }
-    }
-
-    // Handle URL changes with automatic deactivation
-    if (urlHasChanged && isPremium) {
-      if (!user?.access_token) {
-        console.error('No access token available for URL update');
-        alert('Authentication error. Please refresh the page and try again.');
-        return;
-      }
-
-      try {
-        const response = await fetch('/api/blogs/update-url', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.access_token}`
-          },
-          body: JSON.stringify({
-            submissionId: blog.id,
-            newUrl: editForm.url,
-            changeReason: urlChangeReason
-          })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          alert(result.error || 'Failed to update URL');
-          return;
-        }
-
-        if (result.requiresReapproval) {
-          alert('Your blog URL has been updated successfully. Since the URL changed, your blog has been deactivated and will need to go through the approval process again. You will be notified once it has been reviewed.');
-        }
-
-        // Update the form with the response data
-        onSave(blog.id, {
-          ...editForm,
-          urlChangeReason: urlHasChanged ? urlChangeReason : undefined,
-          // Include the updated status from the response
-          status: result.data?.status,
-          isLive: result.data?.is_live
-        });
-      } catch (error) {
-        console.error('URL update error:', error);
-        alert('Failed to update URL. Please try again.');
-        return;
-      }
-    } else {
-      // Regular save for non-URL changes
-      const saveData = {
-        ...editForm,
-        urlChangeReason: urlHasChanged ? urlChangeReason : undefined
-      };
-
-      onSave(blog.id, saveData);
-    }
+    onSave(blog.id, editForm);
   };
 
   return (
@@ -331,7 +267,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             Max 2MB • JPG, PNG, WebP
           </small>
         </div>
-
+        
         {editForm.imagePreview && (
           <div className={styles.editField} style={{ marginTop: '1rem' }}>
             <label>
@@ -384,98 +320,12 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
             type="url"
             value={editForm.url}
             onChange={(e) => setEditForm(prev => ({ ...prev, url: e.target.value }))}
-            onBlur={async (e) => {
-              // Real-time validation when user finishes editing URL
-              if (isPremium && e.target.value !== originalUrl && e.target.value.trim()) {
-                if (!user?.access_token) {
-                  console.error('No access token available for URL validation');
-                  alert('Authentication error. Please refresh the page and try again.');
-                  return;
-                }
-
-                try {
-                  const response = await fetch('/api/validate-blog-url', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${user.access_token}`
-                    },
-                    body: JSON.stringify({ postUrl: e.target.value })
-                  });
-
-                  const result = await response.json();
-
-                  if (!response.ok || !result.valid) {
-                    // Reset to original URL if validation fails
-                    setEditForm(prev => ({ ...prev, url: originalUrl }));
-                    alert(result.error || 'The URL must be from your verified domain.');
-                  }
-                } catch (error) {
-                  console.error('URL validation error:', error);
-                  alert('Unable to validate URL. Please try again.');
-                }
-              }
-            }}
-            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''} ${isPremium ? styles.proInput : ''}`}
+            className={`${styles.editInput} ${!isPremium ? styles.readOnlyInput : ''} ${isPremium ? styles.premiumInput : ''}`}
             placeholder={isPremium ? "https://yourblog.com/post-url" : "Upgrade to Pro to edit URLs"}
             readOnly={!isPremium}
             disabled={!isPremium}
             style={!isPremium ? { backgroundColor: '#f9fafb', color: '#6b7280', cursor: 'not-allowed' } : { backgroundColor: '#f0fdf4', border: '2px solid #10b981' }}
           />
-          
-          {/* URL Change Reason Dropdown - Only show if URL has changed and user is premium */}
-          {isPremium !== null && isPremium && editForm.url !== originalUrl && editForm.url.trim() !== '' && (
-            <div style={{ marginTop: '0.75rem' }}>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem', 
-                fontWeight: '500', 
-                color: '#374151',
-                fontSize: '0.875rem' 
-              }}>
-                Reason for URL Change *
-              </label>
-              <select
-                value={urlChangeReason}
-                onChange={(e) => {
-                  console.log('URL change reason selected:', e.target.value);
-                  setUrlChangeReason(e.target.value);
-                }}
-                className={styles.editSelect}
-                required
-                style={{ 
-                  backgroundColor: '#fef3c7', 
-                  border: '2px solid #f59e0b',
-                  minHeight: '40px',
-                  padding: '8px 12px'
-                }}
-              >
-                <option value="" disabled>Select a reason for changing the URL</option>
-                {urlChangeReasons.map((reason, index) => (
-                  <option key={`reason-${index}`} value={reason}>{reason}</option>
-                ))}
-              </select>
-              <small style={{ 
-                color: '#92400e', 
-                fontSize: '0.75rem', 
-                marginTop: '0.25rem', 
-                display: 'block',
-                fontWeight: '500'
-              }}>
-                ⚠️ This change will be logged for review purposes
-              </small>
-              {/* Debug info */}
-              <small style={{ 
-                color: '#6b7280', 
-                fontSize: '0.7rem', 
-                display: 'block',
-                marginTop: '0.25rem'
-              }}>
-                Debug: isPremium={String(isPremium)}, urlChanged={String(editForm.url !== originalUrl)}, selectedReason="{urlChangeReason}"
-              </small>
-            </div>
-          )}
-
           {!isPremium && (
             <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
               URL editing is only available to Pro subscribers. 
@@ -497,20 +347,6 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
               <option key={category} value={category}>{category}</option>
             ))}
           </select>
-        {editForm.category === 'Other' && (
-            <CustomCategoryInput
-              selectedCategories={editForm.category === 'Other' ? [editForm.category] : []}
-              onCategoryChange={(categories) => {
-                const customCategories = categories.filter(cat => cat.startsWith('custom:'));
-                if (customCategories.length > 0) {
-                  const customCategoryName = customCategories[customCategories.length - 1].replace('custom:', '');
-                  setEditForm(prev => ({ ...prev, category: customCategoryName }));
-                }
-              }}
-              maxWords={3}
-              label="Enter your custom category (one word at a time, max 3 words)"
-            />
-          )}
         </div>
         <div className={styles.editField}>
           <label>

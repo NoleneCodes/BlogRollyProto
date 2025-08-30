@@ -14,6 +14,5 @@ export { default as BugReportModal } from './BugReportModal';
 export { default as ContactSupportPopup } from './ContactSupportPopup';
 export { default as FeedbackPopup } from './FeedbackPopup';
 export { default as SurveyPopup } from './SurveyPopup';
-export { CustomCategoryInput } from './CustomCategoryInput';
 export { default as SubmissionGuidelinesPopup } from './SubmissionGuidelinesPopup';
 export { default as HowItWorksPopup } from './HowItWorksPopup';

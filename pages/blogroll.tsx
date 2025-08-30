@@ -1,14 +1,12 @@
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { IoSettingsOutline } from "react-icons/io5";
 import Layout from "../components/Layout";
 import BlogCard from "../components/BlogCard";
 import SearchBar from "../components/SearchBar";
 import styles from "../styles/Home.module.css";
 import blogCardStyles from "../styles/BlogCard.module.css";
 import { performKeywordSearch, performAISearch, SearchResult, AISearchResult } from "../lib/searchUtils";
-import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 
 interface BlogPost {
   id: string;
@@ -19,7 +17,6 @@ interface BlogPost {
   authorProfile: string;
   bloggerId: string;
   bloggerDisplayName: string;
-  bloggerTopics?: string[];
   description: string;
   category: string;
   tags: string[];
@@ -42,7 +39,6 @@ const mockBlogs: BlogPost[] = [
     authorProfile: "/blogger/sarah-johnson",
     bloggerId: "sarah-johnson",
     bloggerDisplayName: "Sarah Johnson",
-    bloggerTopics: ["Productivity", "Self-Care", "Wellness", "Lifestyle"],
     description: "Discover the science-backed strategies for creating a morning routine that sticks. From optimizing your sleep schedule to choosing the right activities, this comprehensive guide covers everything you need to know about starting your day right and maintaining consistency over time.",
     category: "Lifestyle",
     tags: ["Morning Routine", "Productivity", "Self-Care"],
@@ -62,7 +58,6 @@ const mockBlogs: BlogPost[] = [
     authorProfile: "/blogger/alex-chen",
     bloggerId: "alex-chen",
     bloggerDisplayName: "Alex Chen",
-    bloggerTopics: ["Mental Health", "Tech Industry", "Developer Life", "Burnout Prevention"],
     description: "An honest look at burnout, stress, and finding balance in the fast-paced world of technology.",
     category: "Health & Wellness",
     tags: ["Mental Health", "Tech", "Burnout Recovery"],
@@ -81,7 +76,6 @@ const mockBlogs: BlogPost[] = [
     authorProfile: "/blogger/maria-rodriguez",
     bloggerId: "maria-rodriguez",
     bloggerDisplayName: "Maria Rodriguez",
-    bloggerTopics: ["Cooking", "Healthy Living", "Time Management", "Family Meals"],
     description: "Quick and delicious meals that don't compromise on flavor or nutrition.",
     category: "Food & Drink",
     tags: ["Cooking", "Quick Meals", "Healthy Eating"],
@@ -94,16 +88,10 @@ const mockBlogs: BlogPost[] = [
   }
 ];
 
-// Get popular tags from centralized file
-const POPULAR_TAGS = [
-  ...TAGS['Themes & Topics'].slice(0, 20),
-  ...TAGS['Vibe / Tone'].slice(0, 8)
-].filter(tag => tag !== 'Other');
-
 const Blogroll: NextPage = () => {
   const router = useRouter();
   const { q, type, tag, category } = router.query;
-
+  
   const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
   const [filter, setFilter] = useState<string>("all");
   const [tagFilter, setTagFilter] = useState<string>("");
@@ -112,15 +100,6 @@ const Blogroll: NextPage = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[] | AISearchResult[]>([]);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [searchFilters, setSearchFilters] = useState({
-    category: '',
-    dateRange: '',
-    author: '',
-    tags: [] as string[]
-  });
-    const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (q && typeof q === 'string') {
@@ -149,41 +128,21 @@ const Blogroll: NextPage = () => {
 
   const performSearch = async (query: string, searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
-
+    
     setIsSearching(true);
+    setIsSearchActive(true);
+    
     try {
-      const params = new URLSearchParams();
-      params.append('q', query);
-      params.append('type', searchType);
-
-      // Add filters to search
-      if (searchFilters.category) {
-        params.append('category', searchFilters.category);
-      }
-      if (searchFilters.author) {
-        params.append('author', searchFilters.author);
-      }
-      if (searchFilters.dateRange) {
-        params.append('dateRange', searchFilters.dateRange);
-      }
-      if (searchFilters.tags.length > 0) {
-        params.append('tags', searchFilters.tags.join(','));
-      }
-
-      const response = await fetch(`/api/blogs/search?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error('Search failed');
-      }
-
-      const data = await response.json();
-      // Handle API errors gracefully
-      if (data.error) {
-        console.warn('Search API returned error:', data.error);
-        setSearchResults([]);
+      let results: SearchResult[] | AISearchResult[];
+      
+      if (searchType === 'ai') {
+        results = await performAISearch(query, mockBlogs);
       } else {
-        setSearchResults(data.results || []);
+        results = performKeywordSearch(query, mockBlogs);
       }
-      setIsSearchActive(true);
+      
+      setSearchResults(results);
+      
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
@@ -197,104 +156,12 @@ const Blogroll: NextPage = () => {
     router.push(`/blogroll?${searchParams.toString()}`);
   };
 
-  const handleFiltersChange = (filters: any) => {
-    setSearchFilters(filters);
-    // Apply filters immediately
-    applyAdvancedFilters(filters);
-  };
-
-  const applyAdvancedFilters = (filters: any) => {
-    let filteredResults = mockBlogs;
-
-    // Apply category filter
-    if (filters.category) {
-      filteredResults = filteredResults.filter(blog => blog.category === filters.category);
-    }
-
-    // Apply author filter (search by name, display name, or topics)
-    if (filters.author && filters.author.trim()) {
-      const authorQuery = filters.author.toLowerCase().trim();
-      filteredResults = filteredResults.filter(blog => {
-        const authorMatch = blog.author.toLowerCase().includes(authorQuery);
-        const displayNameMatch = blog.bloggerDisplayName?.toLowerCase().includes(authorQuery);
-        const topicsMatch = blog.bloggerTopics?.some((topic: string) => 
-          topic.toLowerCase().includes(authorQuery)
-        );
-        return authorMatch || displayNameMatch || topicsMatch;
-      });
-    }
-
-    // Apply tags filter
-    if (filters.tags && filters.tags.length > 0) {
-      filteredResults = filteredResults.filter(blog =>
-        filters.tags.some((filterTag: string) =>
-          blog.tags.some((blogTag: string) => 
-            blogTag.toLowerCase().includes(filterTag.toLowerCase())
-          )
-        )
-      );
-    }
-
-    // Apply date range filter
-    if (filters.dateRange) {
-      const now = new Date();
-      let cutoffDate = new Date();
-
-      switch (filters.dateRange) {
-        case 'week':
-          cutoffDate.setDate(now.getDate() - 7);
-          break;
-        case 'month':
-          cutoffDate.setMonth(now.getMonth() - 1);
-          break;
-        case 'year':
-          cutoffDate.setFullYear(now.getFullYear() - 1);
-          break;
-        default:
-          cutoffDate = new Date(0);
-      }
-
-      filteredResults = filteredResults.filter(blog => {
-        const blogDate = new Date(blog.dateAdded);
-        return blogDate >= cutoffDate;
-      });
-    }
-
-    setBlogs(filteredResults);
-
-    // If there are active filters, show as search active
-    const hasActiveFilters = filters.category || filters.author || filters.tags?.length > 0 || filters.dateRange;
-    setIsSearchActive(hasActiveFilters);
-
-    if (hasActiveFilters) {
-      setSearchResults(filteredResults.map(blog => ({ ...blog, relevanceScore: 1, matchType: 'filter' as const })));
-    } else {
-      setIsSearchActive(false);
-      setSearchResults([]);
-      setBlogs(mockBlogs); // Reset to original blogs
-    }
-  };
-
   const clearSearch = () => {
     router.push('/blogroll');
   };
 
   const clearFilters = () => {
     router.push('/blogroll');
-  };
-
-  const clearAdvancedFilters = () => {
-    const emptyFilters = {
-      category: '',
-      dateRange: '',
-      author: '',
-      tags: [] as string[]
-    };
-    setSearchFilters(emptyFilters);
-    setIsSearchActive(false);
-    setSearchResults([]);
-    setBlogs(mockBlogs);
-    setShowAdvancedFilters(false);
   };
 
   const toggleSave = (blogId: string) => {
@@ -321,41 +188,21 @@ const Blogroll: NextPage = () => {
     }
   };
 
-    const fetchBlogs = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      // Replace with actual API endpoint to fetch blogs from database
-      const response = await fetch('/api/blogs');
-      if (!response.ok) {
-        throw new Error(`Failed to fetch blogs: ${response.status}`);
-      }
-      const data = await response.json();
-      setBlogs(data); // Assuming API returns an array of blog posts
-    } catch (err: any) {
-      console.error("Failed to fetch blogs", err);
-      setError(err.message || "Failed to fetch blogs");
-    } finally {
-      setLoading(false);
-    }
-  };
   let filteredBlogs = blogs;
-
+  
   // Apply category filter
   if (filter !== "all") {
     filteredBlogs = filteredBlogs.filter(blog => blog.category === filter);
   }
-
+  
   // Apply tag filter
   if (tagFilter) {
     filteredBlogs = filteredBlogs.filter(blog => 
       blog.tags.some(blogTag => blogTag.toLowerCase() === tagFilter.toLowerCase())
     );
   }
-
+  
   const displayBlogs = isSearchActive ? searchResults : filteredBlogs;
-
-  const CATEGORIES = MAIN_CATEGORIES.filter(category => category !== 'Other');
 
   return (
     <Layout title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}>
@@ -367,36 +214,12 @@ const Blogroll: NextPage = () => {
       </div>
 
       {/* Search Bar */}
-      <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ margin: '2rem 0', display: 'flex', justifyContent: 'center' }}>
         <SearchBar
           onSearch={handleNewSearch}
           placeholder="Search blogs, topics, or authors..."
-          showAdvancedFilters={showAdvancedFilters}
-          showFilters={showAdvancedFilters}
-          onFiltersChange={handleFiltersChange}
-          blogs={blogs}
+          showAdvancedFilters={true}
         />
-        <button
-          onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-          style={{
-            background: showAdvancedFilters ? '#c42142' : '#f8fafc',
-            color: showAdvancedFilters ? 'white' : '#64748b',
-            border: `2px solid ${showAdvancedFilters ? '#c42142' : '#e2e8f0'}`,
-            borderRadius: '8px',
-            padding: '0.75rem',
-            cursor: 'pointer',
-            fontSize: '1.2rem',
-            transition: 'all 0.2s ease',
-            minWidth: '48px',
-            height: '48px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          title="Advanced filters"
-        >
-          <IoSettingsOutline size={20} />
-        </button>
       </div>
 
       {/* Search Results Info */}
@@ -408,19 +231,14 @@ const Blogroll: NextPage = () => {
             ) : (
               <>
                 <p>
-                  {searchQuery ? (
-                    searchResults.length > 0 
-                      ? `Found ${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for "${searchQuery}"` 
-                      : `No results found for "${searchQuery}"`
-                  ) : (
-                    searchResults.length > 0
-                      ? `Showing ${searchResults.length} filtered result${searchResults.length !== 1 ? 's' : ''}`
-                      : 'No results match your filters'
-                  )}
+                  {searchResults.length > 0 
+                    ? `Found ${searchResults.length} result${searchResults.length !== 1 ? 's' : ''} for "${searchQuery}"` 
+                    : `No results found for "${searchQuery}"`
+                  }
                   {searchType === 'ai' && ' (AI Search)'}
                 </p>
                 <button 
-                  onClick={searchQuery ? clearSearch : clearAdvancedFilters}
+                  onClick={clearSearch}
                   style={{
                     background: 'transparent',
                     color: '#c42142',
@@ -432,7 +250,7 @@ const Blogroll: NextPage = () => {
                     marginLeft: '10px'
                   }}
                 >
-                  {searchQuery ? 'Clear Search' : 'Clear Filters'}
+                  Clear Search
                 </button>
               </>
             )}
@@ -469,7 +287,30 @@ const Blogroll: NextPage = () => {
         </div>
       )}
 
-
+      {/* Filters - Only show when not searching */}
+      {!isSearchActive && (
+        <div className={blogCardStyles.filterSection}>
+          <select 
+            value={filter} 
+            onChange={(e) => {
+              setFilter(e.target.value);
+              const newParams = new URLSearchParams();
+              if (e.target.value !== "all") {
+                newParams.set('category', e.target.value);
+              }
+              router.push(`/blogroll${newParams.toString() ? '?' + newParams.toString() : ''}`);
+            }}
+            className={blogCardStyles.filterSelect}
+          >
+            <option value="all">All Categories</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Health & Wellness">Health & Wellness</option>
+            <option value="Food & Drink">Food & Drink</option>
+            <option value="Tech & Digital Life">Tech & Digital Life</option>
+            <option value="Creative Expression">Creative Expression</option>
+          </select>
+        </div>
+      )}
 
       {/* Blog Grid */}
       <div className={blogCardStyles.blogGrid}>
@@ -482,7 +323,7 @@ const Blogroll: NextPage = () => {
               showAuthor={true}
               showSaveButton={true}
             />
-
+            
             {/* AI Search Additional Info */}
             {isSearchActive && searchType === 'ai' && 'aiRelevanceReason' in blog && (
               <div style={{

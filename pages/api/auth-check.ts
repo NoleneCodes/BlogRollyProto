@@ -1,67 +1,32 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '../../lib/supabase';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-  try {
-    const authHeader = req.headers.authorization;
+type AuthData = {
+  authenticated: boolean;
+  userId?: string;
+  userName?: string;
+  userRoles?: string;
+};
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(200).json({ 
-        isAuthenticated: false
-      });
-    }
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<AuthData>
+) {
+  // Check for Repl Auth headers
+  const userId = req.headers['x-replit-user-id'] as string;
+  const userName = req.headers['x-replit-user-name'] as string;
+  const userRoles = req.headers['x-replit-user-roles'] as string;
 
-    const token = authHeader.split(' ')[1];
-
-    // Verify the access token with Supabase
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      return res.status(200).json({ 
-        isAuthenticated: false
-      });
-    }
-
-    // Get user profile
-    const { data: profile, error: profileError } = await supabase
-      .from('user_profiles')
-      .select(`
-        *,
-        blogger_profiles(
-          stripe_customer_id,
-          subscription_status,
-          subscription_end_date
-        )
-      `)
-      .eq('user_id', user.id)
-      .single();
-
-    if (profileError) {
-      return res.status(200).json({ 
-        isAuthenticated: false
-      });
-    }
-
-    return res.status(200).json({
-      isAuthenticated: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: profile.first_name,
-        surname: profile.surname,
-        role: profile.role,
-        tier: profile.tier
-      }
+  if (userId && userName) {
+    res.status(200).json({
+      authenticated: true,
+      userId,
+      userName,
+      userRoles
     });
-
-  } catch (error) {
-    console.error('Auth check error:', error);
-    return res.status(200).json({ 
-      isAuthenticated: false
+  } else {
+    res.status(200).json({
+      authenticated: false
     });
   }
 }

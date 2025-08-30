@@ -1,3 +1,4 @@
+
 // Search utilities for BlogRolly
 export interface SearchResult {
   id: string;
@@ -69,31 +70,10 @@ export function performKeywordSearch(
       matchTypes.push('tags');
     }
 
-    // Check author matches (enhanced to include blogger display name and topics)
-    let authorMatches = 0;
-
-    // Check author name (existing functionality)
-    const authorNameMatches = searchTerms.filter(term => 
+    // Check author matches
+    const authorMatches = searchTerms.filter(term => 
       blog.author.toLowerCase().includes(term)
     ).length;
-    authorMatches += authorNameMatches;
-
-    // Check blogger display name if available
-    if (blog.bloggerDisplayName) {
-      const displayNameMatches = searchTerms.filter(term => 
-        blog.bloggerDisplayName.toLowerCase().includes(term)
-      ).length;
-      authorMatches += displayNameMatches;
-    }
-
-    // Check blogger topics/niches (for pro bloggers)
-    if (blog.bloggerTopics && Array.isArray(blog.bloggerTopics)) {
-      const topicMatches = searchTerms.filter(term => 
-        blog.bloggerTopics.some((topic: string) => topic.toLowerCase().includes(term))
-      ).length;
-      authorMatches += topicMatches * 0.8; // Slightly lower weight than direct name matches
-    }
-
     if (authorMatches > 0) {
       relevanceScore += authorMatches * 6;
       matchTypes.push('author');
@@ -122,7 +102,7 @@ export function performKeywordSearch(
         const blogDate = new Date(blog.dateAdded);
         const now = new Date();
         let cutoffDate = new Date();
-
+        
         switch (filters.dateRange) {
           case 'week':
             cutoffDate.setDate(now.getDate() - 7);
@@ -136,7 +116,7 @@ export function performKeywordSearch(
           default:
             cutoffDate = new Date(0); // Beginning of time
         }
-
+        
         if (blogDate < cutoffDate) return;
       }
     }
@@ -161,13 +141,13 @@ export async function performAISearch(
 ): Promise<AISearchResult[]> {
   // TODO: Implement AI search using OpenAI/Anthropic API
   // This will analyze the user's question and match it with blog content
-
+  
   console.log('AI Search Query:', query);
   console.log('Available blogs:', blogs.length);
-
+  
   // For now, return keyword search results with AI relevance simulation
   const keywordResults = performKeywordSearch(query, blogs, filters);
-
+  
   return keywordResults.map(result => ({
     ...result,
     aiRelevanceReason: `This blog matches your search because it discusses topics related to "${query}".`,
@@ -219,17 +199,17 @@ export function getSearchSuggestions(query: string): string[] {
   if (!query.trim()) return suggestions.slice(0, 5);
 
   const searchTerm = query.toLowerCase().trim();
-
+  
   // Filter suggestions that start with the search term first, then ones that contain it
   const startsWithMatches = suggestions.filter(suggestion => 
     suggestion.toLowerCase().startsWith(searchTerm)
   );
-
+  
   const containsMatches = suggestions.filter(suggestion => 
     suggestion.toLowerCase().includes(searchTerm) && 
     !suggestion.toLowerCase().startsWith(searchTerm)
   );
-
+  
   // Combine and limit to 5 suggestions
   return [...startsWithMatches, ...containsMatches].slice(0, 5);
 }
@@ -244,7 +224,7 @@ export function saveSearchToHistory(query: string, searchType: 'keyword' | 'ai')
     timestamp: new Date().toISOString(),
     id: Date.now().toString()
   };
-
+  
   const updatedHistory = [newEntry, ...history.slice(0, 9)]; // Keep last 10 searches
   localStorage.setItem('blogrolly_search_history', JSON.stringify(updatedHistory));
 }
@@ -256,7 +236,7 @@ export function getSearchHistory(): Array<{
   timestamp: string;
 }> {
   if (typeof window === 'undefined') return [];
-
+  
   try {
     const history = localStorage.getItem('blogrolly_search_history');
     return history ? JSON.parse(history) : [];

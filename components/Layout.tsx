@@ -3,9 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import { initGA, trackPageView } from '../lib/analytics';
-import { validateSupabaseConfig, handleSupabaseError } from '../lib/supabase-check';
 import BugReportModal from './BugReportModal';
-import CookieConsentBanner from './CookieConsentBanner'; // Assuming this component exists
 import styles from '../styles/Layout.module.css';
 
 interface LayoutProps {
@@ -37,34 +35,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   }, []);
 
   useEffect(() => {
-    // Initialize Google Analytics only if consent is given
-    // This logic should ideally be in CookieConsentBanner or a hook
-    // For now, assuming initGA() is safe to call and respects consent if implemented within it
-    if (typeof window !== 'undefined' && localStorage.getItem('cookieConsent') === 'granted') {
-      initGA();
-    }
+    // Initialize Google Analytics
+    initGA();
 
     const checkAuth = async () => {
       try {
-        // Check if Supabase is properly configured
-        if (!validateSupabaseConfig()) {
-          setUserInfo(null);
-          setIsLoading(false);
-          return;
-        }
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
-        const response = await fetch('/api/auth-check', {
-          signal: controller.signal,
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        });
-
-        clearTimeout(timeoutId);
-
+        const response = await fetch('/api/auth-check');
         if (response.ok) {
           const data = await response.json();
           if (data.authenticated) {
@@ -73,24 +49,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               name: data.userName,
               roles: data.userRoles ? data.userRoles.split(',') : []
             });
-          } else {
-            setUserInfo(null);
           }
-        } else if (response.status === 401) {
-          // User not authenticated, this is expected
-          setUserInfo(null);
-        } else {
-          console.warn(`Auth check returned ${response.status}`);
-          setUserInfo(null);
         }
       } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.warn('Auth check timed out');
-        } else {
-          handleSupabaseError(error);
-        }
-        // Fail gracefully - assume not authenticated
-        setUserInfo(null);
+        console.error('Auth check failed:', error);
       } finally {
         setIsLoading(false);
       }
@@ -102,10 +64,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
   // Track page views on route changes
   useEffect(() => {
     const handleRouteChange = (url: string) => {
-      // Only track page views if consent is given
-      if (typeof window !== 'undefined' && localStorage.getItem('cookieConsent') === 'granted') {
-        trackPageView(url);
-      }
+      trackPageView(url);
     };
 
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -142,9 +101,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
       <Head>
         <title>{title}</title>
         <meta name="description" content="Discover and organize your favorite blogs with BlogRolly" />
-        <meta name="theme-color" content="#c42142" />
-        <meta name="msapplication-navbutton-color" content="#c42142" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="icon" href="/DigitalBR.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/DigitalBR.svg" />
         <link rel="manifest" href="/manifest.json" />
@@ -274,9 +230,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           isOpen={showBugReportPopup}
           onClose={() => setShowBugReportPopup(false)}
         />
-
-      <CookieConsentBanner />
-    </div>
+      </div>
     </>
   );
 };

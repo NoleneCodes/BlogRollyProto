@@ -15,13 +15,13 @@ const PremiumFeatureGuard: React.FC<PremiumFeatureGuardProps> = ({
   showUpgradePrompt = true
 }) => {
   const { user } = useSupabaseAuth();
-  const [isPro, setIsPro] = useState<boolean | null>(null);
+  const [isPremium, setIsPremium] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkProStatus = async () => {
+    const checkPremiumStatus = async () => {
       if (!user) {
-        setIsPro(false);
+        setIsPremium(false);
         setLoading(false);
         return;
       }
@@ -35,26 +35,26 @@ const PremiumFeatureGuard: React.FC<PremiumFeatureGuardProps> = ({
 
         if (response.ok) {
           const data = await response.json();
-          setIsPro(data.isPremium);
+          setIsPremium(data.isPremium);
         } else {
-          setIsPro(false);
+          setIsPremium(false);
         }
       } catch (error) {
-        console.error('Error checking pro status:', error);
-        setIsPro(false);
+        console.error('Error checking premium status:', error);
+        setIsPremium(false);
       } finally {
         setLoading(false);
       }
     };
 
-    checkProStatus();
+    checkPremiumStatus();
   }, [user]);
 
   if (loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
 
-  if (isPro) {
+  if (isPremium) {
     return <>{children}</>;
   }
 
@@ -66,7 +66,7 @@ const PremiumFeatureGuard: React.FC<PremiumFeatureGuardProps> = ({
     return (
       <div className={styles.upgradePrompt}>
         <div className={styles.promptContent}>
-          <h3>🔒 Pro Feature</h3>
+          <h3>🔒 Premium Feature</h3>
           <p>This feature is only available to Pro subscribers.</p>
           <button 
             className={styles.upgradeButton}

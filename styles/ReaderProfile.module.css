@@ -833,46 +833,8 @@
 
 .topicGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.tagCategories {
-  margin-top: 1rem;
-  border: 1px solid #e1e5e9;
-  border-radius: 8px;
-  padding: 1rem;
-  background-color: #f8f9fa;
-}
-
-.tagCategory {
-  margin-bottom: 0.75rem;
-}
-
-.tagCategory:last-child {
-  margin-bottom: 0;
-}
-
-.tagCategoryTitle {
-  font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #e1e5e9;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.tagCategoryTitle:hover {
-  color: #c42142;
-}
-
-.tagCategoryGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 0.5rem;
-  padding-top: 0.5rem;
 }
 
 .topicLabel {
