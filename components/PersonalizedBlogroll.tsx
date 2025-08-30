@@ -112,50 +112,67 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
   showHeader = true,
   className = '' 
 }) => {
-  // Add error boundary
-  try {
-    const router = useRouter();
-    const [personalizedBlogs, setPersonalizedBlogs] = useState<BlogPost[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
+  const router = useRouter();
+  const [personalizedBlogs, setPersonalizedBlogs] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
+  const [hasError, setHasError] = useState(false);
 
     useEffect(() => {
-      loadUserPreferences();
+      try {
+        loadUserPreferences();
+      } catch (error) {
+        console.error('Error loading user preferences:', error);
+        setHasError(true);
+        setIsLoading(false);
+      }
     }, []);
 
     useEffect(() => {
-      if (userPreferences) {
-        const filtered = filterBlogsByPreferences(mockBlogs, userPreferences);
-        setPersonalizedBlogs(filtered.slice(0, maxItems));
-      } else {
-        // If no preferences, show most recent blogs
-        setPersonalizedBlogs(mockBlogs.slice(0, maxItems));
+      try {
+        if (userPreferences) {
+          const filtered = filterBlogsByPreferences(mockBlogs, userPreferences);
+          setPersonalizedBlogs(filtered.slice(0, maxItems));
+        } else {
+          // If no preferences, show most recent blogs
+          setPersonalizedBlogs(mockBlogs.slice(0, maxItems));
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error filtering blogs:', error);
+        setHasError(true);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }, [userPreferences, maxItems]);
 
     const loadUserPreferences = () => {
-      // Check for authentication first
-      const userId = getUserId(); // You'll need to implement this based on your auth system
+      try {
+        // Check for authentication first
+        const userId = getUserId(); // You'll need to implement this based on your auth system
 
-      if (userId) {
-        // Try to load from localStorage (in production, fetch from Supabase)
-        const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
-        const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
+        if (userId) {
+          // Try to load from localStorage (in production, fetch from Supabase)
+          const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
+          const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
 
-        if (storedPreferences) {
-          const preferences = JSON.parse(storedPreferences);
-          const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
-            categoryClicks: {},
-            tagClicks: {}
-          };
+          if (storedPreferences) {
+            const preferences = JSON.parse(storedPreferences);
+            const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
+              categoryClicks: {},
+              tagClicks: {}
+            };
 
-          setUserPreferences({
-            categories: preferences.categories || [],
-            tags: preferences.tags || [],
-            engagementHistory: engagement
-          });
+            setUserPreferences({
+              categories: preferences?.categories || [],
+              tags: preferences?.tags || [],
+              engagementHistory: engagement
+            });
+          }
         }
+      } catch (error) {
+        console.error('Error in loadUserPreferences:', error);
+        // Set to null to trigger fallback
+        setUserPreferences(null);
       }
     };
 
@@ -234,6 +251,17 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
       router.push('/blogroll');
     };
 
+    if (hasError) {
+      return (
+        <section className={`${styles.personalizedSection} ${className}`}>
+          <div className={styles.emptyState}>
+            <h3>Something went wrong</h3>
+            <p>We're experiencing technical difficulties. Please try refreshing the page.</p>
+          </div>
+        </section>
+      );
+    }
+
     if (isLoading) {
       return (
         <div className={styles.loadingContainer}>
@@ -286,17 +314,6 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
         </div>
       </section>
     );
-  } catch (error) {
-    console.error('PersonalizedBlogroll error:', error);
-    return (
-      <section className={`${styles.personalizedSection} ${className}`}>
-        <div className={styles.emptyState}>
-          <h3>Something went wrong</h3>
-          <p>We're experiencing technical difficulties. Please try refreshing the page.</p>
-        </div>
-      </section>
-    );
-  }
 };
 
 export default PersonalizedBlogroll;
