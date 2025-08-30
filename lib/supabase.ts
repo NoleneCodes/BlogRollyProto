@@ -1,15 +1,21 @@
 // Supabase configuration and client setup
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+// Get environment variables with safe fallbacks
+const rawSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const rawSupabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 // Check if we have valid Supabase configuration
-const hasValidConfig = supabaseUrl !== 'your_supabase_url_here/' && 
-                      supabaseUrl !== 'https://placeholder.supabase.co' &&
-                      supabaseAnonKey !== 'your_supabase_anon_key_here' &&
-                      supabaseAnonKey !== 'placeholder-key' &&
-                      supabaseUrl.includes('.supabase.co')
+const hasValidConfig = rawSupabaseUrl !== 'your_supabase_url_here/' && 
+                      rawSupabaseUrl !== '' &&
+                      rawSupabaseKey !== 'your_supabase_anon_key_here' &&
+                      rawSupabaseKey !== '' &&
+                      rawSupabaseUrl.includes('.supabase.co') &&
+                      rawSupabaseUrl.startsWith('https://')
+
+// Use valid URLs for Supabase client creation
+const supabaseUrl = hasValidConfig ? rawSupabaseUrl : 'https://placeholder.supabase.co'
+const supabaseAnonKey = hasValidConfig ? rawSupabaseKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUwNzI0MDAsImV4cCI6MTk2MDY0ODQwMH0.abc123placeholder'
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
