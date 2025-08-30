@@ -6,6 +6,7 @@ import styles from '../styles/PersonalizedBlogroll.module.css';
 interface BlogPost {
   id: string;
   image?: string;
+  imageDescription?: string; // Added based on mock data usage
   title: string;
   author: string;
   authorProfile: string;
@@ -103,184 +104,199 @@ const mockBlogs: BlogPost[] = [
 interface PersonalizedBlogrollProps {
   maxItems?: number;
   showHeader?: boolean;
+  className?: string; // Added className prop
 }
 
 const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({ 
-  maxItems = 6, 
-  showHeader = true 
+  maxItems = 12, 
+  showHeader = true,
+  className = '' 
 }) => {
-  const router = useRouter();
-  const [personalizedBlogs, setPersonalizedBlogs] = useState<BlogPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
+  // Add error boundary
+  try {
+    const router = useRouter();
+    const [personalizedBlogs, setPersonalizedBlogs] = useState<BlogPost[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
 
-  useEffect(() => {
-    loadUserPreferences();
-  }, []);
+    useEffect(() => {
+      loadUserPreferences();
+    }, []);
 
-  useEffect(() => {
-    if (userPreferences) {
-      const filtered = filterBlogsByPreferences(mockBlogs, userPreferences);
-      setPersonalizedBlogs(filtered.slice(0, maxItems));
-    } else {
-      // If no preferences, show most recent blogs
-      setPersonalizedBlogs(mockBlogs.slice(0, maxItems));
-    }
-    setIsLoading(false);
-  }, [userPreferences, maxItems]);
-
-  const loadUserPreferences = () => {
-    // Check for authentication first
-    const userId = getUserId(); // You'll need to implement this based on your auth system
-
-    if (userId) {
-      // Try to load from localStorage (in production, fetch from Supabase)
-      const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
-      const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
-
-      if (storedPreferences) {
-        const preferences = JSON.parse(storedPreferences);
-        const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
-          categoryClicks: {},
-          tagClicks: {}
-        };
-
-        setUserPreferences({
-          categories: preferences.categories || [],
-          tags: preferences.tags || [],
-          engagementHistory: engagement
-        });
+    useEffect(() => {
+      if (userPreferences) {
+        const filtered = filterBlogsByPreferences(mockBlogs, userPreferences);
+        setPersonalizedBlogs(filtered.slice(0, maxItems));
+      } else {
+        // If no preferences, show most recent blogs
+        setPersonalizedBlogs(mockBlogs.slice(0, maxItems));
       }
-    }
-  };
+      setIsLoading(false);
+    }, [userPreferences, maxItems]);
 
-  const getUserId = () => {
-    // Placeholder - implement based on your auth system
-    // This could check for Replit auth headers or Supabase session
-    return localStorage.getItem('current_user_id') || null;
-  };
+    const loadUserPreferences = () => {
+      // Check for authentication first
+      const userId = getUserId(); // You'll need to implement this based on your auth system
 
-  const filterBlogsByPreferences = (blogs: BlogPost[], preferences: UserPreferences): BlogPost[] => {
-    return blogs
-      .map(blog => ({
-        ...blog,
-        relevanceScore: calculateRelevanceScore(blog, preferences)
-      }))
-      .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))
-      .filter(blog => (blog.relevanceScore || 0) > 0);
-  };
+      if (userId) {
+        // Try to load from localStorage (in production, fetch from Supabase)
+        const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
+        const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
 
-  const calculateRelevanceScore = (blog: BlogPost, preferences: UserPreferences): number => {
-    let score = 0;
+        if (storedPreferences) {
+          const preferences = JSON.parse(storedPreferences);
+          const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
+            categoryClicks: {},
+            tagClicks: {}
+          };
 
-    // Score based on user's selected categories
-    if (preferences.categories.includes(blog.category)) {
-      score += 10;
-    }
-
-    // Score based on user's selected tags
-    blog.tags.forEach(tag => {
-      if (preferences.tags.includes(tag)) {
-        score += 8;
+          setUserPreferences({
+            categories: preferences.categories || [],
+            tags: preferences.tags || [],
+            engagementHistory: engagement
+          });
+        }
       }
-    });
+    };
 
-    // Score based on engagement history
-    const categoryEngagement = preferences.engagementHistory.categoryClicks[blog.category] || 0;
-    score += Math.min(categoryEngagement * 2, 10); // Cap at 10 points
+    const getUserId = () => {
+      // Placeholder - implement based on your auth system
+      // This could check for Replit auth headers or Supabase session
+      return localStorage.getItem('current_user_id') || null;
+    };
 
-    blog.tags.forEach(tag => {
-      const tagEngagement = preferences.engagementHistory.tagClicks[tag] || 0;
-      score += Math.min(tagEngagement * 1.5, 8); // Cap at 8 points per tag
-    });
+    const filterBlogsByPreferences = (blogs: BlogPost[], preferences: UserPreferences): BlogPost[] => {
+      return blogs
+        .map(blog => ({
+          ...blog,
+          relevanceScore: calculateRelevanceScore(blog, preferences)
+        }))
+        .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))
+        .filter(blog => (blog.relevanceScore || 0) > 0);
+    };
 
-    return score;
-  };
+    const calculateRelevanceScore = (blog: BlogPost, preferences: UserPreferences): number => {
+      let score = 0;
 
-  const handleBlogInteraction = (blogId: string, action: 'save' | 'read' | 'click') => {
-    const blog = personalizedBlogs.find(b => b.id === blogId);
-    if (!blog) return;
-
-    // Update engagement history
-    const userId = getUserId();
-    if (userId) {
-      const currentEngagement = JSON.parse(localStorage.getItem(`user_engagement_${userId}`) || '{"categoryClicks": {}, "tagClicks": {}}');
-
-      if (action === 'click') {
-        currentEngagement.categoryClicks[blog.category] = (currentEngagement.categoryClicks[blog.category] || 0) + 1;
-        blog.tags.forEach(tag => {
-          currentEngagement.tagClicks[tag] = (currentEngagement.tagClicks[tag] || 0) + 1;
-        });
-        localStorage.setItem(`user_engagement_${userId}`, JSON.stringify(currentEngagement));
+      // Score based on user's selected categories
+      if (preferences.categories.includes(blog.category)) {
+        score += 10;
       }
-    }
 
-    // Update local state
-    setPersonalizedBlogs(prev => prev.map(b => 
-      b.id === blogId ? { 
-        ...b, 
-        isSaved: action === 'save' ? !b.isSaved : b.isSaved,
-        isRead: action === 'read' ? true : b.isRead
-      } : b
-    ));
-  };
+      // Score based on user's selected tags
+      blog.tags.forEach(tag => {
+        if (preferences.tags.includes(tag)) {
+          score += 8;
+        }
+      });
 
-  const handleViewAll = () => {
-    router.push('/blogroll');
-  };
+      // Score based on engagement history
+      const categoryEngagement = preferences.engagementHistory.categoryClicks[blog.category] || 0;
+      score += Math.min(categoryEngagement * 2, 10); // Cap at 10 points
 
-  if (isLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSkeleton}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className={styles.skeletonCard}></div>
-          ))}
+      blog.tags.forEach(tag => {
+        const tagEngagement = preferences.engagementHistory.tagClicks[tag] || 0;
+        score += Math.min(tagEngagement * 1.5, 8); // Cap at 8 points per tag
+      });
+
+      return score;
+    };
+
+    const handleBlogInteraction = (blogId: string, action: 'save' | 'read' | 'click') => {
+      const blog = personalizedBlogs.find(b => b.id === blogId);
+      if (!blog) return;
+
+      // Update engagement history
+      const userId = getUserId();
+      if (userId) {
+        const currentEngagement = JSON.parse(localStorage.getItem(`user_engagement_${userId}`) || '{"categoryClicks": {}, "tagClicks": {}}');
+
+        if (action === 'click') {
+          currentEngagement.categoryClicks[blog.category] = (currentEngagement.categoryClicks[blog.category] || 0) + 1;
+          blog.tags.forEach(tag => {
+            currentEngagement.tagClicks[tag] = (currentEngagement.tagClicks[tag] || 0) + 1;
+          });
+          localStorage.setItem(`user_engagement_${userId}`, JSON.stringify(currentEngagement));
+        }
+      }
+
+      // Update local state
+      setPersonalizedBlogs(prev => prev.map(b => 
+        b.id === blogId ? { 
+          ...b, 
+          isSaved: action === 'save' ? !b.isSaved : b.isSaved,
+          isRead: action === 'read' ? true : b.isRead
+        } : b
+      ));
+    };
+
+    const handleViewAll = () => {
+      router.push('/blogroll');
+    };
+
+    if (isLoading) {
+      return (
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSkeleton}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className={styles.skeletonCard}></div>
+            ))}
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (personalizedBlogs.length === 0) {
-    return (
-      <div className={styles.emptyState}>
-        <h3>No personalized content yet</h3>
-        <p>Set your preferences in your profile to see personalized blog recommendations here!</p>
-        <button 
-          onClick={() => router.push('/profile/reader')}
-          className={styles.setupButton}
-        >
-          Set Preferences
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <section className={styles.personalizedSection}>
-      {showHeader && (
-        <div className={styles.sectionHeader}>
-          <button onClick={handleViewAll} className={styles.viewAllButton}>
-            View All Blogs →
+    if (personalizedBlogs.length === 0) {
+      return (
+        <div className={styles.emptyState}>
+          <h3>No personalized content yet</h3>
+          <p>Set your preferences in your profile to see personalized blog recommendations here!</p>
+          <button 
+            onClick={() => router.push('/profile/reader')}
+            className={styles.setupButton}
+          >
+            Set Preferences
           </button>
         </div>
-      )}
+      );
+    }
 
-      <div className={styles.blogGrid}>
-        {personalizedBlogs.map((blog) => (
-          <div key={blog.id} onClick={() => handleBlogInteraction(blog.id, 'click')}>
-            <BlogCard
-              blog={blog}
-              onToggleSave={(id) => handleBlogInteraction(id, 'save')}
-              onMarkAsRead={(id) => handleBlogInteraction(id, 'read')}
-              showAuthor={true}
-              showSaveButton={true}
-            />
+    return (
+      <section className={`${styles.personalizedSection} ${className}`}>
+        {showHeader && (
+          <div className={styles.sectionHeader}>
+            <button onClick={handleViewAll} className={styles.viewAllButton}>
+              View All Blogs →
+            </button>
           </div>
-        ))}
-      </div>
-    </section>
-  );
+        )}
+
+        <div className={styles.blogGrid}>
+          {personalizedBlogs.map((blog) => (
+            <div key={blog.id} onClick={() => handleBlogInteraction(blog.id, 'click')}>
+              <BlogCard
+                blog={blog}
+                onToggleSave={(id) => handleBlogInteraction(id, 'save')}
+                onMarkAsRead={(id) => handleBlogInteraction(id, 'read')}
+                showAuthor={true}
+                showSaveButton={true}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  } catch (error) {
+    console.error('PersonalizedBlogroll error:', error);
+    return (
+      <section className={`${styles.personalizedSection} ${className}`}>
+        <div className={styles.emptyState}>
+          <h3>Something went wrong</h3>
+          <p>We're experiencing technical difficulties. Please try refreshing the page.</p>
+        </div>
+      </section>
+    );
+  }
 };
 
 export default PersonalizedBlogroll;
