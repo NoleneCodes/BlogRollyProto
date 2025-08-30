@@ -58,7 +58,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     blogUrl: '',
     blogName: '',
     topics: [],
-    monetizationMethods: [],
+    monetisationMethods: [],
     blogPosts: ['', '', ''],
     agreeToTerms: false,
     confirmOwnership: false,
@@ -189,9 +189,9 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const handleMonetizationChange = (method: string, checked: boolean) => {
     setBloggerForm(prev => ({
       ...prev,
-      monetizationMethods: checked
-        ? [...(prev.monetizationMethods || []), method]
-        : (prev.monetizationMethods || []).filter(m => m !== method)
+      monetisationMethods: checked
+        ? [...(prev.monetisationMethods || []), method]
+        : (prev.monetisationMethods || []).filter(m => m !== method)
     }));
   };
 
