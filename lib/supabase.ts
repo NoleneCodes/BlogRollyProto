@@ -1,42 +1,28 @@
 // Supabase configuration and client setup
 import { createClient } from '@supabase/supabase-js'
 
-// Get environment variables with safe fallbacks
-const rawSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const rawSupabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
 
-// Check if we have valid Supabase configuration
-const hasValidConfig = rawSupabaseUrl !== 'your_supabase_url_here/' && 
-                      rawSupabaseUrl !== '' &&
-                      rawSupabaseKey !== 'your_supabase_anon_key_here' &&
-                      rawSupabaseKey !== '' &&
-                      rawSupabaseUrl.includes('.supabase.co') &&
-                      rawSupabaseUrl.startsWith('https://')
-
-// Use valid URLs for Supabase client creation
-const supabaseUrl = hasValidConfig ? rawSupabaseUrl : 'https://placeholder.supabase.co'
-const supabaseAnonKey = hasValidConfig ? rawSupabaseKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUwNzI0MDAsImV4cCI6MTk2MDY0ODQwMH0.abc123placeholder'
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+// Create a mock client if env vars are missing
+const createMockClient = () => ({
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    signInWithPassword: () => Promise.resolve({ data: { user: null }, error: { message: 'Mock client' } }),
+    signUp: () => Promise.resolve({ data: { user: null }, error: { message: 'Mock client' } }),
+    signOut: () => Promise.resolve({ error: null })
   },
-  global: {
-    headers: {
-      'Cache-Control': 'max-age=300'
-    }
-  },
-  db: {
-    schema: 'public'
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10
-    }
-  }
+  from: () => ({
+    select: () => Promise.resolve({ data: [], error: null }),
+    insert: () => Promise.resolve({ data: null, error: null }),
+    update: () => Promise.resolve({ data: null, error: null }),
+    delete: () => Promise.resolve({ data: null, error: null })
+  })
 })
+
+export const supabase = (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) 
+  ? createMockClient() 
+  : createClient(supabaseUrl, supabaseAnonKey)
 
 // Database Types and Enums
 export type UserRole = 'reader' | 'blogger' | 'admin' | 'moderator';
@@ -223,7 +209,7 @@ export interface EmailQueue {
 // Real Supabase authentication functions
 export const supabaseAuth = {
   signUp: async (email: string, password: string, metadata: any) => {
-    if (!hasValidConfig) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       console.warn('Supabase not configured - using mock auth');
       return { 
         data: { 
@@ -233,7 +219,7 @@ export const supabaseAuth = {
         error: null 
       };
     }
-    
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -249,7 +235,7 @@ export const supabaseAuth = {
     }
   },
   signIn: async (email: string, password: string) => {
-    if (!hasValidConfig) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       console.warn('Supabase not configured - using mock auth');
       return { 
         data: { 
@@ -259,7 +245,7 @@ export const supabaseAuth = {
         error: null 
       };
     }
-    
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -272,10 +258,10 @@ export const supabaseAuth = {
     }
   },
   signOut: async () => {
-    if (!hasValidConfig) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       return { error: null };
     }
-    
+
     try {
       const { error } = await supabase.auth.signOut();
       return { error };
@@ -284,10 +270,10 @@ export const supabaseAuth = {
     }
   },
   getSession: async () => {
-    if (!hasValidConfig) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       return { data: { session: null }, error: null };
     }
-    
+
     try {
       const { data, error } = await supabase.auth.getSession();
       return { data, error };
@@ -296,7 +282,7 @@ export const supabaseAuth = {
     }
   },
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
-    if (!hasValidConfig) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       // Return mock subscription for development
       return { 
         data: { 
@@ -304,7 +290,7 @@ export const supabaseAuth = {
         } 
       };
     }
-    
+
     try {
       const { data } = supabase.auth.onAuthStateChange(callback);
       return { data };
@@ -322,14 +308,14 @@ export const supabaseAuth = {
 export const supabaseDB = {
   // User Management
   insertUser: async (userData: any) => {
-    if (!hasValidConfig) {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       console.warn('Supabase not configured - using mock database');
       return { 
         data: [{ ...userData, id: 'mock-user-' + Date.now() }], 
         error: null 
       };
     }
-    
+
     try {
       const { data, error } = await supabase
         .from('users')
