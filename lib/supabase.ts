@@ -1,8 +1,15 @@
 // Supabase configuration and client setup
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
+// Check if we have valid Supabase configuration
+const hasValidConfig = supabaseUrl !== 'your_supabase_url_here/' && 
+                      supabaseUrl !== 'https://placeholder.supabase.co' &&
+                      supabaseAnonKey !== 'your_supabase_anon_key_here' &&
+                      supabaseAnonKey !== 'placeholder-key' &&
+                      supabaseUrl.includes('.supabase.co')
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -210,44 +217,123 @@ export interface EmailQueue {
 // Real Supabase authentication functions
 export const supabaseAuth = {
   signUp: async (email: string, password: string, metadata: any) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata
-      }
-    });
-    return { data, error };
+    if (!hasValidConfig) {
+      console.warn('Supabase not configured - using mock auth');
+      return { 
+        data: { 
+          user: { id: 'mock-user', email }, 
+          session: null 
+        }, 
+        error: null 
+      };
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: metadata
+        }
+      });
+      return { data, error };
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      return { data: null, error: { message: 'Authentication service unavailable' } };
+    }
   },
   signIn: async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    return { data, error };
+    if (!hasValidConfig) {
+      console.warn('Supabase not configured - using mock auth');
+      return { 
+        data: { 
+          user: { id: 'mock-user', email }, 
+          session: { access_token: 'mock-token' }
+        }, 
+        error: null 
+      };
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      return { data, error };
+    } catch (error: any) {
+      console.error('Auth error:', error);
+      return { data: null, error: { message: 'Authentication service unavailable' } };
+    }
   },
   signOut: async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    if (!hasValidConfig) {
+      return { error: null };
+    }
+    
+    try {
+      const { error } = await supabase.auth.signOut();
+      return { error };
+    } catch (error: any) {
+      return { error: { message: 'Sign out failed' } };
+    }
   },
   getSession: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    return { data, error };
+    if (!hasValidConfig) {
+      return { data: { session: null }, error: null };
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      return { data, error };
+    } catch (error: any) {
+      return { data: { session: null }, error: { message: 'Session check failed' } };
+    }
   },
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
-    const { data } = supabase.auth.onAuthStateChange(callback);
-    return { data };
+    if (!hasValidConfig) {
+      // Return mock subscription for development
+      return { 
+        data: { 
+          subscription: { unsubscribe: () => {} } 
+        } 
+      };
+    }
+    
+    try {
+      const { data } = supabase.auth.onAuthStateChange(callback);
+      return { data };
+    } catch (error: any) {
+      console.error('Auth state change error:', error);
+      return { 
+        data: { 
+          subscription: { unsubscribe: () => {} } 
+        } 
+      };
+    }
   }
 };
 
 export const supabaseDB = {
   // User Management
   insertUser: async (userData: any) => {
-    const { data, error } = await supabase
-      .from('users')
-      .insert([userData])
-      .select();
-    return { data, error };
+    if (!hasValidConfig) {
+      console.warn('Supabase not configured - using mock database');
+      return { 
+        data: [{ ...userData, id: 'mock-user-' + Date.now() }], 
+        error: null 
+      };
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .insert([userData])
+        .select();
+      return { data, error };
+    } catch (error: any) {
+      console.error('Database error:', error);
+      return { data: null, error: { message: 'Database service unavailable' } };
+    }
   },
 
   insertUserProfile: async (profileData: UserProfile) => {
