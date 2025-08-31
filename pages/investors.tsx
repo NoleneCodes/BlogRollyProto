@@ -426,8 +426,8 @@ const Investors: NextPage = () => {
         <div className={styles.roadmapPhase}>
           <h3>Vision – 2026 and beyond</h3>
           <ul className={styles.featureList}>
-            <li>• Dynamic AI-assisted blog collections directly addressing search queries</li>
-            <li>• Monetisation layers for advocates (Affiliate Programmes)</li>
+            <li>• Dymaic AI-assisted blog collections directly addressing search queries</li>
+            <li>• Monetisation layers for advocates (Affiliate Programs)</li>
             <li>• Indie press tools (newsletter/blogger events)</li>
           </ul>
         </div>

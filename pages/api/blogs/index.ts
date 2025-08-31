@@ -1,18 +1,8 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../../lib/supabase';
-import { getRateLimitMiddleware, apiRateLimit } from '../../../lib/rate-limit';
-import { sanitizeSearchQuery } from '../../../lib/validation';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Rate limiting
-  const rateLimitResult = getRateLimitMiddleware(apiRateLimit)(req);
-  if (!rateLimitResult.allowed) {
-    return res.status(429).json({ 
-      error: 'Too many requests', 
-      resetTime: rateLimitResult.resetTime 
-    });
-  }
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

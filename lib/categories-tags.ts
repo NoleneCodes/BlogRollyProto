@@ -52,7 +52,7 @@ export const createCustomCategory = (input: string): string => {
 export const TAGS = {
   'Themes & Topics': [
     'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
-    'Black Joy', 'Ancestral Healing', 'Decolonisation', 'Digital Minimalism',
+    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
     'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
     'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
     'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
