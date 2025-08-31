@@ -13,6 +13,7 @@ interface BlogPost {
   tags: string[];
   postUrl: string;
   imageUrl?: string;
+  image?: string; // Support both imageUrl and image for compatibility
   imageDescription?: string; // Description for image alt text
   hasAdultContent?: boolean;
   readTime?: string;

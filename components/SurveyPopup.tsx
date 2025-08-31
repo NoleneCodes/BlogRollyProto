@@ -48,29 +48,64 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
     // Validate required fields
     if (!surveyData.bloggerExperience) newErrors.bloggerExperience = 'Please select your blogging experience';
-    if (!surveyData.primaryGoal) newErrors.primaryGoal = 'Please select your primary goal';
+    if (!surveyData.primaryGoal) newErrors.primaryGoal = 'Please tell us your primary goal';
     if (!surveyData.audienceSize) newErrors.audienceSize = 'Please select your audience size';
     if (!surveyData.contentFrequency) newErrors.contentFrequency = 'Please select your posting frequency';
+    if (!surveyData.challengesFaced) newErrors.challengesFaced = 'Please share your main challenges';
     if (surveyData.discoveryMethods.length === 0) newErrors.discoveryMethods = 'Please select at least one discovery method';
-    if (!surveyData.challengesFaced) newErrors.challengesFaced = 'Please describe your main challenge';
-    if (!surveyData.currentMonetizationMethods || surveyData.currentMonetizationMethods.length === 0) {
-      newErrors.currentMonetizationMethods = 'Please select at least one option';
-    }
-    if (!surveyData.communityInterest) newErrors.communityInterest = 'Please select your community interest';
+    if (surveyData.platformsUsed.length === 0) newErrors.platformsUsed = 'Please select at least one platform';
+    if (surveyData.currentMonetizationMethods.length === 0) newErrors.currentMonetizationMethods = 'Please select at least one option';
+    if (!surveyData.communityInterest) newErrors.communityInterest = 'Please select your interest level';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    onComplete(surveyData);
-    onClose();
+    setIsSubmitting(true);
+
+    try {
+      // Get user ID - in a real app, this would come from authentication context
+      // For now, we'll use a placeholder since this is called during signup
+      const userId = 'temp_user_id'; // This should be replaced with actual user ID after account creation
+
+      // Save survey data to database
+      const { data, error } = await supabaseDB.insertSurveyFeedback({
+        user_id: userId,
+        blogger_experience: surveyData.bloggerExperience,
+        primary_goal: surveyData.primaryGoal,
+        audience_size: surveyData.audienceSize,
+        content_frequency: surveyData.contentFrequency,
+        discovery_methods: surveyData.discoveryMethods,
+        challenges_faced: surveyData.challengesFaced,
+        platforms_used: surveyData.platformsUsed,
+        current_monetization_methods: surveyData.currentMonetizationMethods,
+        community_interest: surveyData.communityInterest,
+        additional_features: surveyData.additionalFeatures || null,
+        feedback: surveyData.feedback || null
+      });
+
+      if (error) {
+        console.error('Survey submission error:', error);
+        setErrors({ submit: 'Failed to submit survey. Please try again.' });
+        return;
+      }
+
+      console.log('Survey data saved:', data);
+      onComplete(surveyData);
+      onClose();
+    } catch (error) {
+      console.error('Survey submission error:', error);
+      setErrors({ submit: 'Failed to submit survey. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -290,7 +325,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
               ))}
             </div>
             {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
-            
+
             {surveyData.currentMonetizationMethods.includes('Other monetisation method') && (
               <div style={{ marginTop: '1rem' }}>
                 <label className={styles.label}>

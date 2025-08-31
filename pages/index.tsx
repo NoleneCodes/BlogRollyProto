@@ -12,7 +12,7 @@ const Home: NextPage = () => {
         <p className={styles.description}>
           Discover and organise your favourite blogs in one place
         </p>
-        
+
         <div className={styles.searchSection}>
           <SearchBar 
             placeholder="Search blogs, topics, or authors..."

@@ -22,24 +22,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // Check if user has premium status
-    const { data: profile, error: profileError } = await supabase
-      .from('users')
-      .select('subscription_status, tier')
-      .eq('id', user.id)
-      .single();
-
-    if (profileError) {
-      console.error('Error fetching user profile:', profileError);
+    // Check if user has premium status with Stripe verification
+    const { isPremium, error: premiumError, tier } = await supabaseDB.isUserPremium(user.id);
+    
+    if (premiumError) {
+      console.error('Error checking premium status:', premiumError);
       return res.status(500).json({ error: 'Failed to check user status' });
     }
 
-    const isPremium = profile?.subscription_status === 'active' || profile?.tier === 'pro';
+    // Sync tier with Stripe status
+    await supabaseDB.verifyAndSyncUserTier(user.id);
     
     return res.status(200).json({ 
       canEditUrl: isPremium,
       isPremium,
-      tier: profile?.tier || 'free'
+      tier: tier || 'free',
+      note: 'This permission is for editing individual blog post URLs, not the main blog domain'
     });
     
   } catch (error) {

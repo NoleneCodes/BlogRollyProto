@@ -1,32 +1,71 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 
-import type { NextApiRequest, NextApiResponse } from 'next';
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-type AuthData = {
-  authenticated: boolean;
-  userId?: string;
-  userName?: string;
-  userRoles?: string;
-};
+  try {
+    const authHeader = req.headers.authorization;
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<AuthData>
-) {
-  // Check for Repl Auth headers
-  const userId = req.headers['x-replit-user-id'] as string;
-  const userName = req.headers['x-replit-user-name'] as string;
-  const userRoles = req.headers['x-replit-user-roles'] as string;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ 
+        authenticated: false, 
+        error: 'No authorization header' 
+      });
+    }
 
-  if (userId && userName) {
-    res.status(200).json({
+    const token = authHeader.split(' ')[1];
+
+    // Verify the JWT token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ 
+        authenticated: false, 
+        error: 'Invalid or expired token' 
+      });
+    }
+
+    // Get user profile
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select(`
+        *,
+        blogger_profiles(
+          stripe_customer_id,
+          subscription_status,
+          subscription_end_date
+        )
+      `)
+      .eq('user_id', user.id)
+      .single();
+
+    if (profileError) {
+      return res.status(500).json({ 
+        authenticated: false, 
+        error: 'Failed to load user profile' 
+      });
+    }
+
+    return res.status(200).json({
       authenticated: true,
-      userId,
-      userName,
-      userRoles
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: profile.first_name,
+        surname: profile.surname,
+        role: profile.role,
+        tier: profile.tier,
+        isAuthenticated: true
+      }
     });
-  } else {
-    res.status(200).json({
-      authenticated: false
+
+  } catch (error) {
+    console.error('Auth check error:', error);
+    return res.status(500).json({ 
+      authenticated: false, 
+      error: 'Authentication check failed' 
     });
   }
 }

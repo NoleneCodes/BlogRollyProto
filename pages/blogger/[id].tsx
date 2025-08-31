@@ -1,9 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogCard from '../../components/BlogCard';
+import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 import styles from '../../styles/PublicBloggerProfile.module.css';
+import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub, FaHeart, FaRegHeart } from 'react-icons/fa';
 
 interface BloggerProfile {
   id: string;
@@ -14,6 +15,15 @@ interface BloggerProfile {
   blogUrl: string;
   joinedDate: string;
   topics: string[];
+  isPro?: boolean;
+  socialLinks?: {
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+    youtube?: string;
+    tiktok?: string;
+    github?: string;
+  };
 }
 
 interface BlogPost {
@@ -40,18 +50,81 @@ const PublicBloggerProfile: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
       loadBloggerProfile(id as string);
+      checkAuthStatus();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (id && isAuthenticated) {
+      checkFollowStatus(id as string);
+    }
+  }, [id, isAuthenticated]);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      setIsAuthenticated(data.isAuthenticated);
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      setIsAuthenticated(false);
+    }
+  };
+
+  const checkFollowStatus = async (bloggerId: string) => {
+    try {
+      // In production, this would check if current user follows this blogger
+      // For now, simulate with localStorage
+      const followedBloggers = JSON.parse(localStorage.getItem('followedBloggers') || '[]');
+      setIsFollowing(followedBloggers.includes(bloggerId));
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+    }
+  };
+
+  const handleFollowToggle = async () => {
+    if (!isAuthenticated) {
+      router.push('/auth');
+      return;
+    }
+
+    setFollowLoading(true);
+    
+    try {
+      // In production, this would make an API call to follow/unfollow
+      // For now, simulate with localStorage
+      const followedBloggers = JSON.parse(localStorage.getItem('followedBloggers') || '[]');
+      
+      if (isFollowing) {
+        // Unfollow
+        const updatedFollowed = followedBloggers.filter((bloggerId: string) => bloggerId !== id);
+        localStorage.setItem('followedBloggers', JSON.stringify(updatedFollowed));
+        setIsFollowing(false);
+      } else {
+        // Follow
+        const updatedFollowed = [...followedBloggers, id];
+        localStorage.setItem('followedBloggers', JSON.stringify(updatedFollowed));
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   const loadBloggerProfile = async (bloggerId: string) => {
     try {
       // Mock data - in production this would fetch from your API/Supabase
       // This would query your database for the blogger and their approved, active posts
-      
+
       // Create different mock profiles based on blogger ID
       const mockProfiles: { [key: string]: BloggerProfile } = {
         'blogger_1': {
@@ -62,7 +135,16 @@ const PublicBloggerProfile: React.FC = () => {
           blogName: 'Mindful Productivity',
           blogUrl: 'https://mindfulproductivity.com',
           joinedDate: '2024-01-15',
-          topics: ['Productivity', 'Wellness', 'Personal Growth']
+          topics: ['Productivity', 'Wellness', 'Personal Growth'],
+          isPro: true,
+          socialLinks: {
+            twitter: 'https://twitter.com/sarahjohnson',
+            linkedin: 'https://linkedin.com/in/sarah-johnson-productivity',
+            instagram: 'https://instagram.com/mindfulproductivity',
+            youtube: '',
+            tiktok: '',
+            github: ''
+          }
         },
         'blogger_2': {
           id: bloggerId,
@@ -72,7 +154,8 @@ const PublicBloggerProfile: React.FC = () => {
           blogName: 'Tech & Balance',
           blogUrl: 'https://techandbalance.com',
           joinedDate: '2024-02-10',
-          topics: ['Tech', 'Mental Health', 'Career']
+          topics: ['Tech', 'Mental Health', 'Career'],
+          isPro: false
         },
         'blogger_3': {
           id: bloggerId,
@@ -82,20 +165,22 @@ const PublicBloggerProfile: React.FC = () => {
           blogName: 'Nourish Daily',
           blogUrl: 'https://nourishdaily.com',
           joinedDate: '2024-01-28',
-          topics: ['Food', 'Health', 'Nutrition']
+          topics: ['Food', 'Health', 'Nutrition'],
+          isPro: true
         }
       };
 
       // Get the profile or use a default one
       const mockBlogger = mockProfiles[bloggerId] || {
         id: bloggerId,
-        username: 'Blogger User',
+        displayName: 'Blogger User',
         bio: 'Welcome to my blog! I share insights and stories about my passions.',
         avatar: `https://picsum.photos/150/150?random=${Math.floor(Math.random() * 10)}`,
         blogName: 'My Blog',
         blogUrl: 'https://example.com',
         joinedDate: '2024-01-01',
-        topics: ['General', 'Writing']
+        topics: ['General', 'Writing'],
+        isPro: false
       };
 
       // Create different mock blog posts based on blogger ID
@@ -237,6 +322,10 @@ const PublicBloggerProfile: React.FC = () => {
     );
   }
 
+  const handleTopicFilter = (topic: string) => {
+    router.push(`/blogroll?tag=${encodeURIComponent(topic)}`);
+  };
+
   return (
     <Layout title={`${blogger.displayName} - Blogrolly`}>
       <div className={styles.profileContainer}>
@@ -250,35 +339,110 @@ const PublicBloggerProfile: React.FC = () => {
               </div>
             )}
           </div>
-          
+
           <div className={styles.profileInfo}>
             <h1 className={styles.displayName}>{blogger.displayName}</h1>
             <div className={styles.blogInfo}>
               <span className={styles.blogLabel}>Blog:</span>
               <h2 className={styles.blogName}>{blogger.blogName}</h2>
             </div>
-            
+
             {blogger.bio && (
               <p className={styles.bio}>{blogger.bio}</p>
             )}
-            
-            <div className={styles.profileMeta}>
-              <div className={styles.metaItem}>
-                <span className={styles.metaLabel}>Topics:</span>
-                <div className={styles.topicTags}>
-                  {blogger.topics.map((topic, index) => (
-                    <a 
-                      key={index} 
-                      href={`/blogroll?tag=${encodeURIComponent(topic)}`}
-                      className={styles.topicTag}
-                    >
-                      {topic}
-                    </a>
-                  ))}
+
+            {blogger.isPro && (
+              <div className={styles.profileMeta}>
+                <div className={styles.metaItem}>
+                  <span className={styles.metaLabel}>Talks about:</span>
+                  <div className={styles.topicTags}>
+                    {blogger.topics.map((topic, index) => (
+                      <a 
+                        key={index} 
+                        href={`/blogroll?tag=${encodeURIComponent(topic)}`}
+                        className={styles.topicTag}
+                      >
+                        {topic}
+                      </a>
+                    ))}
+                  </div>
                 </div>
+                {blogger.socialLinks && Object.entries(blogger.socialLinks).some(([_, url]) => url) && (
+                  <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Connect:</span>
+                    <div className={styles.socialLinks}>
+                      {blogger.socialLinks.twitter && (
+                        <a 
+                          href={blogger.socialLinks.twitter} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="Twitter"
+                        >
+                          <FaTwitter />
+                        </a>
+                      )}
+                      {blogger.socialLinks.linkedin && (
+                        <a 
+                          href={blogger.socialLinks.linkedin} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="LinkedIn"
+                        >
+                          <FaLinkedin />
+                        </a>
+                      )}
+                      {blogger.socialLinks.instagram && (
+                        <a 
+                          href={blogger.socialLinks.instagram} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="Instagram"
+                        >
+                          <FaInstagram />
+                        </a>
+                      )}
+                      {blogger.socialLinks.youtube && (
+                        <a 
+                          href={blogger.socialLinks.youtube} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="YouTube"
+                        >
+                          <FaYoutube />
+                        </a>
+                      )}
+                      {blogger.socialLinks.tiktok && (
+                        <a 
+                          href={blogger.socialLinks.tiktok} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="TikTok"
+                        >
+                          <FaTiktok />
+                        </a>
+                      )}
+                      {blogger.socialLinks.github && (
+                        <a 
+                          href={blogger.socialLinks.github} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className={styles.socialLink}
+                          title="GitHub"
+                        >
+                          <FaGithub />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-            
+            )}
+
             <div className={styles.profileActions}>
               <a 
                 href={blogger.blogUrl} 
@@ -288,6 +452,26 @@ const PublicBloggerProfile: React.FC = () => {
               >
                 Visit {blogger.blogName} →
               </a>
+              {blogger.isPro && (
+                <button
+                  onClick={handleFollowToggle}
+                  disabled={followLoading}
+                  className={`${styles.followButton} ${isFollowing ? styles.following : ''}`}
+                  title={isFollowing ? 'Unfollow this blogger' : 'Follow this blogger'}
+                >
+                  {followLoading ? (
+                    <span className={styles.followButtonContent}>
+                      <span className={styles.followSpinner}></span>
+                      {isFollowing ? 'Unfollowing...' : 'Following...'}
+                    </span>
+                  ) : (
+                    <span className={styles.followButtonContent}>
+                      {isFollowing ? <FaHeart /> : <FaRegHeart />}
+                      {isFollowing ? 'Following' : 'Follow'}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -297,7 +481,7 @@ const PublicBloggerProfile: React.FC = () => {
             <h3>Published on Blogrolly ({blogPosts.length})</h3>
             <p>These are {blogger.displayName.split(' ')[0]}'s featured blog posts on Blogrolly</p>
           </div>
-          
+
           {blogPosts.length > 0 ? (
             <div className={styles.blogrollGrid}>
               {blogPosts.map((post) => (

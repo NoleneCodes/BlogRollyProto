@@ -1,8 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
+import { MAIN_CATEGORIES, validateCustomInput } from '../lib/categories-tags';
+import { CustomCategoryInput } from './CustomCategoryInput';
 
 interface AuthFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -55,6 +56,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     subscribeToUpdates: false
   });
 
+  const [customTopic, setCustomTopic] = useState('');
+
   // Sign in form state
   const [signInForm, setSignInForm] = useState<SignInFormData>({
     email: '',
@@ -62,13 +65,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showOtherTopic, setShowOtherTopic] = useState(false);
 
-  const topicOptions = [
-    'Culture & Society', 'Travel', 'Health & Wellness', 'Feminism', 'Tech', 
-    'Homesteading', 'Books & Media', 'Money & Work', 'Spirituality', 
-    'Creativity', 'Relationships', 'Food', 'Learning', 'Society & Politics', 'Other'
-  ];
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -121,15 +119,47 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const handleReaderTopicChange = (topic: string, checked: boolean) => {
     if (topic === 'Other') {
-      setShowOtherTopic(checked);
+      if (checked) {
+        setReaderForm(prev => ({
+          ...prev,
+          topics: [...prev.topics, 'Other']
+        }));
+      } else {
+        setReaderForm(prev => ({
+          ...prev,
+          topics: prev.topics.filter(t => t !== 'Other' && t !== prev.otherTopic),
+          otherTopic: ''
+        }));
+        setCustomTopic('');
+      }
+    } else {
+      setReaderForm(prev => ({
+        ...prev,
+        topics: checked 
+          ? [...prev.topics, topic]
+          : prev.topics.filter(t => t !== topic)
+      }));
     }
+  };
 
-    setReaderForm(prev => ({
-      ...prev,
-      topics: checked 
-        ? [...prev.topics, topic]
-        : prev.topics.filter(t => t !== topic)
-    }));
+  const handleCustomTopicChange = (value: string) => {
+    setCustomTopic(value);
+    const validation = validateCustomInput(value);
+
+    if (validation.isValid && value.trim()) {
+      const formattedTopic = formatCustomInput(value);
+      setReaderForm(prev => ({
+        ...prev,
+        topics: [...prev.topics.filter(t => t !== prev.otherTopic), formattedTopic],
+        otherTopic: formattedTopic
+      }));
+    } else if (readerForm.otherTopic) {
+      setReaderForm(prev => ({
+        ...prev,
+        topics: prev.topics.filter(t => t !== prev.otherTopic),
+        otherTopic: ''
+      }));
+    }
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -146,17 +176,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
     // TODO: Implement Supabase authentication
     console.log('Sign in attempted:', signInForm);
-    
+
     // Mock successful authentication - replace with actual Supabase logic
     // For now, assume all users are readers unless they have blogger role
     const userRoles = ['reader']; // This would come from your database
-    
+
     if (userRoles.includes('blogger')) {
       router.push('/profile/blogger');
     } else {
       router.push('/profile/reader');
     }
-    
+
     alert('Sign in successful! Welcome back!');
   };
 
@@ -184,7 +214,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     // TODO: Implement Supabase authentication
     console.log('Reader form submitted:', readerForm);
     alert('Account created successfully! Welcome to BlogRolly!');
-    
+
     // Redirect to reader profile
     router.push('/profile/reader');
   };
@@ -217,7 +247,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
         <div className={styles.authCard}>
           <h2>Welcome to Blogrolly</h2>
           <p>Join our community of readers and bloggers</p>
-          
+
           <div className={styles.modeSelection}>
             <button 
               className={styles.modeButton}
@@ -226,7 +256,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               <h3>Create Account</h3>
               <p>New to Blogrolly? Sign up to start discovering amazing blogs or share your own.</p>
             </button>
-            
+
             <button 
               className={styles.modeButton}
               onClick={() => setAuthMode('signin')}
@@ -235,7 +265,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               <p>Already have an account? Sign in to access your dashboard and submissions.</p>
             </button>
           </div>
-          
+
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <button 
               className={styles.linkButton}
@@ -442,28 +472,29 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             <div className={styles.formGroup}>
               <label className={styles.label}>Topics You're Into *</label>
               <div className={styles.checkboxGrid}>
-                {topicOptions.map(topic => (
-                  <label key={topic} className={styles.checkboxLabel}>
+                {MAIN_CATEGORIES.map(category => (
+                  <label key={category} className={styles.checkboxLabel}>
                     <input
                       type="checkbox"
-                      checked={readerForm.topics.includes(topic)}
-                      onChange={(e) => handleReaderTopicChange(topic, e.target.checked)}
+                      checked={readerForm.topics.includes(category)}
+                      onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
                       className={styles.checkbox}
                     />
-                    <span className={styles.checkboxText}>{topic}</span>
+                    <span className={styles.checkboxText}>{category}</span>
                   </label>
                 ))}
               </div>
+
+              <CustomCategoryInput
+                selectedCategories={readerForm.topics}
+                onCategoryChange={(categories) => 
+                  setReaderForm(prev => ({ ...prev, topics: categories }))
+                }
+                maxWords={3}
+                label="Add your custom topic (one word at a time, max 3 words)"
+              />
+
               {errors.topics && <span className={styles.error}>{errors.topics}</span>}
-              {showOtherTopic && (
-                <textarea
-                  value={readerForm.otherTopic}
-                  onChange={(e) => setReaderForm(prev => ({ ...prev, otherTopic: e.target.value }))}
-                  className={styles.textarea}
-                  placeholder="Tell us your niche."
-                  rows={3}
-                />
-              )}
             </div>
 
             <div className={styles.formGroup}>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
+import { CustomCategoryInput } from './CustomCategoryInput';
 import styles from '../styles/BlogSubmissionForm.module.css';
 import SubmissionGuidelinesPopup from './SubmissionGuidelinesPopup';
+import DomainVerificationModal from './DomainVerificationModal';
 
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
@@ -26,70 +29,7 @@ interface FormData {
   hasAdultContent: boolean;
 }
 
-const MAIN_CATEGORIES = [
-  'Lifestyle',
-  'Health & Wellness',
-  'Culture & Society',
-  'Tech & Digital Life',
-  'Creative Expression',
-  'Work & Money',
-  'Education & Learning',
-  'Relationships & Emotions',
-  'Art & Media',
-  'Home & Garden',
-  'Food & Drink',
-  'Travel & Places',
-  'Identity & Intersectionality',
-  'Spirituality & Inner Work',
-  'Opinion & Commentary',
-  'Other'
-];
 
-const TAGS = {
-  'Themes & Topics': [
-    'Mental Health', 'Self-Care', 'Productivity', 'Feminism', 'Queer Experience',
-    'Black Joy', 'Ancestral Healing', 'Decolonization', 'Digital Minimalism',
-    'Burnout Recovery', 'Entrepreneurship', 'Diaspora Life', 'Spiritual Practices',
-    'Financial Literacy', 'Personal Growth', 'Tech for Good', 'Neurodivergence',
-    'Motherhood', 'Body Image', 'Healing Justice', 'Climate & Ecology',
-    'Herbalism', 'Relationships', 'Grief', 'Joy', 'Education Reform',
-    'Activism', 'Sensuality', 'Conscious Living', 'Food Sovereignty',
-    'Solo Travel', 'Ethical Consumption', 'Language & Identity', 'Book Reviews',
-    'Film Criticism', 'Indie Publishing', 'Developer Life', 'Design Thinking',
-    'Open Source', 'Minimalist Living', 'Mindful Parenting', 'Student Life',
-    'Street Culture', 'AfroFuturism', 'Slow Fashion', 'Unschooling',
-    'Sex Positivity', 'AI Reflections', 'Coding in Public', 'Personal Finance',
-    'Freelance Tips', 'Sustainable Living', 'Home Projects', 'Permaculture',
-    'Gardening', 'Beauty & Skincare', 'Journalism', 'Local Stories',
-    'Tech Trends', 'Intimacy', 'Zine Culture', 'Religious Identity',
-    'Addiction & Recovery', 'Chronic Illness', 'Other'
-  ],
-  'Structure / Format': [
-    'Listicle', 'Longform Essay', 'Personal Diary', 'Photo Essay', 'Letter',
-    'Manifesto', 'Interview', 'Tutorial', 'Poem', 'Short Story', 'Q&A',
-    'Open Thread', 'Roundup', 'Resource Guide', 'Commentary', 'Thought Piece',
-    'Audio Journal', 'Microblog', 'Illustrated Piece', 'Visual Essay',
-    'Thread Dump', 'Journal Entry', 'Other'
-  ],
-  'Vibe / Tone': [
-    'Vulnerable', 'Funny', 'Educational', 'Chill', 'Angry', 'Empowering',
-    'Comforting', 'Provocative', 'Uplifting', 'Raw & Unfiltered', 'Philosophical',
-    'Meditative', 'Sarcastic', 'Loving', 'Analytical', 'Dreamy', 'Manifesting',
-    'Deep Dive', 'Reflective', 'Activist', 'Spiritual', 'Poetic', 'Other'
-  ],
-  'Intended Audience': [
-    'For Creatives', 'For Founders', 'For Parents', 'For Coders', 'For Students',
-    'For Readers', 'For Black Women', 'For the Diaspora', 'For Queer Folks',
-    'For Neurodivergents', 'For Healers', 'For Side Hustlers', 'For Burnt-Out People',
-    'For the Culture', 'For Survivors', 'For Book Lovers', 'For Poets',
-    'For Makers', 'For Beginners', 'For the Overwhelmed', 'Other'
-  ],
-  'Content Filters': [
-    'Evergreen', 'Trending', 'Monthly Highlight', 'Seasonal', 'Archive Gem',
-    'Hot Take', 'Experimental', 'Series Part', 'Collaboration', 'Anonymous',
-    'Sponsored', 'Debut Blog', 'Staff Pick', 'Reader Pick', 'Other'
-  ]
-};
 
 const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ 
   onSubmit, 
@@ -149,6 +89,72 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     );
   }
 
+  // Check domain verification status for existing bloggers
+  const [domainVerificationStatus, setDomainVerificationStatus] = useState<'loading' | 'verified' | 'pending' | 'failed' | null>(null);
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+
+  useEffect(() => {
+    if (isBlogger && !isSignupMode) {
+      checkDomainVerification();
+    }
+  }, [isBlogger, isSignupMode]);
+
+  const checkDomainVerification = async () => {
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      
+      if (data.bloggerProfile) {
+        setDomainVerificationStatus(data.bloggerProfile.domain_verification_status || 'pending');
+      }
+    } catch (error) {
+      console.error('Failed to check domain verification:', error);
+      setDomainVerificationStatus('pending');
+    }
+  };
+
+  // Show domain verification requirement if not verified
+  if (isBlogger && !isSignupMode && domainVerificationStatus && domainVerificationStatus !== 'verified') {
+    return (
+      <div className={styles.formContainer}>
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '2rem',
+          backgroundColor: '#fef3cd',
+          borderRadius: '8px',
+          border: '1px solid #fbbf24'
+        }}>
+          <h3 style={{ color: '#d97706', marginBottom: '1rem' }}>
+            Domain Verification Required
+          </h3>
+          <p style={{ color: '#92400e', marginBottom: '1.5rem' }}>
+            You must verify ownership of your blog domain before you can submit content for approval. 
+            This ensures that only legitimate blog owners can submit posts to BlogRolly.
+          </p>
+          <button
+            onClick={() => setShowDomainVerification(true)}
+            style={{
+              background: '#c42142',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
+            Verify Your Domain
+          </button>
+          {domainVerificationStatus === 'failed' && (
+            <p style={{ color: '#dc2626', marginTop: '1rem', fontSize: '0.875rem' }}>
+              Previous verification attempt failed. Please try again.
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   const [progress, setProgress] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState('');
@@ -157,6 +163,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   // Calculate progress based on filled fields
   useEffect(() => {
@@ -187,14 +194,14 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       hasAdultContent: formData.hasAdultContent,
       savedAt: new Date().toISOString()
     };
-    
+
     localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
     setDraftSaved(true);
     setLastSavedAt(new Date().toLocaleTimeString());
-    
+
     // Notify parent component that draft was saved
     onDraftSaved?.();
-    
+
     // Clear the "saved" indicator after 3 seconds
     setTimeout(() => {
       setDraftSaved(false);
@@ -270,10 +277,12 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       ...prev, 
       category
     }));
+
+    setShowCustomCategory(category === 'Other');
   };
 
   const handleTagAdd = (tag: string) => {
-    if (formData.tags.length < 10 && !formData.tags.includes(tag)) {
+    if (formData.tags.length < 4 && !formData.tags.includes(tag)) {
       setFormData(prev => ({ ...prev, tags: [...prev.tags, tag] }));
     }
     setTagInput('');
@@ -287,21 +296,55 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     }));
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setFormData(prev => ({ ...prev, postUrl: url }));
 
-    if (url && !validateUrl(url)) {
+    if (!url) {
+      setErrors(prev => ({ ...prev, postUrl: '' }));
+      return;
+    }
+
+    if (!validateUrl(url)) {
       setErrors(prev => ({ 
         ...prev, 
         postUrl: 'URL must start with https:// and contain a path (e.g., /blog/my-post)' 
       }));
-    } else {
+      return;
+    }
+
+    // Validate domain matches blogger's verified domain
+    try {
+      const response = await fetch('/api/auth-check');
+      const data = await response.json();
+      
+      if (data.bloggerProfile?.blog_url) {
+        const { DomainVerificationService } = await import('../lib/domainVerification');
+        const domainValidation = DomainVerificationService.validatePostUrlMatchesBlogDomain(
+          url, 
+          data.bloggerProfile.blog_url
+        );
+        
+        if (!domainValidation.isValid) {
+          setErrors(prev => ({ 
+            ...prev, 
+            postUrl: domainValidation.error || 'Blog post must be from your verified domain' 
+          }));
+          return;
+        }
+      }
+      
       setErrors(prev => ({ ...prev, postUrl: '' }));
+    } catch (error) {
+      console.error('Domain validation error:', error);
+      setErrors(prev => ({ 
+        ...prev, 
+        postUrl: 'Unable to validate domain. Please try again.' 
+      }));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate required fields
@@ -316,12 +359,96 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     if (!formData.postUrl.trim()) newErrors.postUrl = 'Post URL is required';
     if (!validateUrl(formData.postUrl)) newErrors.postUrl = 'Invalid URL format';
 
+    // Additional validation for adult content
+    if (formData.hasAdultContent) {
+      try {
+        const authResponse = await fetch('/api/auth-check');
+        const authData = await authResponse.json();
+        
+        if (!authData.userProfile?.age_verified) {
+          newErrors.hasAdultContent = 'Age verification required to submit adult content. Please verify your age in profile settings.';
+        }
+      } catch (error) {
+        newErrors.hasAdultContent = 'Unable to verify age status. Please try again.';
+      }
+    }
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      onSubmit?.(formData);
-      // Clear draft after successful submission
-      localStorage.removeItem('blogSubmissionDraft');
+      try {
+        // Upload image if it's a file
+        let imageUrl = '';
+        let imageType = 'url';
+        let imageFilePath = '';
+
+        if (formData.image) {
+          const imageFormData = new FormData();
+          imageFormData.append('image', formData.image);
+
+          const uploadResponse = await fetch('/api/upload-image', {
+            method: 'POST',
+            body: imageFormData
+          });
+
+          const uploadData = await uploadResponse.json();
+
+          if (!uploadResponse.ok) {
+            setErrors(prev => ({ 
+              ...prev, 
+              image: uploadData.error || 'Failed to upload image' 
+            }));
+            return;
+          }
+
+          imageUrl = uploadData.imageUrl;
+          imageType = 'upload';
+          imageFilePath = uploadData.filePath;
+        }
+
+        // Final server-side validation before submission
+        const authResponse = await fetch('/api/auth-check');
+        const authData = await authResponse.json();
+        
+        if (authData.session?.access_token) {
+          const validationResponse = await fetch('/api/validate-blog-url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authData.session.access_token}`
+            },
+            body: JSON.stringify({ postUrl: formData.postUrl })
+          });
+
+          const validationData = await validationResponse.json();
+
+          if (!validationData.valid) {
+            setErrors(prev => ({ 
+              ...prev, 
+              postUrl: validationData.error || 'Blog post URL validation failed' 
+            }));
+            return;
+          }
+        }
+
+        // Add image data to form submission
+        const submissionData = {
+          ...formData,
+          imageUrl,
+          imageType,
+          imageFilePath
+        };
+
+        onSubmit?.(submissionData);
+        // Clear draft after successful submission
+        localStorage.removeItem('blogSubmissionDraft');
+      } catch (error) {
+        console.error('Submission error:', error);
+        setErrors(prev => ({ 
+          ...prev, 
+          image: 'Failed to process image upload. Please try again.' 
+        }));
+      }
     }
   };
 
@@ -390,7 +517,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         >
           {draftSaved ? '✓ Draft Saved' : 'Save Draft'}
         </button>
-        
+
         {(formData.title || formData.description || formData.postUrl || lastSavedAt) && (
           <button 
             type="button"
@@ -421,7 +548,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             </div>
           )}
           <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP</small>
-          
+
           {formData.image && (
             <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
               <label className={styles.label}>
@@ -490,15 +617,28 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             {MAIN_CATEGORIES.map(category => (
               <option key={category} value={category}>{category}</option>
             ))}
+             <option value="Other">Other</option>
           </select>
           {errors.category && <span className={styles.error}>{errors.category}</span>}
         </div>
+
+         {/* Custom Category Input */}
+         {showCustomCategory && (
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Custom Category *
+            </label>
+            <CustomCategoryInput
+              onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+            />
+          </div>
+        )}
 
         {/* Step 5: Tags */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
             Tags
-            <span className={styles.optional}>(Up to 10 tags)</span>
+            <span className={styles.optional}>(Up to 4 tags)</span>
           </label>
 
           <div className={styles.tagsContainer}>
@@ -516,7 +656,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             ))}
           </div>
 
-          {formData.tags.length < 10 && (
+          {formData.tags.length < 4 && (
             <div className={styles.tagInputContainer}>
               <input
                 type="text"
@@ -556,7 +696,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
                       key={tag}
                       type="button"
                       onClick={() => handleTagAdd(tag)}
-                      disabled={formData.tags.includes(tag) || formData.tags.length >= 10}
+                      disabled={formData.tags.includes(tag) || formData.tags.length >= 4}
                       className={`${styles.tagCategoryTag} ${formData.tags.includes(tag) ? styles.tagSelected : ''}`}
                     >
                       {tag}
@@ -599,8 +739,9 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
               This content includes adult themes or material (18+ only)
             </span>
           </label>
+          {errors.hasAdultContent && <span className={styles.error}>{errors.hasAdultContent}</span>}
           <small className={styles.hint}>
-            Adult content will be filtered out for users under 18
+            Adult content requires age verification for both submission and viewing. Only age-verified users (18+) can submit and view this content.
           </small>
         </div>
 
@@ -619,6 +760,20 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         isOpen={showSubmissionGuidelinesPopup}
         onClose={() => setShowSubmissionGuidelinesPopup(false)}
       />
+
+      {/* Domain Verification Modal */}
+      {showDomainVerification && (
+        <DomainVerificationModal
+          isOpen={showDomainVerification}
+          onClose={() => setShowDomainVerification(false)}
+          blogUrl={formData.postUrl || 'https://example.com'}
+          verificationToken="blogrolly-verify-placeholder"
+          onVerificationComplete={() => {
+            setDomainVerificationStatus('verified');
+            setShowDomainVerification(false);
+          }}
+        />
+      )}
     </div>
   );
 };

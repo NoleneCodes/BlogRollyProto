@@ -4,8 +4,10 @@ import Layout from '../../components/Layout';
 import BlogPostManager from '../../components/BlogPostManager';
 import { getAllInternalBlogPosts, deleteInternalBlogPost, InternalBlogPost } from '../../lib/internalBlogData';
 import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
+import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, addEmailToThread, SupportRequest } from '../../lib/supportRequestData';
 import { BlogSubmission, BlogStatus, RejectionReason, BlogStatusHelpers } from '../../lib/supabase';
 import { supabase } from '../../lib/supabase';
+import { securityLogger } from '../../lib/security-logger';
 import styles from '../../styles/AdminDashboard.module.css';
 
 interface AdminUser {
@@ -372,38 +374,402 @@ const BugReports = () => {
   );
 };
 
+const LinkedInVerifications = () => {
+  const [verifications, setVerifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedVerification, setSelectedVerification] = useState<any>(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [selectedRejectionReason, setSelectedRejectionReason] = useState<RejectionReason | ''>('');
+  const [customRejectionReason, setCustomRejectionReason] = useState('');
+
+  useEffect(() => {
+    loadVerifications();
+  }, []);
+
+  const loadVerifications = async () => {
+    try {
+      // In a real implementation, you'd fetch from your database
+      // For now, I'll create mock data that would come from supabase
+      const mockVerifications = [
+        {
+          id: '1',
+          name: 'John Smith',
+          email: 'john.smith@investment.com',
+          linkedin_url: 'https://linkedin.com/in/johnsmith-investor',
+          linkedin_verification_token: 'token123',
+          verification_status: 'pending_linkedin',
+          created_at: '2025-01-24T10:00:00Z'
+        },
+        {
+          id: '2',
+          name: 'Sarah Johnson',
+          email: 'sarah.j@venture.com',
+          linkedin_url: 'https://linkedin.com/in/sarahjohnson-vc',
+          linkedin_verification_token: 'token456',
+          verification_status: 'pending_linkedin',
+          created_at: '2025-01-24T11:30:00Z'
+        }
+      ];
+
+      setVerifications(mockVerifications.filter(v => v.verification_status === 'pending_linkedin'));
+    } catch (error) {
+      console.error('Failed to load LinkedIn verifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveLinkedIn = async (verificationToken: string, approved: boolean, rejectionReason?: string) => {
+    try {
+      const response = await fetch('/api/investor/approve-linkedin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          verificationToken,
+          approved,
+          rejectionReason
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`LinkedIn verification ${approved ? 'approved' : 'rejected'} successfully!`);
+        loadVerifications(); // Refresh the list
+        setShowViewModal(false);
+      } else {
+        alert(`Failed to ${approved ? 'approve' : 'reject'} verification: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error processing LinkedIn verification:', error);
+      alert('Network error occurred. Please try again.');
+    }
+  };
+
+  const handleViewVerification = (verification: any) => {
+    setSelectedVerification(verification);
+    setShowViewModal(true);
+  };
+
+  const handleRejectVerification = (verification: any) => {
+    setSelectedVerification(verification);
+    setShowRejectionModal(true);
+  };
+
+  const handleSubmitRejection = async () => {
+    if (!selectedVerification) return;
+
+    let rejectionReason = selectedRejectionReason;
+
+    if (selectedRejectionReason === 'other') {
+      rejectionReason = customRejectionReason;
+    }
+
+    await handleApproveLinkedIn(selectedVerification.linkedin_verification_token, false, rejectionReason);
+    setShowRejectionModal(false);
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.sectionContent}>
+        <div className={styles.sectionHeader}>
+          <h2>LinkedIn Verifications</h2>
+          <p>Loading pending verifications...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.sectionContent}>
+      <div className={styles.sectionHeader}>
+        <h2>LinkedIn Verifications</h2>
+        <p>Review and approve investor LinkedIn profiles</p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>{verifications.length}</h3>
+          <p>Pending Reviews</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>24hr</h3>
+          <p>Avg Review Time</p>
+        </div>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>LinkedIn Profile</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {verifications.map((verification) => (
+              <tr key={verification.id}>
+                <td><strong>{verification.name}</strong></td>
+                <td>{verification.email}</td>
+                <td>
+                  <a 
+                    href={verification.linkedin_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.linkedinLink}
+                  >
+                    View Profile
+                  </a>
+                </td>
+                <td>{new Date(verification.created_at).toLocaleDateString()}</td>
+                <td>
+                  <div className={styles.verificationActions}>
+                    <button 
+                      className={styles.approveButton}
+                      onClick={() => handleApproveLinkedIn(verification.linkedin_verification_token, true)}
+                    >
+                      ✓ Approve
+                    </button>
+                    <button 
+                      className={styles.rejectButton}
+                      onClick={() => handleRejectVerification(verification)}
+                    >
+                      ✗ Reject
+                    </button>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleViewVerification(verification)}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {verifications.length === 0 && (
+          <div className={styles.emptyState}>
+            <h3>No pending LinkedIn verifications</h3>
+            <p>All investor LinkedIn profiles have been reviewed.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Verification View Modal */}
+      {showViewModal && selectedVerification && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>LinkedIn Verification Details</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.verificationDetails}>
+              <div className={styles.verificationSection}>
+                <h5>Investor Information</h5>
+                <p><strong>Name:</strong> {selectedVerification.name}</p>
+                <p><strong>Email:</strong> {selectedVerification.email}</p>
+                <p><strong>Submitted:</strong> {new Date(selectedVerification.created_at).toLocaleString()}</p>
+              </div>
+
+              <div className={styles.verificationSection}>
+                <h5>LinkedIn Profile</h5>
+                <p><strong>URL:</strong> <a href={selectedVerification.linkedin_url} target="_blank" rel="noopener noreferrer">{selectedVerification.linkedin_url}</a></p>
+                <p><em>Please review the LinkedIn profile to verify:</em></p>
+                <ul>
+                  <li>Profile belongs to a legitimate investor or investment professional</li>
+                  <li>Profile shows relevant investment experience</li>
+                  <li>Profile appears complete and professional</li>
+                  <li>Name matches the registration information</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.approveButton}
+                onClick={() => handleApproveLinkedIn(selectedVerification.linkedin_verification_token, true)}
+              >
+                ✓ Approve Verification
+              </button>
+              <button 
+                className={styles.rejectButton}
+                onClick={() => handleRejectVerification(verification)}
+              >
+                ✗ Reject Verification
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => setShowViewModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rejection Reason Modal */}
+      {showRejectionModal && selectedVerification && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>Reject LinkedIn Verification</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowRejectionModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.rejectionReasonForm}>
+              <div className={styles.rejectionSection}>
+                <h5>Investor: {selectedVerification.name}</h5>
+                <p>Please select a reason for rejecting this LinkedIn verification:</p>
+              </div>
+
+              <div className={styles.rejectionReasons}>
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="incomplete_profile"
+                    checked={selectedRejectionReason === 'incomplete_profile'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Incomplete LinkedIn profile</span>
+                  <small>Profile is missing key professional information</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="insufficient_experience"
+                    checked={selectedRejectionReason === 'insufficient_experience'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Insufficient investment experience</span>
+                  <small>Profile lacks relevant investment or business background</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="unverified_identity"
+                    checked={selectedRejectionReason === 'unverified_identity'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Identity verification failed</span>
+                  <small>Unable to verify profile belongs to the applicant</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="fake_profile"
+                    checked={selectedRejectionReason === 'fake_profile'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Suspicious or fake profile</span>
+                  <small>Profile appears to be inauthentic</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="privacy_settings"
+                    checked={selectedRejectionReason === 'privacy_settings'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Privacy settings too restrictive</span>
+                  <small>Profile privacy prevents proper verification</small>
+                </label>
+
+                <label className={styles.reasonOption}>
+                  <input
+                    type="radio"
+                    name="rejectionReason"
+                    value="other"
+                    checked={selectedRejectionReason === 'other'}
+                    onChange={(e) => setSelectedRejectionReason(e.target.value)}
+                  />
+                  <span>Other reason</span>
+                  <small>Specify custom rejection reason</small>
+                </label>
+
+                {selectedRejectionReason === 'other' && (
+                  <div className={styles.customReasonInput}>
+                    <textarea
+                      value={customRejectionReason}
+                      onChange={(e) => setCustomRejectionReason(e.target.value)}
+                      placeholder="Please provide a specific reason for rejection..."
+                      className={styles.rejectionTextarea}
+                      rows={3}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.rejectionActions}>
+                <button 
+                  className={styles.confirmRejectButton}
+                  onClick={handleSubmitRejection}
+                  disabled={!selectedRejectionReason || (selectedRejectionReason === 'other' && !customRejectionReason.trim())}
+                >
+                  Confirm Rejection
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => {
+                    setShowRejectionModal(false);
+                    setSelectedRejectionReason('');
+                    setCustomRejectionReason('');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const SupportRequests = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
-  const [priorityFilter, setPriorityFilter] = useState<'all' | 'critical' | 'high' | 'medium' | 'low'>('all');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low' | 'critical'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'responded' | 'closed'>('all');
-  const [supportRequestsData] = useState([
-    {
-      id: 'SUP-001',
-      subject: 'Cannot access premium features',
-      priority: 'high',
-      user: 'premium@user.com',
-      status: 'open',
-      created: '2025-01-24',
-      dateSort: new Date('2025-01-24').getTime(),
-      message: 'I upgraded to premium but still cannot access premium features. The payment went through successfully.',
-      email: 'premium@user.com',
-      submittedAt: new Date('2025-01-24')
-    },
-    {
-      id: 'SUP-002',
-      subject: 'Question about blog submission',
-      priority: 'low',
-      user: 'newuser@blog.com',
-      status: 'responded',
-      created: '2025-01-23',
-      dateSort: new Date('2025-01-23').getTime(),
-      message: 'I would like to know more about the blog submission process and approval times.',
-      email: 'newuser@blog.com',
-      submittedAt: new Date('2025-01-23')
-    }
-  ]);
-  const [selectedSupportRequest, setSelectedSupportRequest] = useState<any>(null);
+  const [supportRequestsData, setSupportRequestsData] = useState<SupportRequest[]>([]);
+  const [selectedSupportRequest, setSelectedSupportRequest] = useState<SupportRequest | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showResponseModal, setShowResponseModal] = useState(false);
+  const [adminResponse, setAdminResponse] = useState('');
+
+  useEffect(() => {
+    // Load support requests data
+    const requests = getAllSupportRequests();
+    setSupportRequestsData(requests);
+  }, []);
 
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -432,12 +798,12 @@ const SupportRequests = () => {
         let aValue = a[sortConfig.key as keyof typeof a];
         let bValue = b[sortConfig.key as keyof typeof b];
 
-        if (sortConfig.key === 'created') {
+        if (sortConfig.key === 'date') {
           aValue = a.dateSort;
           bValue = b.dateSort;
         }
 
-        // Special handling for priority column to order low-medium-high
+        // Special handling for priority column to order low-medium-high-critical
         if (sortConfig.key === 'priority') {
           const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3, 'critical': 4 };
           aValue = priorityOrder[a.priority as keyof typeof priorityOrder];
@@ -483,11 +849,53 @@ const SupportRequests = () => {
     }
   };
 
+  const handleStatusChange = (requestId: string, newStatus: 'open' | 'responded' | 'closed') => {
+    const success = updateSupportRequestStatus(requestId, newStatus);
+    if (success) {
+      // Refresh the data
+      const updatedRequests = getAllSupportRequests();
+      setSupportRequestsData(updatedRequests);
+      alert(`Support request ${requestId} status updated to ${newStatus}`);
+    } else {
+      alert('Failed to update request status');
+    }
+  };
+
   const handleViewSupportRequest = (requestId: string) => {
-    const request = supportRequestsData.find(req => req.id === requestId);
+    const request = getSupportRequestById(requestId);
     if (request) {
       setSelectedSupportRequest(request);
       setShowViewModal(true);
+    }
+  };
+
+  const handleRespondToRequest = (requestId: string) => {
+    const request = getSupportRequestById(requestId);
+    if (request) {
+      setSelectedSupportRequest(request);
+      setShowResponseModal(true);
+    }
+  };
+
+  const handleSubmitResponse = () => {
+    if (!selectedSupportRequest || !adminResponse.trim()) return;
+
+    // Add the admin response to the email thread
+    const emailSuccess = addEmailToThread(selectedSupportRequest.id, {
+      from: 'admin',
+      sender: 'support@blogrolly.com',
+      content: adminResponse
+    });
+
+    if (emailSuccess) {
+      // In a real implementation, you'd also send the actual email here
+      const updatedRequests = getAllSupportRequests();
+      setSupportRequestsData(updatedRequests);
+      setShowResponseModal(false);
+      setAdminResponse('');
+      alert('Response sent successfully!');
+    } else {
+      alert('Failed to send response');
     }
   };
 
@@ -497,31 +905,31 @@ const SupportRequests = () => {
     <div className={styles.sectionContent}>
       <div className={styles.sectionHeader}>
         <h2>Support Requests</h2>
-        <p>Handle user inquiries and support tickets</p>
+        <p>Manage and respond to user support inquiries</p>
       </div>
 
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <h3>{sortedAndFilteredData.filter(item => item.status === 'open').length}</h3>
-          <p>Open Tickets</p>
+          <p>Open Requests</p>
         </div>
         <div className={styles.statCard}>
-          <h3>{sortedAndFilteredData.filter(item => item.priority === 'high').length}</h3>
-          <p>Urgent</p>
+          <h3>{sortedAndFilteredData.filter(item => item.priority === 'high' || item.priority === 'critical').length}</h3>
+          <p>High Priority</p>
         </div>
         <div className={styles.statCard}>
-          <h3>24hr</h3>
-          <p>Avg Response Time</p>
+          <h3>{sortedAndFilteredData.filter(item => item.status === 'closed').length}</h3>
+          <p>Resolved</p>
         </div>
       </div>
 
       <div className={styles.tableFilters}>
         <div className={styles.filterGroup}>
-          <label htmlFor="priority-filter-support">Priority:</label>
+          <label htmlFor="priority-filter">Priority:</label>
           <select 
-            id="priority-filter-support"
+            id="priority-filter"
             value={priorityFilter} 
-            onChange={(e) => setPriorityFilter(e.target.value as 'all' | 'critical' | 'high' | 'medium' | 'low')}
+            onChange={(e) => setPriorityFilter(e.target.value as 'all' | 'high' | 'medium' | 'low' | 'critical')}
             className={styles.filterSelect}
           >
             <option value="all">All Priorities</option>
@@ -533,9 +941,9 @@ const SupportRequests = () => {
         </div>
 
         <div className={styles.filterGroup}>
-          <label htmlFor="status-filter-support">Status:</label>
+          <label htmlFor="status-filter">Status:</label>
           <select 
-            id="status-filter-support"
+            id="status-filter"
             value={statusFilter} 
             onChange={(e) => setStatusFilter(e.target.value as 'all' | 'open' | 'responded' | 'closed')}
             className={styles.filterSelect}
@@ -557,7 +965,7 @@ const SupportRequests = () => {
           <thead>
             <tr>
               <th onClick={() => handleSort('id')} className={styles.sortableHeader}>
-                Ticket ID{getSortIcon('id')}
+                Request ID{getSortIcon('id')}
               </th>
               <th onClick={() => handleSort('subject')} className={styles.sortableHeader}>
                 Subject{getSortIcon('subject')}
@@ -571,36 +979,50 @@ const SupportRequests = () => {
               <th onClick={() => handleSort('status')} className={styles.sortableHeader}>
                 Status{getSortIcon('status')}
               </th>
-              <th onClick={() => handleSort('created')} className={styles.sortableHeader}>
-                Created{getSortIcon('created')}
+              <th onClick={() => handleSort('date')} className={styles.sortableHeader}>
+                Date{getSortIcon('date')}
               </th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {sortedAndFilteredData.map((ticket) => (
-              <tr key={ticket.id}>
-                <td><strong>#{ticket.id}</strong></td>
-                <td>{ticket.subject}</td>
+            {sortedAndFilteredData.map((request) => (
+              <tr key={request.id}>
+                <td><strong>{request.id}</strong></td>
+                <td>{request.subject}</td>
                 <td>
-                  <span className={getPriorityClass(ticket.priority)}>
-                    {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                  <span className={getPriorityClass(request.priority)}>
+                    {request.priority.charAt(0).toUpperCase() + request.priority.slice(1)}
                   </span>
                 </td>
-                <td>{ticket.user}</td>
+                <td>{request.user}</td>
                 <td>
-                  <span className={getStatusClass(ticket.status)}>
-                    {ticket.status === 'responded' ? 'Responded' : ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                  </span>
-                </td>
-                <td>{ticket.created}</td>
-                <td>
-                  <button 
-                    className={styles.actionButton}
-                    onClick={() => handleViewSupportRequest(ticket.id)}
+                  <select 
+                    value={request.status}
+                    onChange={(e) => handleStatusChange(request.id, e.target.value as 'open' | 'responded' | 'closed')}
+                    className={`${styles.statusSelect} ${getStatusClass(request.status)}`}
                   >
-                    View
-                  </button>
+                    <option value="open">Open</option>
+                    <option value="responded">Responded</option>
+                    <option value="closed">Closed</option>
+                  </select>
+                </td>
+                <td>{request.created}</td>
+                <td>
+                  <div className={styles.supportRequestActions}>
+                    <button 
+                      className={styles.actionButton}
+                      onClick={() => handleViewSupportRequest(request.id)}
+                    >
+                      View
+                    </button>
+                    <button 
+                      className={styles.approveButton}
+                      onClick={() => handleRespondToRequest(request.id)}
+                    >
+                      Respond
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -646,24 +1068,107 @@ const SupportRequests = () => {
                 <div className={styles.metaItem}>
                   <strong>User:</strong> {selectedSupportRequest.user}
                 </div>
-                <div className={styles.metaItem}>
-                  <strong>Email:</strong> {selectedSupportRequest.email}
-                </div>
+                {selectedSupportRequest.email && (
+                  <div className={styles.metaItem}>
+                    <strong>Contact Email:</strong> {selectedSupportRequest.email}
+                  </div>
+                )}
                 <div className={styles.metaItem}>
                   <strong>Submitted:</strong> {new Date(selectedSupportRequest.submittedAt).toLocaleString()}
                 </div>
                 <div className={styles.metaItem}>
-                  <strong>Priority:</strong> {selectedSupportRequest.priority}
+                  <strong>Messages:</strong> {selectedSupportRequest.emailThread?.length || 0}
                 </div>
               </div>
 
               <div className={styles.supportRequestSection}>
-                <h5>Message</h5>
-                <p>{selectedSupportRequest.message}</p>
+                <h5>Email Conversation</h5>
+                <div className={styles.emailThread}>
+                  {selectedSupportRequest.emailThread?.map((message, index) => (
+                    <div 
+                      key={message.id} 
+                      className={`${styles.emailMessage} ${message.from === 'admin' ? styles.adminMessage : styles.userMessage}`}
+                    >
+                      <div className={styles.messageHeader}>
+                        <span className={styles.messageSender}>
+                          {message.from === 'admin' ? '🛠️ Support Team' : '👤 User'}: {message.sender}
+                        </span>
+                        <span className={styles.messageTime}>
+                          {new Date(message.timestamp).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className={styles.messageContent}>
+                        {message.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              {/* Resolution Analysis */}
+              {selectedSupportRequest.emailThread && selectedSupportRequest.emailThread.length > 1 && (
+                <div className={styles.supportRequestSection}>
+                  <h5>Resolution Analysis</h5>
+                  <div className={styles.resolutionAnalysis}>
+                    {(() => {
+                      const lastMessage = selectedSupportRequest.emailThread[selectedSupportRequest.emailThread.length - 1];
+                      const userResponses = selectedSupportRequest.emailThread.filter(msg => msg.from === 'user');
+                      const adminResponses = selectedSupportRequest.emailThread.filter(msg => msg.from === 'admin');
+
+                      return (
+                        <div className={styles.resolutionDetails}>
+                          <p><strong>Admin Responses:</strong> {adminResponses.length}</p>
+                          <p><strong>User Responses:</strong> {userResponses.length}</p>
+                          <p><strong>Last Message From:</strong> {lastMessage.from === 'admin' ? 'Support Team' : 'User'}</p>
+                          <p><strong>Last Activity:</strong> {new Date(lastMessage.timestamp).toLocaleString()}</p>
+
+                          {lastMessage.from === 'user' && adminResponses.length > 0 && (
+                            <div className={styles.resolutionSuggestion}>
+                              <p>💡 <strong>Suggestion:</strong> User responded after support team. Review their message to determine if:</p>
+                              <ul>
+                                <li>Issue is resolved (consider closing)</li>
+                                <li>Additional assistance needed</li>
+                                <li>Follow-up questions remain</li>
+                              </ul>
+                            </div>
+                          )}
+
+                          {lastMessage.from === 'admin' && (
+                            <div className={styles.resolutionSuggestion}>
+                              <p>⏳ <strong>Status:</strong> Waiting for user response to latest support message.</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className={styles.modalActions}>
+              <button 
+                className={styles.approveButton}
+                onClick={() => {
+                  setShowViewModal(false);
+                  handleRespondToRequest(selectedSupportRequest.id);
+                }}
+              >
+                Respond to Request
+              </button>
+              {selectedSupportRequest.status !== 'closed' && (
+                <button 
+                  className={styles.resolveButton}
+                  onClick={() => {
+                    if (confirm('Are you sure you want to close this support request? This should only be done when the issue is fully resolved.')) {
+                      handleStatusChange(selectedSupportRequest.id, 'closed');
+                      setShowViewModal(false);
+                    }
+                  }}
+                >
+                  Mark as Resolved
+                </button>
+              )}
               <button 
                 className={styles.cancelButton}
                 onClick={() => setShowViewModal(false)}
@@ -674,257 +1179,363 @@ const SupportRequests = () => {
           </div>
         </div>
       )}
+
+      {/* Response Modal */}
+      {showResponseModal && selectedSupportRequest && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h3>Respond to Support Request - {selectedSupportRequest.id}</h3>
+              <button 
+                className={styles.closeButton}
+                onClick={() => setShowResponseModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.responseForm}>
+              <div className={styles.supportRequestSection}>
+                <h5>Original Request</h5>
+                <p><strong>Subject:</strong> {selectedSupportRequest.subject}</p>
+                <p><strong>Message:</strong> {selectedSupportRequest.message}</p>
+              </div>
+
+              <div className={styles.supportRequestSection}>
+                <h5>Your Response</h5>
+                <textarea
+                  value={adminResponse}
+                  onChange={(e) => setAdminResponse(e.target.value)}
+                  placeholder="Type your response to the user..."
+                  className={styles.responseTextarea}
+                  rows={6}
+                />
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.approveButton}
+                onClick={handleSubmitResponse}
+                disabled={!adminResponse.trim()}
+              >
+                Send Response
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={() => {
+                  setShowResponseModal(false);
+                  setAdminResponse('');
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const AdminStats = () => (
-  <div className={styles.sectionContent}>
-    <div className={styles.sectionHeader}>
-      <h2>Dashboard Overview</h2>
-      <p>Overview of BlogRolly performance and metrics</p>
-    </div>
+// Security monitoring component
+const SecurityMonitoring = () => {
+  const [securityEvents, setSecurityEvents] = useState<any[]>([]);
+  const [eventTypeFilter, setEventTypeFilter] = useState<'all' | 'rate_limit' | 'auth_attempt' | 'suspicious_request' | 'error'>('all');
+  const [timeFilter, setTimeFilter] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
+  const [suspiciousIPs, setSuspiciousIPs] = useState<string[]>([]);
 
-    <div className={styles.statsCardsGrid}>
-      <div className={styles.statsMainCard}>
-        <div className={styles.cardHeader}>
-          <h3>Platform Statistics</h3>
-          <p>Current user metrics and platform health</p>
+  useEffect(() => {
+    loadSecurityData();
+    // Refresh every 30 seconds
+    const interval = setInterval(loadSecurityData, 30000);
+    return () => clearInterval(interval);
+  }, [eventTypeFilter, timeFilter]);
+
+  const loadSecurityData = () => {
+    // Get recent security events
+    const events = securityLogger.getRecentEvents(eventTypeFilter === 'all' ? undefined : eventTypeFilter, 100);
+
+    // Filter by time
+    const now = new Date();
+    const filteredEvents = events.filter(event => {
+      const eventTime = new Date(event.timestamp);
+      const hoursDiff = (now.getTime() - eventTime.getTime()) / (1000 * 60 * 60);
+
+      switch (timeFilter) {
+        case '24h': return hoursDiff <= 24;
+        case '7d': return hoursDiff <= 168; // 7 * 24
+        case '30d': return hoursDiff <= 720; // 30 * 24
+        default: return true;
+      }
+    });
+
+    setSecurityEvents(filteredEvents);
+    setSuspiciousIPs(securityLogger.getSuspiciousIPs());
+  };
+
+  const getEventTypeClass = (type: string) => {
+    switch (type) {
+      case 'rate_limit': return styles.eventRateLimit;
+      case 'auth_attempt': return styles.eventAuthAttempt;
+      case 'suspicious_request': return styles.eventSuspicious;
+      case 'error': return styles.eventError;
+      default: return '';
+    }
+  };
+
+  const getEventTypeIcon = (type: string) => {
+    switch (type) {
+      case 'rate_limit': return '🚦';
+      case 'auth_attempt': return '🔐';
+      case 'suspicious_request': return '⚠️';
+      case 'error': return '❌';
+      default: return '📋';
+    }
+  };
+
+  const blockSuspiciousIP = async (ip: string) => {
+    // In a real implementation, you would add this IP to a blocklist
+    // For now, we'll just show an alert
+    if (confirm(`Block IP address ${ip}? This will prevent all requests from this IP.`)) {
+      alert(`IP ${ip} has been blocked. (This is a demo - implement actual IP blocking in production)`);
+    }
+  };
+
+  return (
+    <div className={styles.sectionContent}>
+      <div className={styles.sectionHeader}>
+        <h2>Security Monitoring</h2>
+        <p>Monitor suspicious activities and security events</p>
+      </div>
+
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <h3>{securityEvents.filter(e => e.type === 'rate_limit').length}</h3>
+          <p>Rate Limit Events</p>
         </div>
-        <div className={styles.statsGrid}>
-          <div className={styles.statCard}>
-            <h3>1,247</h3>
-            <p>Total Users</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>342</h3>
-            <p>Active Bloggers</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>905</h3>
-            <p>Readers</p>
-          </div>
-          <div className={styles.statCard}>
-            <h3>89</h3>
-            <p>Premium Members</p>
-          </div>
+        <div className={styles.statCard}>
+          <h3>{securityEvents.filter(e => e.type === 'suspicious_request').length}</h3>
+          <p>Suspicious Requests</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{suspiciousIPs.length}</h3>
+          <p>Flagged IPs</p>
+        </div>
+        <div className={styles.statCard}>
+          <h3>{securityEvents.filter(e => e.type === 'auth_attempt').length}</h3>
+          <p>Auth Attempts</p>
         </div>
       </div>
 
-      {/* The blog stats and monthly growth card have been removed as per instructions */}
+      {suspiciousIPs.length > 0 && (
+        <div className={styles.suspiciousIPsSection}>
+          <h3>🚨 Suspicious IP Addresses</h3>
+          <div className={styles.suspiciousIPsList}>
+            {suspiciousIPs.map((ip, index) => (
+              <div key={index} className={styles.suspiciousIPItem}>
+                <span className={styles.ipAddress}>{ip}</span>
+                <div className={styles.ipActions}>
+                  <button 
+                    className={styles.blockButton}
+                    onClick={() => blockSuspiciousIP(ip)}
+                  >
+                    Block IP
+                  </button>
+                  <button 
+                    className={styles.whitelistButton}
+                    onClick={() => alert(`IP ${ip} whitelisted (demo)`)}
+                  >
+                    Whitelist
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* Top categories card has been removed as per the instructions */}
+      <div className={styles.tableFilters}>
+        <div className={styles.filterGroup}>
+          <label htmlFor="event-type-filter">Event Type:</label>
+          <select 
+            id="event-type-filter"
+            value={eventTypeFilter} 
+            onChange={(e) => setEventTypeFilter(e.target.value as any)}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Events</option>
+            <option value="rate_limit">Rate Limits</option>
+            <option value="auth_attempt">Auth Attempts</option>
+            <option value="suspicious_request">Suspicious Requests</option>
+            <option value="error">Errors</option>
+          </select>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label htmlFor="time-filter">Time Range:</label>
+          <select 
+            id="time-filter"
+            value={timeFilter} 
+            onChange={(e) => setTimeFilter(e.target.value as any)}
+            className={styles.filterSelect}
+          >
+            <option value="24h">Last 24 Hours</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+
+        <div className={styles.resultsInfo}>
+          Showing {securityEvents.length} security events
+        </div>
+
+        <button 
+          className={styles.refreshButton}
+          onClick={loadSecurityData}
+        >
+          🔄 Refresh
+        </button>
+      </div>
+
+      <div className={styles.tableContainer}>
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>IP Address</th>
+              <th>User Agent</th>
+              <th>Details</th>
+              <th>Timestamp</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {securityEvents.map((event, index) => (
+              <tr key={index}>
+                <td>
+                  <span className={`${styles.eventTypeBadge} ${getEventTypeClass(event.type)}`}>
+                    {getEventTypeIcon(event.type)} {event.type.replace('_', ' ').toUpperCase()}
+                  </span>
+                </td>
+                <td>
+                  <span className={styles.ipAddress}>{event.ip}</span>
+                  {suspiciousIPs.includes(event.ip) && (
+                    <span className={styles.suspiciousFlag}>🚨</span>
+                  )}
+                </td>
+                <td>
+                  <span className={styles.userAgent}>
+                    {event.userAgent ? event.userAgent.substring(0, 50) + '...' : 'Unknown'}
+                  </span>
+                </td>
+                <td>
+                  <div className={styles.eventDetails}>
+                    {typeof event.details === 'object' ? JSON.stringify(event.details, null, 2) : event.details}
+                  </div>
+                </td>
+                <td>{new Date(event.timestamp).toLocaleString()}</td>
+                <td>
+                  <div className={styles.securityActions}>
+                    <button 
+                      className={styles.blockButton}
+                      onClick={() => blockSuspiciousIP(event.ip)}
+                    >
+                      Block
+                    </button>
+                    <button 
+                      className={styles.investigateButton}
+                      onClick={() => alert(`Investigating IP ${event.ip} (demo)`)}
+                    >
+                      Investigate
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {securityEvents.length === 0 && (
+          <div className={styles.emptyState}>
+            <h3>No security events found</h3>
+            <p>No security events match your current filters.</p>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const AdminDashboard: React.FC = () => {
+const AdminDashboard = () => {
   const router = useRouter();
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [authError, setAuthError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('submissions');
-
   const [submissions, setSubmissions] = useState<BlogSubmissionWithReview[]>([]);
-  const [filter, setFilter] = useState<BlogStatus | 'all'>('pending');
+  const [filter, setFilter] = useState<BlogStatus | 'all'>('all');
   const [tierFilter, setTierFilter] = useState<'all' | 'free' | 'pro'>('all');
   const [dateFilter, setDateFilter] = useState<'all' | 'newest' | 'oldest'>('all');
-  const [selectedSubmission, setSelectedSubmission] = useState<BlogSubmissionWithReview | null>(null);
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewAction, setReviewAction] = useState<'approve' | 'reject' | null>(null);
-  const [rejectionReason, setRejectionReason] = useState<RejectionReason | ''>('');
-  const [rejectionNote, setRejectionNote] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
   const [showManager, setShowManager] = useState(false);
-  const [editingPost, setEditingPost] = useState<InternalBlogPost | undefined>();
-  const [mode, setMode] = useState<'add' | 'edit'>('add');
-
-  // Email testing states
+  const [editingPost, setEditingPost] = useState<InternalBlogPost | null>(null);
+  const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [testEmail, setTestEmail] = useState('');
-  const [testFirstName, setTestFirstName] = useState('John');
+  const [testFirstName, setTestFirstName] = useState('');
   const [emailTestLoading, setEmailTestLoading] = useState(false);
   const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
 
+  const testEmailTemplates = [
+    { name: 'Welcome Blogger', endpoint: '/api/test-email/welcome-blogger' },
+    { name: 'Welcome Reader', endpoint: '/api/test-email/welcome-reader' },
+    { name: 'Blog Submission Received', endpoint: '/api/test-email/blog-submission-received' },
+    { name: 'Blog Approved', endpoint: '/api/test-email/blog-approved' },
+    { name: 'Blog Rejected', endpoint: '/api/test-email/blog-rejected' },
+    { name: 'Payment Successful', endpoint: '/api/test-email/payment-successful' },
+    { name: 'Payment Failed First Notice', endpoint: '/api/test-email/payment-failed-first' },
+    { name: 'Blog Delisted Payment', endpoint: '/api/test-email/blog-delisted-payment' },
+    { name: 'Bug Report Received', endpoint: '/api/test-email/bug-report-received' },
+    { name: 'Support Request Received', endpoint: '/api/test-email/support-request-received' },
+    { name: 'Support Request Reply', endpoint: '/api/test-email/support-request-reply' },
+    { name: 'Password Reset', endpoint: '/api/test-email/password-reset' }
+  ];
+
   useEffect(() => {
-    let mounted = true;
-
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!session?.access_token) {
-          if (mounted) {
-            window.location.href = '/admin/login';
-          }
-          return;
-        }
-
-        const response = await fetch('/api/admin-auth-check', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`Auth check failed: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!mounted) return;
-
-        if (data.authenticated && data.authorized) {
-          setAdminUser({
-            authenticated: true,
-            authorized: true,
-            userId: data.userId,
-            userName: data.userEmail || 'Admin',
-            userRoles: 'admin'
-          });
-        } else {
-          setAuthError('Access denied');
-          setTimeout(() => {
-            if (mounted) {
-              window.location.href = '/admin/login';
-            }
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        if (mounted) {
-          setAuthError('Authentication failed');
-          setTimeout(() => {
-            window.location.href = '/admin/login';
-          }, 2000);
-        }
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    checkAuth();
-
-    return () => {
-      mounted = false;
-    };
+    loadSubmissions();
+    loadBlogPosts();
   }, []);
-
-  useEffect(() => {
-    if (adminUser) {
-      if (activeTab === 'submissions') {
-        loadSubmissions();
-      } else if (activeTab === 'manager') {
-        loadBlogPosts();
-      }
-    }
-  }, [adminUser, activeTab, filter, tierFilter, dateFilter]);
 
   const loadSubmissions = async () => {
     try {
-      const mockSubmissions: BlogSubmissionWithReview[] = [
-        {
-          id: '1',
-          user_id: 'user-1',
-          title: 'How to Build Better React Components',
-          description: 'A comprehensive guide to creating reusable React components with best practices.',
-          url: 'https://example-blog.com/react-components',
-          image_url: 'https://example-blog.com/images/react.jpg',
-          category: 'Technology',
-          tags: ['React', 'JavaScript', 'Frontend'],
-          status: 'pending',
-          has_adult_content: false,
-          is_live: false,
-          views: 0,
-          clicks: 0,
-          submitted_at: '2025-01-24T10:00:00Z',
-          created_at: '2025-01-24T10:00:00Z',
-          updated_at: '2025-01-24T10:00:00Z',
-          blogger_name: 'John Developer',
-          blogger_email: 'john@example.com',
-          blogger_tier: 'free',
-          review_count: 0
-        },
-        {
-          id: '2',
-          user_id: 'user-2',
-          title: 'Advanced Node.js Performance Optimization',
-          description: 'Deep dive into Node.js performance optimization techniques for production applications.',
-          url: 'https://pro-blog.com/nodejs-optimization',
-          image_url: 'https://pro-blog.com/images/nodejs.jpg',
-          category: 'Technology',
-          tags: ['Node.js', 'Performance', 'Backend'],
-          status: 'pending',
-          has_adult_content: false,
-          is_live: false,
-          views: 0,
-          clicks: 0,
-          submitted_at: '2025-01-24T11:30:00Z',
-          created_at: '2025-01-24T11:30:00Z',
-          updated_at: '2025-01-24T11:30:00Z',
-          blogger_name: 'Sarah Pro',
-          blogger_email: 'sarah@problog.com',
-          blogger_tier: 'pro',
-          review_count: 0
-        },
-        {
-          id: '3',
-          user_id: 'user-3',
-          title: 'Getting Started with Web Development',
-          description: 'A beginner-friendly guide to starting your web development journey.',
-          url: 'https://beginner-blog.com/web-dev-start',
-          category: 'Education',
-          tags: ['Web Development', 'Beginner', 'Tutorial'],
-          status: 'approved',
-          has_adult_content: false,
-          is_live: true,
-          views: 245,
-          clicks: 18,
-          submitted_at: '2025-01-23T14:00:00Z',
-          created_at: '2025-01-23T14:00:00Z',
-          updated_at: '2025-01-23T15:30:00Z',
-          blogger_name: 'Mike Beginner',
-          blogger_email: 'mike@beginblog.com',
-          blogger_tier: 'free',
-          review_count: 1
-        }
-      ];
+      setLoading(true);
+      const { data: submissionsData, error } = await supabase
+        .from('blog_submissions')
+        .select(`
+          *,
+          blogger_profiles (
+            display_name,
+            email,
+            tier
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-      let filteredSubmissions = mockSubmissions;
+      if (error) throw error;
 
-      // Apply status filter
-      if (filter !== 'all') {
-        filteredSubmissions = filteredSubmissions.filter(sub => sub.status === filter);
-      }
+      const submissionsWithReview = submissionsData?.map(submission => ({
+        ...submission,
+        blogger_name: submission.blogger_profiles?.display_name || 'Unknown',
+        blogger_email: submission.blogger_profiles?.email || 'unknown@email.com',
+        blogger_tier: submission.blogger_profiles?.tier || 'free',
+        review_count: 0,
+        last_reviewed_at: null
+      })) || [];
 
-      // Apply tier filter
-      if (tierFilter !== 'all') {
-        filteredSubmissions = filteredSubmissions.filter(sub => sub.blogger_tier === tierFilter);
-      }
-
-      // Apply date sorting
-      if (dateFilter !== 'all') {
-        // Sort by date
-        filteredSubmissions = filteredSubmissions.sort((a, b) => {
-          const dateA = new Date(a.submitted_at || a.created_at);
-          const dateB = new Date(b.submitted_at || b.created_at);
-          
-          if (dateFilter === 'newest') {
-            return dateB.getTime() - dateA.getTime(); // Most recent first
-          } else {
-            return dateA.getTime() - dateB.getTime(); // Oldest first
-          }
-        });
-      }
-
-      setSubmissions(filteredSubmissions);
+      setSubmissions(submissionsWithReview);
     } catch (error) {
       console.error('Failed to load submissions:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -933,36 +1544,18 @@ const AdminDashboard: React.FC = () => {
     setBlogPosts(posts);
   };
 
-  const handleReviewSubmission = (submission: BlogSubmissionWithReview, action: 'approve' | 'reject') => {
-    setSelectedSubmission(submission);
-    setReviewAction(action);
-    setShowReviewModal(true);
-    setRejectionReason('');
-    setRejectionNote('');
-  };
-
-  const submitReview = async () => {
-    if (!selectedSubmission || !reviewAction) return;
-
-    setIsProcessing(true);
+  const handleSignOut = async () => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert(`Blog submission ${reviewAction}d successfully!`);
-      setShowReviewModal(false);
-      setSelectedSubmission(null);
-      setReviewAction(null);
-      loadSubmissions();
+      await supabase.auth.signOut();
+      router.push('/');
     } catch (error) {
-      console.error('Failed to submit review:', error);
-      alert('Failed to process review. Please try again.');
-    } finally {
-      setIsProcessing(false);
+      console.error('Sign out error:', error);
     }
   };
 
   const handleAddNew = () => {
-    setEditingPost(undefined);
-    setMode('add');
+    setEditingPost(null);
+    setMode('create');
     setShowManager(true);
   };
 
@@ -972,86 +1565,27 @@ const AdminDashboard: React.FC = () => {
     setShowManager(true);
   };
 
-  const handleDelete = (postId: string) => {
-    if (confirm('Are you sure you want to delete this blog post?')) {
-      deleteInternalBlogPost(postId);
-      loadBlogPosts();
-    }
-  };
-
   const handleCloseManager = () => {
     setShowManager(false);
-    setEditingPost(undefined);
+    setEditingPost(null);
     loadBlogPosts();
   };
 
-  // Email testing functions
-  const testEmailTemplates = [
-    {
-      name: 'Welcome Reader',
-      endpoint: '/api/test-email/welcome-reader',
-      params: { firstName: testFirstName }
-    },
-    {
-      name: 'Welcome Blogger',
-      endpoint: '/api/test-email/welcome-blogger',
-      params: { firstName: testFirstName }
-    },
-    {
-      name: 'Blog Submission Received',
-      endpoint: '/api/test-email/blog-submission-received',
-      params: { firstName: testFirstName, blogTitle: 'My Awesome Blog Post' }
-    },
-    {
-      name: 'Blog Approved',
-      endpoint: '/api/test-email/blog-approved',
-      params: { firstName: testFirstName, blogTitle: 'My Awesome Blog Post', blogUrl: 'https://example.com/blog' }
-    },
-    {
-      name: 'Blog Rejected',
-      endpoint: '/api/test-email/blog-rejected',
-      params: { firstName: testFirstName, blogTitle: 'My Blog Post', rejectionReason: 'Content quality', rejectionNote: 'Please improve readability' }
-    },
-    {
-      name: 'Password Reset',
-      endpoint: '/api/test-email/password-reset',
-      params: { firstName: testFirstName, resetLink: 'https://blogrolly.com/reset?token=test123' }
-    },
-    {
-      name: 'Bug Report Received',
-      endpoint: '/api/test-email/bug-report-received',
-      params: { firstName: testFirstName, reportId: 'BUG-001' }
-    },
-    {
-      name: 'Support Request Received',
-      endpoint: '/api/test-email/support-request-received',
-      params: { firstName: testFirstName, ticketId: 'SUPPORT-001', supportMessage: 'I need help with my account' }
-    },
-    {
-      name: 'Support Request Reply',
-      endpoint: '/api/test-email/support-request-reply',
-      params: { firstName: testFirstName, ticketId: 'SUPPORT-001', originalMessage: 'I need help', supportReply: 'We are here to help you!' }
-    },
-    {
-      name: 'Payment Successful',
-      endpoint: '/api/test-email/payment-successful',
-      params: { firstName: testFirstName, amount: '$9.99', planName: 'Pro Monthly', invoiceUrl: 'https://example.com/invoice', nextBillingDate: '2025-02-28' }
-    },
-    {
-      name: 'Payment Failed (First Notice)',
-      endpoint: '/api/test-email/payment-failed-first',
-      params: { firstName: testFirstName, planName: 'Pro Monthly', amount: '$9.99', retryDate: '2025-02-03' }
-    },
-    {
-      name: 'Blog Delisted Payment',
-      endpoint: '/api/test-email/blog-delisted-payment',
-      params: { firstName: testFirstName, blogCount: 3, amount: '$9.99' }
+  const handleDelete = (postId: string) => {
+    if (confirm('Are you sure you want to delete this blog post?')) {
+      const success = deleteInternalBlogPost(postId);
+      if (success) {
+        loadBlogPosts();
+        alert('Blog post deleted successfully!');
+      } else {
+        alert('Failed to delete blog post.');
+      }
     }
-  ];
+  };
 
   const sendTestEmail = async (template: any) => {
     if (!testEmail) {
-      alert('Please enter a test email address');
+      alert('Please enter a test email address first.');
       return;
     }
 
@@ -1064,88 +1598,108 @@ const AdminDashboard: React.FC = () => {
         },
         body: JSON.stringify({
           email: testEmail,
-          ...template.params
+          firstName: testFirstName || 'Test User'
         }),
       });
 
       const result = await response.json();
-      setEmailTestResults(prev => [...prev, {
+      const testResult = {
         template: template.name,
         success: response.ok,
-        result,
-        timestamp: new Date().toLocaleTimeString()
-      }]);
+        result: result,
+        timestamp: new Date().toLocaleString()
+      };
+
+      setEmailTestResults(prev => [testResult, ...prev]);
+
+      if (response.ok) {
+        alert(`Test email "${template.name}" sent successfully to ${testEmail}!`);
+      } else {
+        alert(`Failed to send test email "${template.name}": ${result.error || 'Unknown error'}`);
+      }
     } catch (error) {
-      setEmailTestResults(prev => [...prev, {
-        template: template.name,
-        success: false,
-        result: { error: error instanceof Error ? error.message : 'Unknown error' },
-        timestamp: new Date().toLocaleTimeString()
-      }]);
+      console.error('Test email error:', error);
+      alert(`Network error sending test email "${template.name}"`);
+    } finally {
+      setEmailTestLoading(false);
     }
-    setEmailTestLoading(false);
   };
 
   const sendAllTestEmails = async () => {
     if (!testEmail) {
-      alert('Please enter a test email address');
+      alert('Please enter a test email address first.');
       return;
     }
 
     setEmailTestLoading(true);
     setEmailTestResults([]);
-    
+
     for (const template of testEmailTemplates) {
-      await sendTestEmail(template);
-      // Small delay between emails to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 500));
+      try {
+        const response = await fetch(template.endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: testEmail,
+            firstName: testFirstName || 'Test User'
+          }),
+        });
+
+        const result = await response.json();
+        const testResult = {
+          template: template.name,
+          success: response.ok,
+          result: result,
+          timestamp: new Date().toLocaleString()
+        };
+
+        setEmailTestResults(prev => [testResult, ...prev]);
+
+        // Small delay between emails to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`Test email error for ${template.name}:`, error);
+        const testResult = {
+          template: template.name,
+          success: false,
+          result: { error: 'Network error' },
+          timestamp: new Date().toLocaleString()
+        };
+        setEmailTestResults(prev => [testResult, ...prev]);
+      }
     }
-    
+
     setEmailTestLoading(false);
+    alert(`All test emails completed! Check results below.`);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      router.push('/admin/login');
-    } catch (error) {
-      console.error('Sign out error:', error);
-      alert('Failed to sign out. Please try again.');
+  // Filter submissions based on current filters
+  const filteredSubmissions = submissions.filter(submission => {
+    if (filter !== 'all' && submission.status !== filter) return false;
+    if (tierFilter !== 'all' && submission.blogger_tier !== tierFilter) return false;
+    return true;
+  });
+
+  // Sort submissions based on date filter
+  const sortedSubmissions = [...filteredSubmissions].sort((a, b) => {
+    if (dateFilter === 'newest') {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    } else if (dateFilter === 'oldest') {
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
     }
-  };
+    return 0; // Default order
+  });
 
-  const getRejectionReasons = (): { value: RejectionReason; label: string }[] => {
-    return [
-      { value: 'inappropriate_content', label: 'Inappropriate Content' },
-      { value: 'broken_link', label: 'Broken Link' },
-      { value: 'spam', label: 'Spam' },
-      { value: 'teaser_paywall', label: 'Teaser / Paywall Site' },
-      { value: 'malicious_site', label: 'Malicious Site' },
-      { value: 'not_a_blog', label: 'Not a Blog' },
-      { value: 'duplicate', label: 'Duplicate' },
-      { value: 'ai_generated_low_quality', label: 'AI-Generated / Low Quality' },
-      { value: 'copyright_violation', label: 'Copyright Violation' }
-    ];
-  };
-
-  if (isLoading) {
+  if (loading) {
     return (
-      <Layout title="Loading...">
-        <div className={styles.loading}>
-          <h2>Loading admin dashboard...</h2>
-          <p>Verifying your admin access...</p>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (authError || !adminUser) {
-    return (
-      <Layout title="Access Error">
-        <div className={styles.accessDenied}>
-          <h2>Access Error</h2>
-          <p>{authError || 'Unable to verify admin access'}</p>
-          <p>Redirecting to login...</p>
+      <Layout title="Admin Dashboard - BlogRolly">
+        <div className={styles.adminDashboard}>
+          <div className={styles.loading}>
+            <h2>Loading admin dashboard...</h2>
+            <p>Please wait while we load your data.</p>
+          </div>
         </div>
       </Layout>
     );
@@ -1178,6 +1732,12 @@ const AdminDashboard: React.FC = () => {
             Blog Manager
           </button>
           <button 
+            className={`${styles.tabButton} ${activeTab === 'linkedin-verifications' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('linkedin-verifications')}
+          >
+            LinkedIn Verifications
+          </button>
+          <button 
             className={`${styles.tabButton} ${activeTab === 'bug-reports' ? styles.activeTab : ''}`}
             onClick={() => setActiveTab('bug-reports')}
           >
@@ -1200,6 +1760,12 @@ const AdminDashboard: React.FC = () => {
             onClick={() => setActiveTab('email-testing')}
           >
             Email Testing
+          </button>
+          <button 
+            className={`${styles.tabButton} ${activeTab === 'security' ? styles.activeTab : ''}`}
+            onClick={() => setActiveTab('security')}
+          >
+            Security
           </button>
         </div>
 
@@ -1331,19 +1897,85 @@ const AdminDashboard: React.FC = () => {
 
         {activeTab === 'manager' && (
           <div className={styles.tabContent}>
-            <div className={styles.managerHeader}>
-              <h2>Internal Blog Posts</h2>
-              <button 
-                onClick={() => alert('Blog manager functionality coming soon!')}
-                className={styles.primaryButton}
-              >
-                Add New Post
-              </button>
-            </div>
-            <p>Blog management tools will be available here.</p>
+            {!showManager ? (
+              <>
+                <div className={styles.managerHeader}>
+                  <h2>Internal Blog Posts</h2>
+                  <button 
+                    onClick={handleAddNew}
+                    className={styles.primaryButton}
+                  >
+                    Add New Post
+                  </button>
+                </div>
+
+                <div className={styles.blogPostsGrid}>
+                  {blogPosts.length === 0 ? (
+                    <div className={styles.emptyState}>
+                      <h3>No blog posts found</h3>
+                      <p>Start by creating your first internal blog post.</p>
+                    </div>
+                  ) : (
+                    blogPosts.map((post) => (
+                      <div key={post.id} className={styles.blogPostCard}>
+                        <div className={styles.blogPostHeader}>
+                          <h3>{post.title}</h3>
+                          <div className={styles.blogPostActions}>
+                            <button 
+                              className={styles.editButton}
+                              onClick={() => handleEdit(post)}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              className={styles.deleteButton}
+                              onClick={() => handleDelete(post.id)}
+                            >
+                              Delete
+                            </button>
+                            <a 
+                              href={`/blog/post/${post.slug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={styles.viewButton}
+                            >
+                              View
+                            </a>
+                          </div>
+                        </div>
+
+                        <p className={styles.blogPostDescription}>
+                          {post.description}
+                        </p>
+
+                        <div className={styles.blogPostMeta}>
+                          <span>Category: {post.category}</span>
+                          <span>Author: {post.author}</span>
+                          <span>Published: {new Date(post.publishDate).toLocaleDateString()}</span>
+                          <span>Status: {post.isPublished ? 'Published' : 'Draft'}</span>
+                        </div>
+
+                        <div className={styles.blogPostTags}>
+                          {post.tags.map((tag, index) => (
+                            <span key={index} className={styles.tag}>{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <BlogPostManager
+                onClose={handleCloseManager}
+                existingPost={editingPost}
+                mode={mode}
+              />
+            )}
           </div>
         )}
 
+        {activeTab === 'linkedin-verifications' && <LinkedInVerifications />}
         {activeTab === 'bug-reports' && <BugReports />}
         {activeTab === 'support-requests' && <SupportRequests />}
         {activeTab === 'stats' && (
@@ -1401,7 +2033,7 @@ const AdminDashboard: React.FC = () => {
                   className={styles.emailInput}
                 />
               </div>
-              
+
               <div className={styles.formGroup}>
                 <label htmlFor="test-first-name">First Name (for personalization):</label>
                 <input
@@ -1413,7 +2045,7 @@ const AdminDashboard: React.FC = () => {
                   className={styles.emailInput}
                 />
               </div>
-              
+
               <button
                 onClick={sendAllTestEmails}
                 disabled={emailTestLoading || !testEmail}
@@ -1465,6 +2097,7 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         )}
+         {activeTab === 'security' && <SecurityMonitoring />}
       </div>
     </Layout>
   );

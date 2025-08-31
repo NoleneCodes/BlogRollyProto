@@ -47,7 +47,6 @@ interface BlogStats {
   totalSubmissions: number;
   approvedSubmissions: number;
   clickThroughRate: number;
-  averageTimeOnSite: number;
 }
 
 const BloggerProfile: React.FC = () => {
@@ -196,14 +195,18 @@ const BloggerProfile: React.FC = () => {
         ]);
 
         // Mock blog stats
-        setBlogStats({
-          totalViews: 2140,
-          totalClicks: 156,
-          totalSubmissions: 4,
-          approvedSubmissions: 2,
-          clickThroughRate: 7.3,
-          averageTimeOnSite: 3.2
-        });
+        const totalViews = blogSubmissions.reduce((sum, blog) => sum + (blog.views || 0), 0);
+        const totalClicks = blogSubmissions.reduce((sum, blog) => sum + (blog.clicks || 0), 0);
+
+        const blogStats: BlogStats = {
+          totalViews: totalViews,
+          totalClicks: totalClicks,
+          totalSubmissions: blogSubmissions.length,
+          approvedSubmissions: blogSubmissions.filter(blog => blog.status === 'approved').length,
+          clickThroughRate: totalViews > 0 ? (totalClicks / totalViews) * 100 : 0
+        };
+
+        setBlogStats(blogStats);
 
         // Load saved drafts from localStorage
         loadSavedDrafts();
