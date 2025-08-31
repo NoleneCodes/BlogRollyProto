@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../../components/Layout';
 import { getInternalBlogPostBySlug, getAllInternalBlogPosts, InternalBlogPost } from '../../../lib/internalBlogData';
 import styles from '../../../styles/Home.module.css';
+import Link from "next/link";
 
 interface BlogPostPageProps {
   post: InternalBlogPost | null;
@@ -25,7 +26,8 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
               The blog post you're looking for doesn't exist.
             </p>
             <div className={styles.cta}>
-              <a href="/blog" className={styles.primaryButton}>
+              <Link href="/blog" passHref legacyBehavior>
+                <a className={styles.primaryButton}>
                 Back to Blog
               </a>
             </div>

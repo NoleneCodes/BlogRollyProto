@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import InternalBlogCard from "../components/InternalBlogCard";
@@ -23,7 +24,9 @@ const Blog: NextPage = () => {
         </p>
 
         <div className={styles.cta}>
-          <a href="/auth" className={styles.brandButton}>Join The Movement</a>
+          <Link href="/auth" passHref legacyBehavior>
+            <a className={styles.brandButton}>Join The Movement</a>
+          </Link>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
@@ -118,33 +119,33 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               </a>
             </div>
             <div className={styles.navLinks}>
-              <a href="/blogroll" className={styles.navLink}>The Blogroll</a>
-              <a href="/about" className={styles.navLink}>About</a>
-              <a href="/investors" className={styles.navLink}>Investors</a>
-              <a href="/blog" className={styles.navLink}>Our Blog</a>
-              <a href="/submit" className={styles.navLink}>Submit a Blog</a>
+              <Link href="/blogroll" passHref legacyBehavior><a className={styles.navLink}>The Blogroll</a></Link>
+              <Link href="/about" passHref legacyBehavior><a className={styles.navLink}>About</a></Link>
+              <Link href="/investors" passHref legacyBehavior><a className={styles.navLink}>Investors</a></Link>
+              <Link href="/blog" passHref legacyBehavior><a className={styles.navLink}>Our Blog</a></Link>
+              <Link href="/submit" passHref legacyBehavior><a className={styles.navLink}>Submit a Blog</a></Link>
               {!isLoading && (
                 userInfo ? (
                   <>
-                    <a href="/profile/reader" className={styles.navLink}>Profile</a>
+                    <Link href="/profile/reader" passHref legacyBehavior><a className={styles.navLink}>Profile</a></Link>
                     {(userInfo.name === 'Nolene-AA' || userInfo.roles.includes('admin')) && (
-                      <a href="/admin/dashboard" className={styles.navLink} style={{color: '#c42142', fontWeight: '600'}}>Admin Dashboard</a>
+                      <Link href="/admin/dashboard" passHref legacyBehavior><a className={styles.navLink} style={{color: '#c42142', fontWeight: '600'}}>Admin Dashboard</a></Link>
                     )}
                   </>
                 ) : (
-                  <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+                  <Link href="/auth" passHref legacyBehavior><a className={styles.navLink}>Sign Up/In</a></Link>
                 )
               )}
               <DarkModeToggle />
             </div>
             <div className={styles.mobileMenuContainer}>
               <div className={styles.mobileVisibleButtons}>
-                <a href="/submit" className={styles.navLink}>Submit a Blog</a>
+                <Link href="/submit" passHref legacyBehavior><a className={styles.navLink}>Submit a Blog</a></Link>
                 {!isLoading && (
                   userInfo ? (
-                    <a href="/profile/reader" className={styles.navLink}>Profile</a>
+                    <Link href="/profile/reader" passHref legacyBehavior><a className={styles.navLink}>Profile</a></Link>
                   ) : (
-                    <a href="/auth" className={styles.navLink}>Sign Up/In</a>
+                    <Link href="/auth" passHref legacyBehavior><a className={styles.navLink}>Sign Up/In</a></Link>
                   )
                 )}
                 <DarkModeToggle />
@@ -160,21 +161,21 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           {/* Mobile menu dropdown */}
           {isMobileMenuOpen && (
             <div className={styles.mobileMenuDropdown}>
-              <a href="/blogroll" className={styles.mobileNavLink} onClick={toggleMobileMenu}>The Blogroll</a>
-              <a href="/about" className={styles.mobileNavLink} onClick={toggleMobileMenu}>About</a>
-              <a href="/investors" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Investors</a>
-              <a href="/blog" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Our Blog</a>
-              <a href="/submit" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Submit a Blog</a>
+              <Link href="/blogroll" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>The Blogroll</a></Link>
+              <Link href="/about" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>About</a></Link>
+              <Link href="/investors" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>Investors</a></Link>
+              <Link href="/blog" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>Our Blog</a></Link>
+              <Link href="/submit" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>Submit a Blog</a></Link>
               {!isLoading && (
                 userInfo ? (
                   <>
-                    <a href="/profile/reader" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Profile</a>
+                    <Link href="/profile/reader" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>Profile</a></Link>
                     {(userInfo.name === 'Nolene-AA' || userInfo.roles.includes('admin')) && (
-                      <a href="/admin/dashboard" className={styles.mobileNavLink} onClick={toggleMobileMenu} style={{color: '#c42142', fontWeight: '600'}}>Admin Dashboard</a>
+                      <Link href="/admin/dashboard" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu} style={{color: '#c42142', fontWeight: '600'}}>Admin Dashboard</a></Link>
                     )}
                   </>
                 ) : (
-                  <a href="/auth" className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a>
+                  <Link href="/auth" passHref legacyBehavior><a className={styles.mobileNavLink} onClick={toggleMobileMenu}>Sign Up/In</a></Link>
                 )
               )}
               <div className={styles.mobileMenuToggleContainer}>
@@ -196,21 +197,21 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
             </div>
             <div className={styles.footerSection}>
               <h4>Web Nav</h4>
-              <a href="/about">About Us</a>
-              <a href="/blogroll">The Blogroll</a>
-              <a href="/blog">Our Blog</a>
+              <Link href="/about" passHref legacyBehavior><a>About Us</a></Link>
+              <Link href="/blogroll" passHref legacyBehavior><a>The Blogroll</a></Link>
+              <Link href="/blog" passHref legacyBehavior><a>Our Blog</a></Link>
               <a href="#">Contact Us</a>
               <a href="#" onClick={(e) => { e.preventDefault(); setShowBugReportPopup(true); }}>Report a Bug</a>
             </div>
             <div className={styles.footerSection}>
               <h4>Legal</h4>
-              <a href="/terms">Terms & Conditions</a>
-              <a href="/privacy">Privacy Policy</a>
-              <a href="/cookies">Cookie Policy</a>
+              <Link href="/terms" passHref legacyBehavior><a>Terms & Conditions</a></Link>
+              <Link href="/privacy" passHref legacyBehavior><a>Privacy Policy</a></Link>
+              <Link href="/cookies" passHref legacyBehavior><a>Cookie Policy</a></Link>
             </div>
             <div className={styles.footerSection}>
               <h4>Investors</h4>
-              <a href="/investors">Investor Information</a>
+              <Link href="/investors" passHref legacyBehavior><a>Investor Information</a></Link>
             </div>
             <div className={styles.footerSection}>
               <h4>Connect</h4>

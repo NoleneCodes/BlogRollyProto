@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import Link from "next/link";
 import Layout from "../components/Layout";
 import BlogrollTrendsChart from "../components/BlogrollTrendsChart";
 import styles from "../styles/Home.module.css";
@@ -111,7 +112,9 @@ const About: NextPage = () => {
         <p><strong>You just need to write well, own your space, and be found by the right people.</strong></p>
         
         <div className={styles.submitCta}>
-          <a href="/submit" className={styles.submitButton}>Submit Your Blog</a>
+          <Link href="/submit" passHref legacyBehavior>
+            <a className={styles.submitButton}>Submit Your Blog</a>
+          </Link>
         </div>
         
         <p>
