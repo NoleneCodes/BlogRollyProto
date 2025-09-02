@@ -23,13 +23,12 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
           <div className={styles.hero}>
             <h1 className={styles.title}>Post Not Found</h1>
             <p className={styles.description}>
-              The blog post you're looking for doesn't exist.
+              The blog post you&apos;re looking for doesn&apos;t exist.
             </p>
             <div className={styles.cta}>
-              <Link href="/blog" passHref legacyBehavior>
-                <a className={styles.primaryButton}>
+              <Link href="/blog" className={styles.primaryButton}>
                 Back to Blog
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -52,7 +51,9 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
         <article className={styles.blogPost}>
           <div className={styles.blogPostHeader}>
             <div className={styles.breadcrumb}>
-              <a href="/blog" className={styles.breadcrumbLink}>Blog</a>
+              <Link href="/blog" passHref legacyBehavior>
+                <a className={styles.breadcrumbLink}>Blog</a>
+              </Link>
               <span className={styles.breadcrumbSeparator}>/</span>
               <span className={styles.breadcrumbCurrent}>{post.title}</span>
             </div>
@@ -111,9 +112,9 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
               Category: <span>{post.category}</span>
             </div>
             <div className={styles.blogPostActions}>
-              <a href="/blog" className={styles.backToBlogButton}>
-                ← Back to Blog
-              </a>
+              <Link href="/blog" passHref legacyBehavior>
+                <a className={styles.backToBlogButton}>&larr; Back to Blog</a>
+              </Link>
             </div>
           </div>
         </article>

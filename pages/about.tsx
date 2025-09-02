@@ -43,7 +43,7 @@ const About: NextPage = () => {
         <p>Remember blogrolls?</p>
         <p>
           That small-but-powerful tradition where bloggers listed and linked to each other—not for clicks, but for community?<br />
-          That's the spirit we're reviving.
+          That&apos;s the spirit we&apos;re reviving.
         </p>
         <p>
           But not just the sidebar lists.<br />
@@ -59,18 +59,18 @@ const About: NextPage = () => {
 
       <div className={styles.trendsSection}>
         <h2>The Data Speaks:</h2>
-        <p>Google Trends shows the decline and quiet disappearance of "blogroll" searches over the past two decades:</p>
+        <p>Google Trends shows the decline and quiet disappearance of &quot;blogroll&quot; searches over the past two decades:</p>
         <div className={styles.trendsChart}>
           <BlogrollTrendsChart />
           <p className={styles.trendsCaption}>
-            Search interest in "blogroll" peaked in May 2007 at 100, then steadily declined to near zero by 2018, with occasional small spikes.
+            Search interest in &quot;blogroll&quot; peaked in May 2007 at 100, then steadily declined to near zero by 2018, with occasional small spikes.
           </p>
         </div>
       </div>
 
       <div className={styles.rebuildSection}>
-        <p>We're rebuilding that legacy.</p>
-        <p>For today's creators. For tomorrow's internet.</p>
+        <p>We&apos;re rebuilding that legacy.</p>
+        <p>For today&apos;s creators. For tomorrow&apos;s internet.</p>
         <p>Not through popularity contests or viral dances, but through:</p>
         <ul className={styles.featureList}>
           <li>• Intentional discovery</li>
@@ -106,9 +106,9 @@ const About: NextPage = () => {
           <li>• Or become invisible without technical SEO mastery</li>
         </ul>
         <p>BlogRolly is the platform that says:</p>
-        <p><strong>You don't need to go viral.</strong></p>
-        <p><strong>You don't need to create ten versions of the same "engaging content."</strong></p>
-        <p><strong>You don't need to chase followers.</strong></p>
+        <p><strong>You don&apos;t need to go viral.</strong></p>
+        <p><strong>You don&apos;t need to create ten versions of the same &quot;engaging content.&quot;</strong></p>
+        <p><strong>You don&apos;t need to chase followers.</strong></p>
         <p><strong>You just need to write well, own your space, and be found by the right people.</strong></p>
         
         <div className={styles.submitCta}>
@@ -118,7 +118,7 @@ const About: NextPage = () => {
         </div>
         
         <p>
-          Whether you're a niche blogger, a personal brand, or a digital writer building your first audience—we're building this for you.
+          Whether you&apos;re a niche blogger, a personal brand, or a digital writer building your first audience—we&apos;re building this for you.
         </p>
         <p>BlogRolly is your amplifier, directory, and tribe—all in one.</p>
       </div>
@@ -143,7 +143,7 @@ const About: NextPage = () => {
         
         <div className={styles.valueItem}>
           <h3>Your Blog is Your Legacy</h3>
-          <p>We're here to support your long-term creative journey—not just your trending moment.</p>
+          <p>We&apos;re here to support your long-term creative journey—not just your trending moment.</p>
         </div>
         
         <div className={styles.valueItem}>
@@ -155,7 +155,7 @@ const About: NextPage = () => {
       <div className={styles.contactSection}>
         <h2>Get In Touch</h2>
         <p>Have questions, suggestions, or just want to say hello?</p>
-        <p>We'd love to hear from you.</p>
+        <p>We&apos;d love to hear from you.</p>
         
         <div className={styles.contactInfo}>
           <div className={styles.contactItem}>
