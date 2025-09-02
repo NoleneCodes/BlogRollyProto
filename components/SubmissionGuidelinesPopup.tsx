@@ -1,4 +1,3 @@
-
 import React from 'react';
 import styles from '../styles/AuthForm.module.css';
 
@@ -51,10 +50,10 @@ const SubmissionGuidelinesPopup: React.FC<SubmissionGuidelinesPopupProps> = ({ i
               paddingLeft: '1.5rem',
               margin: 0
             }}>
-              <li style={{ marginBottom: '0.5rem' }}>Original, complete blog posts (no teasers or "read more" paywalls)</li>
+              <li style={{ marginBottom: '0.5rem' }}>Original, complete blog posts (no teasers or &quot;read more&quot; paywalls)</li>
               <li style={{ marginBottom: '0.5rem' }}>Posts that are publicly accessible without needing to log in</li>
               <li style={{ marginBottom: '0.5rem' }}>Posts hosted on your main blog domain</li>
-              <li style={{ marginBottom: '0.5rem' }}>Content that's safe, thoughtful, and created by a human</li>
+              <li style={{ marginBottom: '0.5rem' }}>Content that&apos;s safe, thoughtful, and created by a human</li>
               <li style={{ marginBottom: '0.5rem' }}>A working URL that loads properly</li>
             </ul>
           </div>

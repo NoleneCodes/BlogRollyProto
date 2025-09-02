@@ -267,7 +267,7 @@ const Blogroll: NextPage = () => {
     setIsSearchActive(hasActiveFilters);
 
     if (hasActiveFilters) {
-      setSearchResults(filteredResults.map(blog => ({ ...blog, relevanceScore: 1, matchType: 'filter' as const })));
+      setSearchResults(filteredResults.map(blog => ({ ...blog, relevanceScore: 1, matchType: 'tags' as const })));
     } else {
       setIsSearchActive(false);
       setSearchResults([]);

@@ -42,18 +42,18 @@ const About: NextPage = () => {
         <h2>Our Roots:</h2>
         <p>Remember blogrolls?</p>
         <p>
-          That small-but-powerful tradition where bloggers listed and linked to each other—not for clicks, but for community?<br />
+          That small-but-powerful tradition where bloggers listed and linked to each other&apos;not for clicks, but for community?<br />
           That&apos;s the spirit we&apos;re reviving.
         </p>
         <p>
           But not just the sidebar lists.<br />
-          We're also bringing back the grand, curated blogroll directories that once served as hubs for discovering thoughtful blogs across every niche—before they quietly disappeared around 2007–2008, swept away by social media feeds, SEO obsession, and algorithmic dominance.
+          We&apos;re also bringing back the grand, curated blogroll directories that once served as hubs for discovering thoughtful blogs across every niche&apos;before they quietly disappeared around 2007&apos;2008, swept away by social media feeds, SEO obsession, and algorithmic dominance.
         </p>
         <p>
           Before timelines.<br />
           Before feeds.<br />
           Before followers.<br />
-          There were blogrolls—organic, human-curated networks of voices that shaped internet culture.
+          There were blogrolls&apos;organic, human-curated networks of voices that shaped internet culture.
         </p>
       </div>
 
@@ -82,9 +82,9 @@ const About: NextPage = () => {
         </p>
         <p>BlogRolly combines modern discovery tools with the timeless appeal of personal blogs, creating a space where:</p>
         <ul className={styles.featureList}>
-          <li>• Readers explore thoughtful content</li>
-          <li>• Writers grow their brands</li>
-          <li>• The open web stays open</li>
+          <li>&#8226; Readers explore thoughtful content</li>
+          <li>&#8226; Writers grow their brands</li>
+          <li>&#8226; The open web stays open</li>
         </ul>
       </div>
 
@@ -93,17 +93,17 @@ const About: NextPage = () => {
         <p>Modern bloggers are underserved.</p>
         <p>They care deeply about:</p>
         <ul className={styles.featureList}>
-          <li>• Owning their content</li>
-          <li>• Attracting genuine readers</li>
-          <li>• Building domain authority and brand partnerships</li>
-          <li>• Monetising with ads, products, services, or affiliates</li>
-          <li>• Connecting with others without playing the algorithm game</li>
+          <li>&#8226; Owning their content</li>
+          <li>&#8226; Attracting genuine readers</li>
+          <li>&#8226; Building domain authority and brand partnerships</li>
+          <li>&#8226; Monetising with ads, products, services, or affiliates</li>
+          <li>&#8226; Connecting with others without playing the algorithm game</li>
         </ul>
         <p>But most platforms today force them to:</p>
         <ul className={styles.featureList}>
-          <li>• Surrender ownership of their creations</li>
-          <li>• Chase virality just to stay seen</li>
-          <li>• Or become invisible without technical SEO mastery</li>
+          <li>&#8226; Surrender ownership of their creations</li>
+          <li>&#8226; Chase virality just to stay seen</li>
+          <li>&#8226; Or become invisible without technical SEO mastery</li>
         </ul>
         <p>BlogRolly is the platform that says:</p>
         <p><strong>You don&apos;t need to go viral.</strong></p>
@@ -118,9 +118,9 @@ const About: NextPage = () => {
         </div>
         
         <p>
-          Whether you&apos;re a niche blogger, a personal brand, or a digital writer building your first audience—we&apos;re building this for you.
+          Whether you&apos;re a niche blogger, a personal brand, or a digital writer building your first audience&apos;we&apos;re building this for you.
         </p>
-        <p>BlogRolly is your amplifier, directory, and tribe—all in one.</p>
+        <p>BlogRolly is your amplifier, directory, and tribe&apos;all in one.</p>
       </div>
 
       <div className={styles.valuesSection}>
@@ -143,7 +143,7 @@ const About: NextPage = () => {
         
         <div className={styles.valueItem}>
           <h3>Your Blog is Your Legacy</h3>
-          <p>We&apos;re here to support your long-term creative journey—not just your trending moment.</p>
+          <p>We&apos;re here to support your long-term creative journey&apos;not just your trending moment.</p>
         </div>
         
         <div className={styles.valueItem}>

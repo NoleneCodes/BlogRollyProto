@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -80,11 +79,11 @@ const InvestorDashboard = () => {
             <h2>👤 Meet the Founder</h2>
             <div className={styles.founderBio}>
               <h3>Nolene – Why Me, Why Now</h3>
-              <p>Hi, I'm Nolene, the founder of BlogRolly.</p>
-              <p>As a researcher, and solo builder, I've lived the silence that fell over the open web. I've seen incredible creators publish great content—only for it to disappear into the void.</p>
+              <p>Hi, I&apos;m Nolene, the founder of BlogRolly.</p>
+              <p>As a researcher, and solo builder, I&apos;ve lived the silence that fell over the open web. I&apos;ve seen incredible creators publish great content&apos;only for it to disappear into the void.</p>
               <p>I started BlogRolly because I believe in digital sovereignty and the power of long-form thought. I want to make the web feel interconnected again not just performative and feed-based.</p>
-              <p>With a background in [briefly list highlights, e.g. regulatory systems, content strategy, tech upskilling], I've bootstrapped the MVP with no outside funding and designed a product informed by both cultural insight and user empathy.</p>
-              <p><strong>I'm building BlogRolly not to go viral but to last.</strong></p>
+              <p>With a background in [briefly list highlights, e.g. regulatory systems, content strategy, tech upskilling], I&apos;ve bootstrapped the MVP with no outside funding and designed a product informed by both cultural insight and user empathy.</p>
+              <p><strong>I&apos;m building BlogRolly not to go viral but to last.</strong></p>
             </div>
           </div>
 
@@ -183,7 +182,7 @@ const InvestorDashboard = () => {
               <div className={styles.downloadItem}>
                 <div className={styles.downloadInfo}>
                   <h4>One-Pager PDF</h4>
-                  <p>A quick overview of BlogRolly's mission, product, and market thesis</p>
+                  <p>A quick overview of BlogRolly&apos;s mission, product, and market thesis</p>
                 </div>
                 <div className={styles.downloadCta}>
                   <span className={styles.comingSoonSmall}>Coming Soon</span>
@@ -206,7 +205,7 @@ const InvestorDashboard = () => {
             <h2>📅 Schedule a Call</h2>
             <p>Book a 15-minute call with our founder to discuss vision, strategy, or potential partnership.</p>
             <div className={styles.calendlySection}>
-              <p>Let's talk vision, strategy, or potential partnership.</p>
+              <p>Let&apos;s talk vision, strategy, or potential partnership.</p>
               <button className={styles.actionButton}>Schedule Call with Nolene</button>
             </div>
           </div>

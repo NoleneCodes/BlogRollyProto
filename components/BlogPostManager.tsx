@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { InternalBlogPost, addInternalBlogPost, updateInternalBlogPost, deleteInternalBlogPost, ContentImage } from '../lib/internalBlogData';
 import styles from '../styles/BloggerProfilePremium.module.css';
@@ -469,7 +468,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 onChange={(e) => handleInputChange('content', e.target.value)}
                 rows={15}
                 style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px', fontFamily: 'monospace' }}
-                placeholder="Write your blog content here. You can use HTML tags like <h2>, <p>, <ul>, <li>, <strong>, etc. For images, use: ![description](image-url)"
+                placeholder="Write your blog content here. You can use HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, etc. For images, use: ![description](image-url)"
                 required
               />
             </div>

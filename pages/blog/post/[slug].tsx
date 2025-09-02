@@ -4,6 +4,7 @@ import Layout from '../../../components/Layout';
 import { getInternalBlogPostBySlug, getAllInternalBlogPosts, InternalBlogPost } from '../../../lib/internalBlogData';
 import styles from '../../../styles/Home.module.css';
 import Link from "next/link";
+import Image from 'next/image';
 
 interface BlogPostPageProps {
   post: InternalBlogPost | null;
@@ -85,9 +86,12 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
 
           {post.imageUrl && (
             <div className={styles.blogImage}>
-              <img 
+              <Image 
                 src={post.imageUrl} 
                 alt={post.imageDescription || post.title} 
+                width={800}
+                height={400}
+                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', margin: '1rem 0' }}
               />
             </div>
           )}

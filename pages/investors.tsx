@@ -142,11 +142,11 @@ const Investors: NextPage = () => {
       <div className={styles.missionSection}>
         <h2>Explore Our Vision, Opportunity & Strategy</h2>
         <p>BlogRolly is building the future of independent content discovery, one that puts power back in the hands of creators.</p>
-        <p>We believe the next wave of the creator economy won't be algorithmic.</p>
+        <p>We believe the next wave of the creator economy won&apos;t be algorithmic.</p>
         <p>It will be owned, authentic, and connected.</p>
-        <p>We're not just rebuilding a tool.</p>
-        <p><strong>We're rebuilding a culture.</strong></p>
-        <p>BlogRolly is the next-generation blogroll our 'Y' is to become a platform that helps self-hosted bloggers grow, monetise, and build loyal readerships without relying on social feeds or SEO games.</p>
+        <p>We&apos;re not just rebuilding a tool.</p>
+        <p><strong>We&apos;re rebuilding a culture.</strong></p>
+        <p>BlogRolly is the next-generation blogroll our &apos;Y&apos; is to become a platform that helps self-hosted bloggers grow, monetise, and build loyal readerships without relying on social feeds or SEO games.</p>
 
         <h3>How we'll win:</h3>
         <ul className={styles.featureList}>

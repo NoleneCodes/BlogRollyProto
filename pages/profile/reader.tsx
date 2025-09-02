@@ -129,7 +129,7 @@ const ReaderProfile: React.FC = () => {
             setFollowedBloggers([
               {
                 id: '1',
-                displayName: 'Jane Smith',
+                username: 'Jane Smith',
                 blogName: 'Tech Insights Daily',
                 blogUrl: 'https://techinsights.com',
                 bio: 'Frontend developer sharing the latest in web technology',
@@ -138,7 +138,7 @@ const ReaderProfile: React.FC = () => {
               },
               {
                 id: '2',
-                displayName: 'Alex Johnson',
+                username: 'Alex Johnson',
                 blogName: 'Mindful Moments',
                 blogUrl: 'https://mindfulmoments.blog',
                 bio: 'Wellness coach helping you live mindfully',
@@ -147,8 +147,8 @@ const ReaderProfile: React.FC = () => {
               },
               {
                 id: '3',
-                displayName: 'Sarah Davis',
-                blogName: 'Book Lover\'s Corner',
+                username: 'Sarah Davis',
+                blogName: 'Book Lover&apos;s Corner',
                 blogUrl: 'https://bookloverscorner.com',
                 bio: 'Avid reader reviewing the latest fiction and non-fiction',
                 followedDate: '2024-01-08',
@@ -306,7 +306,7 @@ const ReaderProfile: React.FC = () => {
           <div className={styles.content}>
             <h2>Saved Blogs</h2>
             {savedBlogs.length === 0 ? (
-              <p className={styles.emptyState}>You haven't saved any blogs yet. Start exploring!</p>
+              <p className={styles.emptyState}>You haven&apos;t saved any blogs yet. Start exploring!</p>
             ) : (
               <div className={styles.blogList}>
                 {savedBlogs.map(blog => (
@@ -338,7 +338,7 @@ const ReaderProfile: React.FC = () => {
           <div className={styles.content}>
             <h2>Following</h2>
             {followedBloggers.length === 0 ? (
-              <p className={styles.emptyState}>You're not following any bloggers yet. Discover and follow bloggers you love!</p>
+              <p className={styles.emptyState}>You&apos;re not following any bloggers yet. Discover and follow bloggers you love!</p>
             ) : (
               <div className={styles.followingList}>
                 {followedBloggers.map(blogger => (
@@ -346,15 +346,15 @@ const ReaderProfile: React.FC = () => {
                     <div className={styles.bloggerInfo}>
                       <div className={styles.bloggerAvatar}>
                         {blogger.avatar ? (
-                          <img src={blogger.avatar} alt={blogger.displayName} />
+                          <img src={blogger.avatar} alt={blogger.username} />
                         ) : (
                           <div className={styles.bloggerInitials}>
-                            {getInitials(blogger.displayName)}
+                            {getInitials(blogger.username)}
                           </div>
                         )}
                       </div>
                       <div className={styles.bloggerDetails}>
-                        <h4>{blogger.displayName}</h4>
+                        <h4>{blogger.username}</h4>
                         <p className={styles.blogName}>{blogger.blogName}</p>
                         {blogger.bio && <p className={styles.bloggerBio}>{blogger.bio}</p>}
                         <div className={styles.bloggerMeta}>

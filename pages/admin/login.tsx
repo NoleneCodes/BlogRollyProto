@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -31,7 +30,7 @@ const AdminLogin: React.FC = () => {
     } else if (!user && !loading) {
       setAuthStatus('unauthorized');
     }
-  }, [user, loading]);
+  }, [user, loading, checkAdminAuth, isChecking]);
 
   const checkAdminAuth = async () => {
     if (!user || isChecking) return;

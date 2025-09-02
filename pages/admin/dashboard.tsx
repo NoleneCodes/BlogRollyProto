@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import Layout from '../../components/Layout';
 import BlogPostManager from '../../components/BlogPostManager';
 import { getAllInternalBlogPosts, deleteInternalBlogPost, InternalBlogPost } from '../../lib/internalBlogData';
@@ -346,11 +347,13 @@ const BugReports = () => {
                   <h5>Screenshots</h5>
                   <div className={styles.bugReportImages}>
                     {selectedBugReport.images.map((image, index) => (
-                      <img 
+                      <Image 
                         key={index}
                         src={image} 
                         alt={`Screenshot ${index + 1}`}
                         className={styles.bugReportImage}
+                        width={600}
+                        height={400}
                       />
                     ))}
                   </div>

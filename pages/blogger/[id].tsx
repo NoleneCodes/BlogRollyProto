@@ -313,7 +313,7 @@ const PublicBloggerProfile: React.FC = () => {
       <Layout title="Blogger Not Found - Blogrolly">
         <div className={styles.error}>
           <h2>Blogger Not Found</h2>
-          <p>Sorry, we couldn't find the blogger profile you're looking for.</p>
+          <p>Sorry, we couldn&apos;t find the blogger profile you&apos;re looking for.</p>
           <button onClick={() => router.push('/blogroll')} className={styles.backButton}>
             Back to Blogroll
           </button>

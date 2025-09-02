@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import styles from '../styles/ReaderProfile.module.css';
 
@@ -60,7 +59,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({ isOpen, onClose }) => {
         
         <div className={styles.popupBody}>
           <p className={styles.popupDescription}>
-            We'd love to hear from you! Your feedback helps us improve BlogRolly and create a better experience for everyone.
+            We&apos;d love to hear from you! Your feedback helps us improve BlogRolly and create a better experience for everyone.
           </p>
           
           <form onSubmit={handleSubmit}>
@@ -124,7 +123,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({ isOpen, onClose }) => {
                 placeholder="your@email.com"
               />
               <small className={styles.hint}>
-                Provide your email if you'd like us to follow up on your feedback
+                Provide your email if you&apos;d like us to follow up on your feedback
               </small>
             </div>
 

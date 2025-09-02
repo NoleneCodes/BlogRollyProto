@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { DomainVerificationService } from '../lib/domainVerification';
 import styles from '../styles/DomainVerificationModal.module.css';
@@ -95,7 +94,7 @@ const DomainVerificationModal: React.FC<DomainVerificationModalProps> = ({
                 />
                 <div>
                   <strong>DNS TXT Record</strong>
-                  <p>Add a TXT record to your domain's DNS (Recommended)</p>
+                  <p>Add a TXT record to your domain&apos;s DNS (Recommended)</p>
                 </div>
               </label>
 
@@ -147,7 +146,7 @@ const DomainVerificationModal: React.FC<DomainVerificationModalProps> = ({
                 <p>{instructions.htmlFile.instructions}</p>
                 <div className={styles.codeBlock}>
                   <p><strong>Filename:</strong> {instructions.htmlFile.filename}</p>
-                  <p><strong>Upload to:</strong> Your website's root directory</p>
+                  <p><strong>Upload to:</strong> Your website&apos;s root directory</p>
                   <p><strong>Accessible at:</strong> {instructions.htmlFile.path}</p>
                 </div>
                 <details>

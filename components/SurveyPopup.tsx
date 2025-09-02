@@ -38,6 +38,12 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [otherMonetizationMethod, setOtherMonetizationMethod] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Placeholder for supabaseDB
+  const supabaseDB = {
+    insertSurveyFeedback: async (data: any) => ({ data: {}, error: null })
+  };
 
   const handleCheckboxChange = (field: 'discoveryMethods' | 'platformsUsed' | 'currentMonetizationMethods', value: string, checked: boolean) => {
     setSurveyData(prev => ({
@@ -151,7 +157,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              What's your primary goal with blogging? *
+              What&apos;s your primary goal with blogging? *
             </label>
             <select
               value={surveyData.primaryGoal}
@@ -173,7 +179,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              What's your approximate monthly audience size? *
+              What&apos;s your approximate monthly audience size? *
             </label>
             <select
               value={surveyData.audienceSize}
@@ -246,7 +252,7 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              What's your biggest challenge as a blogger? *
+              What&apos;s your biggest challenge as a blogger? *
             </label>
             <textarea
               value={surveyData.challengesFaced}

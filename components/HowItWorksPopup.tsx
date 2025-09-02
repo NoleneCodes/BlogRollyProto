@@ -29,7 +29,7 @@ const HowItWorksPopup: React.FC<HowItWorksPopupProps> = ({ isOpen, onClose }) =>
               <div className={profileStyles.stepNumber}>1</div>
               <div className={profileStyles.stepContent}>
                 <h4>Submit Your Blog</h4>
-                <p>Once you've signed up for a Blogger Account, use the submission form to share a URL to a live blog post from your main site. We're looking for full, original pieces—not link dumps, teasers, or redirects.</p>
+                <p>Once you&apos;ve signed up for a Blogger Account, use the submission form to share a URL to a live blog post from your main site. We&apos;re looking for full, original pieces—not link dumps, teasers, or redirects.</p>
               </div>
             </div>
 
@@ -54,15 +54,15 @@ const HowItWorksPopup: React.FC<HowItWorksPopupProps> = ({ isOpen, onClose }) =>
             <h4>Updates & Support</h4>
             <div className={profileStyles.supportItem}>
               <strong>Edit or Resubmit:</strong>
-              <p>You can easily update your blog post's title, description, or cover image from your Blogger Dashboard—no need for reapproval.</p>
+              <p>You can easily update your blog post&apos;s title, description, or cover image from your Blogger Dashboard—no need for reapproval.</p>
             </div>
             <div className={profileStyles.supportItem}>
               <strong>Changed the URL?</strong>
-              <p>If the blog post URL changes, it'll need to go through the review process again. This helps us make sure the new link is working, safe, and still matches our quality standards.</p>
+              <p>If the blog post URL changes, it&apos;ll need to go through the review process again. This helps us make sure the new link is working, safe, and still matches our quality standards.</p>
             </div>
             <div className={profileStyles.supportItem}>
               <strong>Need Help?</strong>
-              <p>Got questions or stuck somewhere? Reach out anytime. We're building this platform with independent bloggers in mind and are happy to help.</p>
+              <p>Got questions or stuck somewhere? Reach out anytime. We&apos;re building this platform with independent bloggers in mind and are happy to help.</p>
             </div>
           </div>
         </div>

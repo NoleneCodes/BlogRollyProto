@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
-import { MAIN_CATEGORIES, validateCustomInput } from '../lib/categories-tags';
+import { MAIN_CATEGORIES, validateCustomInput, formatCustomInput } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
 
 interface AuthFormProps {
@@ -333,7 +333,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               className={styles.linkButton}
               onClick={() => setAuthMode('signup')}
             >
-              Don't have an account? Sign up
+              Don&apos;t have an account? Sign up
             </button>
           </div>
         </div>
@@ -470,7 +470,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.label}>Topics You're Into *</label>
+              <label className={styles.label}>Topics You&apos;re Into *</label>
               <div className={styles.checkboxGrid}>
                 {MAIN_CATEGORIES.map(category => (
                   <label key={category} className={styles.checkboxLabel}>

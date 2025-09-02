@@ -1,4 +1,3 @@
-
 import type { NextPage } from "next";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
@@ -23,7 +22,7 @@ const Privacy: NextPage = () => {
           <li><a href="#data-retention">DATA RETENTION</a></li>
           <li><a href="#data-security">DATA SECURITY</a></li>
           <li><a href="#privacy-rights">YOUR PRIVACY RIGHTS</a></li>
-          <li><a href="#childrens-privacy">CHILDREN'S PRIVACY</a></li>
+          <li><a href="#childrens-privacy">CHILDREN&apos;S PRIVACY</a></li>
           <li><a href="#international-transfers">INTERNATIONAL DATA TRANSFERS</a></li>
           <li><a href="#policy-updates">UPDATES TO THIS POLICY</a></li>
           <li><a href="#contact-information">CONTACT INFORMATION</a></li>
@@ -123,7 +122,7 @@ const Privacy: NextPage = () => {
 
         <h3>For California Residents (CCPA/CPRA)</h3>
         <ul>
-          <li>Right to know what personal information we collect and how it's used</li>
+          <li>Right to know what personal information we collect and how it&apos;s used</li>
           <li>Right to delete personal information</li>
           <li>Right to opt-out of the sale of personal information (we do not sell personal information)</li>
           <li>Right to non-discrimination for exercising privacy rights</li>

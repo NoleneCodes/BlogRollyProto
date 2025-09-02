@@ -1,4 +1,3 @@
-
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -133,7 +132,7 @@ const Submit: NextPage = () => {
             textAlign: 'center',
             lineHeight: '1.6'
           }}>
-            To submit a blog post to BlogRolly, you'll need to sign up as a blogger. 
+            To submit a blog post to BlogRolly, you&apos;ll need to sign up as a blogger. 
             This helps us keep the content authentic, high quality, and properly credited.
           </p>
 
@@ -237,8 +236,8 @@ const Submit: NextPage = () => {
               marginBottom: '1.5rem',
               fontStyle: 'italic'
             }}>
-              We're here to amplify indie blogs—not just list them.<br />
-              You focus on writing; we'll help bring the readers.
+              We&apos;re here to amplify indie blogs&apos;not just list them.<br />
+              You focus on writing; we&apos;ll help bring the readers.
             </p>
             <div style={{
               display: 'grid',

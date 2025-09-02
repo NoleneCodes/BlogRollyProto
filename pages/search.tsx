@@ -1,4 +1,3 @@
-
 import type { NextPage } from "next";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -179,7 +178,7 @@ const SearchPage: NextPage = () => {
                 <h3>No results found</h3>
                 <p>
                   {searchType === 'ai' 
-                    ? "Rolly couldn't find blogs that directly answer your question. Try rephrasing or using the regular search."
+                    ? "Rolly couldn&apos;t find blogs that directly answer your question. Try rephrasing or using the regular search."
                     : "No blogs match your search terms. Try different keywords or check your spelling."
                   }
                 </p>

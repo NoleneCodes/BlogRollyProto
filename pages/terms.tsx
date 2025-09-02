@@ -1,4 +1,3 @@
-
 import type { NextPage } from "next";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
@@ -12,16 +11,13 @@ const Terms: NextPage = () => {
 
         <h2>AGREEMENT TO OUR LEGAL TERMS</h2>
         <p>
-          We are BlogRolly Ltd ('Company', 'we', 'us', or 'our'), a company registered in England and Wales.
+          We are BlogRolly Ltd (&apos;Company&apos;, &apos;we&apos;, &apos;us&apos;, or &apos;our&apos;), a company registered in England and Wales.
         </p>
         <p>
-          We operate the website https://blogrolly.com (the 'Site'), as well as any other related products and services that refer or link to these legal terms (the 'Legal Terms') (collectively, the 'Services').
+          We operate the website https://blogrolly.com (the &apos;Site&apos;), as well as any other related products and services that refer or link to these legal terms (the &apos;Legal Terms&apos;) (collectively, the &apos;Services&apos;).
         </p>
         <p>
-          You can contact us by phone at +44 (0) 7796439429 or by email at hello@blogrolly.com.
-        </p>
-        <p>
-          These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity ('you'), and BlogRolly Ltd, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+          These Legal Terms constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&apos;you&apos;), and BlogRolly Ltd, concerning your access to and use of the Services. You agree that by accessing the Services, you have read, understood, and agreed to be bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
         </p>
         <p>
           We will provide you with prior notice of any scheduled changes to the Services you are using. The modified Legal Terms will become effective upon posting or notifying you by hello@blogrolly.com, as stated in the email message. By continuing to use the Services after the effective date of any changes, you agree to be bound by the modified terms.
@@ -73,13 +69,13 @@ const Terms: NextPage = () => {
 
         <h2 id="intellectual-property">2. INTELLECTUAL PROPERTY RIGHTS</h2>
         <p>
-          We are the owner or the licensee of all intellectual property rights in our Services, including all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics in the Services (collectively, the 'Content'), as well as the trademarks, service marks, and logos contained therein (the 'Marks').
+          We are the owner or the licensee of all intellectual property rights in our Services, including all source code, databases, functionality, software, website designs, audio, video, text, photographs, and graphics in the Services (collectively, the &apos;Content&apos;), as well as the trademarks, service marks, and logos contained therein (the &apos;Marks&apos;).
         </p>
         <p>
           Our Content and Marks are protected by copyright and trademark laws (and various other intellectual property rights and unfair competition laws) and treaties in the United Kingdom and around the world.
         </p>
         <p>
-          The Content and Marks are provided in or through the Services 'AS IS' for your personal, non-commercial use or internal business purpose only.
+          The Content and Marks are provided in or through the Services &apos;AS IS&apos; for your personal, non-commercial use or internal business purpose only.
         </p>
 
         <h2 id="user-representations">3. USER REPRESENTATIONS</h2>
@@ -127,7 +123,7 @@ const Terms: NextPage = () => {
 
         <h2 id="user-generated-contributions">8. USER GENERATED CONTRIBUTIONS</h2>
         <p>
-          The Services may invite you to chat, contribute to, or participate in blogs, message boards, online forums, and other functionality, and may provide you with the opportunity to create, submit, post, display, transmit, perform, publish, distribute, or broadcast content and materials to us or on the Services, including but not limited to text, writings, video, audio, photographs, graphics, comments, suggestions, blog submissions, or personal information or other material (collectively, 'Contributions').
+          The Services may invite you to chat, contribute to, or participate in blogs, message boards, online forums, and other functionality, and may provide you with the opportunity to create, submit, post, display, transmit, perform, publish, distribute, or broadcast content and materials to us or on the Services, including but not limited to text, writings, video, audio, photographs, graphics, comments, suggestions, blog submissions, or personal information or other material (collectively, &apos;Contributions&apos;).
         </p>
         <p>
           Contributions may be viewable by other users of the Services and through third-party websites. As such, any Contributions you transmit may be treated as non-confidential and non-proprietary.
@@ -140,7 +136,7 @@ const Terms: NextPage = () => {
 
         <h2 id="third-party-websites">10. THIRD-PARTY WEBSITES AND CONTENT</h2>
         <p>
-          The Services may contain (or you may be sent via the Site) links to other websites ('Third-Party Websites') as well as articles, photographs, text, graphics, pictures, designs, music, sound, video, information, applications, software, and other content or items belonging to or originating from third parties ('Third-Party Content'). Such Third-Party Websites and Third-Party Content are not investigated, monitored, or checked for accuracy, appropriateness, or completeness by us.
+          The Services may contain (or you may be sent via the Site) links to other websites (&apos;Third-Party Websites&apos;) as well as articles, photographs, text, graphics, pictures, designs, music, sound, video, information, applications, software, and other content or items belonging to or originating from third parties (&apos;Third-Party Content&apos;). Such Third-Party Websites and Third-Party Content are not investigated, monitored, or checked for accuracy, appropriateness, or completeness by us.
         </p>
 
         <h2 id="services-management">11. SERVICES MANAGEMENT</h2>
@@ -175,7 +171,7 @@ const Terms: NextPage = () => {
 
         <h2 id="dispute-resolution">17. DISPUTE RESOLUTION</h2>
         <p>
-          Any legal action of whatever nature brought by either you or us (collectively, the 'Parties' and each a 'Party') shall be commenced or prosecuted in the courts of England and Wales, and the Parties hereby consent to, and waive all defences of lack of personal jurisdiction, and forum non conveniens with respect to venue and jurisdiction in such courts.
+          Any legal action of whatever nature brought by either you or us (collectively, the &apos;Parties&apos; and each a &apos;Party&apos;) shall be commenced or prosecuted in the courts of England and Wales, and the Parties hereby consent to, and waive all defences of lack of personal jurisdiction, and forum non conveniens with respect to venue and jurisdiction in such courts.
         </p>
 
         <h2 id="corrections">18. CORRECTIONS</h2>
@@ -195,7 +191,7 @@ const Terms: NextPage = () => {
 
         <h2 id="indemnification">21. INDEMNIFICATION</h2>
         <p>
-          You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys' fees and expenses, made by any third party due to or arising out of: (1) your Contributions; (2) use of the Services; (3) breach of these Legal Terms; (4) any breach of your representations and warranties set forth in these Legal Terms; (5) your violation of the rights of a third party, including but not limited to intellectual property rights; or (6) any overt harmful act toward any other user of the Services with whom you connected via the Services.
+          You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including reasonable attorneys&apos; fees and expenses, made by any third party due to or arising out of: (1) your Contributions; (2) use of the Services; (3) breach of these Legal Terms; (4) any breach of your representations and warranties set forth in these Legal Terms; (5) your violation of the rights of a third party, including but not limited to intellectual property rights; or (6) any overt harmful act toward any other user of the Services with whom you connected via the Services.
         </p>
 
         <h2 id="user-data">22. USER DATA</h2>
@@ -210,7 +206,7 @@ const Terms: NextPage = () => {
 
         <h2 id="uk-users">24. UK USERS AND RESIDENTS</h2>
         <p>
-          If you are a UK resident, you have the right to access, update, or delete the information we have on you. If you wish to exercise any of these rights, please contact us using the information provided below. Additionally, if you are a UK resident you also have the right to lodge a complaint with the Information Commissioner's Office (ICO) if you believe we have processed your personal data unlawfully.
+          If you are a UK resident, you have the right to access, update, or delete the information we have on you. If you wish to exercise any of these rights, please contact us using the information provided below. Additionally, if you are a UK resident you also have the right to lodge a complaint with the Information Commissioner&apos;s Office (ICO) if you believe we have processed your personal data unlawfully.
         </p>
 
         <h2 id="miscellaneous">25. MISCELLANEOUS</h2>
