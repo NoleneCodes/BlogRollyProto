@@ -349,13 +349,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
           className={`${styles.tab} ${activeTab === 'reader' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('reader')}
         >
-          I'm a Reader
+            I&apos;m a Reader
         </button>
         <button 
           className={`${styles.tab} ${activeTab === 'blogger' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('blogger')}
         >
-          I'm a Blogger
+          I&apos;m a Blogger
         </button>
       </div>
 

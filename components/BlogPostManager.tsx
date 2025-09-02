@@ -454,7 +454,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 )}
                 
                 <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '1rem 0 0 0' }}>
-                  Upload images to use in your blog content. Click "Insert" to add the image to your content below.
+                  Upload images to use in your blog content. Click &quot;Insert&quot; to add the image to your content below.
                 </p>
               </div>
             </div>

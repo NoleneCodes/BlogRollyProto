@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
@@ -30,6 +31,8 @@ interface BlogData {
   imagePreview: string | null;
   imageDescription: string;
   urlChangeReason?: string;
+  status?: string;
+  isLive?: boolean;
 }
 
 
@@ -471,17 +474,17 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
                 display: 'block',
                 marginTop: '0.25rem'
               }}>
-                Debug: isPremium={String(isPremium)}, urlChanged={String(editForm.url !== originalUrl)}, selectedReason="{urlChangeReason}"
+                Debug: isPremium={String(isPremium)}, urlChanged={String(editForm.url !== originalUrl)}, selectedReason={`"${urlChangeReason}"`}
               </small>
             </div>
           )}
-
           {!isPremium && (
             <small style={{ color: '#6b7280', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
-              URL editing is only available to Pro subscribers. 
-              <a href="/profile/blogger#billing" style={{ color: '#c42142', textDecoration: 'underline' }}>
+              URL editing is only available to Pro subscribers.{' '}
+              <Link href="/profile/blogger#billing" style={{ color: '#c42142', textDecoration: 'underline' }}>
                 Upgrade to Pro
-              </a> to edit blog URLs.
+              </Link>{' '}
+              to edit blog URLs.
             </small>
           )}
         </div>

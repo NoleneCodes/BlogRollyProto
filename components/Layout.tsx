@@ -111,12 +111,14 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
         <nav className={styles.navbar}>
           <div className={styles.navContent}>
             <div className={styles.logo}>
-              <a href="/" className={styles.logoLink}>
+              <Link href="/" passHref legacyBehavior>
+                <a className={styles.logoLink}>
                 <div className={styles.logoContainer}>
                   <img src="/DigitalBR.svg" alt="BlogRolly Logo" className={styles.logoIcon} />
                   <img src="/DigitalText.svg" alt="BlogRolly" className={styles.logoText} />
                 </div>
               </a>
+              </Link>
             </div>
             <div className={styles.navLinks}>
               <Link href="/blogroll" passHref legacyBehavior><a className={styles.navLink}>The Blogroll</a></Link>

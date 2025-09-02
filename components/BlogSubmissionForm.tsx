@@ -624,14 +624,13 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
 
          {/* Custom Category Input */}
          {showCustomCategory && (
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
               Custom Category *
-            </label>
-            <CustomCategoryInput
-              onChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
-            />
-          </div>
+              </label>
+              <CustomCategoryInput
+              onCategoryChange={(categories: string[]) => setFormData(prev => ({ ...prev, category: categories.join(', ') }))} selectedCategories={[]}              />
+            </div>
         )}
 
         {/* Step 5: Tags */}
