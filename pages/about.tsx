@@ -29,7 +29,7 @@ const About: NextPage = () => {
           To reconnect the fragmented blogosphere and empower independent writers with the visibility they deserve.
         </p>
         <p>
-          We're building a powerful, interconnected ecosystem of thinkers, writers, and readers, helping creators monetise, get discovered, and connect on their own terms.
+          We&apos;re building a powerful, interconnected ecosystem of thinkers, writers, and readers, helping creators monetise, get discovered, and connect on their own terms.
         </p>
         <p>
           In a world that rewards noise, BlogRolly rewards nuance.<br />

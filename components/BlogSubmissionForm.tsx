@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
 import styles from '../styles/BlogSubmissionForm.module.css';
@@ -28,8 +29,6 @@ interface FormData {
   postUrl: string;
   hasAdultContent: boolean;
 }
-
-
 
 const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({ 
   onSubmit, 
@@ -70,20 +69,22 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
           </h3>
           <p style={{ color: '#7f1d1d', marginBottom: '1.5rem' }}>
             Only registered bloggers can submit blog posts. Please sign up as a blogger first.
+            <Link href="/auth?tab=blogger" passHref legacyBehavior>
+              <a
+                style={{
+                  background: '#c42142',
+                  color: 'white',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '6px',
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
+              >
+                Sign Up as Blogger
+              </a>
+            </Link>
           </p>
-          <a 
-            href="/auth?tab=blogger"
-            style={{
-              background: '#c42142',
-              color: 'white',
-              padding: '0.75rem 1.5rem',
-              borderRadius: '6px',
-              textDecoration: 'none',
-              display: 'inline-block'
-            }}
-          >
-            Sign Up as Blogger
-          </a>
+      
         </div>
       </div>
     );
@@ -112,48 +113,6 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       setDomainVerificationStatus('pending');
     }
   };
-
-  // Show domain verification requirement if not verified
-  if (isBlogger && !isSignupMode && domainVerificationStatus && domainVerificationStatus !== 'verified') {
-    return (
-      <div className={styles.formContainer}>
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '2rem',
-          backgroundColor: '#fef3cd',
-          borderRadius: '8px',
-          border: '1px solid #fbbf24'
-        }}>
-          <h3 style={{ color: '#d97706', marginBottom: '1rem' }}>
-            Domain Verification Required
-          </h3>
-          <p style={{ color: '#92400e', marginBottom: '1.5rem' }}>
-            You must verify ownership of your blog domain before you can submit content for approval. 
-            This ensures that only legitimate blog owners can submit posts to BlogRolly.
-          </p>
-          <button
-            onClick={() => setShowDomainVerification(true)}
-            style={{
-              background: '#c42142',
-              color: 'white',
-              padding: '0.75rem 1.5rem',
-              borderRadius: '6px',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '1rem'
-            }}
-          >
-            Verify Your Domain
-          </button>
-          {domainVerificationStatus === 'failed' && (
-            <p style={{ color: '#dc2626', marginTop: '1rem', fontSize: '0.875rem' }}>
-              Previous verification attempt failed. Please try again.
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  }
 
   const [progress, setProgress] = useState(0);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -473,6 +432,35 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
 
   return (
     <div className={styles.formContainer}>
+      {isBlogger && !isSignupMode && domainVerificationStatus !== 'verified' && (
+        <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#fef3cd', borderRadius: '8px', border: '1px solid #fbbf24' }}>
+          <h3 style={{ color: '#d97706', marginBottom: '1rem' }}>Domain Verification Required</h3>
+          <p style={{ color: '#92400e', marginBottom: '1.5rem' }}>
+            You must verify ownership of your blog domain before you can submit content for approval. 
+            This ensures that only legitimate blog owners can submit posts to BlogRolly.
+          </p>
+          <button
+            onClick={() => setShowDomainVerification(true)}
+            style={{
+              background: '#c42142',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
+            Verify Your Domain
+          </button>
+          {domainVerificationStatus === 'failed' && (
+            <p style={{ color: '#dc2626', marginTop: '1rem', fontSize: '0.875rem' }}>
+              Previous verification attempt failed. Please try again.
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Submission Guidelines Section */}
       {!hideGuidelines && (
         <div className={styles.guidelinesSection}>

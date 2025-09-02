@@ -148,10 +148,10 @@ const SearchPage: NextPage = () => {
         {searchQuery && (
           <div className={searchStyles.resultsSection}>
             <div className={searchStyles.resultsHeader}>
-              <h2>
+                <h2>
                 {searchType === 'ai' ? '🤖 AI Search Results' : '🔍 Search Results'} 
-                for "{searchQuery}"
-              </h2>
+                for &quot;{searchQuery}&quot;
+                </h2>
               {!isLoading && searchResults.length > 0 && (
                 <p className={searchStyles.resultsCount}>
                   Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}

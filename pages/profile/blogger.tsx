@@ -770,7 +770,7 @@ const BloggerProfile: React.FC = () => {
             <div className={styles.billingSection}>
               <div className={styles.currentPlan}>
                 <h3>Current Plan: Free Tier</h3>
-                <p>You're currently on our free tier with basic analytics and up to 5 blog submissions per month.</p>
+                <p>You&apos;re currently on our free tier with basic analytics and up to 5 blog submissions per month.</p>
                 <div className={styles.planFeatures}>
                   <ul>
                     <li>List up to 3 blogs</li>

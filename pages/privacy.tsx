@@ -9,9 +9,7 @@ const Privacy: NextPage = () => {
         <h1>PRIVACY POLICY</h1>
         <p><strong>Last updated January 24, 2025</strong></p>
 
-        <p>
-          This Privacy Policy describes how BlogRolly Ltd ("Company", "we", "us", or "our") collects, uses, and discloses your personal information when you visit or use our website https://blogrolly.com (the "Site") and our related services (collectively, the "Services").
-        </p>
+        <p>This Privacy Policy describes how BlogRolly Ltd (&quot;Company&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and discloses your personal information when you visit or use our website https://blogrolly.com (the &quot;Site&quot;) and our related services (collectively, the &quot;Services&quot;).</p>
 
         <h2>TABLE OF CONTENTS</h2>
         <ol>

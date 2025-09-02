@@ -32,7 +32,7 @@ const Blog: NextPage = () => {
 
       <div className={styles.missionSection}>
         <p>Hey, welcome to the BlogRolly blog 👋</p>
-        <p>We're sharing our journey, the ups, the pivots, and everything in between as we build a space for independent bloggers to get seen, heard, and supported.</p>
+        <p>We&apos;re sharing our journey, the ups, the pivots, and everything in between as we build a space for independent bloggers to get seen, heard, and supported.</p>
         <p>Think of this as our behind-the-scenes notebook, shared out loud.</p>
         <p>Thanks for being here.</p>
       </div>

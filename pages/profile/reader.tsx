@@ -573,7 +573,7 @@ const ReaderProfile: React.FC = () => {
               </div>
               <div className={styles.popupBody}>
                 <p className={styles.popupDescription}>
-                  Select the topics you're interested in. This helps us personalize your blog recommendations.
+                  Select the topics you&apos;re interested in. This helps us personalise your blog recommendations.
                 </p>
 
                 <div className={styles.topicSection}>

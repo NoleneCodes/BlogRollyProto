@@ -404,7 +404,7 @@ const Blogroll: NextPage = () => {
         <div style={{ margin: '1rem 0', textAlign: 'center' }}>
           <div className={styles.searchInfo}>
             {isSearching ? (
-              <p>Searching for "{searchQuery}"...</p>
+                <p>Searching for &quot;{searchQuery}&quot;...</p>
             ) : (
               <>
                 <p>

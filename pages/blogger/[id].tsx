@@ -479,7 +479,7 @@ const PublicBloggerProfile: React.FC = () => {
         <div className={styles.blogPostsSection}>
           <div className={styles.sectionHeader}>
             <h3>Published on Blogrolly ({blogPosts.length})</h3>
-            <p>These are {blogger.displayName.split(' ')[0]}'s featured blog posts on Blogrolly</p>
+            <p>These are {blogger.displayName.split(' ')[0]}&apos;s featured blog posts on Blogrolly</p>
           </div>
 
           {blogPosts.length > 0 ? (

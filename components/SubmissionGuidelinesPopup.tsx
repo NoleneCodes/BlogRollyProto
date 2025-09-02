@@ -68,7 +68,7 @@ const SubmissionGuidelinesPopup: React.FC<SubmissionGuidelinesPopupProps> = ({ i
               alignItems: 'center',
               gap: '0.5rem'
             }}>
-              <span>❌</span> What We Don't Accept
+              <span>❌</span> What We Don&apos;t Accept
             </h4>
             <ul style={{ 
               color: '#374151', 

@@ -920,7 +920,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <div className={styles.planHeader}>
                   <h3>Current Plan: Pro</h3>                  
                 </div>
-                <p>You're subscribed to our Pro plan with unlimited listings and priority support.</p>
+                <p>You&apos;re subscribed to our Pro plan with unlimited listings and priority support.</p>
                 <div className={styles.planFeatures}>
                   <ul>
                     <li>✅ Unlimited blog submissions</li>

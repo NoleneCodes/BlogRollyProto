@@ -148,7 +148,7 @@ const Investors: NextPage = () => {
         <p><strong>We&apos;re rebuilding a culture.</strong></p>
         <p>BlogRolly is the next-generation blogroll our &apos;Y&apos; is to become a platform that helps self-hosted bloggers grow, monetise, and build loyal readerships without relying on social feeds or SEO games.</p>
 
-        <h3>How we'll win:</h3>
+        <h3>How we&apos;ll win:</h3>
         <ul className={styles.featureList}>
           <li>• By serving the overlooked: 30M+ independent bloggers building businesses from scratch</li>
           <li>• By reviving lost discovery habits: organic linking, curated ecosystems, value-based visibility</li>
@@ -462,7 +462,7 @@ const Investors: NextPage = () => {
           <span>TikTok: <a href="https://www.tiktok.com/@blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
         </div>
 
-        <p>Let's reshape how the world discovers thoughtful, independent voices.</p>
+        <p>Let&apos;s reshape how the world discovers thoughtful, independent voices.</p>
       </div>
     </Layout>
   );

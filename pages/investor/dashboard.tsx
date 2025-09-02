@@ -191,7 +191,7 @@ const InvestorDashboard = () => {
               <div className={styles.downloadItem}>
                 <div className={styles.downloadInfo}>
                   <h4>Market Deep Dive PDF</h4>
-                  <p>A short report on the rising creator economy, SEO/content tool gaps, and "indie web" resurgence</p>
+                    <p>A short report on the rising creator economy, SEO/content tool gaps, and &quot;indie web&quot; resurgence</p>
                 </div>
                 <div className={styles.downloadCta}>
                   <span className={styles.comingSoonSmall}>Coming Soon</span>
