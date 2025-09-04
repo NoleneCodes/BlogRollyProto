@@ -6,6 +6,7 @@ import styles from '../styles/PersonalizedBlogroll.module.css';
 interface BlogPost {
   id: string;
   image?: string;
+  imageDescription: string;
   title: string;
   author: string;
   authorProfile: string;
@@ -85,6 +86,7 @@ const mockBlogs: BlogPost[] = [
   {
     id: '4',
     image: "https://picsum.photos/300/200?random=4",
+    imageDescription: "A random photo",
     title: "Remote Work Productivity Tips",
     author: "David Kim",
     authorProfile: "/blogger/david-kim",
