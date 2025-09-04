@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import styles from '../styles/ReaderProfile.module.css';
-import { createSupportRequest } from '../lib/supabase';
+import { supabaseDB } from '../lib/supabase';
 
 interface ContactSupportPopupProps {
   isOpen: boolean;
@@ -39,7 +39,7 @@ const ContactSupportPopup: React.FC<ContactSupportPopupProps> = ({ isOpen, onClo
 
     try {
       // Save support request to database
-      const result = await createSupportRequest({
+      const result = await supabaseDB.createSupportRequest({
         subject: formData.subject.trim(),
         priority: (formData.priority as 'low' | 'medium' | 'high' | 'critical') || 'low',
         message: formData.message.trim(),
