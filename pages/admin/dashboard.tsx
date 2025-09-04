@@ -76,8 +76,8 @@ const BugReports = () => {
         // Special handling for priority column to order low-medium-high
         if (sortConfig.key === 'priority') {
           const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
-          aValue = priorityOrder[a.priority as keyof typeof priorityOrder];
-          bValue = priorityOrder[b.priority as keyof typeof priorityOrder];
+          aValue = priorityOrder[a.priority as keyof typeof priorityOrder] as any;
+          bValue = priorityOrder[b.priority as keyof typeof priorityOrder] as any;
         }
 
         if (aValue < bValue) {
@@ -382,7 +382,7 @@ const LinkedInVerifications = () => {
   const [selectedVerification, setSelectedVerification] = useState<any>(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
-  const [selectedRejectionReason, setSelectedRejectionReason] = useState<RejectionReason | ''>('');
+  const [selectedRejectionReason, setSelectedRejectionReason] = useState<string>('');
   const [customRejectionReason, setCustomRejectionReason] = useState('');
 
   useEffect(() => {
@@ -1251,7 +1251,7 @@ const AdminDashboard = () => {
   const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
   const [showManager, setShowManager] = useState(false);
   const [editingPost, setEditingPost] = useState<InternalBlogPost | null>(null);
-  const [mode, setMode] = useState<'create' | 'edit'>('create');
+  const [mode, setMode] = useState<'add' | 'edit'>('add');
   const [testEmail, setTestEmail] = useState('');
   const [testFirstName, setTestFirstName] = useState('');
   const [emailTestLoading, setEmailTestLoading] = useState(false);
@@ -1327,7 +1327,7 @@ const AdminDashboard = () => {
 
   const handleAddNew = () => {
     setEditingPost(null);
-    setMode('create');
+    setMode('add');
     setShowManager(true);
   };
 

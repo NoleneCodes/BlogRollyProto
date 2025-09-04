@@ -24,14 +24,6 @@ const AdminLogin: React.FC = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [authStatus, setAuthStatus] = useState<'loading' | 'authenticated' | 'unauthorized' | 'error'>('loading');
 
-  useEffect(() => {
-    if (user && !isChecking) {
-      checkAdminAuth();
-    } else if (!user && !loading) {
-      setAuthStatus('unauthorized');
-    }
-  }, [user, loading, checkAdminAuth, isChecking]);
-
   const checkAdminAuth = async () => {
     if (!user || isChecking) return;
     
@@ -74,6 +66,14 @@ const AdminLogin: React.FC = () => {
       setIsChecking(false);
     }
   };
+
+  useEffect(() => {
+    if (user && !isChecking) {
+      checkAdminAuth();
+    } else if (!user && !loading) {
+      setAuthStatus('unauthorized');
+    }
+  }, [user, loading, checkAdminAuth, isChecking]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
