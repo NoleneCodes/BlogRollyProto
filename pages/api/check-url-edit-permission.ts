@@ -1,6 +1,9 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../lib/supabase';
+// Make sure the file exists at the specified path and exports supabaseDB
+import { supabaseDB } from '../../lib/supabase';
+// If the file does not exist, create '../../lib/supabaseDB.ts' and export supabaseDB from it.
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {

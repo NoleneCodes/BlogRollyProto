@@ -1,6 +1,6 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabaseHelpers } from '../../lib/supabase';
+import { BlogStatusHelpers } from '../../lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Send rejection email using blog review data
-    const result = await supabaseHelpers.sendRejectionEmailFromReview(blogSubmissionId);
+    const result = await BlogStatusHelpers.sendRejectionEmailFromReview(blogSubmissionId);
     
     if (!result.success) {
       return res.status(500).json({ error: result.error });

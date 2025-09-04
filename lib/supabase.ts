@@ -384,7 +384,9 @@ export const supabaseDB = {
         .update({
           status: 'approved',
           approved_at: new Date().toISOString(),
-          reviewed_at: new Date().toISOString()
+          reviewed_at: new Date().toISOString(),
+          is_live: true,
+        live_at: new Date().toISOString()
         })
         .eq('id', submissionId);
 
@@ -491,29 +493,31 @@ export const supabaseDB = {
   },
 
   // Check if a blog submission can go live
-  checkBlogLiveEligibility: async (submissionId: string) => {
+  checkBlogLiveEligibility: async (submissionId: string, userId: string, isLive: boolean) => {
     try {
       const { data, error } = await supabase
         .rpc('can_blog_submission_go_live', { submission_id: submissionId });
 
       if (error) throw error;
 
-      return { data: { canGoLive: data }, error: null };
+      // Set blog post live status and timestamp
+      const { data: updateData, error: updateError } = await supabase
+        .from('blog_submissions')
+        .update({ 
+          is_live: isLive,
+          live_at: isLive ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', submissionId)
+        .eq('user_id', userId)
+        .select();
+
+      if (updateError) throw updateError;
+
+      return { data: { canGoLive: data, update: updateData }, error: null };
     } catch (error: any) {
       return { data: null, error: { message: error.message || 'Failed to check live eligibility' } };
     }
-
-    const { data, error } = await supabase
-      .from('blog_submissions')
-      .update({ 
-        is_live: isLive,
-        live_at: isLive ? new Date().toISOString() : null
-      })
-      .eq('id', submissionId)
-      .eq('user_id', userId)
-      .select();
-
-    return { data, error };
   },
 
   getUserApprovedSubmissions: async (userId: string) => {

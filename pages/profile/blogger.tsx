@@ -20,7 +20,7 @@ interface UserInfo {
   joinedDate: string;
   avatar?: string;
   blogName?: string;
-  blogUrl?: string;
+  blogUrl: string;
   topics: string[];
   roles: string[];
 }
@@ -88,6 +88,7 @@ const BloggerProfile: React.FC = () => {
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
   const [showStripePricingModal, setShowStripePricingModal] = useState<boolean>(false);
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
+  const [stripeScriptLoaded, setStripeScriptLoaded] = useState(false);
 
 
   useEffect(() => {
@@ -99,7 +100,7 @@ const BloggerProfile: React.FC = () => {
           id: 'demo-blogger-123',
           name: 'Demo Blogger',
           email: 'blogger@example.com',
-          displayName: 'Demo Blogger',
+          username: 'Demo Blogger',
           bio: 'Passionate writer sharing insights on tech and lifestyle',
           joinedDate: '2024-01-10',
           blogName: 'Tech & Life Insights',
@@ -110,20 +111,7 @@ const BloggerProfile: React.FC = () => {
 
         // Mock blog submissions
         setBlogSubmissions([
-          {
-            id: '1',
-            title: 'The Future of Remote Work',
-            url: 'https://techlifeinsights.com/remote-work-future',
-            category: 'Tech',
-            tags: ['remote work', 'technology', 'future'],
-            status: 'approved',
-            submittedDate: '2024-01-15',
-            views: 1250,
-            clicks: 89,
-            isActive: true,
-            description: 'Exploring how remote work is reshaping the modern workplace and what it means for the future.',
-            image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=200&fit=crop'
-          },
+         
           {
             id: '2',
             title: 'Building Better Morning Routines',
@@ -221,13 +209,26 @@ const BloggerProfile: React.FC = () => {
     checkAuth();
   }, [router]);
 
+  useEffect(() => {
+  if (!(window as any).StripePricingTable) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/pricing-table.js';
+      script.async = true;
+      script.onload = () => setStripeScriptLoaded(true);
+      document.body.appendChild(script);
+    } else {
+      setStripeScriptLoaded(true);
+    }
+  }, []);
+
   const loadSavedDrafts = () => {
-    const savedDraft = localStorage.getItem('blogSubmissionDraft');
+    // Load draft from localStorage
+    const savedDraft = typeof window !== 'undefined' ? localStorage.getItem('blogSubmissionDraft') : null;
     if (savedDraft) {
       try {
         const draft = JSON.parse(savedDraft);
         const { savedAt, ...draftFormData } = draft;
-
+        
         // Only add draft if it has meaningful content
         if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
           const draftSubmission: BlogSubmission = {
@@ -484,12 +485,12 @@ const BloggerProfile: React.FC = () => {
                   <img src={userInfo.avatar} alt="Profile" />
                 ) : (
                   <div className={styles.initials}>
-                    {getInitials(userInfo.displayName || userInfo.name)}
+                    {getInitials(userInfo.username || userInfo.name)}
                   </div>
                 )}
               </div>
               <div className={styles.profileInfo}>
-                <h3>{userInfo.displayName || userInfo.name}</h3>
+                <h3>{userInfo.username || userInfo.name}</h3>
                 <p className={styles.blogName}>{userInfo.blogName}</p>
                 <p className={styles.bio}>{userInfo.bio}</p>
               </div>
@@ -689,7 +690,7 @@ const BloggerProfile: React.FC = () => {
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>
-                        {getInitials(userInfo.displayName || userInfo.name)}
+                        {getInitials(userInfo.username || userInfo.name)}
                       </div>
                     )}
                   </div>
@@ -939,7 +940,7 @@ const BloggerProfile: React.FC = () => {
                 <BlogSubmissionForm 
                   onSubmit={handleBlogSubmit}
                   onDraftSaved={loadSavedDrafts}
-                  displayName={userInfo.displayName}
+                  displayName={userInfo.username}
                   bloggerId={userInfo.id}
                   isBlogger={true}
                 />
@@ -987,11 +988,12 @@ const BloggerProfile: React.FC = () => {
               </button>
             </div>
             <div className={styles.stripePricingModalContent}>
-              <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-              <stripe-pricing-table 
-                pricing-table-id="prctbl_1RmgGoDyKgK2ioTOXJv76mNC"
-                publishable-key="pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL">
-              </stripe-pricing-table>
+              {stripeScriptLoaded && typeof window !== 'undefined' && (
+                <stripe-pricing-table 
+                  pricing-table-id="prctbl_1RmgGoDyKgK2ioTOXJv76mNC"
+                  publishable-key="pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL">
+                </stripe-pricing-table>
+              )}
             </div>
           </div>
         </div>
@@ -1001,3 +1003,15 @@ const BloggerProfile: React.FC = () => {
 };
 
 export default BloggerProfile;
+
+// Add custom JSX type for Stripe Pricing Table web component
+declare module 'react' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        'pricing-table-id': string;
+        'publishable-key': string;
+      };
+    }
+  }
+}

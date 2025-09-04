@@ -1,7 +1,7 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { emailService } from '../../../lib/email-templates';
-import { supabaseHelpers } from '../../../lib/supabase';
+import { BlogStatusHelpers } from '../../../lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     // If blogSubmissionId is provided, use actual blog review data
     if (blogSubmissionId) {
-      const result = await supabaseHelpers.sendRejectionEmailFromReview(blogSubmissionId);
+  const result = await BlogStatusHelpers.sendRejectionEmailFromReview(blogSubmissionId);
       
       if (!result.success) {
         return res.status(500).json({ error: result.error });
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Convert rejection reason to human-readable label if it's a code
     const reasonLabel = rejectionReason.includes('_') ? 
-      supabaseHelpers.getRejectionReasonLabel(rejectionReason) : 
+  BlogStatusHelpers.getRejectionReasonLabel(rejectionReason) : 
       rejectionReason;
 
     const result = await emailService.sendBlogStatusEmail(email, firstName, blogTitle, '', 'rejected', reasonLabel, rejectionNote);

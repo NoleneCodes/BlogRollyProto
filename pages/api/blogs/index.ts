@@ -84,11 +84,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       imageFilePath: blog.image_file_path,
       category: blog.category,
       tags: blog.tags,
-      author: blog.user_profiles.display_name || 
-              `${blog.user_profiles.first_name} ${blog.user_profiles.surname}`,
-      authorUsername: blog.user_profiles.username,
-      blogName: blog.blogger_profiles.blog_name,
-      isVerified: blog.blogger_profiles.is_verified,
+      author: blog.user_profiles?.[0]?.display_name || 
+              `${blog.user_profiles?.[0]?.first_name} ${blog.user_profiles?.[0]?.surname}`,
+      authorUsername: blog.user_profiles?.[0]?.username,
+      blogName: blog.blogger_profiles?.[0]?.blog_name,
+      isVerified: blog.blogger_profiles?.[0]?.is_verified,
       readTime: Math.ceil((blog.description?.length || 0) / 200), // Estimate
       date: blog.created_at,
       views: blog.views,

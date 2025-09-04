@@ -62,8 +62,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Update the URL using the new method that handles automatic deactivation
-    const supabaseDB = await import('../../../lib/supabase');
-    const { data, error, requiresReapproval } = await supabaseDB.SupabaseDB.updateBlogUrl(
+    const supabaseDBModule = await import('../../../lib/supabase');
+    const { data, error, requiresReapproval } = await supabaseDBModule.supabaseDB.updateBlogUrl(
       submissionId,
       user.id,
       newUrl,

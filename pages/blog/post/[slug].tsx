@@ -1,5 +1,6 @@
-import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
+import { GetStaticProps, GetStaticPaths } from 'next';
 import { useRouter } from 'next/router';
+import { FC } from 'react';
 import Layout from '../../../components/Layout';
 import { getInternalBlogPostBySlug, getAllInternalBlogPosts, InternalBlogPost } from '../../../lib/internalBlogData';
 import styles from '../../../styles/Home.module.css';
@@ -9,8 +10,7 @@ import Image from 'next/image';
 interface BlogPostPageProps {
   post: InternalBlogPost | null;
 }
-
-const BlogPostPage: NextPage<BlogPostPageProps> = ({ post }) => {
+const BlogPostPage: FC<BlogPostPageProps> = ({ post }) => {
   const router = useRouter();
 
   if (router.isFallback) {

@@ -38,10 +38,11 @@ export default async function handler(
         console.log('Checkout session completed:', session.id)
 
         // Get customer and subscription details
-        const customer = await stripe.customers.retrieve(session.customer as string)
-        const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
-
-        if (typeof customer === 'object' && customer.email) {
+        const customerResponse = await stripe.customers.retrieve(session.customer as string)
+        const customer = (customerResponse as any).email ? (customerResponse as any) : (customerResponse as any).data
+        const checkoutSubscription = await stripe.subscriptions.retrieve(session.subscription as string)
+        if (customer && typeof customer === 'object' && customer.email) {
+        if (typeof customer === 'object' && 'email' in customer && customer.email) {
           // Find user by email
           const { data: user, error: userError } = await supabaseDB.getUserByEmail(customer.email)
 
@@ -53,8 +54,8 @@ export default async function handler(
             await supabaseDB.updateBloggerStripeInfo(user.id, {
               stripe_customer_id: customer.id,
               subscription_status: 'active',
-              subscription_id: subscription.id,
-              subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString()
+              subscription_id: checkoutSubscription.id,
+              subscription_end_date: new Date((checkoutSubscription as any).current_period_end ? (checkoutSubscription as any).current_period_end * 1000 : Date.now()).toISOString()
             })
 
             // Verify tier is synced with subscription status
@@ -68,6 +69,7 @@ export default async function handler(
           }
         }
         break
+      }
 
       case 'invoice.payment_succeeded':
         const invoice = event.data.object
@@ -77,14 +79,19 @@ export default async function handler(
           const customer = await stripe.customers.retrieve(invoice.customer as string)
           const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string)
 
-          if (typeof customer === 'object' && customer.email) {
-            const { data: user } = await supabaseDB.getUserByEmail(customer.email)
+          if (
+            typeof customer === 'object' &&
+            'email' in customer &&
+            (customer as any).email
+          ) {
+            const customerEmail = (customer as any).email
+            const { data: user } = await supabaseDB.getUserByEmail(customerEmail)
 
             if (user) {
               // Update subscription end date
               await supabaseDB.updateBloggerStripeInfo(user.id, {
                 subscription_status: 'active',
-                subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString()
+                subscription_end_date: new Date((subscription as any).current_period_end * 1000).toISOString()
               })
 
               // Verify tier is synced with subscription status
@@ -93,10 +100,10 @@ export default async function handler(
               // Send payment successful email
               const planName = subscription.items.data[0]?.price.nickname || 'Pro Plan'
               const amount = `$${(invoice.amount_paid / 100).toFixed(2)}`
-              const nextBillingDate = new Date(subscription.current_period_end * 1000).toLocaleDateString()
+              const nextBillingDate = new Date((subscription as any).current_period_end * 1000).toLocaleDateString()
 
               await emailService.sendPaymentSuccessful(
-                customer.email,
+                customerEmail,
                 user.first_name || 'User',
                 amount,
                 planName,
@@ -116,8 +123,9 @@ export default async function handler(
           const customer = await stripe.customers.retrieve(failedInvoice.customer as string)
           const subscription = await stripe.subscriptions.retrieve(failedInvoice.subscription as string)
 
-          if (typeof customer === 'object' && customer.email) {
-            const { data: user } = await supabaseDB.getUserByEmail(customer.email)
+          const customerObj = (customer as any).email ? (customer as any) : (customer as any).data;
+          if (typeof customerObj === 'object' && customerObj.email) {
+            const { data: user } = await supabaseDB.getUserByEmail(customerObj.email)
 
             if (user) {
               // Update subscription status
@@ -134,7 +142,7 @@ export default async function handler(
               if (isFirstNotice) {
                 const retryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
                 await emailService.sendPaymentFailedNotice(
-                  customer.email,
+                  customerObj.email,
                   user.first_name || 'User',
                   planName,
                   amount,
@@ -144,7 +152,7 @@ export default async function handler(
               } else {
                 const delistDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString()
                 await emailService.sendPaymentFailedNotice(
-                  customer.email,
+                  customerObj.email,
                   user.first_name || 'User',
                   planName,
                   amount,
@@ -166,8 +174,9 @@ export default async function handler(
         if (subscription.customer) {
           const customer = await stripe.customers.retrieve(subscription.customer as string)
 
-          if (typeof customer === 'object' && customer.email) {
-            const { data: user } = await supabaseDB.getUserByEmail(customer.email)
+          const customerObj = (customer as any).email ? (customer as any) : (customer as any).data;
+          if (typeof customerObj === 'object' && customerObj.email) {
+            const { data: user } = await supabaseDB.getUserByEmail(customerObj.email)
 
             if (user) {
               const isActive = subscription.status === 'active'
@@ -191,7 +200,7 @@ export default async function handler(
                   // Send blog delisted email
                   const amount = `$${((subscription.items.data[0]?.price.unit_amount || 0) / 100).toFixed(2)}`
                   await emailService.sendBlogDelistedPayment(
-                    customer.email,
+                    (customer as any).email,
                     user.first_name || 'User',
                     liveCount,
                     amount
@@ -211,7 +220,7 @@ export default async function handler(
                 }
 
                 // Update Mailchimp tags
-                await emailService.addToMailchimpAudience(customer.email, user.first_name || 'User', ['free', 'blogger'])
+                await emailService.addToMailchimpAudience((customer as any).email, user.first_name || 'User', ['free', 'blogger'])
               } else {
                 // Update subscription info for other status changes
                 await supabaseDB.updateBloggerStripeInfo(user.id, {
