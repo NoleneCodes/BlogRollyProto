@@ -10,7 +10,7 @@ import { passwordResetTemplate } from './system-notifications/passwordReset';
 import { bugReportReceivedTemplate } from './bug-reporting/bugReportReceived';
 import { supportRequestReceivedTemplate } from './support-requests/supportRequestReceived';
 import { supportRequestReplyTemplate } from './support-requests/supportRequestReply';
-import { premiumWelcomeTemplate } from './subscription-payments/premiumWelcome';
+import { proWelcomeTemplate } from './subscription-payments/premiumWelcome';
 import { paymentSuccessfulTemplate } from './subscription-payments/paymentSuccessful';
 import { paymentFailedFirstNoticeTemplate } from './subscription-payments/paymentFailedFirstNotice';
 import { paymentFailedFinalNoticeTemplate } from './subscription-payments/paymentFailedFinalNotice';
@@ -52,7 +52,7 @@ export const emailTemplates = {
   supportRequestReply: supportRequestReplyTemplate,
 
   // Subscription & Payments
-  premiumWelcome: premiumWelcomeTemplate,
+  premiumWelcome: proWelcomeTemplate,
   paymentSuccessful: paymentSuccessfulTemplate,
   paymentFailedFirstNotice: paymentFailedFirstNoticeTemplate,
   paymentFailedFinalNotice: paymentFailedFinalNoticeTemplate,
@@ -287,7 +287,7 @@ export const emailService = {
         to: email,
         subject,
         html,
-        reply_to: SUPPORT_EMAIL_CONFIG.replyTo
+        replyTo: SUPPORT_EMAIL_CONFIG.replyTo
       });
 
       if (error) {
