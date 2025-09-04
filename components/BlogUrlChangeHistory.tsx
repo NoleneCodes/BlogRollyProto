@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import supabaseDB, { BlogPostUrlChange } from '../lib/supabase';
+import { supabaseDB, BlogPostUrlChange } from '../lib/supabase';
 import styles from '../styles/BlogUrlChangeHistory.module.css';
 
 interface BlogUrlChangeHistoryProps {
