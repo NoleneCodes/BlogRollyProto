@@ -97,12 +97,12 @@ const Privacy: NextPage = () => {
         <ul>
           <li>Account information is retained while your account is active and for 2 years after account deletion</li>
           <li>Blog submissions remain in our directory unless you request removal</li>
-          <li>Analytics data is retained according to our analytics providers' retention policies</li>
+          <li>Analytics data is retained according to our analytics providers&apos; retention policies</li>
           <li>Communication records are retained for 3 years for customer service purposes</li>
         </ul>
 
         <h2 id="data-security">6. DATA SECURITY</h2>
-        <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+        <p>We implement appropriate technical and organisational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
 
         <h2 id="privacy-rights">7. YOUR PRIVACY RIGHTS</h2>
         <p>Depending on your location, you may have certain rights regarding your personal information:</p>
@@ -129,7 +129,7 @@ const Privacy: NextPage = () => {
         <h3>Exercising Your Rights</h3>
         <p>To exercise these rights, please contact us at hello@blogrolly.com. We will respond to your request within the timeframes required by applicable law.</p>
 
-        <h2 id="childrens-privacy">8. CHILDREN'S PRIVACY</h2>
+        <h2 id="childrens-privacy">8. CHILDREN&apos;S PRIVACY</h2>
         <p>Our Services are not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that we have collected personal information from a child under 13, we will take steps to delete such information.</p>
 
         <h2 id="international-transfers">9. INTERNATIONAL DATA TRANSFERS</h2>
@@ -139,7 +139,7 @@ const Privacy: NextPage = () => {
         <h2 id="policy-updates">10. UPDATES TO THIS POLICY</h2>
         <p>We may update this Privacy Policy from time to time. When we make changes, we will:</p>
         <ul>
-          <li>Update the "Last updated" date at the top of this policy</li>
+          <li>Update the &quot;Last updated&quot; date at the top of this policy</li>
           <li>Notify you by email (to the email address associated with your account) of any material changes</li>
           <li>Post the updated policy on our website</li>
         </ul>
@@ -157,12 +157,12 @@ const Privacy: NextPage = () => {
         </p>
 
         <h3>Data Protection Officer</h3>
-        <p>For data protection inquiries, you can reach us at hello@blogrolly.com with "Data Protection" in the subject line.</p>
+        <p>For data protection inquiries, you can reach us at hello@blogrolly.com with &quot;Data Protection&quot; in the subject line.</p>
 
         <h3>Supervisory Authorities</h3>
         <p>If you are in the EU or UK and have concerns about our data processing that we cannot resolve, you have the right to lodge a complaint with your local supervisory authority:</p>
         <ul>
-          <li><strong>UK:</strong> Information Commissioner's Office (ICO) - https://ico.org.uk/</li>
+          <li><strong>UK:</strong> Information Commissioner&apos;s Office (ICO) - https://ico.org.uk/</li>
           <li><strong>EU:</strong> Contact your local Data Protection Authority</li>
         </ul>
 
