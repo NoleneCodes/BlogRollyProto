@@ -19,6 +19,7 @@ interface BlogPost {
   readTime?: string;
   publishDate?: string;
   isSaved?: boolean;
+  isRead?: boolean;
 }
 
 interface BlogCardProps {
