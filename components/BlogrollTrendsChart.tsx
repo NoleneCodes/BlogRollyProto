@@ -83,7 +83,7 @@ const BlogrollTrendsChart: React.FC = () => {
 
   // Process data for Chart.js
   const labels = rawData.map(([date]) => {
-    const [year, month] = date.split('-');
+    const [year, month] = String(date).split('-');
     return `${year}-${month.padStart(2, '0')}`;
   });
   
