@@ -36,7 +36,9 @@ export const useSupabaseAuth = () => {
         } else if (session?.user) {
           setAuthState({
             user: {
-              ...session.user,
+              id: session.user.id,
+              email: session.user.email ?? '', // Ensure email is always present
+              user_metadata: session.user.user_metadata,
               access_token: session.access_token
             },
             loading: false,
