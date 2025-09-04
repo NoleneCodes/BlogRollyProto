@@ -12,7 +12,7 @@ const Cookies: NextPage = () => {
         <p><strong>Last updated January 24, 2025</strong></p>
 
         <p>
-          This Cookie Policy explains how BlogRolly Ltd ("Company", "we", "us", or "our") uses cookies and similar technologies when you visit our website https://blogrolly.com (the "Site") and our related services (collectively, the "Services").
+          This Cookie Policy explains how BlogRolly Ltd (&quot;Company&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) uses cookies and similar technologies when you visit our website https://blogrolly.com (the &quot;Site&quot;) and our related services (collectively, the &quot;Services&quot;).
         </p>
 
         <h2>TABLE OF CONTENTS</h2>
@@ -202,7 +202,7 @@ const Cookies: NextPage = () => {
         <h2 id="updates-to-policy">10. UPDATES TO THIS POLICY</h2>
         <p>We may update this Cookie Policy from time to time to reflect changes in our practices or legal requirements. When we make changes, we will:</p>
         <ul>
-          <li>Update the "Last updated" date at the top of this policy</li>
+          <li>Update the &quot;Last updated&quot; date at the top of this policy</li>
           <li>Notify you of material changes via email or website notification</li>
           <li>Seek your consent again for any new types of cookies where required by law</li>
         </ul>
@@ -219,7 +219,7 @@ const Cookies: NextPage = () => {
         </p>
 
         <h3>Data Protection Inquiries</h3>
-        <p>For cookie-related data protection inquiries, please email us at hello@blogrolly.com with "Cookie Policy" in the subject line.</p>
+        <p>For cookie-related data protection inquiries, please email us at hello@blogrolly.com with &quot;Cookie Policy&quot; in the subject line.</p>
       </div>
     </Layout>
   );
