@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { createBugReport } from '../lib/supabase';
+import { supabaseDB } from '../lib/supabase';
 import styles from '../styles/BugReportModal.module.css';
 
 interface BugReportModalProps {
@@ -132,7 +132,7 @@ const BugReportModal: React.FC<BugReportModalProps> = ({
       };
       
       // Save bug report to database
-      const result = await createBugReport(reportData);
+      const result = await supabaseDB.createBugReport(reportData);
       
       if (!result.success) {
         throw new Error(result.error);

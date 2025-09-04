@@ -1361,7 +1361,7 @@ export const BlogStatusHelpers = {
   // Send rejection email using blog review data
   sendRejectionEmailFromReview: async (blogSubmissionId: string) => {
     try {
-      const reviewResult = await supabaseHelpers.getBlogReviewDetails(blogSubmissionId);
+      const reviewResult = await BlogStatusHelpers.getBlogReviewDetails(blogSubmissionId);
 
       if (!reviewResult.success || !reviewResult.data) {
         throw new Error('Failed to get blog review details');
@@ -1381,7 +1381,7 @@ export const BlogStatusHelpers = {
       const { emailService } = await import('./email-templates');
 
       // Get human-readable rejection reason
-      const rejectionReasonLabel = supabaseHelpers.getRejectionReasonLabel(review.rejection_reason!);
+      const rejectionReasonLabel = BlogStatusHelpers.getRejectionReasonLabel(review.rejection_reason!);
 
       // Send email with review data
       await emailService.sendBlogStatusEmail(
