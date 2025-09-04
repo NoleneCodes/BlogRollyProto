@@ -67,7 +67,7 @@ export const sendEmail = async (emailData: {
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,
-      reply_to: emailData.replyTo || RESEND_CONFIG.replyTo,
+      replyTo: emailData.replyTo || RESEND_CONFIG.replyTo,
     });
 
     if (error) {
@@ -95,7 +95,7 @@ export const sendInvestorEmail = async (emailData: {
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,
-      reply_to: INVESTOR_EMAIL_CONFIG.replyTo,
+      replyTo: INVESTOR_EMAIL_CONFIG.replyTo,
     });
 
     if (error) {
@@ -123,7 +123,7 @@ export const sendSupportEmail = async (emailData: {
       to: emailData.to,
       subject: emailData.subject,
       html: emailData.html,
-      reply_to: SUPPORT_EMAIL_CONFIG.replyTo,
+      replyTo: SUPPORT_EMAIL_CONFIG.replyTo,
     });
 
     if (error) {
@@ -151,7 +151,7 @@ export const sendInvestorWelcomeEmail = async (email: string, name: string, veri
       subject: template.subject,
       html: template.html,
       text: template.text,
-      reply_to: INVESTOR_EMAIL_CONFIG.replyTo,
+      replyTo: INVESTOR_EMAIL_CONFIG.replyTo,
     });
 
     if (error) {
@@ -206,7 +206,7 @@ export const sendLinkedInVerificationResult = async (email: string, name: string
       subject: template.subject,
       html: template.html,
       text: template.text,
-      reply_to: INVESTOR_EMAIL_CONFIG.replyTo,
+      replyTo: INVESTOR_EMAIL_CONFIG.replyTo,
     });
 
     if (error) {
