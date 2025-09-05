@@ -143,9 +143,19 @@ export const getStaticProps: GetStaticProps<BlogPostPageProps> = async ({ params
   const slug = params?.slug as string;
   const post = getInternalBlogPostBySlug(slug);
 
+  // If no post found, return 404
+  if (!post) {
+    return { notFound: true };
+  }
+
   return {
     props: {
-      post,
+      post: {
+        ...post,
+        imageUrl: post.imageUrl ?? null, // ✅ fixes the serialization error
+        imageDescription: post.imageDescription ?? null,
+        readTime: post.readTime ?? null,
+      },
     },
   };
 };
