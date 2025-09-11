@@ -8,6 +8,9 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import PremiumBlogCard from '../../components/PremiumBlogCard';
 import styles from '../../styles/BloggerProfilePremium.module.css';
+import PremiumOverviewTab from '../../components/bloggerPremium/PremiumOverviewTab';
+import PremiumBlogrollTab from '../../components/bloggerPremium/PremiumBlogrollTab';
+import PremiumAnalyticsTab from '../../components/bloggerPremium/PremiumAnalyticsTab';
 import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
 import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
@@ -471,232 +474,40 @@ const BloggerProfilePremium: React.FC = () => {
     switch (activeSection) {
       case 'overview':
         return (
-          <div className={styles.content}>
-            <h2>Profile Overview</h2>
-            <div className={styles.profileHeader}>
-              <div className={styles.avatar}>
-                {userInfo.avatar ? (
-                  <img src={userInfo.avatar} alt="Profile" />
-                ) : (
-                  <div className={styles.initials}>
-                    {getInitials(userInfo.displayName || userInfo.name)}
-                  </div>
-                )}
-              </div>
-              <div className={styles.profileInfo}>
-                <h3>{userInfo.displayName || userInfo.name}</h3>
-                <p className={styles.blogName}>{userInfo.blogName}</p>
-                <p className={styles.bio}>{userInfo.bio}</p>
-              </div>
-            </div>
-            {blogStats && (
-              <div className={styles.proStatsGrid}>
-                <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
-                  <div className={styles.statCardHeader}>
-                    <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
-                    <button className={styles.toggleButton}>
-                      {viewsToggle === 'total' ? 'Monthly' : 'Total'}
-                    </button>
-                  </div>
-                  <span className={styles.statNumber}>
-                    {viewsToggle === 'total' 
-                      ? blogStats.totalViews.toLocaleString() 
-                      : blogStats.monthlyViews.toLocaleString()
-                    }
-                  </span>
-                  <span className={styles.statGrowth}>
-                    {viewsToggle === 'total' 
-                      ? `+${blogStats.monthlyGrowth}% this month` 
-                      : 'Current month performance'
-                    }
-                  </span>
-                </div>
-                <div className={styles.statCard} onClick={() => setClicksToggle(clicksToggle === 'total' ? 'monthly' : 'total')}>
-                  <div className={styles.statCardHeader}>
-                    <h4>{clicksToggle === 'total' ? 'Total Clicks' : 'Clicks This Month'}</h4>
-                    <button className={styles.toggleButton}>
-                      {clicksToggle === 'total' ? 'Monthly' : 'Total'}
-                    </button>
-                  </div>
-                  <span className={styles.statNumber}>
-                    {clicksToggle === 'total' 
-                      ? blogStats.totalClicks.toLocaleString() 
-                      : blogStats.monthlyClicks.toLocaleString()
-                    }
-                  </span>
-                  <span className={styles.statGrowth}>
-                    {clicksToggle === 'total' 
-                      ? 'All-time performance' 
-                      : 'Current month performance'
-                    }
-                  </span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Click Rate</h4>
-                  <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Active Blogs</h4>
-                  <span className={styles.statNumber}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>
-                  <span className={styles.statDescription}>Unlimited</span>
-                </div>
-              </div>
-            )}
-          </div>
+          <PremiumOverviewTab
+            userInfo={userInfo}
+            blogStats={blogStats}
+            blogSubmissions={blogSubmissions}
+            viewsToggle={viewsToggle}
+            setViewsToggle={setViewsToggle}
+            clicksToggle={clicksToggle}
+            setClicksToggle={setClicksToggle}
+          />
         );
-
       case 'blogroll':
         return (
-          <div className={styles.content}>
-            <div className={styles.sectionHeader}>
-              <h2>My Blogroll</h2>
-              <button 
-                className={styles.primaryButton}
-                onClick={() => setShowBlogSubmissionForm(true)}
-              >
-                Submit New Blog
-              </button>
-            </div>
-
-            {blogSubmissions.length === 0 ? (
-              <p className={styles.emptyState}>No blog submissions yet. Submit your first blog post!</p>
-            ) : (
-              <>
-                <div className={styles.blogrollFilters}>
-                  <div className={styles.filterButtons}>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'all' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('all')}
-                    >
-                      All ({blogSubmissions.length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'draft' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('draft')}
-                    >
-                      Drafts ({blogSubmissions.filter(post => post.status === 'draft').length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'live' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('live')}
-                    >
-                      Live ({blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'deactivated' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('deactivated')}
-                    >
-                      Inactive ({blogSubmissions.filter(post => post.status === 'approved' && !post.isActive).length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'pending' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('pending')}
-                    >
-                      Pending ({blogSubmissions.filter(post => post.status === 'pending').length})
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.submissionsList}>
-                  {blogSubmissions
-                    .filter(submission => {
-                      if (blogrollFilter === 'all') return true;
-                      if (blogrollFilter === 'draft') return submission.status === 'draft';
-                      if (blogrollFilter === 'live') return submission.status === 'approved' && submission.isActive;
-                      if (blogrollFilter === 'deactivated') return submission.status === 'approved' && !submission.isActive;
-                      if (blogrollFilter === 'pending') return submission.status === 'pending';
-                      return true;
-                    })
-                    .map(submission => (
-                      <PremiumBlogCard
-                        key={submission.id}
-                        submission={submission}
-                        isEditing={editingBlog === submission.id}
-                        onEdit={handleEditBlog}
-                        onSaveEdit={handleSaveBlogEdit}
-                        onCancelEdit={handleCancelBlogEdit}
-                        onToggleActivation={togglePostActivation}
-                        showMetrics={true}
-                      />
-                    ))}
-                </div>
-              </>
-            )}
-          </div>
+          <PremiumBlogrollTab
+            blogSubmissions={blogSubmissions}
+            blogrollFilter={blogrollFilter}
+            setBlogrollFilter={setBlogrollFilter}
+            editingBlog={editingBlog}
+            startEditingBlog={handleEditBlog}
+            cancelEditingBlog={handleCancelBlogEdit}
+            saveEditedBlog={handleSaveBlogEdit}
+            handleEditField={() => {}}
+            handleSaveEdit={() => {}}
+            togglePostActivation={togglePostActivation}
+            setShowBlogSubmissionForm={setShowBlogSubmissionForm}
+          />
         );
-
       case 'analytics':
         return (
-          <div className={styles.content}>
-            <div className={styles.sectionHeader}>
-              <h2>Analytics</h2>
-              <select 
-                value={selectedTimeframe}
-                onChange={(e) => setSelectedTimeframe(e.target.value)}
-                className={styles.timeframeSelect}
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
-            </div>
-
-            {blogStats && (
-              <>
-                <div className={styles.analyticsGrid}>
-                  <div className={styles.analyticsCard}>
-                    <h4>Performance Overview</h4>
-                    <div className={styles.performanceMetrics}>
-                      <div className={styles.performanceItem}>
-                        <span className={styles.performanceLabel}>Avg. CTR</span>
-                        <span className={styles.performanceValue}>{blogStats.clickThroughRate}%</span>
-                        <span className={styles.performanceGrowth}>+0.8% vs last period</span>
-                      </div>
-
-                      <div className={styles.performanceItem}>
-                        <span className={styles.performanceLabel}>Monthly Growth</span>
-                        <span className={styles.performanceValue}>+{blogStats.monthlyGrowth}%</span>
-                        <span className={styles.performanceGrowth}>Traffic growth rate</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.analyticsCard}>
-                    <h4>Top Performing Content</h4>
-                    <div className={styles.topContent}>
-                      {blogSubmissions
-                        .filter(sub => sub.status === 'approved' && sub.isActive)
-                        .sort((a, b) => (b.views || 0) - (a.views || 0))
-                        .slice(0, 3)
-                        .map(submission => (
-                          <div key={submission.id} className={styles.topContentItem}>
-                            <div className={styles.contentTitle}>{submission.title}</div>
-                            <div className={styles.contentStats}>
-                              <span>{submission.views} views</span>
-                              <span>{submission.clicks} clicks</span>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-
-                  <div className={styles.analyticsCard}>
-                    <h4>Audience Insights</h4>
-                    <div className={styles.audienceInsights}>
-                      <div className={styles.insightItem}>
-                        <span className={styles.insightLabel}>Top Category</span>
-                        <span className={styles.insightValue}>{blogStats.topPerformingCategory}</span>
-                      </div>
-                      <div className={styles.insightItem}>
-                        <span className={styles.insightLabel}>Monthly Growth</span>
-                        <span className={styles.insightValue}>+{blogStats.monthlyGrowth}%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          <PremiumAnalyticsTab
+            blogStats={blogStats}
+            blogSubmissions={blogSubmissions}
+            selectedTimeframe={selectedTimeframe}
+            setSelectedTimeframe={setSelectedTimeframe}
+          />
         );
 
       case 'settings':

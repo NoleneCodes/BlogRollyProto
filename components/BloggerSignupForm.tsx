@@ -375,6 +375,15 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             Profile Picture
             <span className={styles.optional}>(Optional)</span>
           </label>
+          <div style={{ marginBottom: '0.5rem' }}>
+            {bloggerForm.profilePicture && (
+              <img
+                src={URL.createObjectURL(bloggerForm.profilePicture)}
+                alt="Profile Preview"
+                style={{ width: '96px', height: '96px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+              />
+            )}
+          </div>
           <input
             type="file"
             accept=".jpg,.jpeg,.png,.webp"

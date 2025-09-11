@@ -1,0 +1,80 @@
+import React from 'react';
+import styles from '../../styles/BloggerProfilePremium.module.css';
+
+export default function PremiumOverviewTab({ userInfo, blogStats, blogSubmissions, viewsToggle, setViewsToggle, clicksToggle, setClicksToggle }: any) {
+  if (!userInfo) return null;
+  return (
+    <div className={styles.content}>
+      <h2>Profile Overview</h2>
+      <div className={styles.profileHeader}>
+        <div className={styles.avatar}>
+          {userInfo.avatar ? (
+            <img src={userInfo.avatar} alt="Profile" />
+          ) : (
+            <div className={styles.initials}>
+              {userInfo.displayName?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || userInfo.name}
+            </div>
+          )}
+        </div>
+        <div className={styles.profileInfo}>
+          <h3>{userInfo.displayName || userInfo.name}</h3>
+          <p className={styles.blogName}>{userInfo.blogName}</p>
+          <p className={styles.bio}>{userInfo.bio}</p>
+        </div>
+      </div>
+      {blogStats && (
+        <div className={styles.proStatsGrid}>
+          <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
+            <div className={styles.statCardHeader}>
+              <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
+              <button className={styles.toggleButton}>
+                {viewsToggle === 'total' ? 'Monthly' : 'Total'}
+              </button>
+            </div>
+            <span className={styles.statNumber}>
+              {viewsToggle === 'total' 
+                ? blogStats.totalViews.toLocaleString() 
+                : blogStats.monthlyViews.toLocaleString()
+              }
+            </span>
+            <span className={styles.statGrowth}>
+              {viewsToggle === 'total' 
+                ? `+${blogStats.monthlyGrowth}% this month` 
+                : 'Current month performance'
+              }
+            </span>
+          </div>
+          <div className={styles.statCard} onClick={() => setClicksToggle(clicksToggle === 'total' ? 'monthly' : 'total')}>
+            <div className={styles.statCardHeader}>
+              <h4>{clicksToggle === 'total' ? 'Total Clicks' : 'Clicks This Month'}</h4>
+              <button className={styles.toggleButton}>
+                {clicksToggle === 'total' ? 'Monthly' : 'Total'}
+              </button>
+            </div>
+            <span className={styles.statNumber}>
+              {clicksToggle === 'total' 
+                ? blogStats.totalClicks.toLocaleString() 
+                : blogStats.monthlyClicks.toLocaleString()
+              }
+            </span>
+            <span className={styles.statGrowth}>
+              {clicksToggle === 'total' 
+                ? 'All-time performance' 
+                : 'Current month performance'
+              }
+            </span>
+          </div>
+          <div className={styles.statCard}>
+            <h4>Click Rate</h4>
+            <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
+          </div>
+          <div className={styles.statCard}>
+            <h4>Active Blogs</h4>
+            <span className={styles.statNumber}>{blogSubmissions.filter((post: any) => post.status === 'approved' && post.isActive).length}</span>
+            <span className={styles.statDescription}>Unlimited</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -15,6 +15,7 @@ import { paymentSuccessfulTemplate } from './subscription-payments/paymentSucces
 import { paymentFailedFirstNoticeTemplate } from './subscription-payments/paymentFailedFirstNotice';
 import { paymentFailedFinalNoticeTemplate } from './subscription-payments/paymentFailedFinalNotice';
 import { blogDelistedPaymentTemplate } from './subscription-payments/blogDelistedPayment';
+import { linkedinVerificationResultTemplate } from './investor-onboarding/linkedinVerificationResult';
 
 // Email service configuration
 export const MAILCHIMP_CONFIG = {
@@ -56,7 +57,10 @@ export const emailTemplates = {
   paymentSuccessful: paymentSuccessfulTemplate,
   paymentFailedFirstNotice: paymentFailedFirstNoticeTemplate,
   paymentFailedFinalNotice: paymentFailedFinalNoticeTemplate,
-  blogDelistedPayment: blogDelistedPaymentTemplate
+  blogDelistedPayment: blogDelistedPaymentTemplate,
+
+  // LinkedIn Verification
+  linkedinVerificationResult: linkedinVerificationResultTemplate
 };
 
 // Email service functions with Resend SDK
@@ -469,4 +473,7 @@ export interface EmailTemplateData {
   paymentFailedFirstNotice: { firstName: string; planName: string; amount: string; retryDate: string };
   paymentFailedFinalNotice: { firstName: string; planName: string; amount: string; delistDate: string };
   blogDelistedPayment: { firstName: string; blogCount: number; amount: string };
+
+  // LinkedIn Verification
+  linkedinVerificationResult: { firstName: string; status: string; profileUrl: string; };
 }

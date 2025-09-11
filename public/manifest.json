@@ -1,7 +1,6 @@
-
 {
-  "name": "Blogrolly",
-  "short_name": "Blogrolly",
+  "name": "BlogRolly",
+  "short_name": "BlogRolly",
   "description": "Your personal blog directory",
   "start_url": "/",
   "display": "standalone",

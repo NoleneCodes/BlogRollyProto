@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import ReaderOverviewTab from '../../components/reader/ReaderOverviewTab';
+import ReaderSavedTab from '../../components/reader/ReaderSavedTab';
+import ReaderFollowingTab from '../../components/reader/ReaderFollowingTab';
+import ReaderHistoryTab from '../../components/reader/ReaderHistoryTab';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BugReportPopup from '../../components/BugReportPopup';
@@ -263,148 +267,32 @@ const ReaderProfile: React.FC = () => {
     switch (activeSection) {
       case 'overview':
         return (
-          <div className={styles.content}>
-            <h2>Profile Overview</h2>
-            <div className={styles.profileHeader}>
-              <div className={styles.avatar}>
-                {userInfo.avatar ? (
-                  <img src={userInfo.avatar} alt="Profile" />
-                ) : (
-                  <div className={styles.initials}>
-                    {getInitials(userInfo.displayName || userInfo.name)}
-                  </div>
-                )}
-              </div>
-              <div className={styles.profileInfo}>
-                <h3>{userInfo.displayName || userInfo.name}</h3>
-                <p className={styles.bio}>{userInfo.bio}</p>
-              </div>
-            </div>
-            <div className={styles.statsGrid}>
-              <div className={styles.statCard}>
-                <h4>Saved Blogs</h4>
-                <span className={styles.statNumber}>{savedBlogs.length}</span>
-              </div>
-              <div className={styles.statCard}>
-                <h4>Following</h4>
-                <span className={styles.statNumber}>{followedBloggers.length}</span>
-              </div>
-              <div className={styles.statCard}>
-                <h4>Blogs Read</h4>
-                <span className={styles.statNumber}>{readingHistory.length}</span>
-              </div>
-              <div className={styles.statCard}>
-                <h4>Topics Following</h4>
-                <span className={styles.statNumber}>{userInfo.topics.length}</span>
-              </div>
-            </div>
-          </div>
+          <ReaderOverviewTab
+            userInfo={userInfo}
+            savedBlogs={savedBlogs}
+            followedBloggers={followedBloggers}
+            readingHistory={readingHistory}
+          />
         );
-
       case 'saved':
         return (
-          <div className={styles.content}>
-            <h2>Saved Blogs</h2>
-            {savedBlogs.length === 0 ? (
-              <p className={styles.emptyState}>You haven&apos;t saved any blogs yet. Start exploring!</p>
-            ) : (
-              <div className={styles.blogList}>
-                {savedBlogs.map(blog => (
-                  <div key={blog.id} className={styles.blogItem}>
-                    <div className={styles.blogDetails}>
-                      <h4>{blog.title}</h4>
-                      <p>by {blog.author}</p>
-                      <span className={styles.category}>{blog.category}</span>
-                      <span className={styles.date}>Saved {new Date(blog.savedDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className={styles.blogActions}>
-                      <a href={blog.url} className={styles.readButton}>Read</a>
-                      <button 
-                        onClick={() => removeSavedBlog(blog.id)}
-                        className={styles.removeButton}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReaderSavedTab
+            savedBlogs={savedBlogs}
+            removeSavedBlog={removeSavedBlog}
+          />
         );
-
       case 'following':
         return (
-          <div className={styles.content}>
-            <h2>Following</h2>
-            {followedBloggers.length === 0 ? (
-              <p className={styles.emptyState}>You&apos;re not following any bloggers yet. Discover and follow bloggers you love!</p>
-            ) : (
-              <div className={styles.followingList}>
-                {followedBloggers.map(blogger => (
-                  <div key={blogger.id} className={styles.followingItem}>
-                    <div className={styles.bloggerInfo}>
-                      <div className={styles.bloggerAvatar}>
-                        {blogger.avatar ? (
-                          <img src={blogger.avatar} alt={blogger.username} />
-                        ) : (
-                          <div className={styles.bloggerInitials}>
-                            {getInitials(blogger.username)}
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles.bloggerDetails}>
-                        <h4>{blogger.username}</h4>
-                        <p className={styles.blogName}>{blogger.blogName}</p>
-                        {blogger.bio && <p className={styles.bloggerBio}>{blogger.bio}</p>}
-                        <div className={styles.bloggerMeta}>
-                          <span className={styles.category}>{blogger.category}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.bloggerActions}>
-                      <a href={`/blogger/${blogger.id}`} className={styles.visitButton}>
-                        View Profile
-                      </a>
-                      <button 
-                        onClick={() => unfollowBlogger(blogger.id)}
-                        className={styles.unfollowButton}
-                      >
-                        Unfollow
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReaderFollowingTab
+            followedBloggers={followedBloggers}
+            unfollowBlogger={unfollowBlogger}
+          />
         );
-
       case 'history':
         return (
-          <div className={styles.content}>
-            <h2>Reading History</h2>
-            {readingHistory.length === 0 ? (
-              <p className={styles.emptyState}>No reading history yet. Start reading to build your history!</p>
-            ) : (
-              <div className={styles.historyList}>
-                {readingHistory.map(item => (
-                  <div key={item.id} className={styles.historyItem}>
-                    <div className={styles.historyDetails}>
-                      <h4>{item.title}</h4>
-                      <p>by {item.author}</p>
-                      {item.timeSpent && (
-                        <span className={styles.timeSpent}>{item.timeSpent} min read</span>
-                      )}
-                    </div>
-                    <div className={styles.historyActions}>
-                      <a href={item.url} className={styles.revisitButton}>Revisit</a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReaderHistoryTab
+            readingHistory={readingHistory}
+          />
         );
 
       case 'preferences':

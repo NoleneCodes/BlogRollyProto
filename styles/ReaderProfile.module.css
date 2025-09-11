@@ -467,7 +467,7 @@
 .previewImage {
   width: 100px;
   height: 100px;
-  border-radius: 50%;
+  border-radius: 8px;
   object-fit: cover;
   border: 3px solid #e2e8f0;
 }
@@ -475,7 +475,7 @@
 .previewPlaceholder {
   width: 100px;
   height: 100px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: #c42142;
   display: flex;
   align-items: center;

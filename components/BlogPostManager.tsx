@@ -68,7 +68,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     formData.append('image', file);
 
     try {
-      const response = await fetch('/api/upload-image', {
+      const response = await fetch('/api/upload-image-cloudinary', {
         method: 'POST',
         body: formData,
       });
@@ -136,7 +136,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     handleInputChange('content', currentContent + imageMarkdown);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.title || !formData.description || !formData.content) {
@@ -152,14 +152,17 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
       tags: formData.tags || [],
     } as Omit<InternalBlogPost, 'id'>;
 
-    if (mode === 'add') {
-      addInternalBlogPost(postData);
-    } else if (mode === 'edit' && existingPost) {
-      updateInternalBlogPost(existingPost.id, postData);
+    try {
+      if (mode === 'add') {
+        await addInternalBlogPost(postData);
+      } else if (mode === 'edit' && existingPost) {
+        await updateInternalBlogPost(existingPost.id, postData);
+      }
+      onClose();
+      window.location.reload(); // Refresh to show changes
+    } catch (error) {
+      alert('Failed to save blog post. Please try again.');
     }
-
-    onClose();
-    window.location.reload(); // Refresh to show changes
   };
 
   return (
