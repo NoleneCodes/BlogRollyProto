@@ -43,10 +43,17 @@
 
 .blogGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 32px;
+  box-sizing: border-box;
+}
+@media (min-width: 1536px) {
+  .blogGrid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 }
 
 .loadingContainer {

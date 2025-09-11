@@ -123,18 +123,18 @@
 
 .secondaryButton {
   background: transparent;
-  color: #0070f3;
-  padding: 1rem 2rem;
+  color: #ffffff;
+  padding: 1rem 1rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.2s ease;
-  border: 2px solid #0070f3;
+  border: 2px solid #fdfeff;
 }
 
 .secondaryButton:hover {
-  background: #0070f3;
-  color: white;
+  background: #ffffff;
+  color: #c42142;
 }
 
 .brandButton {

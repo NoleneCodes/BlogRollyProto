@@ -8,7 +8,8 @@ const Investors: NextPage = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'signup' | 'login' | null>(null);
   const [investorForm, setInvestorForm] = useState({
-    name: '',
+  firstName: '',
+  lastName: '',
     email: '',
     company: '',
     investmentRange: '',
@@ -69,7 +70,8 @@ const Investors: NextPage = () => {
         setSubmitStatus('success');
         setSubmitMessage(data.message);
         setInvestorForm({
-          name: '',
+          firstName: '',
+          lastName: '',
           email: '',
           company: '',
           investmentRange: '',
@@ -197,12 +199,24 @@ const Investors: NextPage = () => {
           <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
             <div className={styles.formRow}>
               <div className={styles.formGroup}>
-                <label htmlFor="name">Full Name *</label>
+                <label htmlFor="firstName">First Name *</label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={investorForm.name}
+                  id="firstName"
+                  name="firstName"
+                  value={investorForm.firstName}
+                  onChange={handleInputChange}
+                  required
+                  className={styles.formInput}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="lastName">Last Name *</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={investorForm.lastName}
                   onChange={handleInputChange}
                   required
                   className={styles.formInput}
@@ -233,7 +247,6 @@ const Investors: NextPage = () => {
                   value={investorForm.company}
                   onChange={handleInputChange}
                   className={styles.formInput}
-                  placeholder="Optional"
                 />
               </div>
 

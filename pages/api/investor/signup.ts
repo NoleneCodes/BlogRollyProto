@@ -11,7 +11,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const {
-      name,
+      firstName,
+      lastName,
       email,
       company,
       investmentRange,
@@ -23,9 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } = req.body;
 
     // Validate required fields
-    if (!name || !email || !investmentRange || !investorType || !password) {
+    if (!firstName || !lastName || !email || !investmentRange || !investorType || !password) {
       return res.status(400).json({ 
-        error: 'Missing required fields: name, email, investment range, investor type, and password are required' 
+        error: 'Missing required fields: first name, last name, email, investment range, investor type, and password are required' 
       });
     }
 
@@ -45,14 +46,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Generate verification token
+
     const verificationToken = Math.random().toString(36).substring(2, 15) + 
-                            Math.random().toString(36).substring(2, 15);
+                Math.random().toString(36).substring(2, 15);
+    const tokenExpiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 minutes from now
 
     // Insert new investor
     const { data: newInvestor, error: insertError } = await supabase
       .from('investor_users')
       .insert([{
-        name,
+        first_name: firstName,
+        last_name: lastName,
         email,
         company: company || null,
         investment_range: investmentRange,
@@ -61,6 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         message: message || null,
         password_hash: passwordHash,
         verification_token: verificationToken,
+        token_expires_at: tokenExpiresAt,
         linkedin_url: linkedinUrl || null,
         is_verified: false,
         linkedin_verified: false,
@@ -76,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Send welcome email with verification link
     try {
-      await sendInvestorWelcomeEmail(email, name, verificationToken);
+  await sendInvestorWelcomeEmail(email, `${firstName} ${lastName}`, verificationToken);
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
       // Don't fail the signup if email fails

@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import ContactSupportPopup from '../../components/ContactSupportPopup';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import styles from '../../styles/Home.module.css';
@@ -9,6 +10,7 @@ const InvestorVerify = () => {
   const { token } = router.query;
   const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
+  const [showContactSupportPopup, setShowContactSupportPopup] = useState(false);
 
   useEffect(() => {
     if (!token || typeof token !== 'string') return;
@@ -52,52 +54,64 @@ const InvestorVerify = () => {
       <div className={styles.hero}>
         <div className={styles.verificationContainer}>
           {verificationStatus === 'loading' && (
-            <div className={styles.loadingSection}>
-              <div className={styles.loader}></div>
-              <h1>Verifying Your Email...</h1>
-              <p>Please wait while we verify your investor account.</p>
-            </div>
-          )}
-
-          {verificationStatus === 'success' && (
-            <div className={styles.successSection}>
-              <div className={styles.successIcon}>✅</div>
-              <h1>Email Verified Successfully!</h1>
-              <p>{message}</p>
-              <p>Redirecting to LinkedIn verification...</p>
-              <button 
-                onClick={() => router.push('/investor/linkedin-verification')}
-                className={styles.primaryButton}
-              >
-                Continue to LinkedIn Verification
-              </button>
-            </div>
-          )}
-
-          {verificationStatus === 'error' && (
-            <div className={styles.errorSection}>
-              <div className={styles.errorIcon}>❌</div>
-              <h1>Verification Failed</h1>
-              <p>{message}</p>
-              <p>Please contact our support team if you continue to have issues.</p>
-              <div className={styles.buttonGroup}>
-                <button 
-                  onClick={() => router.push('/investors')}
-                  className={styles.primaryButton}
-                >
-                  Back to Investor Portal
-                </button>
-                <a 
-                  href="mailto:investors@blogrolly.com"
-                  className={styles.secondaryButton}
-                >
-                  Contact Support
-                </a>
+              <div className={styles.loadingSection}>
+                <div className={styles.loader}></div>
+                <h1>Thank you for Signing up!</h1>
+                <p>Please verify your email. This will only take a moment.</p>
+                <p> <strong>Note:</strong> If you don't see the email, please check your spam folder.</p>
+                
+                <div className={styles.buttonGroup} style={{ marginTop: 32 }}>
+                  <button
+                    type="button"
+                    className={styles.secondaryButton}
+                    onClick={() => setShowContactSupportPopup(true)}
+                  >
+                    Contact Support
+                  </button>
+                </div>
               </div>
-            </div>
           )}
+            {verificationStatus === 'success' && (
+              <div className={styles.successSection}>
+                <h1>Thank You for Creating Your Investor Account!</h1>
+                <p>Your email has been verified. We're grateful to have you join the BlogRolly investor community.</p>
+                <p>Next, our team will review your LinkedIn profile.</p>
+                <p>You'll receive an email notification as soon as your account is approved and you have access to the investor dashboard.</p>
+                <div className={styles.buttonGroup} style={{ marginTop: 32 }}>
+                  <a
+                    href="mailto:invest@blogrolly.com"
+                    className={styles.secondaryButton}
+                  >
+                    Investor Relations
+                  </a>
+                </div>
+              </div>
+            )}
+            {verificationStatus === 'error' && (
+              <div className={styles.errorSection}>
+                
+                <h1>Verification Failed</h1>
+                <p>{message}</p>
+                <p>Please contact our support team if you continue to have issues.</p>
+                <div className={styles.buttonGroup} style={{ marginTop: 32 }}>
+                  <button
+                    type="button"
+                    className={styles.secondaryButton}
+                    onClick={() => setShowContactSupportPopup(true)}
+                  >
+                    Contact Support
+                  </button>
+                </div>
+              </div>
+            )}
         </div>
       </div>
+      {showContactSupportPopup && (
+        <ContactSupportPopup
+          isOpen={showContactSupportPopup}
+          onClose={() => setShowContactSupportPopup(false)}
+        />
+      )}
     </Layout>
   );
 };
