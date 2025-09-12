@@ -70,110 +70,34 @@ const ReaderProfile: React.FC = () => {
   const [showContactSupportPopup, setShowContactSupportPopup] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const fetchProfileData = async () => {
       try {
-        // Temporarily bypass auth check for design review
-        // const response = await fetch('/api/auth-check');
-        // if (response.ok) {
-        //   const data = await response.json();
-        //   if (data.authenticated) {
-            // Mock user data for design review
-            setUserInfo({
-              id: 'demo-user-123',
-              name: 'Demo User',
-              email: 'demo@example.com',
-              displayName: 'Demo User',
-              bio: 'Passionate reader exploring diverse topics',
-              joinedDate: '2024-01-15',
-              topics: ['Tech', 'Health & Wellness', 'Books & Media'],
-              roles: ['reader', 'blogger'],
-              tier: 'free' // Change to 'pro' to test premium routing
-            });
+        // Fetch user info (replace with your actual API endpoint)
+        const userRes = await fetch('/api/reader/info');
+        const userData = await userRes.json();
+        setUserInfo(userData);
 
-            // Mock saved blogs data
-            setSavedBlogs([
-              {
-                id: '1',
-                title: 'The Future of Web Development',
-                author: 'Jane Smith',
-                savedDate: '2024-01-20',
-                url: '/blog/future-web-dev',
-                category: 'Tech'
-              },
-              {
-                id: '2',
-                title: 'Mindful Living in a Digital Age',
-                author: 'Alex Johnson',
-                savedDate: '2024-01-18',
-                url: '/blog/mindful-living',
-                category: 'Health & Wellness'
-              }
-            ]);
+        // Fetch saved blogs
+        const savedRes = await import('../../lib/savedBlogsClient');
+        const savedData = await savedRes.getSavedBlogs(userData.id);
+        setSavedBlogs(savedData.blogs || []);
 
-            // Mock reading history
-            setReadingHistory([
-              {
-                id: '1',
-                title: 'The Future of Web Development',
-                author: 'Jane Smith',
-                readDate: '2024-01-20',
-                url: '/blog/future-web-dev',
-                timeSpent: 8
-              },
-              {
-                id: '2',
-                title: 'Building Better Habits',
-                author: 'Mike Wilson',
-                readDate: '2024-01-19',
-                url: '/blog/better-habits',
-                timeSpent: 12
-              }
-            ]);
+        // Fetch reading history
+        const historyRes = await import('../../lib/readingHistoryClient');
+        const historyData = await historyRes.getReadingHistory(userData.id);
+        setReadingHistory(historyData.history || []);
 
-            setFollowedBloggers([
-              {
-                id: '1',
-                username: 'Jane Smith',
-                blogName: 'Tech Insights Daily',
-                blogUrl: 'https://techinsights.com',
-                bio: 'Frontend developer sharing the latest in web technology',
-                followedDate: '2024-01-15',
-                category: 'Tech'
-              },
-              {
-                id: '2',
-                username: 'Alex Johnson',
-                blogName: 'Mindful Moments',
-                blogUrl: 'https://mindfulmoments.blog',
-                bio: 'Wellness coach helping you live mindfully',
-                followedDate: '2024-01-10',
-                category: 'Health & Wellness'
-              },
-              {
-                id: '3',
-                username: 'Sarah Davis',
-                blogName: 'Book Lover&apos;s Corner',
-                blogUrl: 'https://bookloverscorner.com',
-                bio: 'Avid reader reviewing the latest fiction and non-fiction',
-                followedDate: '2024-01-08',
-                category: 'Books & Media'
-              }
-            ]);
-          // } else {
-          //   router.push('/auth');
-          // }
-        // } else {
-        //   router.push('/auth');
-        // }
+        // Fetch followed bloggers
+        const followRes = await import('../../lib/followClient');
+        const followData = await followRes.getBloggerFollowingCount(userData.id);
+        setFollowedBloggers(followData.bloggers || []);
       } catch (error) {
-        console.error('Auth check failed:', error);
-        // router.push('/auth');
+        console.error('Failed to fetch profile data:', error);
       } finally {
         setIsLoading(false);
       }
     };
-
-    checkAuth();
+    fetchProfileData();
   }, [router]);
 
   const handleLogout = () => {

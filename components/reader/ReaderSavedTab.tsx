@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/ReaderProfile.module.css';
 import { getSavedBlogs, removeSavedBlog } from '../../lib/savedBlogsClient';
@@ -39,14 +37,18 @@ export default function ReaderSavedTab({ readerId }: any) {
             id: 'mock1',
             title: 'How to Build a Productive Morning Routine',
             author: 'Sarah Johnson',
+            authorUsername: 'sarahjohnson',
             category: 'Productivity',
+            tags: ['Morning', 'Routine', 'Wellness'],
             postUrl: 'https://mindfulproductivity.com/morning-routine',
           },
           {
             id: 'mock2',
             title: 'The Ultimate Guide to Indie Blogging',
             author: 'Alex Chen',
+            authorUsername: 'alexchen',
             category: 'Tech',
+            tags: ['Indie', 'Blogging', 'Guide'],
             postUrl: 'https://techandbalance.com/indie-blogging-guide',
           }
         ];
@@ -58,7 +60,11 @@ export default function ReaderSavedTab({ readerId }: any) {
 
   const handleRemove = async (blogId: string) => {
     await removeSavedBlog(readerId, blogId);
-    setSavedBlogs(savedBlogs.filter(b => b.id !== blogId));
+    // Refetch saved blogs from API for accuracy
+    const res = await getSavedBlogs(readerId);
+    const blogIds = (res.blogs || []).map((b: any) => b.blog_id);
+    const blogDetails = await fetchBlogDetails(blogIds);
+    setSavedBlogs(blogDetails);
   };
 
   return (
@@ -72,8 +78,22 @@ export default function ReaderSavedTab({ readerId }: any) {
             <div key={blog.id} className={styles.blogItem}>
               <div className={styles.blogDetails}>
                 <h4>{blog.title}</h4>
-                <p>by {blog.author}</p>
-                <span className={styles.category}>{blog.category}</span>
+                <p>by <a href={`/profile/blogger/${blog.authorUsername}`} className={styles.bloggerLink}>{blog.authorUsername}</a></p>
+                {/* Removed category yellow box */}
+                {blog.tags && Array.isArray(blog.tags) && blog.tags.length > 0 && (
+                  <div className={styles.tagsContainer} style={{ marginTop: 16 }}>
+                    {blog.tags.slice(0, 3).map((tag: string, idx: number) => (
+                      <a
+                        key={idx}
+                        href={`/blogroll?tag=${encodeURIComponent(tag)}`}
+                        className={styles.tag}
+                        style={{ background: '#f3f4f6', color: '#c42142', borderRadius: '999px', padding: '2px 10px', marginRight: 6, fontSize: '0.95em', textDecoration: 'none', fontWeight: 500 }}
+                      >
+                        {tag}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className={styles.blogActions}>
                 <a href={blog.postUrl} className={styles.readButton}>Read</a>

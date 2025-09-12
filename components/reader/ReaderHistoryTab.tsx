@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/ReaderProfile.module.css';
 import { getReadingHistory } from '../../lib/readingHistoryClient';
@@ -67,7 +66,7 @@ export default function ReaderHistoryTab({ readerId }: any) {
                       className={styles.bloggerHandle}
                       style={{ color: '#c42142', textDecoration: 'none', fontWeight: 500 }}
                     >
-                      @{item.bloggerUsername}
+                      {item.bloggerUsername}
                     </a>
                   </span>
                 )}
@@ -75,7 +74,14 @@ export default function ReaderHistoryTab({ readerId }: any) {
                 {item.tags && Array.isArray(item.tags) && item.tags.length > 0 && (
                   <div className={styles.tagsContainer} style={{ marginTop: 16 }}>
                     {item.tags.slice(0, 3).map((tag: string, idx: number) => (
-                      <span key={idx} className={styles.tag} style={{ background: '#f3f4f6', color: '#c42142', borderRadius: '999px', padding: '2px 10px', marginRight: 6, fontSize: '0.95em' }}>{tag}</span>
+                      <a
+                        key={idx}
+                        href={`/blogroll?tag=${encodeURIComponent(tag)}`}
+                        className={styles.tag}
+                        style={{ background: '#f3f4f6', color: '#c42142', borderRadius: '999px', padding: '2px 10px', marginRight: 6, fontSize: '0.95em', textDecoration: 'none', fontWeight: 500 }}
+                      >
+                        {tag}
+                      </a>
                     ))}
                   </div>
                 )}

@@ -87,14 +87,14 @@
 
 .navItem.logout {
   margin-top: 1rem;
-  color: #ef4444;
+  color: #c42142;
   border-top: 1px solid #e2e8f0;
   padding-top: 1rem;
 }
 
 .navItem.logout:hover {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #fbe7ed;
+  color: #a01835;
 }
 
 .main {
