@@ -3,7 +3,8 @@
 CREATE TABLE IF NOT EXISTS investor_users (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
+  first_name VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL,
   company VARCHAR(255),
   investment_range VARCHAR(100) NOT NULL,
   investor_type VARCHAR(100) NOT NULL,

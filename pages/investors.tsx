@@ -448,33 +448,19 @@ const Investors: NextPage = () => {
 
       <div className={styles.contactSection}>
         <h2>Contact</h2>
-        <p>Ready to join the BlogRolly journey?</p>
-
-        <div className={styles.contactItem}>
-          <span className={styles.contactIcon}>📧</span>
-          <span>Email: <a href="mailto:invest@blogrolly.com">invest@blogrolly.com</a></span>
+        <p style={{ textAlign: 'center' }}>Ready to join the BlogRolly journey?</p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
+          <div className={styles.contactItem} style={{ textAlign: 'center' }}>
+            <span>Email: <a href="mailto:invest@blogrolly.com">invest@blogrolly.com</a></span>
+          </div>
+          <div className={styles.contactItem} style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+            <span>Follow us:</span>
+            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'center' }}>
+              {/* @ts-ignore-next-line */}
+              {require('../components/SocialIcons').default()}
+            </div>
+          </div>
         </div>
-
-        <div className={styles.contactItem}>
-          <span>Follow us:</span>
-        </div>
-
-        <div className={styles.contactItem}>
-          <span>Twitter/X: <a href="https://x.com/BlogRolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@BlogRolly</a></span>
-        </div>
-
-        <div className={styles.contactItem}>
-          <span>Instagram: <a href="https://www.instagram.com/blogrolly/" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
-        </div>
-
-        <div className={styles.contactItem}>
-          <span>Facebook: <a href="https://www.facebook.com/blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
-        </div>
-
-        <div className={styles.contactItem}>
-          <span>TikTok: <a href="https://www.tiktok.com/@blogrolly" target="_blank" rel="noopener noreferrer" className={styles.brandHandle}>@blogrolly</a></span>
-        </div>
-
         <p>Let&apos;s reshape how the world discovers thoughtful, independent voices.</p>
       </div>
     </Layout>

@@ -202,7 +202,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <Link href="/about" passHref legacyBehavior><a>About Us</a></Link>
               <Link href="/blogroll" passHref legacyBehavior><a>The Blogroll</a></Link>
               <Link href="/blog" passHref legacyBehavior><a>Our Blog</a></Link>
-              <a href="#">Contact Us</a>
+              <Link href="/contact" passHref legacyBehavior><a>Contact Us</a></Link>
               <a href="#" onClick={(e) => { e.preventDefault(); setShowBugReportPopup(true); }}>Report a Bug</a>
             </div>
             <div className={styles.footerSection}>
