@@ -643,7 +643,7 @@ const BloggerProfile: React.FC = () => {
       case 'settings':
         return (
           <div className={styles.content}>
-            <h2>Account Settings</h2>
+            <h2 style={{ color: '#c42142' }}>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
                 <label>Profile Picture</label>
@@ -734,7 +734,7 @@ const BloggerProfile: React.FC = () => {
       case 'billing':
         return (
           <div className={styles.content}>
-            <h2>Billing & Subscription</h2>
+            <h2 style={{ color: '#c42142' }}>Billing & Subscription</h2>
             <div className={styles.billingSection}>
               <div className={styles.currentPlan}>
                 <h3>Current Plan: Free Tier</h3>
@@ -771,7 +771,7 @@ const BloggerProfile: React.FC = () => {
       case 'help':
         return (
           <div className={styles.content}>
-            <h2>Help & Support</h2>
+            <h2 style={{ color: '#c42142' }}>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
                 <h3>Report a Bug</h3>

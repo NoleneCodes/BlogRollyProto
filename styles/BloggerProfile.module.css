@@ -1,3 +1,10 @@
+.content .brandHeading {
+  color: #c42142;
+}
+/* Brand colored heading for tabs */
+.content .brandHeading {
+  color: #c42142;
+}
 /* Account Settings Input Styling - Match Premium */
 .input, .textarea {
   width: 100%;

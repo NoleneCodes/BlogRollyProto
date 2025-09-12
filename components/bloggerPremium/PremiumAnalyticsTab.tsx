@@ -5,7 +5,7 @@ export default function PremiumAnalyticsTab({ blogStats, blogSubmissions, select
   if (!blogStats) return null;
   return (
     <div className={styles.content}>
-      <h2>Advanced Analytics</h2>
+  <h2 className={styles.brandHeading}>Advanced Analytics</h2>
       <div className={styles.analyticsOverview}>
         <div className={styles.statCard}>
           <h4>Total Blog Views</h4>

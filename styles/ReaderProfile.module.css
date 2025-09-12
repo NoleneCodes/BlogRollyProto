@@ -95,7 +95,7 @@
 .avatar {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 8px;
   overflow: hidden;
   background: #c42142;
   display: flex;
@@ -258,7 +258,7 @@
 .bloggerAvatar {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
+  border-radius: 8px;
   overflow: hidden;
   background: #c42142;
   display: flex;

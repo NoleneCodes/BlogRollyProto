@@ -5,7 +5,7 @@ export default function PremiumOverviewTab({ userInfo, blogStats, blogSubmission
   if (!userInfo) return null;
   return (
     <div className={styles.content}>
-      <h2>Profile Overview</h2>
+  <h2 style={{ color: '#c42142' }}>Profile Overview</h2>
       <div className={styles.profileHeader}>
         <div className={styles.avatar}>
           {userInfo.avatar ? (

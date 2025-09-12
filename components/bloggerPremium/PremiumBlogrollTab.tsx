@@ -6,7 +6,7 @@ export default function PremiumBlogrollTab({ blogSubmissions, blogrollFilter, se
   return (
     <div className={styles.content}>
       <div className={styles.sectionHeader}>
-        <h2>My Blogroll</h2>
+  <h2 style={{ color: '#c42142' }}>My Blogroll</h2>
         <button 
           className={styles.primaryButton}
           onClick={() => setShowBlogSubmissionForm(true)}

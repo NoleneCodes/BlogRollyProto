@@ -8,7 +8,8 @@ import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub, FaHe
 
 interface BloggerProfile {
   id: string;
-  displayName: string;
+  displayName: string; // Full name
+  username: string; // @handle
   bio: string;
   avatar?: string;
   blogName: string;
@@ -80,10 +81,16 @@ const PublicBloggerProfile: React.FC = () => {
 
   const checkFollowStatus = async (bloggerId: string) => {
     try {
-      // In production, this would check if current user follows this blogger
-      // For now, simulate with localStorage
-      const followedBloggers = JSON.parse(localStorage.getItem('followedBloggers') || '[]');
-      setIsFollowing(followedBloggers.includes(bloggerId));
+      // Use API to check if current user follows this blogger
+      const readerId = window.localStorage.getItem('readerId'); // Replace with actual auth logic
+      if (!readerId) return;
+      const res = await fetch('/api/follow', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ readerId, bloggerId })
+      });
+      const data = await res.json();
+      setIsFollowing(data.isFollowing);
     } catch (error) {
       console.error('Error checking follow status:', error);
     }
@@ -96,21 +103,22 @@ const PublicBloggerProfile: React.FC = () => {
     }
 
     setFollowLoading(true);
-    
     try {
-      // In production, this would make an API call to follow/unfollow
-      // For now, simulate with localStorage
-      const followedBloggers = JSON.parse(localStorage.getItem('followedBloggers') || '[]');
-      
+      const readerId = window.localStorage.getItem('readerId'); // Replace with actual auth logic
+      if (!readerId) return;
       if (isFollowing) {
-        // Unfollow
-        const updatedFollowed = followedBloggers.filter((bloggerId: string) => bloggerId !== id);
-        localStorage.setItem('followedBloggers', JSON.stringify(updatedFollowed));
+        await fetch('/api/follow', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ readerId, bloggerId: id })
+        });
         setIsFollowing(false);
       } else {
-        // Follow
-        const updatedFollowed = [...followedBloggers, id];
-        localStorage.setItem('followedBloggers', JSON.stringify(updatedFollowed));
+        await fetch('/api/follow', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ readerId, bloggerId: id })
+        });
         setIsFollowing(true);
       }
     } catch (error) {
@@ -126,10 +134,11 @@ const PublicBloggerProfile: React.FC = () => {
       // This would query your database for the blogger and their approved, active posts
 
       // Create different mock profiles based on blogger ID
-      const mockProfiles: { [key: string]: BloggerProfile } = {
+  const mockProfiles: { [key: string]: BloggerProfile } = {
         'blogger_1': {
           id: bloggerId,
           displayName: 'Sarah Johnson',
+          username: 'sarahjohnson', // @sarahjohnson
           bio: 'Passionate writer sharing insights on productivity, wellness, and personal growth. I believe small daily habits create extraordinary transformations.',
           avatar: 'https://picsum.photos/150/150?random=1',
           blogName: 'Mindful Productivity',
@@ -149,6 +158,7 @@ const PublicBloggerProfile: React.FC = () => {
         'blogger_2': {
           id: bloggerId,
           displayName: 'Alex Chen',
+          username: 'alexchen', // @alexchen
           bio: 'Tech professional writing about mental health, work-life balance, and building sustainable careers in technology.',
           avatar: 'https://picsum.photos/150/150?random=2',
           blogName: 'Tech & Balance',
@@ -160,6 +170,7 @@ const PublicBloggerProfile: React.FC = () => {
         'blogger_3': {
           id: bloggerId,
           displayName: 'Maria Garcia',
+          username: 'mariagarcia', // @mariagarcia
           bio: 'Food enthusiast and nutritionist sharing healthy recipes and sustainable eating habits for busy professionals.',
           avatar: 'https://picsum.photos/150/150?random=3',
           blogName: 'Nourish Daily',
@@ -173,7 +184,8 @@ const PublicBloggerProfile: React.FC = () => {
       // Get the profile or use a default one
       const mockBlogger = mockProfiles[bloggerId] || {
         id: bloggerId,
-        displayName: 'Blogger User',
+        displayName: bloggerId,
+        username: bloggerId, // @handle fallback
         bio: 'Welcome to my blog! I share insights and stories about my passions.',
         avatar: `https://picsum.photos/150/150?random=${Math.floor(Math.random() * 10)}`,
         blogName: 'My Blog',
@@ -342,6 +354,9 @@ const PublicBloggerProfile: React.FC = () => {
 
           <div className={styles.profileInfo}>
             <h1 className={styles.displayName}>{blogger.displayName}</h1>
+            <div className={styles.username} style={{ marginBottom: '1.25rem' }}>
+              <a href={`/blogger/${blogger.username}`} style={{ color: '#c42142', textDecoration: 'none', fontWeight: 500 }}>@{blogger.username}</a>
+            </div>
             <div className={styles.blogInfo}>
               <span className={styles.blogLabel}>Blog:</span>
               <h2 className={styles.blogName}>{blogger.blogName}</h2>

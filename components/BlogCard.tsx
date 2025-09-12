@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from '../styles/BlogCard.module.css';
 
 interface BlogPost {
@@ -90,12 +91,9 @@ const BlogCard: React.FC<BlogCardProps> = ({
         </h3>
 
         {showAuthor && (
-          <a 
-            href={`/blogger/${blog.bloggerId}`}
-            className={styles.blogAuthor}
-          >
-            {blog.bloggerDisplayName}
-          </a>
+          <Link href={`/blogger/${blog.bloggerId}`} legacyBehavior>
+            <a className={styles.blogAuthor}>{blog.bloggerDisplayName}</a>
+          </Link>
         )}
 
         <p className={styles.blogDescription}>

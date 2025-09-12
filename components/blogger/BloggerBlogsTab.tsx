@@ -7,7 +7,7 @@ export default function BloggerBlogsTab({ blogSubmissions, blogrollFilter, setBl
   return (
     <div className={styles.content}>
       <div className={styles.sectionHeader}>
-        <h2>My Blogroll</h2>
+  <h2 className={styles.brandHeading}>My Blogroll</h2>
         <button 
           className={styles.primaryButton}
           onClick={() => setShowBlogSubmissionForm(true)}

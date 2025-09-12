@@ -1,11 +1,26 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import styles from '../../styles/ReaderProfile.module.css';
+import { getBloggerFollowingCount } from '../../lib/followClient';
 
 export default function ReaderOverviewTab({ userInfo, savedBlogs, followedBloggers, readingHistory }: any) {
+  const [followingCount, setFollowingCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchFollowingCount() {
+      if (userInfo && userInfo.id) {
+        // Assuming userInfo.id is readerId
+        // If you want to show how many bloggers this reader follows, you need a separate API
+        setFollowingCount(followedBloggers.length);
+      }
+    }
+    fetchFollowingCount();
+  }, [userInfo, followedBloggers]);
+
   if (!userInfo) return null;
   return (
     <div className={styles.content}>
-      <h2>Profile Overview</h2>
+  <h2 style={{ color: '#c42142' }}>Profile Overview</h2>
       <div className={styles.profileHeader}>
         <div className={styles.avatar}>
           {userInfo.avatar ? (
@@ -28,7 +43,7 @@ export default function ReaderOverviewTab({ userInfo, savedBlogs, followedBlogge
         </div>
         <div className={styles.statCard}>
           <h4>Following</h4>
-          <span className={styles.statNumber}>{followedBloggers.length}</span>
+          <span className={styles.statNumber}>{followingCount}</span>
         </div>
         <div className={styles.statCard}>
           <h4>Blogs Read</h4>

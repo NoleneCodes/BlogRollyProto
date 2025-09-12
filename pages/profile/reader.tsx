@@ -277,8 +277,7 @@ const ReaderProfile: React.FC = () => {
       case 'saved':
         return (
           <ReaderSavedTab
-            savedBlogs={savedBlogs}
-            removeSavedBlog={removeSavedBlog}
+            readerId={userInfo.id}
           />
         );
       case 'following':
@@ -298,7 +297,7 @@ const ReaderProfile: React.FC = () => {
       case 'preferences':
         return (
           <div className={styles.content}>
-            <h2>Preferences</h2>
+            <h2 style={{ color: '#c42142' }}>Preferences</h2>
             <div className={styles.preferencesSection}>
               <h3>Topics You Follow</h3>
               <div className={styles.topicTags}>
@@ -329,7 +328,7 @@ const ReaderProfile: React.FC = () => {
       case 'settings':
         return (
           <div className={styles.content}>
-            <h2>Account Settings</h2>
+            <h2 style={{ color: '#c42142' }}>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
                 <label>Profile Picture</label>
@@ -402,7 +401,7 @@ const ReaderProfile: React.FC = () => {
       case 'help':
         return (
           <div className={styles.content}>
-            <h2>Help & Support</h2>
+            <h2 style={{ color: '#c42142' }}>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
                 <h3>Contact Support</h3>
@@ -589,13 +588,9 @@ const ReaderProfile: React.FC = () => {
             >
               Help
             </button>
-            <button 
-              className={`${styles.navItem} ${styles.logout}`}
-              onClick={handleLogout}
-            >
-              Log Out
-            </button>
-            {userInfo.roles.includes('blogger') && (
+          </nav>
+          <div className={styles.accountActionsSection}>
+            {Array.isArray(userInfo.roles) && userInfo.roles.includes('blogger') && (
               <button 
                 className={`${styles.navItem} ${styles.switch}`}
                 onClick={() => {
@@ -607,7 +602,13 @@ const ReaderProfile: React.FC = () => {
                 Switch to Blogger
               </button>
             )}
-          </nav>
+            <button 
+              className={`${styles.navItem} ${styles.logout}`}
+              onClick={handleLogout}
+            >
+              Log Out
+            </button>
+          </div>
         </aside>
         <main className={styles.main}>
           {renderContent()}
