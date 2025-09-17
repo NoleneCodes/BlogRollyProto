@@ -195,7 +195,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           <div className={styles.footerContent}>
             <div className={styles.footerSection}>
               <h4>BlogRolly</h4>
-              <p>Blogging, The Human Way</p>
+              <p className={styles.footerTagline}>Where independent blogs grow stronger together.</p>
             </div>
             <div className={styles.footerSection}>
               <h4>Web Nav</h4>

@@ -8,9 +8,13 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import PremiumBlogCard from '../../components/PremiumBlogCard';
 import styles from '../../styles/BloggerProfilePremium.module.css';
+import ProBillingSubscription from '../../components/bloggerPremium/ProBillingSubscription';
+import FeedbackPopup from '../../components/FeedbackPopup';
 import PremiumOverviewTab from '../../components/bloggerPremium/PremiumOverviewTab';
 import PremiumBlogrollTab from '../../components/bloggerPremium/PremiumBlogrollTab';
 import PremiumAnalyticsTab from '../../components/bloggerPremium/PremiumAnalyticsTab';
+import ProHelpSupport from '../../components/bloggerPremium/ProHelpSupport';
+import ProSocialLinks from '../../components/bloggerPremium/ProSocialLinks';
 import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
 import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
@@ -62,6 +66,7 @@ interface BlogStats {
 }
 
 const BloggerProfilePremium: React.FC = () => {
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -630,90 +635,7 @@ const BloggerProfilePremium: React.FC = () => {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Social Links</label>
-                <small className={styles.hint}>Add your social media and professional links</small>
-                <div className={styles.socialLinksGrid}>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaTwitter /></span>
-                      Twitter/X
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.twitter}
-                      onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
-                      placeholder="https://twitter.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaLinkedin /></span>
-                      LinkedIn
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.linkedin}
-                      onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
-                      placeholder="https://linkedin.com/in/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaInstagram /></span>
-                      Instagram
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.instagram}
-                      onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
-                      placeholder="https://instagram.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaYoutube /></span>
-                      YouTube
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.youtube}
-                      onChange={(e) => handleSocialLinkChange('youtube', e.target.value)}
-                      placeholder="https://youtube.com/@yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaTiktok /></span>
-                      TikTok
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.tiktok}
-                      onChange={(e) => handleSocialLinkChange('tiktok', e.target.value)}
-                      placeholder="https://tiktok.com/@yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaGithub /></span>
-                      GitHub
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.github}
-                      onChange={(e) => handleSocialLinkChange('github', e.target.value)}
-                      placeholder="https://github.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                </div>
-              </div>
+              <ProSocialLinks socialLinks={socialLinks} handleSocialLinkChange={handleSocialLinkChange} />
 
               <button className={styles.saveButton} onClick={handleSaveSettings}>
                 Save Changes
@@ -724,87 +646,17 @@ const BloggerProfilePremium: React.FC = () => {
 
       case 'billing':
         return (
-          <div className={styles.content}>
-            <h2 style={{ color: '#c42142' }}>Membership</h2>
-            <div className={styles.billingSection}>
-              <div className={styles.currentPlan}>
-                <div className={styles.planHeader}>
-                  <h3>Current Plan: Pro</h3>                  
-                </div>
-                <p>You&apos;re subscribed to our Pro plan with unlimited listings and priority support.</p>
-                <div className={styles.planFeatures}>
-                  <ul>
-                    <li>✅ Unlimited blog submissions</li>
-                    <li>✅ Advanced analytics and insights</li>
-                    <li>✅ Priority review for submissions</li>                 
-                    <li>✅ Priority support</li>
-                    <li>✅ Export analytics data</li>
-                    <li>✅ Custom profile themes (coming soon)</li>
-                  </ul>
-                  <p>More Pro features coming soon... Feel free to make suggestions</p>
-
-                </div>
-                <div className={styles.billingInfo}>
-                  <p><strong>Next billing date:</strong> February 15, 2024</p>
-                  <p><strong>Amount:</strong> $19/month</p>
-                  <p><strong>Payment method:</strong> •••• 4242</p>
-                </div>
-                <div className={styles.billingActions}>
-                  <button className={styles.manageButton}>Manage Subscription</button>
-                  <button className={styles.invoicesButton}>View Invoices</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProBillingSubscription onOpenFeedback={() => setShowFeedbackPopup(true)} />
         );
 
       case 'help':
         return (
-          <div className={styles.content}>
-            <h2 style={{ color: '#c42142' }}>Help & Support</h2>
-            <div className={styles.helpSection}>
-              <div className={styles.helpItem}>
-                <h3>Report a Bug</h3>
-                <p>Help us improve BlogRolly by reporting any bugs or issues you encounter</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowBugReportPopup(true)}
-                >
-                  Report a Bug
-                </button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>Submission Guidelines</h3>
-                <p>Learn about our content guidelines and best practices for blog submissions</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowSubmissionGuidelinesPopup(true)}
-                >
-                  View Guidelines
-                </button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>How It Works</h3>
-                <p>Learn about our submission and review process for getting your blog featured</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowHowItWorksPopup(true)}
-                >
-                  Learn How It Works
-                </button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>Contact Support</h3>
-                <p>Get help from our support team</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowContactSupportPopup(true)}
-                >
-                  Contact Us
-                </button>
-              </div>
-            </div>
-          </div>
+          <ProHelpSupport
+            setShowBugReportPopup={setShowBugReportPopup}
+            setShowSubmissionGuidelinesPopup={setShowSubmissionGuidelinesPopup}
+            setShowHowItWorksPopup={setShowHowItWorksPopup}
+            setShowContactSupportPopup={setShowContactSupportPopup}
+          />
         );
 
       default:
@@ -918,10 +770,11 @@ const BloggerProfilePremium: React.FC = () => {
         onClose={() => setShowSubmissionGuidelinesPopup(false)}
       />
 
-      {/* Contact Support Popup */}
-      <ContactSupportPopup
-        isOpen={showContactSupportPopup}
-        onClose={() => setShowContactSupportPopup(false)}
+
+      {/* Feedback Popup */}
+      <FeedbackPopup
+        isOpen={showFeedbackPopup}
+        onClose={() => setShowFeedbackPopup(false)}
       />
 
       {/* Bug Report Modal */}

@@ -9,6 +9,7 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
 import styles from '../../styles/BloggerProfile.module.css';
+import BillingSubscription from '../../components/blogger/BillingSubscription';
 import BloggerOverviewTab from '../../components/blogger/BloggerOverviewTab';
 import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 
@@ -733,39 +734,7 @@ const BloggerProfile: React.FC = () => {
 
       case 'billing':
         return (
-          <div className={styles.content}>
-            <h2 style={{ color: '#c42142' }}>Billing & Subscription</h2>
-            <div className={styles.billingSection}>
-              <div className={styles.currentPlan}>
-                <h3>Current Plan: Free Tier</h3>
-                <p>You&apos;re currently on our free tier with basic analytics and up to 5 blog submissions per month.</p>
-                <div className={styles.planFeatures}>
-                  <ul>
-                    <li>List up to 3 blogs</li>
-                    <li>Basic analytics</li>
-                    <li>Community support</li>
-                  </ul>
-                </div>
-              </div>
-              <div className={styles.upgradeSection}>
-                <h3>Upgrade to Pro</h3>
-                <div className={styles.proFeatures}>
-                  <ul>
-                    <li>Unlimited blog listings</li>
-                    <li>Advanced analytics and insights</li>
-                    <li>Priority review for submissions</li>
-                    <li>Priority Support</li>
-                  </ul>
-                </div>
-                <button 
-                  className={styles.upgradeButton}
-                  onClick={() => setShowStripePricingModal(true)}
-                >
-                  Upgrade to Pro
-                </button>
-              </div>
-            </div>
-          </div>
+          <BillingSubscription setShowStripePricingModal={setShowStripePricingModal} />
         );
 
       case 'help':
