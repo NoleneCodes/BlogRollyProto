@@ -218,59 +218,6 @@ const Submit: NextPage = () => {
             </div>
           </div>
 
-          {/* Why Join */}
-          <div style={{ marginBottom: '3rem' }}>
-            <h3 style={{
-              fontSize: '1.4rem',
-              marginBottom: '1rem',
-              color: '#374151',
-              textAlign: 'center'
-            }}>
-              Why Join?
-            </h3>
-            <p style={{
-              fontSize: '1.1rem',
-              color: '#c42142',
-              fontWeight: '600',
-              textAlign: 'center',
-              marginBottom: '1.5rem',
-              fontStyle: 'italic'
-            }}>
-              We&apos;re here to amplify indie blogs&apos;not just list them.<br />
-              You focus on writing; we&apos;ll help bring the readers.
-            </p>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '1.5rem',
-              textAlign: 'left'
-            }}>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
-                  Real Visibility
-                </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
-                  Get discovered by people who are actually looking for blogs like yours
-                </p>
-              </div>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
-                  Human Readers, Not Bots
-                </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
-                  No fake clicks, just real engagement
-                </p>
-              </div>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
-                  Free to Feature
-                </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
-                  No paywalls, no gimmicks—just submit and shine
-                </p>
-              </div>
-            </div>
-          </div>
 
           {/* How It Works */}
           <div>
