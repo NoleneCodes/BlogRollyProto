@@ -77,14 +77,14 @@ const ReaderProfile: React.FC = () => {
         const userData = await userRes.json();
         setUserInfo(userData);
 
-        // Fetch saved blogs
-        const savedRes = await import('../../lib/savedBlogsClient');
-        const savedData = await savedRes.getSavedBlogs(userData.id);
+        // Fetch saved blogs from API
+        const { getSavedBlogs } = await import('../../lib/savedBlogsClient');
+        const savedData = await getSavedBlogs(userData.id);
         setSavedBlogs(savedData.blogs || []);
 
-        // Fetch reading history
-        const historyRes = await import('../../lib/readingHistoryClient');
-        const historyData = await historyRes.getReadingHistory(userData.id);
+        // Fetch reading history from API
+        const { getReadingHistory } = await import('../../lib/readingHistoryClient');
+        const historyData = await getReadingHistory(userData.id);
         setReadingHistory(historyData.history || []);
 
         // Fetch followed bloggers
