@@ -20,9 +20,8 @@ const Blog: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>Our Blog</h1>
         <p className={styles.description}>
-          Insights, updates, and stories from the BlogRolly team
+          Insights, updates, and stories to help you grow as an independent blogger.
         </p>
-
         <div className={styles.cta}>
           <Link href="/auth" passHref legacyBehavior>
             <a className={styles.brandButton}>Join The Movement</a>
@@ -31,10 +30,17 @@ const Blog: NextPage = () => {
       </div>
 
       <div className={styles.missionSection}>
-        <p>Hey, welcome to the BlogRolly blog 👋</p>
-        <p>We&apos;re sharing our journey, the ups, the pivots, and everything in between as we build a space for independent bloggers to get seen, heard, and supported.</p>
-        <p>Think of this as our behind-the-scenes notebook, shared out loud.</p>
-        <p>Thanks for being here.</p>
+        <h2>Welcome to the Movement</h2>
+        <p>Hey,  thanks for stopping by the BlogRolly blog.</p>
+        <p>Here, we share the lessons we’re learning as we build BlogRolly, along with insights, tips, and stories designed to help you thrive as an indie blogger.</p>
+        <p>Think of it as an open notebook:</p>
+        <ul>
+          <li>Behind the Scenes — how we’re building BlogRolly and why</li>
+          <li>Guides & Insights — practical ideas to grow your reach</li>
+          <li>Community Stories — highlighting the voices and journeys of bloggers like you</li>
+        </ul>
+        <p>We’re all figuring this out together and by reading, sharing, and adding your voice, you’re part of a bigger shift toward an open, connected web.</p>
+        <p>Thanks for being here. Let’s grow together.</p>
       </div>
 
       {blogPosts.length > 0 && (

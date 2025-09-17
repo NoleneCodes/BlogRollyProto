@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
+import JoinInvestorCommunity from "../components/JoinInvestorCommunity";
 
 const Investors: NextPage = () => {
   const router = useRouter();
@@ -137,314 +138,93 @@ const Investors: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>Investors</h1>
         <p className={styles.description}>
-          Join us in revolutionizing how people discover and organize content
+          Back the independent web. Empower creators.
         </p>
       </div>
 
       <div className={styles.missionSection}>
-        <h2>Explore Our Vision, Opportunity & Strategy</h2>
-        <p>BlogRolly is building the future of independent content discovery, one that puts power back in the hands of creators.</p>
-        <p>We believe the next wave of the creator economy won&apos;t be algorithmic.</p>
-        <p>It will be owned, authentic, and connected.</p>
-        <p>We&apos;re not just rebuilding a tool.</p>
-        <p><strong>We&apos;re rebuilding a culture.</strong></p>
-        <p>BlogRolly is the next-generation blogroll our &apos;Y&apos; is to become a platform that helps self-hosted bloggers grow, monetise, and build loyal readerships without relying on social feeds or SEO games.</p>
-
-        <h3>How we&apos;ll win:</h3>
-        <ul className={styles.featureList}>
-          <li>• By serving the overlooked: 30M+ independent bloggers building businesses from scratch</li>
-          <li>• By reviving lost discovery habits: organic linking, curated ecosystems, value-based visibility</li>
-          <li>• By supporting modern, monetisation-friendly infrastructure for indie writers</li>
+        <h2>Our Vision, Opportunity & Strategy</h2>
+        <p><b>The Next Wave of the Creator Economy:</b></p>
+        <ul>
+          <li><b>Owned</b> - Creators want independence. Instead of building on platforms that can change the rules overnight, they keep full ownership of their sites, content, and audiences.</li>
+          <li><b>Trusted</b> - Readers are tired of clickbait and shallow content. Depth, quality, and expertise are what attract and retain loyal audiences.</li>
+          <li><b>Networked</b> - Solo creators struggle to grow alone. Collective visibility and shared SEO momentum unlock scalable, compounding growth.</li>
         </ul>
-      </div>
+        <p>BlogRolly sits at the intersection of these shifts; giving creators ownership; amplifying trusted content; and turning isolated blogs into a network that grows stronger together.</p>
+        <h2>Why Now</h2>
+        <p>The creator economy is booming and set to expand to over $500 billion by 2030 yet independent bloggers are underserved.</p>
+        <ul>
+          <li>30M+ bloggers worldwide run their own sites, many as full/part-time businesses.</li>
+          <li>They face rising acquisition costs, SEO battles, and reliance on volatile platforms.</li>
+          <li>The old engines of discovery ie blogrolls, organic linking, curated directories are disappearing.</li>
+        </ul>
 
-      <div className={styles.investorSignupSection}>
-        <h2>Join Our Investor Community</h2>
-        <p>Create your exclusive investor account to access our dashboard and investment opportunities</p>
 
-        {/* Tab Navigation */}
-        <div className={styles.tabNavigation}>
-          <button 
-            type="button"
-            className={`${styles.tabButton} ${activeTab === 'signup' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('signup')}
+        <p>BlogRolly revives and modernises these engines, building a self-reinforcing discovery network that scales exponentially.</p>
+
+        {/* Join Our Investor Community Section - now a component */}
+        <div id="join-investor-community">
+          <JoinInvestorCommunity
+            activeTab={activeTab}
+            setActiveTab={(tab) => setActiveTab(prev => prev === tab ? null : tab)}
+            submitStatus={submitStatus}
+            submitMessage={submitMessage}
+            handleSignupSubmit={handleSignupSubmit}
+            handleLoginSubmit={handleLoginSubmit}
+            investorForm={investorForm}
+            handleInputChange={handleInputChange}
+            isSubmitting={isSubmitting}
+            loginForm={loginForm}
+            setLoginForm={setLoginForm}
+            styles={styles}
+          />
+        </div>
+
+        <h2>How We’ll Win</h2>
+        <ul>
+          <li>Serve the overlooked — A platform designed specifically for self-hosted and independent bloggers.</li>
+          <li>Rebuild lost infrastructure — Organic linking, curated collections, and visibility that rewards quality.</li>
+          <li>Fuel monetisation — More visibility means more readers. More readers create more opportunities for creators to monetise through ads, sponsorships, products, or services — on their own terms.</li>
+        </ul>
+        <h2>Product Roadmap — Building in Public</h2>
+        <b>MVP Launch — Sept 2025</b>
+        <ul>
+          <li>Blogger directory submissions (searchable)</li>
+          <li>Reader onboarding + interest-based exploration</li>
+          <li>Early engagement tools (save, follow)</li>
+          <li>SEO-friendly profiles</li>
+        </ul>
+        <b>Phase 2 - Oct 2025 –Early 2026</b>
+        <ul>
+          <li>Blogger and Investor analytics dashboard</li>
+          <li>Value-based curated tagging and categories (Blog Collections)</li>
+        </ul>
+        <b>Vision - Mid 2026 and Beyond</b>
+        <ul>
+          <li>Dynamic AI-assisted blog collections answering niche search queries</li>
+          <li>Monetisation layers for advocates (affiliate programs, partnerships)</li>
+          <li>Indie press tools (newsletter syndication, blogger events)</li>
+        </ul>
+        <p>BlogRolly isn’t just a platform — it’s the connective tissue of the independent web.<br />
+        Invest now, and be part of the growth engine that grows stronger with every new voice.<br />
+        Together, we can return power to creators.</p>
+
+        {/* CTA Button to Join Investor Community */}
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '2.5rem 0' }}>
+          <button
+            className={styles.investorSubmitButton}
+            style={{ fontSize: '1.15rem', padding: '1.1rem 2.5rem' }}
+            onClick={() => {
+              const el = document.getElementById('join-investor-community');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }}
           >
-            Create Account
-          </button>
-          <button 
-            type="button"
-            className={`${styles.tabButton} ${activeTab === 'login' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('login')}
-          >
-            Sign In
+            Join Our Investor Community
           </button>
         </div>
-
-        {submitStatus === 'success' && (
-          <div className={styles.successMessage}>
-            <h3>✅ Success!</h3>
-            <p>{submitMessage}</p>
-          </div>
-        )}
-
-        {submitStatus === 'error' && (
-          <div className={styles.errorMessage}>
-            <h3>❌ Error</h3>
-            <p>{submitMessage}</p>
-          </div>
-        )}
-
-        {/* Signup Form - Only show after clicking Create Account tab */}
-        {activeTab === 'signup' && submitStatus !== 'success' && (
-          <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="firstName">First Name *</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={investorForm.firstName}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label htmlFor="lastName">Last Name *</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={investorForm.lastName}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="email">Email Address *</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={investorForm.email}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                />
-              </div>
-            </div>
-
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="company">Company/Fund Name</label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  value={investorForm.company}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="investmentRange">Investment Range *</label>
-                <select
-                  id="investmentRange"
-                  name="investmentRange"
-                  value={investorForm.investmentRange}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formSelect}
-                >
-                  <option value="">Select range</option>
-                  <option value="under-10k">Under $10K</option>
-                  <option value="10k-50k">$10K - $50K</option>
-                  <option value="50k-100k">$50K - $100K</option>
-                  <option value="100k-500k">$100K - $500K</option>
-                  <option value="500k-1m">$500K - $1M</option>
-                  <option value="over-1m">Over $1M</option>
-                  <option value="strategic">Strategic Partnership</option>
-                </select>
-              </div>
-            </div>
-
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="investorType">Investor Type *</label>
-                <select
-                  id="investorType"
-                  name="investorType"
-                  value={investorForm.investorType}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formSelect}
-                >
-                  <option value="">Select type</option>
-                  <option value="angel">Angel Investor</option>
-                  <option value="vc">Venture Capital</option>
-                  <option value="fund">Investment Fund</option>
-                  <option value="strategic">Strategic Investor</option>
-                  <option value="family-office">Family Office</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="interests">Areas of Interest</label>
-                <input
-                  type="text"
-                  id="interests"
-                  name="interests"
-                  value={investorForm.interests}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  placeholder="e.g., Creator Economy, SaaS, Media Tech"
-                />
-              </div>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="message">Message (Optional)</label>
-              <textarea
-                id="message"
-                name="message"
-                value={investorForm.message}
-                onChange={handleInputChange}
-                className={styles.formTextarea}
-                rows={4}
-                placeholder="Tell us about your investment thesis, relevant experience, or questions about BlogRolly..."
-              />
-            </div>
-
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label htmlFor="password">Password *</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={investorForm.password}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                  minLength={8}
-                  placeholder="Minimum 8 characters"
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="confirmPassword">Confirm Password *</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={investorForm.confirmPassword}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                  placeholder="Confirm your password"
-                />
-              </div>
-            </div>
-            
-            <div className={styles.formGroup}>
-                <label htmlFor="linkedinUrl">LinkedIn URL *</label>
-                <input
-                  type="url"
-                  id="linkedinUrl"
-                  name="linkedinUrl"
-                  value={investorForm.linkedinUrl}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                  placeholder="LinkedIn Profile URL (e.g., https://linkedin.com/in/yourname)"
-                />
-              </div>
-
-            <button 
-              type="submit" 
-              className={styles.investorSubmitButton}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Creating Account...' : 'Create Investor Account'}
-            </button>
-          </form>
-        )}
-
-        {/* Login Form */}
-        {activeTab === 'login' && (
-          <form onSubmit={handleLoginSubmit} className={styles.investorForm}>
-            <div className={styles.formGroup}>
-              <label htmlFor="loginEmail">Email Address</label>
-              <input
-                type="email"
-                id="loginEmail"
-                name="email"
-                value={loginForm.email}
-                onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
-                required
-                className={styles.formInput}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label htmlFor="loginPassword">Password</label>
-              <input
-                type="password"
-                id="loginPassword"
-                name="password"
-                value={loginForm.password}
-                onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                required
-                className={styles.formInput}
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              className={styles.investorSubmitButton}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Signing In...' : 'Access Investor Dashboard'}
-            </button>
-          </form>
-        )}
       </div>
 
-      <div className={styles.roadmapSection}>
-        <h2>Product Roadmap – Building in Public</h2>
 
-        <div className={styles.roadmapPhase}>
-          <h3>MVP Launch – Aug 2025</h3>
-          <ul className={styles.featureList}>
-            <li>• Blogger directory submissions (searchable)</li>
-            <li>• Reader onboarding + interest-based exploration</li>
-            <li>• Early engagement tools (save, follow)</li>
-            <li>• SEO-friendly profiles</li>
-          </ul>
-        </div>
-
-        <div className={styles.roadmapPhase}>
-          <h3>Phase 2 – Sept–Dec 2025</h3>
-          <ul className={styles.featureList}>
-            <li>• Blogger analytics dashboard</li>
-            <li>• Value-based curated tagging and categories (Blog Collections)</li>
-          </ul>
-        </div>
-
-        <div className={styles.roadmapPhase}>
-          <h3>Vision – 2026 and beyond</h3>
-          <ul className={styles.featureList}>
-            <li>• Dymaic AI-assisted blog collections directly addressing search queries</li>
-            <li>• Monetisation layers for advocates (Affiliate Programs)</li>
-            <li>• Indie press tools (newsletter/blogger events)</li>
-          </ul>
-        </div>
-      </div>
 
       <div className={styles.contactSection}>
         <h2>Contact</h2>
