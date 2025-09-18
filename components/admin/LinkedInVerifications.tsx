@@ -243,7 +243,7 @@ const LinkedInVerifications = () => {
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
               <h3>Reject LinkedIn Verification</h3>
-              <button className={styles.closeButton} onClick={() => { setShowRejectModal(false); setRejectReason(''); setPendingRejectId(null); }}>×</button>
+              <button className={styles.closeButton} aria-label="Close" onClick={() => { setShowRejectModal(false); setRejectReason(''); setPendingRejectId(null); }}>×</button>
             </div>
             <div className={styles.modalBody}>
               <label htmlFor="reject-reason">Reason for rejection:</label>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from '../styles/BlogCard.module.css';
 
 interface BlogPost {
@@ -67,10 +68,16 @@ const BlogCard: React.FC<BlogCardProps> = ({
     <div className={`${styles.blogCard} ${compact ? styles.compact : ''}`}>
       <div className={styles.imageContainer}>
         {blog.image && (
-          <img 
-            src={blog.image} 
+          <Image
+            src={blog.image}
             alt={blog.imageDescription || blog.title}
             className={styles.blogImage}
+            width={600}
+            height={400}
+            style={{ objectFit: 'cover' }}
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, 600px"
+            priority={false}
           />
         )}
         <div className={styles.categoryTag}>

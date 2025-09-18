@@ -6,7 +6,11 @@ import styles from "../styles/Home.module.css";
 
 const About = () => {
   return (
-    <Layout title="About - BlogRolly">
+    <Layout 
+      title="About - BlogRolly"
+      description="At BlogRolly, our mission is to empower independent bloggers. We help your blog get discovered, connect you with genuine readers, and create a community where blogging thrives."
+      canonical="https://blogrolly.com/about"
+    >
       <div className={styles.hero}>
         <h1 className={styles.title}>About BlogRolly</h1>
         <p className={styles.description}>

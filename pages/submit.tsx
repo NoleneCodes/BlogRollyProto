@@ -59,7 +59,11 @@ const Submit: NextPage = () => {
 
   if (isLoading) {
     return (
-      <Layout title="Submit a Blog - Blogrolly">
+      <Layout 
+        title="Submit a Blog - Blogrolly"
+        description="Submit your blog to BlogRolly and grow your audience. Add your blog, share your story, and connect with readers who are searching for new voices."
+        canonical="https://blogrolly.com/submit"
+      >
         <div className={styles.hero}>
           <h1 className={styles.title}>Loading...</h1>
         </div>
@@ -77,7 +81,7 @@ const Submit: NextPage = () => {
 
   if (userInfo && isBlogger) {
     return (
-      <Layout title="Submit a Blog - Blogrolly">
+  <Layout title="Submit a Blog - Blogrolly" canonical="https://blogrolly.com/submit">
         <div className={styles.hero}>
           <h1 className={styles.title}>Submit a Blog</h1>
           <p className={styles.description}>
@@ -102,7 +106,7 @@ const Submit: NextPage = () => {
   }
 
   return (
-    <Layout title="Submit a Blog - Blogrolly">
+  <Layout title="Submit a Blog - Blogrolly" canonical="https://blogrolly.com/submit">
       <div className={styles.hero}>
         <h1 className={styles.title}>Submit a Blog</h1>
         <p className={styles.description}>

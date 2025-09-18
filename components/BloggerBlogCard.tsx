@@ -1,6 +1,7 @@
 
 import React from 'react';
 import BlogEditForm from './BlogEditForm';
+import Image from 'next/image';
 import styles from '../styles/BloggerBlogCard.module.css';
 
 interface BlogSubmission {
@@ -82,10 +83,16 @@ const BloggerBlogCard: React.FC<BloggerBlogCardProps> = ({
             autoFocus
           />
         ) : blog.image ? (
-          <img 
-            src={blog.image} 
+          <Image
+            src={blog.image}
             alt={blog.title}
             className={styles.submissionImage}
+            width={600}
+            height={400}
+            style={{ objectFit: 'cover' }}
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, 600px"
+            priority={false}
             onClick={() => onEditField(blog.id, 'image', blog.image)}
           />
         ) : (

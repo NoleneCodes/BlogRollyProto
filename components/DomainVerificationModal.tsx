@@ -73,7 +73,7 @@ const DomainVerificationModal: React.FC<DomainVerificationModalProps> = ({
       <div className={styles.modal}>
         <div className={styles.header}>
           <h2>Verify Your Blog Domain</h2>
-          <button onClick={onClose} className={styles.closeButton}>×</button>
+          <button onClick={onClose} className={styles.closeButton} aria-label="Close">×</button>
         </div>
 
         <div className={styles.content}>

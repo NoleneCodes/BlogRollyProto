@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { InternalBlogPost, addInternalBlogPost, updateInternalBlogPost, deleteInternalBlogPost, ContentImage } from '../lib/internalBlogData';
 import styles from '../styles/BloggerProfilePremium.module.css';
 
@@ -226,16 +227,19 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {formData.imageUrl && formData.imageUrl !== '/replit.svg' && (
                   <div style={{ width: '100%', maxWidth: '300px' }}>
-                    <img 
-                      src={formData.imageUrl} 
-                      alt="Blog preview" 
-                      style={{ 
-                        width: '100%', 
-                        height: '150px', 
-                        objectFit: 'cover', 
+                    <Image
+                      src={formData.imageUrl}
+                      alt="Blog preview"
+                      width={300}
+                      height={150}
+                      style={{
+                        width: '100%',
+                        height: '150px',
+                        objectFit: 'cover',
                         borderRadius: '8px',
                         border: '1px solid #d1d5db'
-                      }} 
+                      }}
+                      loading="lazy"
                     />
                   </div>
                 )}
@@ -413,10 +417,13 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                     {formData.contentImages.map((image) => (
                       <div key={image.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.5rem' }}>
-                        <img 
-                          src={image.url} 
+                        <Image
+                          src={image.url}
                           alt={image.description}
+                          width={200}
+                          height={100}
                           style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '4px', marginBottom: '0.5rem' }}
+                          loading="lazy"
                         />
                         <p style={{ fontSize: '0.875rem', margin: '0 0 0.5rem 0', color: '#6b7280' }}>{image.description}</p>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>

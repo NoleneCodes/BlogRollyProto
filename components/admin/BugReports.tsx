@@ -206,7 +206,7 @@ const BugReports = () => {
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
               <h3>Bug Report Details - {selectedBugReport.id}</h3>
-              <button className={styles.closeButton} onClick={() => setShowViewModal(false)}>×</button>
+              <button className={styles.closeButton} aria-label="Close" onClick={() => setShowViewModal(false)}>×</button>
             </div>
             <div className={styles.bugReportDetails}>
               <div className={styles.bugReportHeader}>

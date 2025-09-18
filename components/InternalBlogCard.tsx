@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import styles from '../styles/BlogCard.module.css';
 
 interface InternalBlogPost {
@@ -56,9 +57,15 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
       <div className={styles.imageContainer}>
         {blog.imageUrl && (
           <div className={styles.blogImage}>
-            <img 
-              src={blog.imageUrl} 
-              alt={blog.imageDescription || blog.title} 
+            <Image
+              src={blog.imageUrl}
+              alt={blog.imageDescription || blog.title}
+              width={600}
+              height={400}
+              style={{ objectFit: 'cover' }}
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 600px"
+              priority={false}
             />
           </div>
         )}

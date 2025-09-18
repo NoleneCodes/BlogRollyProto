@@ -11,12 +11,19 @@ const Blog: NextPage = () => {
   const [blogPosts, setBlogPosts] = useState<InternalBlogPost[]>([]);
 
   useEffect(() => {
-    const posts = getInternalBlogPosts();
-    setBlogPosts(posts);
+    const fetchPosts = async () => {
+      const posts = await getInternalBlogPosts();
+      setBlogPosts(posts);
+    };
+    fetchPosts();
   }, []);
 
   return (
-    <Layout title="Our Blog - BlogRolly">
+    <Layout 
+      title="Our Blog - BlogRolly"
+      description="The BlogRolly Blog: tips to grow your blog, insights on the creator economy, platform news, and stories from our blogging community."
+      canonical="https://blogrolly.com/blog"
+    >
       <div className={styles.hero}>
         <h1 className={styles.title}>Our Blog</h1>
         <p className={styles.description}>

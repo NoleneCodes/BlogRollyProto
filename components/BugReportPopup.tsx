@@ -135,7 +135,7 @@ const BugReportPopup: React.FC<BugReportPopupProps> = ({ isOpen, onClose }) => {
       <div className={styles.popupContent}>
         <div className={styles.popupHeader}>
           <h3>Report a Bug</h3>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <button className={styles.closeButton} aria-label="Close" onClick={onClose}>×</button>
         </div>
         
         <div className={styles.popupBody}>

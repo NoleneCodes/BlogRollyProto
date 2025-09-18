@@ -239,7 +239,7 @@ const SupportRequests = () => {
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
               <h3>Support Request Details - {selectedSupportRequest.id}</h3>
-              <button className={styles.closeButton} onClick={() => setShowViewModal(false)}>×</button>
+              <button className={styles.closeButton} aria-label="Close" onClick={() => setShowViewModal(false)}>×</button>
             </div>
             <div className={styles.supportRequestDetails}>
               <div className={styles.supportRequestHeader}>
@@ -320,7 +320,7 @@ const SupportRequests = () => {
           <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
               <h3>Respond to Support Request - {selectedSupportRequest.id}</h3>
-              <button className={styles.closeButton} onClick={() => setShowResponseModal(false)}>×</button>
+              <button className={styles.closeButton} aria-label="Close" onClick={() => setShowResponseModal(false)}>×</button>
             </div>
             <div className={styles.responseForm}>
               <div className={styles.supportRequestSection}>

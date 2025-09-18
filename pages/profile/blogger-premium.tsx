@@ -527,7 +527,7 @@ const BloggerProfilePremium: React.FC = () => {
                     {profilePicturePreview || userInfo.avatar ? (
                       <img 
                         src={profilePicturePreview || userInfo.avatar} 
-                        alt="Profile" 
+                        alt="profile picture" 
                         className={styles.previewImage}
                       />
                     ) : (

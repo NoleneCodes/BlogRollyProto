@@ -6,7 +6,11 @@ import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   return (
-    <Layout title="Blogrolly - Your Personal Blog Directory">
+    <Layout 
+      title="Blogrolly - Your Personal Blog Directory"
+      description="Discover and follow the best independent blogs in one place. BlogRolly is the blog directory and community where bloggers grow, connect, and reach genuine readers."
+      canonical="https://blogrolly.com/"
+    >
       <div className={styles.hero}>
         <h1 className={styles.title}>BlogRolly</h1>
         <p className={styles.description}>

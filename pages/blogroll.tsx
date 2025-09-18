@@ -358,7 +358,11 @@ const Blogroll: NextPage = () => {
   const CATEGORIES = MAIN_CATEGORIES.filter(category => category !== 'Other');
 
   return (
-    <Layout title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}>
+    <Layout 
+      title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}
+      description={searchQuery ? `Search results for “${searchQuery}” in the BlogRolly blogroll. Discover blogs by category, topic, or niche.` : "Browse the BlogRolly blogroll to explore trending blogs, new voices, and independent bloggers across every category."}
+      canonical="https://blogrolly.com/blogroll"
+    >
       <div className={styles.hero}>
         <h1 className={styles.title}>The Blogroll</h1>
         <p className={styles.description}>
