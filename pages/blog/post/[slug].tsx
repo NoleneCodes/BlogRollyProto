@@ -128,7 +128,8 @@ const BlogPostPage: FC<BlogPostPageProps> = ({ post }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = getAllInternalBlogPosts();
+
+  const posts = await getAllInternalBlogPosts();
   const paths = posts.map((post) => ({
     params: { slug: post.slug },
   }));
@@ -141,7 +142,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<BlogPostPageProps> = async ({ params }) => {
   const slug = params?.slug as string;
-  const post = getInternalBlogPostBySlug(slug);
+  const post = await getInternalBlogPostBySlug(slug);
 
   // If no post found, return 404
   if (!post) {
@@ -152,7 +153,7 @@ export const getStaticProps: GetStaticProps<BlogPostPageProps> = async ({ params
     props: {
       post: {
         ...post,
-        imageUrl: post.imageUrl ?? null, // ✅ fixes the serialization error
+        imageUrl: post.imageUrl ?? null, // fixes the serialization error
         imageDescription: post.imageDescription ?? null,
         readTime: post.readTime ?? null,
       },
