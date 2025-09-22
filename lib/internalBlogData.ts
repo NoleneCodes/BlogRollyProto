@@ -13,7 +13,7 @@ export interface InternalBlogPost {
   imageDescription?: string;
   readTime: string;
   publishDate: string;
-  isPublished: boolean;
+  status: 'draft' | 'published' | 'archived';
   content: string;
   contentImages?: ContentImage[];
 }
@@ -35,11 +35,12 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // One mock blog post for testing
 
 export const getInternalBlogPosts = async (): Promise<InternalBlogPost[]> => {
+  // Only return published posts
   const { data, error } = await supabase
     .from('internal_blog_posts')
     .select('*')
-    .eq('is_published', true)
-    .order('publish_date', { ascending: false });
+    .eq('status', 'published')
+  .order('published_at', { ascending: false });
   if (error) throw error;
   return data || [];
 };
@@ -48,8 +49,14 @@ export const getAllInternalBlogPosts = async (): Promise<InternalBlogPost[]> => 
   const { data, error } = await supabase
     .from('internal_blog_posts')
     .select('*')
-    .order('publish_date', { ascending: false });
-  if (error) throw error;
+  .order('published_at', { ascending: false });
+  if (error) {
+    console.error('Error in getAllInternalBlogPosts:', error);
+    throw error;
+  }
+  if (!data) {
+    console.error('No data returned in getAllInternalBlogPosts');
+  }
   return data || [];
 };
 
@@ -59,15 +66,22 @@ export const getInternalBlogPostBySlug = async (slug: string): Promise<InternalB
     .select('*')
     .eq('slug', slug)
     .single();
-  if (error) return null;
+  if (error) {
+    console.error('Error in getInternalBlogPostBySlug:', error, 'slug:', slug);
+    return null;
+  }
+  if (!data) {
+    console.error('No data returned in getInternalBlogPostBySlug for slug:', slug);
+  }
   return data || null;
 };
 
 export const addInternalBlogPost = async (post: Omit<InternalBlogPost, 'id'>): Promise<InternalBlogPost | null> => {
   const id = uuidv4();
+  // Accept status from post, default to 'draft' if not provided
   const { data, error } = await supabase
     .from('internal_blog_posts')
-    .insert([{ ...post, id }])
+    .insert([{ ...post, id, status: post.status || 'draft' }])
     .select()
     .single();
   if (error) throw error;
@@ -75,6 +89,7 @@ export const addInternalBlogPost = async (post: Omit<InternalBlogPost, 'id'>): P
 };
 
 export const updateInternalBlogPost = async (id: string, updates: Partial<InternalBlogPost>): Promise<InternalBlogPost | null> => {
+  // Accept status in updates, default to no change if not provided
   const { data, error } = await supabase
     .from('internal_blog_posts')
     .update({ ...updates, updated_at: new Date().toISOString() })

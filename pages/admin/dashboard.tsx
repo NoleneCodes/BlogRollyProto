@@ -474,7 +474,7 @@ const AdminDashboard = () => {
                             <span>Category: {post.category}</span>
                             <span>Author: {post.author}</span>
                             <span>Published: {new Date(post.publishDate).toLocaleDateString()}</span>
-                            <span>Status: {post.isPublished ? 'Published' : 'Draft'}</span>
+                            <span>Status: {post.status === 'published' ? 'Published' : 'Draft'}</span>
                           </div>
 
                           <div className={styles.blogPostTags}>

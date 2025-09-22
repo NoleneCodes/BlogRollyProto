@@ -24,12 +24,26 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     imageDescription: existingPost?.imageDescription || '',
     readTime: existingPost?.readTime || '5 min read',
     publishDate: existingPost?.publishDate || new Date().toISOString().split('T')[0],
-    isPublished: existingPost?.isPublished ?? true,
+    status: existingPost?.status || 'draft',
     content: existingPost?.content || '',
     contentImages: existingPost?.contentImages || []
   });
 
   const [tagInput, setTagInput] = useState('');
+  const [showTagPopup, setShowTagPopup] = useState(false);
+
+  const predefinedTags = [
+    "Founder’s Notes",
+    "Behind the Scenes",
+    "Blogger Growth",
+    "Monetisation",
+    "Content Strategy",
+    "Tools & Tech",
+    "Community Building",
+    "Independent Voices",
+    "Blogger Spotlight",
+    "Product Updates"
+  ];
   const [isUploadingMainImage, setIsUploadingMainImage] = useState(false);
   const [isUploadingContentImage, setIsUploadingContentImage] = useState(false);
   const [contentImageDescription, setContentImageDescription] = useState('');
@@ -49,6 +63,16 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
       }));
       setTagInput('');
     }
+  };
+
+  const handleSelectTag = (tag: string) => {
+    if (!formData.tags?.includes(tag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...(prev.tags || []), tag]
+      }));
+    }
+    setShowTagPopup(false);
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
@@ -137,22 +161,18 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     handleInputChange('content', currentContent + imageMarkdown);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSave = async (status: 'draft' | 'published') => {
     if (!formData.title || !formData.description || !formData.content) {
       alert('Please fill in all required fields');
       return;
     }
-
     const slug = formData.slug || generateSlug(formData.title);
-    
     const postData = {
       ...formData,
       slug,
       tags: formData.tags || [],
+      status
     } as Omit<InternalBlogPost, 'id'>;
-
     try {
       if (mode === 'add') {
         await addInternalBlogPost(postData);
@@ -160,7 +180,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
         await updateInternalBlogPost(existingPost.id, postData);
       }
       onClose();
-      window.location.reload(); // Refresh to show changes
+      window.location.reload();
     } catch (error) {
       alert('Failed to save blog post. Please try again.');
     }
@@ -180,7 +200,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
         </div>
 
         <div className={styles.blogSubmissionContent}>
-          <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
+          <form onSubmit={e => { e.preventDefault(); handleSave('published'); }} style={{ padding: '2rem' }}>
+
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
                 Title *
@@ -189,6 +210,20 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 type="text"
                 value={formData.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
+                style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
+                required
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
+                Author Name *
+              </label>
+              <input
+                type="text"
+                value={formData.author}
+                onChange={(e) => handleInputChange('author', e.target.value)}
+                placeholder="Enter author name"
                 style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                 required
               />
@@ -327,16 +362,50 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Add a tag"
                   style={{ flex: 1, padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag();
+                    }
+                  }}
+                  aria-label="Add tag input"
                 />
                 <button
                   type="button"
-                  onClick={handleAddTag}
-                  style={{ padding: '0.5rem 1rem', background: '#c42142', color: 'white', border: 'none', borderRadius: '8px' }}
+                  onClick={() => setShowTagPopup(true)}
+                  style={{ padding: '0.5rem 1rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px' }}
+                  aria-label="Open tag selection popup"
                 >
-                  Add
+                  Select Tag
                 </button>
               </div>
+              {showTagPopup && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowTagPopup(false)}>
+                  <div style={{ background: 'white', borderRadius: '12px', padding: '2rem', minWidth: '320px', boxShadow: '0 2px 16px rgba(0,0,0,0.15)' }} onClick={e => e.stopPropagation()}>
+                    <h4 style={{ marginBottom: '1rem' }}>Select a Tag</h4>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                      {predefinedTags.map((tag) => (
+                        <li key={tag} style={{ marginBottom: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleSelectTag(tag)}
+                            style={{ width: '100%', padding: '0.5rem 1rem', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px', cursor: 'pointer', textAlign: 'left' }}
+                          >
+                            {tag}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={() => setShowTagPopup(false)}
+                      style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: '#c42142', color: 'white', border: 'none', borderRadius: '8px' }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {formData.tags?.map((tag, index) => (
                   <span 
@@ -484,14 +553,9 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <input
-                  type="checkbox"
-                  checked={formData.isPublished}
-                  onChange={(e) => handleInputChange('isPublished', e.target.checked)}
-                />
-                Published
-              </label>
+              <span style={{ fontWeight: 600 }}>
+                Status: {formData.status === 'published' ? 'Published' : 'Draft'}
+              </span>
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
@@ -509,11 +573,18 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 Cancel
               </button>
               <button
+                type="button"
+                onClick={() => handleSave('draft')}
+                style={{ padding: '0.75rem 1.5rem', background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: 600 }}
+              >
+                Save as Draft
+              </button>
+              <button
                 type="submit"
                 className={styles.primaryButton}
                 style={{ padding: '0.75rem 1.5rem' }}
               >
-                {mode === 'add' ? 'Add Post' : 'Update Post'}
+                {mode === 'add' ? 'Publish Post' : 'Update & Publish'}
               </button>
             </div>
           </form>

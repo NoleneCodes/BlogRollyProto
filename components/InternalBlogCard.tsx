@@ -16,7 +16,7 @@ interface InternalBlogPost {
   imageUrl?: string;
   readTime?: string;
   publishDate: string;
-  isPublished: boolean;
+  status: 'draft' | 'published' | 'archived';
   imageDescription?: string;
 }
 

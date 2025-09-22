@@ -4,9 +4,8 @@ CREATE TABLE internal_blog_posts (
   id BIGSERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
-  author_id INTEGER NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
-  status VARCHAR(32) NOT NULL DEFAULT 'draft', -- draft, published, archived
-  is_private BOOLEAN NOT NULL DEFAULT TRUE,
+  author VARCHAR(255) NOT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'draft', -- draft: not visible on site, published: visible, archived: hidden
   tags TEXT[],
   slug VARCHAR(255) UNIQUE NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -18,7 +17,7 @@ CREATE TABLE internal_blog_posts (
 );
 
 -- Indexes for performance and security
-CREATE INDEX idx_internal_blog_posts_author_id ON internal_blog_posts(author_id);
+-- Removed author_id index as author_id column is no longer present
 CREATE INDEX idx_internal_blog_posts_status ON internal_blog_posts(status);
 CREATE INDEX idx_internal_blog_posts_created_at ON internal_blog_posts(created_at);
 CREATE INDEX idx_internal_blog_posts_slug ON internal_blog_posts(slug);
@@ -28,5 +27,5 @@ CREATE INDEX idx_internal_blog_posts_slug ON internal_blog_posts(slug);
 
 -- Comments for documentation
 COMMENT ON TABLE internal_blog_posts IS 'Stores internal blog posts for BlogRolly, with security and audit features.';
-COMMENT ON COLUMN internal_blog_posts.is_private IS 'If true, post is only visible to authorized users.';
-COMMENT ON COLUMN internal_blog_posts.status IS 'Post status: draft, published, archived.';
+-- Removed is_private column; all posts are public
+COMMENT ON COLUMN internal_blog_posts.status IS 'Post status: draft (not visible on site), published (visible), archived (hidden from all). Use draft to save unfinished posts.';

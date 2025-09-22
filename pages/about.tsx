@@ -6,36 +6,32 @@ import styles from "../styles/Home.module.css";
 
 const About = () => {
   return (
-    <Layout 
+    <Layout
       title="About - BlogRolly"
       description="At BlogRolly, our mission is to empower independent bloggers. We help your blog get discovered, connect you with genuine readers, and create a community where blogging thrives."
       canonical="https://blogrolly.com/about"
     >
+      <>
       <div className={styles.hero}>
         <h1 className={styles.title}>About BlogRolly</h1>
         <p className={styles.description}>
           Learn more about our mission to connect, empower, and grow independent blogs.
         </p>
       </div>
-
       <div className={styles.pronunciationCard}>
         <h3>Pronunciation: Blog-Roll-Lee</h3>
         <div className={styles.definition}>
           <strong>Definition:</strong><br />
           Blogroll — a list of hyperlinks to blogs or websites.
         </div>
-      </div>
-
-      <div className={styles.missionSection}>
+      </div><div className={styles.missionSection}>
         <h2>Your Mission as a Blogger</h2>
         <p>
           You started writing because you had something to share: ideas, insights, stories worth telling. But in today’s internet, independent voices are too often buried under algorithms and noise.<br />
           You don’t need to chase virality or bend to platform rules. You just need to be found by the right people.<br />
           That’s where BlogRolly comes in.
         </p>
-      </div>
-
-      <div className={styles.missionSection}>
+      </div><div className={styles.missionSection}>
         <h2>Our Mission: A Quiet Revolution for Indie Bloggers</h2>
         <p>
           BlogRolly exists to reconnect the fragmented blogosphere and give independent writers the visibility they deserve.<br />
@@ -46,9 +42,7 @@ const About = () => {
           <li>In a culture obsessed with feeds, we amplify value.</li>
           <li>In an internet dominated by rented platforms, we return power to the writer.</li>
         </ul>
-      </div>
-
-      <div className={styles.missionSection}>
+      </div><div className={styles.missionSection}>
         <h2>The BlogRolly Flywheel</h2>
         <p>BlogRolly grows with you, not off you.</p>
         <p>When you join, you contribute to a discovery loop that multiplies everyone’s reach:</p>
@@ -59,9 +53,7 @@ const About = () => {
           <li>More members join → the loop spins faster, lifting everyone higher.</li>
         </ol>
         <p>It’s not charity — it’s infrastructure. A mutual growth engine powered entirely by the blogs within it.</p>
-      </div>
-
-      <div className={styles.missionSection}>
+      </div><div className={styles.missionSection}>
         <h2>Why BlogRolly Exists</h2>
         <p>Modern bloggers want to:</p>
         <ul className={styles.featureList}>
@@ -84,10 +76,9 @@ const About = () => {
             Submit Your Blog
           </Link>
         </div>
-       
-      </div>
 
-      <div className={styles.valuesSection}>
+  </div>
+  <div className={styles.valuesSection}>
         <h2>Our Values</h2>
         <ul className={styles.featureList}>
           <li>Digital Sovereignty is Freedom → You own your platform. We amplify it, not own it.</li>
@@ -97,7 +88,8 @@ const About = () => {
           <li>Community is the New Network → Every blog strengthens the whole.</li>
         </ul>
         <p>BlogRolly isn’t here to take your voice. We’re here to make sure it travels further.</p>
-      </div>
+  </div>
+      </>
     </Layout>
   );
 };
