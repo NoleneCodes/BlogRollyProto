@@ -40,16 +40,21 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger for blog submissions
-DROP TRIGGER IF EXISTS trigger_blog_url_change ON blog_submissions;
-CREATE TRIGGER trigger_blog_url_change
-  BEFORE UPDATE ON blog_submissions
-  FOR EACH ROW
-  EXECUTE FUNCTION handle_blog_url_change();
 
--- Add index for better performance on URL change queries
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'trigger_blog_url_change') THEN
+    CREATE TRIGGER trigger_blog_url_change
+      BEFORE UPDATE ON blog_submissions
+      FOR EACH ROW
+      EXECUTE FUNCTION handle_blog_url_change();
+  END IF;
+END $$;
+
+
 CREATE INDEX IF NOT EXISTS idx_blog_submissions_url_status 
-ON blog_submissions(url, status, is_live);
+  ON blog_submissions(url, status, is_live);
 -- Migration: Auto-deactivate blog posts when URL changes and require re-approval
 -- This ensures that when a blog post URL is changed, it goes through verification again
 

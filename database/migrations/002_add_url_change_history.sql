@@ -21,11 +21,11 @@ ALTER TABLE blogger_profiles ADD COLUMN IF NOT EXISTS url_changes_count INTEGER 
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_blog_url_change_history_user_id') THEN
-        CREATE INDEX idx_blog_url_change_history_user_id ON blog_url_change_history(user_id);
+    CREATE INDEX IF NOT EXISTS idx_blog_url_change_history_user_id ON blog_url_change_history(user_id);
     END IF;
     
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_blog_url_change_history_changed_at') THEN
-        CREATE INDEX idx_blog_url_change_history_changed_at ON blog_url_change_history(changed_at);
+    CREATE INDEX IF NOT EXISTS idx_blog_url_change_history_changed_at ON blog_url_change_history(changed_at);
     END IF;
 END $$;
 

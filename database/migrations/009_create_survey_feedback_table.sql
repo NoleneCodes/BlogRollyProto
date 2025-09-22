@@ -2,7 +2,7 @@
 -- Migration 009: Create survey feedback table for blogger signup survey responses
 -- This stores data from the mandatory survey completed during blogger registration
 
-CREATE TABLE survey_feedback (
+CREATE TABLE IF NOT EXISTS survey_feedback (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   
@@ -26,31 +26,49 @@ CREATE TABLE survey_feedback (
 );
 
 -- Create indexes for better query performance
-CREATE INDEX idx_survey_feedback_user_id ON survey_feedback(user_id);
-CREATE INDEX idx_survey_feedback_submitted_at ON survey_feedback(submitted_at);
-CREATE INDEX idx_survey_feedback_blogger_experience ON survey_feedback(blogger_experience);
-CREATE INDEX idx_survey_feedback_audience_size ON survey_feedback(audience_size);
+CREATE INDEX IF NOT EXISTS idx_survey_feedback_user_id ON survey_feedback(user_id);
+CREATE INDEX IF NOT EXISTS idx_survey_feedback_submitted_at ON survey_feedback(submitted_at);
+CREATE INDEX IF NOT EXISTS idx_survey_feedback_blogger_experience ON survey_feedback(blogger_experience);
+CREATE INDEX IF NOT EXISTS idx_survey_feedback_audience_size ON survey_feedback(audience_size);
 
 -- Add RLS (Row Level Security) policies
 ALTER TABLE survey_feedback ENABLE ROW LEVEL SECURITY;
 
--- Allow users to insert their own survey responses
-CREATE POLICY "Users can insert their own survey feedback" ON survey_feedback
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Allow users to view their own survey responses
-CREATE POLICY "Users can view their own survey feedback" ON survey_feedback
-  FOR SELECT USING (auth.uid() = user_id);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'survey_feedback' AND policyname = 'Users can insert their own survey feedback') THEN
+    CREATE POLICY "Users can insert their own survey feedback" ON survey_feedback
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
 
--- Allow admins to view all survey responses (for analytics)
-CREATE POLICY "Admins can view all survey feedback" ON survey_feedback
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM user_profiles 
-      WHERE user_id = auth.uid() 
-      AND role IN ('admin', 'moderator')
-    )
-  );
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'survey_feedback' AND policyname = 'Users can view their own survey feedback') THEN
+    CREATE POLICY "Users can view their own survey feedback" ON survey_feedback
+      FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+END $$;
+
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'survey_feedback' AND policyname = 'Admins can view all survey feedback') THEN
+    CREATE POLICY "Admins can view all survey feedback" ON survey_feedback
+      FOR SELECT USING (
+        EXISTS (
+          SELECT 1 FROM user_profiles 
+          WHERE user_id = auth.uid() 
+          AND role IN ('admin', 'moderator')
+        )
+      );
+  END IF;
+END $$;
 
 -- Add trigger to update the updated_at timestamp
 CREATE OR REPLACE FUNCTION update_survey_feedback_updated_at()
@@ -61,10 +79,20 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_survey_feedback_updated_at
-  BEFORE UPDATE ON survey_feedback
-  FOR EACH ROW
-  EXECUTE FUNCTION update_survey_feedback_updated_at();
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger
+    WHERE tgname = 'update_survey_feedback_updated_at'
+      AND tgrelid = 'survey_feedback'::regclass
+  ) THEN
+    CREATE TRIGGER update_survey_feedback_updated_at
+      BEFORE UPDATE ON survey_feedback
+      FOR EACH ROW
+      EXECUTE FUNCTION update_survey_feedback_updated_at();
+  END IF;
+END $$;
 
 -- Add comments for documentation
 COMMENT ON TABLE survey_feedback IS 'Stores survey responses from bloggers during signup process';

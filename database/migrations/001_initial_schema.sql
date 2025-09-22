@@ -2,27 +2,47 @@
 -- BlogRolly Database Schema
 -- Migration 001: Initial Schema Setup
 
--- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create custom types/enums
-CREATE TYPE user_role AS ENUM ('reader', 'blogger', 'admin', 'moderator');
-CREATE TYPE user_tier AS ENUM ('free', 'pro');
-CREATE TYPE blog_status AS ENUM ('draft', 'submitted', 'pending', 'approved', 'rejected', 'live', 'inactive');
-CREATE TYPE rejection_reason AS ENUM (
-  'inappropriate_content',
-  'broken_link',
-  'spam', 
-  'teaser_paywall',
-  'malicious_site',
-  'not_a_blog',
-  'duplicate',
-  'ai_generated_low_quality',
-  'copyright_violation'
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM ('reader', 'blogger', 'admin', 'moderator');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+-- Add separate readers and bloggers tables for foreign key support
+CREATE TABLE IF NOT EXISTS readers (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Users table (extends Supabase auth.users)
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS bloggers (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+DO $$ BEGIN
+  CREATE TYPE user_tier AS ENUM ('free', 'pro');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE TYPE blog_status AS ENUM ('draft', 'submitted', 'pending', 'approved', 'rejected', 'live', 'inactive');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE TYPE rejection_reason AS ENUM (
+    'inappropriate_content',
+    'broken_link',
+    'spam', 
+    'teaser_paywall',
+    'malicious_site',
+    'not_a_blog',
+    'duplicate',
+    'ai_generated_low_quality',
+    'copyright_violation'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255),
@@ -32,8 +52,7 @@ CREATE TABLE users (
   is_active BOOLEAN DEFAULT TRUE
 );
 
--- User profiles table
-CREATE TABLE user_profiles (
+CREATE TABLE IF NOT EXISTS user_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   first_name VARCHAR(100) NOT NULL,
@@ -51,8 +70,7 @@ CREATE TABLE user_profiles (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Reader profiles table
-CREATE TABLE reader_profiles (
+CREATE TABLE IF NOT EXISTS reader_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   topics TEXT[] DEFAULT '{}',
@@ -62,8 +80,7 @@ CREATE TABLE reader_profiles (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Blogger profiles table
-CREATE TABLE blogger_profiles (
+CREATE TABLE IF NOT EXISTS blogger_profiles (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   blog_url VARCHAR(500) NOT NULL,
@@ -81,8 +98,7 @@ CREATE TABLE blogger_profiles (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Blog submissions table
-CREATE TABLE blog_submissions (
+CREATE TABLE IF NOT EXISTS blog_submissions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   title VARCHAR(200) NOT NULL,
@@ -112,8 +128,7 @@ CREATE TABLE blog_submissions (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Adult content table (separate for 18+ posts)
-CREATE TABLE adult_blog_submissions (
+CREATE TABLE IF NOT EXISTS adult_blog_submissions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   blog_submission_id UUID REFERENCES blog_submissions(id) ON DELETE CASCADE,
   content_warnings TEXT[] DEFAULT '{}',
@@ -121,8 +136,7 @@ CREATE TABLE adult_blog_submissions (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Blog reviews table (admin actions)
-CREATE TABLE blog_reviews (
+CREATE TABLE IF NOT EXISTS blog_reviews (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   blog_submission_id UUID REFERENCES blog_submissions(id) ON DELETE CASCADE,
   reviewer_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -133,8 +147,7 @@ CREATE TABLE blog_reviews (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- User tier limits table
-CREATE TABLE user_tier_limits (
+CREATE TABLE IF NOT EXISTS user_tier_limits (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   tier user_tier NOT NULL,
@@ -144,8 +157,7 @@ CREATE TABLE user_tier_limits (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Email queue table
-CREATE TABLE email_queue (
+CREATE TABLE IF NOT EXISTS email_queue (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   email_type VARCHAR(50) NOT NULL,
@@ -156,23 +168,22 @@ CREATE TABLE email_queue (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Indexes for performance
-CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
-CREATE INDEX idx_user_profiles_role ON user_profiles(role);
-CREATE INDEX idx_user_profiles_age_verified ON user_profiles(age_verified);
-CREATE INDEX idx_reader_profiles_user_id ON reader_profiles(user_id);
-CREATE INDEX idx_blogger_profiles_user_id ON blogger_profiles(user_id);
-CREATE INDEX idx_blogger_profiles_verified ON blogger_profiles(is_verified);
-CREATE INDEX idx_blog_submissions_user_id ON blog_submissions(user_id);
-CREATE INDEX idx_blog_submissions_status ON blog_submissions(status);
-CREATE INDEX idx_blog_submissions_adult_content ON blog_submissions(has_adult_content);
-CREATE INDEX idx_blog_submissions_is_live ON blog_submissions(is_live);
-CREATE INDEX idx_blog_submissions_category ON blog_submissions(category);
-CREATE INDEX idx_blog_reviews_submission_id ON blog_reviews(blog_submission_id);
-CREATE INDEX idx_blog_reviews_reviewer_id ON blog_reviews(reviewer_id);
-CREATE INDEX idx_user_tier_limits_user_id ON user_tier_limits(user_id);
-CREATE INDEX idx_email_queue_status ON email_queue(status);
-CREATE INDEX idx_email_queue_user_id ON email_queue(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id ON user_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_role ON user_profiles(role);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_age_verified ON user_profiles(age_verified);
+CREATE INDEX IF NOT EXISTS idx_reader_profiles_user_id ON reader_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_blogger_profiles_user_id ON blogger_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_blogger_profiles_verified ON blogger_profiles(is_verified);
+CREATE INDEX IF NOT EXISTS idx_blog_submissions_user_id ON blog_submissions(user_id);
+CREATE INDEX IF NOT EXISTS idx_blog_submissions_status ON blog_submissions(status);
+CREATE INDEX IF NOT EXISTS idx_blog_submissions_adult_content ON blog_submissions(has_adult_content);
+CREATE INDEX IF NOT EXISTS idx_blog_submissions_is_live ON blog_submissions(is_live);
+CREATE INDEX IF NOT EXISTS idx_blog_submissions_category ON blog_submissions(category);
+CREATE INDEX IF NOT EXISTS idx_blog_reviews_submission_id ON blog_reviews(blog_submission_id);
+CREATE INDEX IF NOT EXISTS idx_blog_reviews_reviewer_id ON blog_reviews(reviewer_id);
+CREATE INDEX IF NOT EXISTS idx_user_tier_limits_user_id ON user_tier_limits(user_id);
+CREATE INDEX IF NOT EXISTS idx_email_queue_status ON email_queue(status);
+CREATE INDEX IF NOT EXISTS idx_email_queue_user_id ON email_queue(user_id);
 
 -- Functions to auto-update timestamps
 CREATE OR REPLACE FUNCTION update_updated_at_column()

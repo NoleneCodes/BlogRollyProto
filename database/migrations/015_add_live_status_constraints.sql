@@ -64,7 +64,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create function to enforce live status constraints
+
 CREATE OR REPLACE FUNCTION enforce_live_status_constraints()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -74,10 +74,20 @@ BEGIN
             RAISE EXCEPTION 'Blog submission cannot go live: domain not verified, not approved, or tier limit exceeded';
         END IF;
     END IF;
-    
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'enforce_live_status_constraints_trigger') THEN
+    CREATE TRIGGER enforce_live_status_constraints_trigger
+      BEFORE UPDATE OF is_live ON blog_submissions
+      FOR EACH ROW
+      EXECUTE FUNCTION enforce_live_status_constraints();
+  END IF;
+END $$;
 
 -- Create trigger to enforce constraints on blog_submissions
 DROP TRIGGER IF EXISTS enforce_live_status_trigger ON blog_submissions;
@@ -198,11 +208,18 @@ CREATE TRIGGER handle_tier_limit_trigger
     EXECUTE FUNCTION handle_tier_limit_change();
 
 -- Add constraint to ensure is_live can only be true for approved submissions
-ALTER TABLE blog_submissions ADD CONSTRAINT IF NOT EXISTS check_live_only_approved 
-CHECK (
-    (is_live = FALSE) OR 
-    (is_live = TRUE AND status = 'approved')
-);
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE table_name = 'blog_submissions' AND constraint_name = 'check_live_only_approved') THEN
+        ALTER TABLE blog_submissions ADD CONSTRAINT check_live_only_approved 
+            CHECK (
+                (is_live = FALSE) OR 
+                (is_live = TRUE AND status = 'approved')
+            );
+    END IF;
+END $$;
 
 -- Add indexes for performance
 CREATE INDEX IF NOT EXISTS idx_blog_submissions_live_status_user 

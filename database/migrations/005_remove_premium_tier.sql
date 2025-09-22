@@ -22,20 +22,46 @@ SET tier = 'pro',
 WHERE tier = 'premium';
 
 -- Create new enum without premium
-CREATE TYPE user_tier_new AS ENUM ('free', 'pro');
+DO $$ BEGIN
+  CREATE TYPE user_tier_new AS ENUM ('free', 'pro');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- Update the user_profiles table to use the new enum
+
+-- Remove default before altering type (if exists)
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'user_profiles' AND column_name = 'tier' AND column_default IS NOT NULL
+  ) THEN
+    ALTER TABLE user_profiles ALTER COLUMN tier DROP DEFAULT;
+  END IF;
+END $$;
+
 ALTER TABLE user_profiles 
   ALTER COLUMN tier TYPE user_tier_new 
   USING tier::text::user_tier_new;
 
--- Update the user_tier_limits table to use the new enum
+-- Restore default after type change
+ALTER TABLE user_profiles ALTER COLUMN tier SET DEFAULT 'free';
+
+
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'user_tier_limits' AND column_name = 'tier' AND column_default IS NOT NULL
+  ) THEN
+    ALTER TABLE user_tier_limits ALTER COLUMN tier DROP DEFAULT;
+  END IF;
+END $$;
+
 ALTER TABLE user_tier_limits 
   ALTER COLUMN tier TYPE user_tier_new 
   USING tier::text::user_tier_new;
 
+ALTER TABLE user_tier_limits ALTER COLUMN tier SET DEFAULT 'free';
+
 -- Drop the old enum and rename the new one
-DROP TYPE user_tier;
+DROP TYPE IF EXISTS user_tier;
 ALTER TYPE user_tier_new RENAME TO user_tier;
 
 -- Update the function that initializes user tier limits
