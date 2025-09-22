@@ -22,6 +22,18 @@ BEGIN
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
     );
   END IF;
+
+END $$;
+
+-- Enable RLS and add policy so users can only see their own bug reports
+ALTER TABLE bug_reports ENABLE ROW LEVEL SECURITY;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'bug_reports' AND policyname = 'Users can view their own bug reports') THEN
+    CREATE POLICY "Users can view their own bug reports" ON bug_reports
+      FOR SELECT USING (auth.email() = reporter);
+  END IF;
 END $$;
 
 CREATE INDEX IF NOT EXISTS idx_bug_reports_status ON bug_reports(status);

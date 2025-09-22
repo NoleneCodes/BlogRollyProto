@@ -19,6 +19,18 @@ BEGIN
       responded_at TIMESTAMP WITH TIME ZONE
     );
   END IF;
+
+END $$;
+
+-- Enable RLS and add policy so users can only see their own support requests
+ALTER TABLE support_requests ENABLE ROW LEVEL SECURITY;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'support_requests' AND policyname = 'Users can view their own support requests') THEN
+    CREATE POLICY "Users can view their own support requests" ON support_requests
+      FOR SELECT USING (auth.email() = user_email);
+  END IF;
 END $$;
 
 CREATE INDEX IF NOT EXISTS idx_support_requests_status ON support_requests(status);

@@ -67,4 +67,15 @@ CREATE INDEX IF NOT EXISTS idx_search_analytics_query ON search_analytics(search
 CREATE INDEX IF NOT EXISTS idx_search_analytics_type ON search_analytics(search_type);
 CREATE INDEX IF NOT EXISTS idx_search_analytics_created_at ON search_analytics(created_at);
 
+-- Enable RLS and add policy so users can only see their own search analytics
+ALTER TABLE search_analytics ENABLE ROW LEVEL SECURITY;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE tablename = 'search_analytics' AND policyname = 'Users can view their own search analytics') THEN
+        CREATE POLICY "Users can view their own search analytics" ON search_analytics
+            FOR SELECT USING (auth.uid() = user_id);
+    END IF;
+END $$;
+
 COMMENT ON TABLE search_analytics IS 'Tracks search queries for analytics and improving search functionality';

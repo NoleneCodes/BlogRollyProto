@@ -104,7 +104,48 @@ END $$;
 -- Enable RLS on security_automation_rules (required for public tables)
 ALTER TABLE security_automation_rules ENABLE ROW LEVEL SECURITY;
 
--- TODO: Add RLS policies to restrict access as needed (e.g., only admins/system roles can insert/update/delete)
+
+-- Policy: Only admins/system roles can insert rules
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1 FROM pg_policies WHERE tablename = 'security_automation_rules' AND policyname = 'Admins can insert rules') THEN
+		CREATE POLICY "Admins can insert rules" ON security_automation_rules
+			FOR INSERT TO authenticated WITH CHECK (auth.role() = 'service_role');
+	END IF;
+END $$;
+
+-- Policy: Only admins/system roles can update rules
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1 FROM pg_policies WHERE tablename = 'security_automation_rules' AND policyname = 'Admins can update rules') THEN
+		CREATE POLICY "Admins can update rules" ON security_automation_rules
+			FOR UPDATE TO authenticated USING (auth.role() = 'service_role');
+	END IF;
+END $$;
+
+-- Policy: Only admins/system roles can delete rules
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1 FROM pg_policies WHERE tablename = 'security_automation_rules' AND policyname = 'Admins can delete rules') THEN
+		CREATE POLICY "Admins can delete rules" ON security_automation_rules
+			FOR DELETE TO authenticated USING (auth.role() = 'service_role');
+	END IF;
+END $$;
+
+-- Policy: (Optional) Users can select rules relevant to them (customize as needed)
+-- DO $$
+-- BEGIN
+--   IF NOT EXISTS (
+--     SELECT 1 FROM pg_policies WHERE tablename = 'security_automation_rules' AND policyname = 'Users can view rules') THEN
+--     CREATE POLICY "Users can view rules" ON security_automation_rules
+--       FOR SELECT USING (/* your condition here */);
+--   END IF;
+-- END $$;
+
+-- Policy: Deny all by default (if no other policy matches)
 
 CREATE INDEX IF NOT EXISTS idx_security_automation_events_type ON security_automation_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_security_automation_rules_active ON security_automation_rules(is_active);

@@ -11,8 +11,20 @@ BEGIN
             saved_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             UNIQUE (reader_id, blog_id)
         );
+
     END IF;
-END $$;
+    END $$;
+
+    -- Enable RLS and add policy so users can only see their own reading history
+    ALTER TABLE reader_reading_history ENABLE ROW LEVEL SECURITY;
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies WHERE tablename = 'reader_reading_history' AND policyname = 'Users can view their own reading history') THEN
+            CREATE POLICY "Users can view their own reading history" ON reader_reading_history
+                FOR SELECT USING (auth.uid() = reader_id);
+        END IF;
+    END $$;
 
 -- Enable RLS and add policy so users can only see their own saved blogs
 ALTER TABLE reader_saved_blogs ENABLE ROW LEVEL SECURITY;

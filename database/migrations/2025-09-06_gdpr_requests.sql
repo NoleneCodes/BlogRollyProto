@@ -14,8 +14,20 @@ BEGIN
 			rejected_at TIMESTAMPTZ,
 			admin_notes TEXT
 		);
+
 	END IF;
-END $$;
+	END $$;
+
+	-- Enable RLS and add policy so users can only see their own GDPR requests
+	ALTER TABLE gdpr_requests ENABLE ROW LEVEL SECURITY;
+	DO $$
+	BEGIN
+		IF NOT EXISTS (
+			SELECT 1 FROM pg_policies WHERE tablename = 'gdpr_requests' AND policyname = 'Users can view their own GDPR requests') THEN
+			CREATE POLICY "Users can view their own GDPR requests" ON gdpr_requests
+				FOR SELECT USING (auth.uid() = user_id);
+		END IF;
+	END $$;
 
 CREATE INDEX IF NOT EXISTS idx_gdpr_requests_user_id ON gdpr_requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_gdpr_requests_status ON gdpr_requests(request_status);

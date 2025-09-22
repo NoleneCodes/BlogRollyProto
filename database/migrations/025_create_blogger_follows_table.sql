@@ -10,8 +10,20 @@ BEGIN
             followed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             UNIQUE (reader_id, blogger_id)
         );
+
     END IF;
-END $$;
+    END $$;
+
+    -- Enable RLS and add policy so users can only see their own follows
+    ALTER TABLE blogger_follows ENABLE ROW LEVEL SECURITY;
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies WHERE tablename = 'blogger_follows' AND policyname = 'Users can view their own follows') THEN
+            CREATE POLICY "Users can view their own follows" ON blogger_follows
+                FOR SELECT USING (auth.uid() = reader_id);
+        END IF;
+    END $$;
 
 CREATE INDEX IF NOT EXISTS idx_blogger_follows_reader_id ON blogger_follows(reader_id);
 CREATE INDEX IF NOT EXISTS idx_blogger_follows_blogger_id ON blogger_follows(blogger_id);

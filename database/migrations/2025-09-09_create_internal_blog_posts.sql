@@ -57,4 +57,16 @@ DO $$ BEGIN
   ) THEN
     COMMENT ON COLUMN internal_blog_posts.status IS 'Post status: draft (not visible on site), published (visible), archived (hidden from all). Use draft to save unfinished posts.';
   END IF;
+
+END $$;
+
+-- Enable RLS and add policy so users can only see their own internal blog posts
+ALTER TABLE internal_blog_posts ENABLE ROW LEVEL SECURITY;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'internal_blog_posts' AND policyname = 'Users can view their own internal blog posts') THEN
+    CREATE POLICY "Users can view their own internal blog posts" ON internal_blog_posts
+      FOR SELECT USING (auth.email() = author);
+  END IF;
 END $$;

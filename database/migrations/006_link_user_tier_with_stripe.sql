@@ -181,7 +181,9 @@ COMMENT ON TRIGGER validate_tier_stripe_trigger ON user_profiles IS 'Ensures tie
 COMMENT ON TRIGGER sync_tier_subscription_trigger ON blogger_profiles IS 'Automatically updates user tier when subscription status changes';
 
 -- Add view for easy monitoring of subscription/tier status
-CREATE OR REPLACE VIEW user_subscription_status AS
+DROP VIEW IF EXISTS user_subscription_status CASCADE;
+-- Recreate view as SECURITY INVOKER (default, safer for RLS)
+CREATE VIEW user_subscription_status AS
 SELECT 
     up.user_id,
     up.first_name,
