@@ -143,11 +143,10 @@ const DomainVerificationModal: React.FC<DomainVerificationModalProps> = ({
 
             {selectedMethod === 'html_file' && (
               <div className={styles.instructionBlock}>
-                <p>{instructions.htmlFile.instructions}</p>
+                <div dangerouslySetInnerHTML={{ __html: instructions.htmlFile.instructions }} />
                 <div className={styles.codeBlock}>
                   <p><strong>Filename:</strong> {instructions.htmlFile.filename}</p>
                   <p><strong>Upload to:</strong> Your website&apos;s root directory</p>
-                  <p><strong>Accessible at:</strong> {instructions.htmlFile.path}</p>
                 </div>
                 <details>
                   <summary>File Content</summary>

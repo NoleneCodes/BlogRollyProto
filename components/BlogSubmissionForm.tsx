@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useError } from './ErrorProvider';
 import Link from 'next/link';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
@@ -40,6 +41,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   isSignupMode = false
 }) => {
   // All hooks at top level
+  const { showError } = useError();
   const [formData, setFormData] = useState<FormData>({
     image: null,
     imageDescription: '',
@@ -79,7 +81,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         setDomainVerificationStatus(data.bloggerProfile.domain_verification_status || 'pending');
       }
     } catch (error) {
-      console.error('Failed to check domain verification:', error);
+      showError('Failed to check domain verification. Please try again.');
       setDomainVerificationStatus('pending');
     }
   };
@@ -251,7 +253,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       
       setErrors(prev => ({ ...prev, postUrl: '' }));
     } catch (error) {
-      console.error('Domain validation error:', error);
+      showError('Unable to validate domain. Please try again.');
       setErrors(prev => ({ 
         ...prev, 
         postUrl: 'Unable to validate domain. Please try again.' 
@@ -358,7 +360,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         // Clear draft after successful submission
         localStorage.removeItem('blogSubmissionDraft');
       } catch (error) {
-        console.error('Submission error:', error);
+        showError('Failed to submit blog post. Please try again.');
         setErrors(prev => ({ 
           ...prev, 
           image: 'Failed to process image upload. Please try again.' 

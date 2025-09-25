@@ -26,7 +26,8 @@ interface DomainVerificationInstructions {
 export class DomainVerificationService {
   
   static generateVerificationInstructions(domain: string, token: string): DomainVerificationInstructions {
-    const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  // For UI instructions, always use 'yourdomain.com' for clarity
+  const cleanDomain = 'yourdomain.com';
     
     return {
       txtRecord: {
@@ -38,7 +39,7 @@ export class DomainVerificationService {
         filename: `${token}.html`,
         content: `<!DOCTYPE html><html><head><title>BlogRolly Domain Verification</title></head><body><p>BlogRolly domain verification: ${token}</p></body></html>`,
         path: `https://${cleanDomain}/${token}.html`,
-        instructions: `Upload a file named "${token}.html" to your website's root directory`
+  instructions: `<p>Upload a file named "${token}.html" to your website's root directory.</p><p>After uploading, open <strong style=\"color:#c42142\">https://${cleanDomain}/${token}.html</strong> in your browser to confirm the file is visible.</p>`
       },
       metaTag: {
         tag: `<meta name="blogrolly-verification" content="${token}" />`,
