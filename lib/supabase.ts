@@ -1,5 +1,15 @@
-// Supabase configuration and client setup
+
 import { createClient } from '@supabase/supabase-js'
+// Supabase configuration and client setup
+// Helper functions
+export const getBloggerProfileByUserId = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('blogger_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+  return { data, error };
+};
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -652,12 +662,34 @@ export const supabaseDB = {
     subscription_status?: 'active' | 'canceled' | 'past_due';
     subscription_id?: string;
     subscription_end_date?: string;
+    stripe_subscription_id?: string;
+    subscription_plan?: string;
   }) => {
     const { data, error } = await supabase
       .from('blogger_profiles')
       .update(stripeInfo)
       .eq('user_id', userId)
       .select();
+    return { data, error };
+  },
+
+  insertSubscriptionHistory: async (history: {
+    user_id: string;
+    stripe_customer_id?: string;
+    stripe_subscription_id?: string;
+    plan?: string;
+    status?: string;
+    period_start?: string | null;
+    period_end?: string | null;
+    event_type: string;
+    raw_event: any;
+  }) => {
+    const { data, error } = await supabase
+      .from('subscription_history')
+      .insert({
+        ...history,
+        raw_event: history.raw_event ? JSON.stringify(history.raw_event) : null
+      });
     return { data, error };
   },
 
