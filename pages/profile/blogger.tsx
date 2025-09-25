@@ -1,4 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+// StripePricingModal component for dynamic script and element injection
+const StripePricingModal = ({ onClose }: { onClose: () => void }) => {
+  const modalContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Only add script if not already present
+    if (!document.querySelector("script[src='https://js.stripe.com/v3/pricing-table.js']")) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/pricing-table.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    // Remove any previous pricing table
+    if (modalContentRef.current) {
+      modalContentRef.current.innerHTML = '';
+      const pricingTable = document.createElement('stripe-pricing-table');
+      pricingTable.setAttribute('pricing-table-id', 'prctbl_1RmgGoDyKgK2ioTOXJv76mNC');
+      pricingTable.setAttribute('publishable-key', 'pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL');
+      modalContentRef.current.appendChild(pricingTable);
+    }
+  }, []);
+
+  return (
+    <div className={styles.blogSubmissionOverlay}>
+      <div className={styles.blogSubmissionContainer}>
+        <div className={styles.blogSubmissionHeader}>
+          <h3>Upgrade to Premium</h3>
+          <button 
+            className={styles.closeButton}
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
+        <div className={styles.stripePricingModalContent} ref={modalContentRef} />
+      </div>
+    </div>
+  );
+};
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
@@ -912,31 +951,10 @@ const BloggerProfile: React.FC = () => {
 
       {/* Stripe Pricing Modal */}
       {showStripePricingModal && (
-        <div className={styles.blogSubmissionOverlay}>
-          <div className={styles.blogSubmissionContainer}>
-            <div className={styles.blogSubmissionHeader}>
-              <h3>Upgrade to Premium</h3>
-              <button 
-                className={styles.closeButton}
-                onClick={() => setShowStripePricingModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className={styles.stripePricingModalContent}
-              dangerouslySetInnerHTML={{
-                __html: `
-                  <script async src='https://js.stripe.com/v3/pricing-table.js'></script>
-                  <stripe-pricing-table 
-                    pricing-table-id='prctbl_1RmgGoDyKgK2ioTOXJv76mNC'
-                    publishable-key='pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL'>
-                  </stripe-pricing-table>
-                `
-              }}
-            />
-          </div>
-        </div>
+        <StripePricingModal onClose={() => setShowStripePricingModal(false)} />
       )}
+
+// StripePricingModal component for dynamic script and element injection
     </Layout>
   );
 };

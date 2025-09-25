@@ -60,6 +60,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_proc WHERE proname = 'enforce_age_verification_for_adult_content') THEN
     EXECUTE '
+      DROP FUNCTION IF EXISTS enforce_age_verification_for_adult_content();
       CREATE FUNCTION enforce_age_verification_for_adult_content() RETURNS trigger AS ''
       BEGIN
         IF NEW.has_adult_content = TRUE THEN
@@ -71,7 +72,8 @@ BEGIN
         END IF;
         RETURN NEW;
       END;
-      '' LANGUAGE plpgsql;
+      '' LANGUAGE plpgsql
+      SET search_path = ''public'';
     ';
   END IF;
 END $$;
