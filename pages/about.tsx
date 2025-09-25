@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Layout from "../components/Layout";
 import BlogrollTrendsChart from "../components/BlogrollTrendsChart";
+import BlogrollyFlywheel from '../components/BlogrollyFlywheel';
 import styles from "../styles/Home.module.css";
 
 
@@ -8,7 +9,7 @@ const About = () => {
   return (
     <Layout
       title="About - BlogRolly"
-      description="At BlogRolly, our mission is to empower independent bloggers. We help your blog get discovered, connect you with genuine readers, and create a community where blogging thrives."
+      description="Breaking Silos, Building A Network"
       canonical="https://blogrolly.com/about"
     >
       <>
@@ -44,7 +45,18 @@ const About = () => {
         </ul>
       </div><div className={styles.missionSection}>
         <h2>The BlogRolly Flywheel</h2>
-        <p>BlogRolly grows with you, not off you.</p>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+          <BlogrollyFlywheel />
+        </div>
+
+        <p style={{ textAlign: 'center' }}>
+  <strong style={{ color: '#c42142' }}>
+    At the heart of BlogRolly is a simple idea: together, we rise.
+  </strong>
+</p>
+  
+      
         <p>When you join, you contribute to a discovery loop that multiplies everyone’s reach:</p>
         <ol style={{ marginLeft: '1.5em', marginBottom: '1.5em' }}>
           <li>You add your blog → the network gains topic depth and authority.</li>
@@ -52,22 +64,63 @@ const About = () => {
           <li>Links back to BlogRolly strengthen the network’s SEO → boosting your listing.</li>
           <li>More members join → the loop spins faster, lifting everyone higher.</li>
         </ol>
-        <p>It’s not charity — it’s infrastructure. A mutual growth engine powered entirely by the blogs within it.</p>
+        <p>We're creating a mutual growth engine powered entirely by the blogs and creators within it.</p>
+        
       </div><div className={styles.missionSection}>
         <h2>Why BlogRolly Exists</h2>
         <p>Modern bloggers want to:</p>
-        <ul className={styles.featureList}>
-          <li>Own their content</li>
-          <li>Attract genuine readers</li>
-          <li>Build domain authority & partnerships</li>
-          <li>Monetise on their own terms</li>
-          <li>Connect without playing the algorithm game</li>
+        <ul style={{ listStyleType: 'none', marginLeft: '2em', paddingLeft: 0 }} className={styles.featureList}>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Own their content
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Attract <span style={{ color: '#c42142' }}>genuine readers</span>
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Build domain authority & <span style={{ color: '#c42142' }}>partnerships</span>
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              <span style={{ color: '#c42142' }}>Monetise</span> on their own terms
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Connect without playing the <span style={{ color: '#c42142' }}>algorithm game</span>
+            </span>
+          </li>
         </ul>
         <p>But the reality is:</p>
-        <ul className={styles.featureList}>
-          <li>Social platforms reward trends, not craft</li>
-          <li>SEO is an uphill battle</li>
-          <li>Independent voices get drowned out by corporate content farms</li>
+        <ul style={{ listStyleType: 'none', marginLeft: '2em', paddingLeft: 0 }} className={styles.featureList}>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Social platforms reward <span style={{ color: '#c42142' }}>trends</span>, not craft
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              <span style={{ color: '#c42142' }}>SEO</span> is an uphill battle
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Independent voices get drowned out by <span style={{ color: '#c42142' }}>corporate content farms</span>
+            </span>
+          </li>
         </ul>
         <p>We’re here to change that — by making sure your work is seen, credited, and connected to the audiences who value it most.</p>
 
@@ -80,12 +133,37 @@ const About = () => {
   </div>
   <div className={styles.valuesSection}>
         <h2>Our Values</h2>
-        <ul className={styles.featureList}>
-          <li>Digital Sovereignty is Freedom → You own your platform. We amplify it, not own it.</li>
-          <li>Craft Over Clout → Your writing is your asset. We highlight quality, not hype.</li>
-          <li>Organic Growth, Authentically Earned → No hacks, no gimmicks. Just meaningful reach.</li>
-          <li>Your Blog is Your Legacy → We’re here for your long-term creative journey.</li>
-          <li>Community is the New Network → Every blog strengthens the whole.</li>
+        <ul style={{ listStyleType: 'none', marginLeft: '2em', paddingLeft: 0 }} className={styles.featureList}>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Digital Sovereignty is Freedom → <span style={{ color: '#c42142' }}>You own your platform. We amplify it, not own it.</span>
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Craft Over Clout → <span style={{ color: '#c42142' }}>Your writing is your asset. We highlight quality, not hype.</span>
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Organic Growth, Authentically Earned → <span style={{ color: '#c42142' }}>No hacks, no gimmicks. Just meaningful reach.</span>
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Your Blog is Your Legacy → <span style={{ color: '#c42142' }}>We’re here for your long-term creative journey.</span>
+            </span>
+          </li>
+          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+            <span style={{ fontWeight: 500 }}>
+              Community is the New Network → <span style={{ color: '#c42142' }}>Every blog strengthens the whole.</span>
+            </span>
+          </li>
         </ul>
         <p>BlogRolly isn’t here to take your voice. We’re here to make sure it travels further.</p>
   </div>
