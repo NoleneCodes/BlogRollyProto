@@ -9,14 +9,14 @@ const About = () => {
   return (
     <Layout
       title="About - BlogRolly"
-      description="Breaking Silos, Building A Network"
+      description="Learn more about our mission to connect, empower, and grow independent blogs."
       canonical="https://blogrolly.com/about"
     >
       <>
       <div className={styles.hero}>
         <h1 className={styles.title}>About BlogRolly</h1>
         <p className={styles.description}>
-          Learn more about our mission to connect, empower, and grow independent blogs.
+          Breaking Silos, Building A Network.
         </p>
       </div>
       <div className={styles.pronunciationCard}>
