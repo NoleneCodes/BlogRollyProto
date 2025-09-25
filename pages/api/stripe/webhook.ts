@@ -68,8 +68,8 @@ export default async function handler(
               stripe_subscription_id: checkoutSubscription.id,
               plan: checkoutSubscription.items.data[0]?.price.nickname || null,
               status: checkoutSubscription.status,
-              period_start: checkoutSubscription.current_period_start ? new Date(checkoutSubscription.current_period_start * 1000).toISOString() : null,
-              period_end: checkoutSubscription.current_period_end ? new Date(checkoutSubscription.current_period_end * 1000).toISOString() : null,
+              period_start: (checkoutSubscription as any).current_period_start ? new Date((checkoutSubscription as any).current_period_start * 1000).toISOString() : null,
+              period_end: (checkoutSubscription as any).current_period_end ? new Date((checkoutSubscription as any).current_period_end * 1000).toISOString() : null,
               event_type: 'checkout.session.completed',
               raw_event: event
             })
@@ -118,8 +118,8 @@ export default async function handler(
                 stripe_subscription_id: subscription.id,
                 plan: subscription.items.data[0]?.price.nickname || null,
                 status: subscription.status,
-                period_start: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
-                period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+                period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
                 event_type: 'invoice.payment_succeeded',
                 raw_event: event
               })
@@ -171,8 +171,8 @@ export default async function handler(
                 stripe_subscription_id: subscription.id,
                 plan: subscription.items.data[0]?.price.nickname || null,
                 status: subscription.status,
-                period_start: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
-                period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+                period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
                 event_type: 'invoice.payment_failed',
                 raw_event: event
               })
@@ -244,8 +244,8 @@ export default async function handler(
                   stripe_subscription_id: subscription.id,
                   plan: subscription.items.data[0]?.price.nickname || null,
                   status: subscription.status,
-                  period_start: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
-                  period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+                  period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                  period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
                   event_type: event.type,
                   raw_event: event
                 })
@@ -294,8 +294,8 @@ export default async function handler(
                   stripe_subscription_id: subscription.id,
                   plan: subscription.items.data[0]?.price.nickname || null,
                   status: subscription.status,
-                  period_start: subscription.current_period_start ? new Date(subscription.current_period_start * 1000).toISOString() : null,
-                  period_end: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null,
+                  period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                  period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
                   event_type: event.type,
                   raw_event: event
                 })
