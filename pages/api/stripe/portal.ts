@@ -1,7 +1,7 @@
 // Next.js API route to create a Stripe customer portal session
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stripe } from '../../../lib/stripe';
-import { supabaseDB } from '../../../lib/supabase';
+import { getBloggerProfileByUserId } from '../../../lib/supabase';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Get Stripe customer ID from blogger_profiles
-  const { data: blogger, error } = await supabaseDB.getBloggerProfileByUserId(userId);
+  const { data: blogger, error } = await getBloggerProfileByUserId(userId);
   if (error || !blogger || !blogger.stripe_customer_id) {
     return res.status(404).json({ error: 'Stripe customer not found' });
   }

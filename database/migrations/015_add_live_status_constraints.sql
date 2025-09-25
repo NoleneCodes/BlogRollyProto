@@ -166,7 +166,7 @@ DECLARE
         SELECT id FROM blog_submissions 
         WHERE user_id = NEW.user_id 
         AND is_live = TRUE 
-        ORDER BY updated_at DESC 
+        ORDER BY ctr DESC NULLS LAST, updated_at DESC 
         OFFSET NEW.max_live_posts;
 BEGIN
     -- If max_live_posts decreased, we may need to deactivate some posts
@@ -176,7 +176,7 @@ BEGIN
         FROM blog_submissions 
         WHERE user_id = NEW.user_id AND is_live = TRUE;
         
-        -- If user exceeds new limit, deactivate excess posts (oldest first)
+        -- If user exceeds new limit, deactivate all but top N by ctr
         IF current_live_count > NEW.max_live_posts THEN
             FOR submission IN excess_submissions LOOP
                 UPDATE blog_submissions 

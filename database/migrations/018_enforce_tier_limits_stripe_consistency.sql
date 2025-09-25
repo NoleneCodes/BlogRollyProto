@@ -126,8 +126,8 @@ RETURNS TABLE(
     current_tier_limits user_tier,
     current_user_tier user_tier,
     should_be_tier user_tier,
-    stripe_customer_id TEXT,
-    subscription_status TEXT,
+    stripe_customer_id character varying(100),
+    subscription_status character varying(100),
     subscription_end_date TIMESTAMPTZ,
     inconsistent BOOLEAN
 ) AS $$
@@ -201,8 +201,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Add foreign key constraint to ensure user_tier_limits references valid users
-
 
 -- Remove duplicate user_id rows in user_profiles (keep the row with the lowest ctid)
 DO $$
@@ -241,6 +239,7 @@ BEGIN
     END IF;
 END $$;
 
+-- Add foreign key constraint to ensure user_tier_limits references valid users
 DO $$
 BEGIN
         IF NOT EXISTS (
@@ -252,20 +251,8 @@ BEGIN
         END IF;
 END $$;
 
--- Add constraint to ensure tier limits are consistent with user profile tier
 
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints 
-        WHERE table_name = 'user_tier_limits' AND constraint_name = 'check_tier_consistent_with_profile') THEN
-        ALTER TABLE user_tier_limits 
-            ADD CONSTRAINT check_tier_consistent_with_profile 
-            CHECK (
-                tier = (SELECT tier FROM user_profiles WHERE user_profiles.user_id = user_tier_limits.user_id)
-            );
-    END IF;
-END $$;
+-- (Removed invalid check constraint with subquery. Consistency is enforced by triggers and sync logic.)
 
 -- Add index for better performance on Stripe-related queries
 CREATE INDEX IF NOT EXISTS idx_blogger_profiles_stripe_subscription 
