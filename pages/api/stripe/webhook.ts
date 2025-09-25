@@ -283,7 +283,7 @@ export default async function handler(
                 // Update subscription info for other status changes
                 await supabaseDB.updateBloggerStripeInfo(user.id, {
                   subscription_status: subscription.status as any,
-                  subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+                  subscription_end_date: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
                   stripe_subscription_id: subscription.id,
                   subscription_plan: subscription.items.data[0]?.price.nickname || null
                 })
