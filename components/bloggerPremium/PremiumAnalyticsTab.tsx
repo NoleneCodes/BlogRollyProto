@@ -6,21 +6,28 @@ export default function PremiumAnalyticsTab({ blogStats, blogSubmissions, select
   return (
     <div className={styles.content}>
   <h2 className={styles.brandHeading}>Advanced Analytics</h2>
-      <div className={styles.analyticsOverview}>
+      <div className={styles.premiumStatsGrid}>
         <div className={styles.statCard}>
-          <h4>Total Blog Views</h4>
+          <h4>Total Views</h4>
           <span className={styles.statNumber}>{blogStats.totalViews.toLocaleString()}</span>
-          <p className={styles.statDescription}>Views across all your approved blogs</p>
+          <span className={styles.statGrowth}>+{blogStats.monthlyGrowth}% this month</span>
+          <span className={styles.statDescription}>Views across all your approved blogs</span>
         </div>
         <div className={styles.statCard}>
           <h4>Total Clicks</h4>
-          <span className={styles.statNumber}>{blogStats.totalClicks}</span>
-          <p className={styles.statDescription}>Clicks to your blog from BlogRolly</p>
+          <span className={styles.statNumber}>{blogStats.totalClicks.toLocaleString()}</span>
+          <span className={styles.statGrowth}>+{blogStats.monthlyClicks} this month</span>
+          <span className={styles.statDescription}>Clicks to your blog from BlogRolly</span>
         </div>
         <div className={styles.statCard}>
-          <h4>Click-through Rate</h4>
+          <h4>Click Rate</h4>
           <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
-          <p className={styles.statDescription}>Percentage of views that resulted in clicks</p>
+          <span className={styles.statDescription}>Percentage of views that resulted in clicks</span>
+        </div>
+        <div className={styles.statCard}>
+          <h4>Active Blogs</h4>
+          <span className={styles.statNumber}>{blogSubmissions.filter((post: any) => post.status === 'approved' && post.isActive).length}</span>
+          <span className={styles.statDescription}>Unlimited</span>
         </div>
       </div>
       <div className={styles.performanceSection}>

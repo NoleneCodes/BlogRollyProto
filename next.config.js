@@ -5,7 +5,11 @@
 const nextConfig = {
 	images: {
 		loader: 'default',
-		domains: ['res.cloudinary.com', 'picsum.photos'], // Allow Cloudinary and Picsum demo images
+		domains: [
+			'res.cloudinary.com',
+			'picsum.photos',
+			'images.unsplash.com'
+		], // Allow Cloudinary, Picsum, and Unsplash demo images
 		formats: ['image/avif', 'image/webp'],
 	},
 };

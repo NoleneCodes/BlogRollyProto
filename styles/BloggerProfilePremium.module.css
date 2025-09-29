@@ -153,9 +153,10 @@
 }
 
 .avatar img {
-  width: 100%;
-  height: 100%;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
+  border-radius: 12px;
 }
 
 .initials {
@@ -191,11 +192,13 @@
   margin: 0;
 }
 
+
 .premiumStatsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
+  align-items: stretch;
 }
 
 .statCard {
@@ -209,6 +212,9 @@
   overflow: hidden;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex: 1 0 160px;
+  min-width: 160px;
+  max-width: 220px;
 }
 
 .statCard:hover {
@@ -1054,7 +1060,7 @@
 
 @media (max-width: 768px) {
   .socialLinksGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 0.25fr));
   }
 }
 

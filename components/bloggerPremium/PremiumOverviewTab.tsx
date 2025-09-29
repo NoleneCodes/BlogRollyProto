@@ -23,7 +23,7 @@ export default function PremiumOverviewTab({ userInfo, blogStats, blogSubmission
         </div>
       </div>
       {blogStats && (
-        <div className={styles.proStatsGrid}>
+        <div className={styles.premiumStatsGrid}>
           <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
             <div className={styles.statCardHeader}>
               <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>

@@ -335,11 +335,8 @@ export const supabaseDB = {
 
   getSubmissionsByStatus: async (status: BlogStatus) => {
     const { data, error } = await supabase
-      .from('blog_submissions')
-      .select(`
-        *,
-        user_profiles!inner(first_name, surname, tier)
-      `)
+      .from('user_subscription_status')
+      .select('*')
       .eq('status', status)
       .order('submitted_at', { ascending: false });
     return { data, error };
@@ -347,12 +344,8 @@ export const supabaseDB = {
 
   getPendingSubmissionsForReview: async () => {
     const { data, error } = await supabase
-      .from('blog_submissions')
-      .select(`
-        *,
-        user_profiles!inner(first_name, surname, tier),
-        blog_reviews(*)
-      `)
+      .from('user_subscription_status')
+      .select('*')
       .eq('status', 'pending')
       .order('submitted_at', { ascending: true });
     return { data, error };
@@ -816,10 +809,7 @@ export const supabaseDB = {
   getAllSurveyFeedback: async () => {
     const { data, error } = await supabase
       .from('survey_feedback')
-      .select(`
-        *,
-        user_profiles!inner(first_name, surname, username)
-      `)
+      .select('*')
       .order('submitted_at', { ascending: false });
     return { data, error };
   },
