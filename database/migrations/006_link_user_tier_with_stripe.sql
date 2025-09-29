@@ -1,4 +1,3 @@
-
 -- BlogRolly Database Schema
 -- Migration 006: Link user-profile tier column with Stripe status information
 
@@ -182,13 +181,13 @@ COMMENT ON TRIGGER sync_tier_subscription_trigger ON blogger_profiles IS 'Automa
 
 -- Add view for easy monitoring of subscription/tier status
 DROP VIEW IF EXISTS user_subscription_status CASCADE;
--- Recreate view as SECURITY INVOKER (default, safer for RLS)
+-- Recreate view as RLS-enforced (default, do NOT specify SECURITY DEFINER or INVOKER)
 CREATE VIEW user_subscription_status AS
 SELECT 
     up.user_id,
-    up.first_name,
-    up.surname,
-    up.username,
+    u.first_name,
+    u.surname,
+    u.username,
     up.tier,
     bp.stripe_customer_id,
     bp.subscription_status,
@@ -212,6 +211,7 @@ SELECT
         ELSE FALSE
     END as tier_subscription_consistent
 FROM user_profiles up
+JOIN users u ON up.user_id = u.id
 LEFT JOIN blogger_profiles bp ON up.user_id = bp.user_id;
 
 COMMENT ON VIEW user_subscription_status IS 'Provides easy monitoring of user tier and Stripe subscription consistency';

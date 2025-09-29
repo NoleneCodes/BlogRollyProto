@@ -268,9 +268,9 @@ SELECT fix_tier_limits_stripe_inconsistencies();
 CREATE OR REPLACE VIEW user_tier_limits_stripe_status AS
 SELECT 
     utl.user_id,
-    up.first_name,
-    up.surname,
-    up.username,
+    u.first_name,
+    u.surname,
+    u.username,
     utl.tier as tier_limits_tier,
     up.tier as profile_tier,
     utl.max_live_posts,
@@ -302,6 +302,7 @@ SELECT
     END as tier_stripe_consistent
 FROM user_tier_limits utl
 JOIN user_profiles up ON utl.user_id = up.user_id
+JOIN users u ON up.user_id = u.id
 LEFT JOIN blogger_profiles bp ON utl.user_id = bp.user_id;
 
 -- Add comments to document the changes
