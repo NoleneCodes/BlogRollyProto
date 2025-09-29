@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// Import Supabase client (adjust path as needed)
+import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
@@ -34,11 +36,42 @@ interface SignInFormData {
   password: string;
 }
 
+// Initialize Supabase client (replace with your actual keys or use env vars)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+type AuthMode = 'selection' | 'signin' | 'signup' | 'resetPassword';
+
 const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [authMode, setAuthMode] = useState<'selection' | 'signin' | 'signup'>('selection');
+  const [authMode, setAuthMode] = useState<AuthMode>('selection');
+  // Reset password state
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetStatus, setResetStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [resetError, setResetError] = useState('');
+  // Handle password reset submit
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetStatus('idle');
+    setResetError('');
+    if (!resetEmail) {
+      setResetError('Email is required');
+      return;
+    }
+    // Send password reset email via Supabase
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined
+    });
+    if (error) {
+      setResetStatus('error');
+      setResetError(error.message);
+    } else {
+      setResetStatus('success');
+    }
+  };
   const [activeTab, setActiveTab] = useState<'reader' | 'blogger'>('reader');
 
   // Reader form state
@@ -334,6 +367,52 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               onClick={() => setAuthMode('signup')}
             >
               Don&apos;t have an account? Sign up
+            </button>
+            <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
+            <button
+              className={styles.linkButton}
+              onClick={() => setAuthMode('resetPassword')}
+            >
+              Forgot password?
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Reset password form
+  if (authMode === 'resetPassword') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.authCard}>
+          <h2>Reset Password</h2>
+          <p>Enter your email address and we’ll send you a link to reset your password.</p>
+          <form onSubmit={handleResetPassword} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Email Address *</label>
+              <input
+                type="email"
+                value={resetEmail}
+                onChange={e => setResetEmail(e.target.value)}
+                className={styles.textInput}
+                required
+              />
+            </div>
+            {resetError && <span className={styles.error}>{resetError}</span>}
+            {resetStatus === 'success' && (
+              <span className={styles.success}>Password reset email sent! Please check your inbox.</span>
+            )}
+            <button type="submit" className={styles.submitButton}>
+              Send Reset Link
+            </button>
+          </form>
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button
+              className={styles.linkButton}
+              onClick={() => setAuthMode('signin')}
+            >
+              ← Back to Sign In
             </button>
           </div>
         </div>
