@@ -33,6 +33,9 @@ interface BlogSubmissionWithReview extends BlogSubmission {
   last_reviewed_at?: string;
 }
 
+
+// import { supabase } from '../../lib/supabase';
+
 const AdminDashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('submissions');
@@ -49,6 +52,42 @@ const AdminDashboard = () => {
   const [testFirstName, setTestFirstName] = useState('');
   const [emailTestLoading, setEmailTestLoading] = useState(false);
   const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  // Require authentication and admin authorization
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          router.replace('/admin/login');
+          return;
+        }
+        const response = await fetch('/api/admin-auth-check', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!response.ok) {
+          router.replace('/admin/login');
+          return;
+        }
+        const data = await response.json();
+        if (!data.authenticated || !data.authorized) {
+          router.replace('/admin/login');
+          return;
+        }
+        setAuthChecked(true);
+      } catch (err) {
+        setAuthError('You must be logged in as an admin to access this page.');
+        router.replace('/admin/login');
+      }
+    };
+    checkAuth();
+  }, [router]);
 
   const testEmailTemplates = [
     { name: 'Welcome Blogger', endpoint: '/api/test-email/welcome-blogger' },
@@ -66,9 +105,10 @@ const AdminDashboard = () => {
   ];
 
   useEffect(() => {
+    if (!authChecked) return;
     loadSubmissions();
     loadBlogPosts();
-  }, []);
+  }, [authChecked]);
 
   const loadSubmissions = async () => {
     try {
@@ -119,6 +159,11 @@ const AdminDashboard = () => {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
+      // Clear local/session storage to remove any cached session
+      if (typeof window !== 'undefined') {
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+      }
       router.push('/');
     } catch (error) {
       console.error('Sign out error:', error);
@@ -289,6 +334,9 @@ const AdminDashboard = () => {
           <button className={`${styles.sidebarTab} ${activeTab === 'stats' ? styles.activeTab : ''}`} onClick={() => setActiveTab('stats')}>Stats</button>
           <button className={`${styles.sidebarTab} ${activeTab === 'security-monitoring' ? styles.activeTab : ''}`} onClick={() => setActiveTab('security-monitoring')}>Security Monitoring</button>
           <button className={`${styles.sidebarTab} ${activeTab === 'email-testing' ? styles.activeTab : ''}`} onClick={() => setActiveTab('email-testing')}>Email Testing</button>
+          <button className={styles.sidebarTab} style={{ color: '#b91c1c', marginTop: '2rem' }} onClick={handleSignOut}>
+            Log Out
+          </button>
         </nav>
         <main className={styles.dashboardContent}>
           {activeTab === 'submissions' && (

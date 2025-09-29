@@ -176,12 +176,15 @@
 }
 
 .error {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: #fff0f5; /* light brand tint */
+  border: 1.5px solid #c42142; /* brand border */
   border-radius: 12px;
   padding: 1.5rem;
   margin-top: 1rem;
-  color: #dc2626;
+  color: #c42142; /* brand red */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .retryButton {

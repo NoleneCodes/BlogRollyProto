@@ -199,7 +199,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
+    // Basic email format validation
     if (!signInForm.email) newErrors.email = 'Email is required';
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(signInForm.email)) newErrors.email = 'Enter a valid email address';
     if (!signInForm.password) newErrors.password = 'Password is required';
 
     if (Object.keys(newErrors).length > 0) {
@@ -207,20 +209,30 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       return;
     }
 
-    // TODO: Implement Supabase authentication
-    console.log('Sign in attempted:', signInForm);
+    // Real Supabase authentication
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: signInForm.email,
+      password: signInForm.password
+    });
 
-    // Mock successful authentication - replace with actual Supabase logic
-    // For now, assume all users are readers unless they have blogger role
-    const userRoles = ['reader']; // This would come from your database
-
-    if (userRoles.includes('blogger')) {
-      router.push('/profile/blogger');
-    } else {
-      router.push('/profile/reader');
+    if (error) {
+      // Show a friendly error for invalid credentials
+      let message = error.message;
+      if (
+        message.toLowerCase().includes('invalid login credentials') ||
+        message.toLowerCase().includes('invalid email or password') ||
+        message.toLowerCase().includes('invalid credentials')
+      ) {
+        message = 'Hmm, those details don\'t match. Want to try again?';
+      }
+      setErrors({ general: message });
+      return;
     }
 
-    alert('Sign in successful! Welcome back!');
+    // Optionally fetch user roles/profile from your DB if needed
+    // For now, just redirect to reader profile
+    router.push('/profile/reader');
+    // Optionally: setUserInfo({ ... })
   };
 
   const handleReaderSubmit = async (e: React.FormEvent) => {
@@ -321,6 +333,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
           <p>Welcome back to Blogrolly</p>
 
           <form onSubmit={handleSignIn} className={styles.form}>
+            {errors.general && (
+              <div className={styles.formGroup}>
+                <span className={styles.error}>{errors.general}</span>
+              </div>
+            )}
             <div className={styles.formGroup}>
               <label className={styles.label}>
                 Email Address *

@@ -73,12 +73,9 @@ export default async function handler(
 
     console.log('User authenticated:', user.email);
 
-    // Check if the user is an authorized admin
-    const authorizedAdminEmails = [
-      'hello@blogrolly.com'
-    ];
-
-    const isAuthorizedAdmin = authorizedAdminEmails.includes(user.email || '');
+    // Only allow @blogrolly.com emails as admins
+    const email = user.email || '';
+    const isAuthorizedAdmin = email.endsWith('@blogrolly.com');
 
     if (isAuthorizedAdmin) {
       console.log('User authorized as admin');
@@ -95,7 +92,7 @@ export default async function handler(
         authorized: false,
         userId: user.id,
         userEmail: user.email,
-        message: 'Only BlogRolly administrators can access this area'
+        message: 'Only BlogRolly administrators with @blogrolly.com emails can access this area'
       });
     }
   } catch (error) {
