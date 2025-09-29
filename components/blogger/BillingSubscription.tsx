@@ -9,7 +9,7 @@ const BillingSubscription: React.FC<BillingSubscriptionProps> = ({ setShowStripe
   <div className={styles.content}>
     <h2 style={{ color: '#c42142' }}>Billing & Subscription</h2>
     <p style={{ margin: '1rem 0', color: '#374151', fontSize: '1.08rem' }}>
-      Choose the plan that supports your blogging journey — and fuels the network that supports you.
+      Choose the plan that supports your blogging journey
     </p>
     <div className={styles.billingSection}>
       <div className={styles.currentPlan}>
@@ -28,11 +28,11 @@ const BillingSubscription: React.FC<BillingSubscriptionProps> = ({ setShowStripe
         <p>For bloggers ready to grow faster and go further.</p>
         <div className={styles.proFeatures}>
           <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem' }}>
-            <li>Unlimited listings - share every post you publish</li>
-            <li>Advanced insights - see what resonates and discover new opportunities</li>
-            <li>Priority reviews & support - faster approvals, real help when you need it</li>
-            <li>Followable profile with social links - let readers connect with you directly</li>
-            <li>Blogger Events (coming soon)</li>
+            <li><span className={styles.brandFeature}>Unlimited listings</span> - share every post you publish</li>
+            <li><span className={styles.brandFeature}>Followable profile with social links</span> - let readers connect with you directly</li>
+            <li><span className={styles.brandFeature}>Advanced insights</span> - see what resonates and discover new opportunities</li>
+            <li><span className={styles.brandFeature}>Priority reviews & support</span> - faster approvals, real help when you need it</li>
+            <li><span className={styles.brandFeature}>Blogger Events</span> (coming soon)</li>
           </ul>
         </div>
         <p style={{ margin: '1rem 0 0.5rem 0', color: '#374151', fontSize: '1.02rem' }}>

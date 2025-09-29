@@ -1,3 +1,8 @@
+/* Brand colored and bold for pro feature bullet points */
+.brandFeature {
+  color: #c42142;
+  font-weight: bold;
+}
 .content .brandHeading {
   color: #c42142;
 }
@@ -783,13 +788,11 @@
   color: #475569;
   margin-bottom: 0.5rem;
   position: relative;
-  padding-left: 1.5rem;
+  padding-left: 0;
 }
 
 .planFeatures li:before, .proFeatures li:before {
-  content: '✓';
-  color: #10b981;
-  font-weight: bold;
+  content: '';
   position: absolute;
   left: 0;
 }

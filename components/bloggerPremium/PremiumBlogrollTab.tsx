@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '../../styles/BloggerProfilePremium.module.css';
 import PremiumBlogCard from '../PremiumBlogCard';
 
-export default function PremiumBlogrollTab({ blogSubmissions, blogrollFilter, setBlogrollFilter, editingBlog, startEditingBlog, cancelEditingBlog, saveEditedBlog, handleEditField, handleSaveEdit, togglePostActivation, setShowBlogSubmissionForm }: any) {
+export default function PremiumBlogrollTab({ blogSubmissions, blogrollFilter, setBlogrollFilter, editingBlog, startEditingBlog, cancelEditingBlog, saveEditedBlog, handleEditField, handleSaveEdit, togglePostActivation, setShowBlogSubmissionForm, viewsToggle = 'total', clicksToggle = 'total' }: any) {
   return (
     <div className={styles.content}>
       <div className={styles.sectionHeader}>
@@ -69,6 +69,8 @@ export default function PremiumBlogrollTab({ blogSubmissions, blogrollFilter, se
                   onSaveEdit={saveEditedBlog}
                   onCancelEdit={cancelEditingBlog}
                   onToggleActivation={togglePostActivation}
+                  viewsToggle={viewsToggle}
+                  clicksToggle={clicksToggle}
                 />
               </div>
             ))}

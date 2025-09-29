@@ -233,6 +233,43 @@ export const supabaseAuth = {
 };
 
 export const supabaseDB = {
+  // Fetch all blog view events for a user's blogs in the last 30 days
+  getBlogViewEventsLast30Days: async (userId: string) => {
+    // Get all blog_submission ids for this user
+    const { data: submissions, error: subError } = await supabase
+      .from('blog_submissions')
+      .select('id')
+      .eq('user_id', userId);
+    if (subError || !submissions) return { data: [], error: subError };
+    const ids = submissions.map((s: any) => s.id);
+    if (ids.length === 0) return { data: [], error: null };
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('blog_view_events')
+      .select('*')
+      .in('blog_submission_id', ids)
+      .gte('created_at', since);
+    return { data, error };
+  },
+
+  // Fetch all blog click events for a user's blogs in the last 30 days
+  getBlogClickEventsLast30Days: async (userId: string) => {
+    // Get all blog_submission ids for this user
+    const { data: submissions, error: subError } = await supabase
+      .from('blog_submissions')
+      .select('id')
+      .eq('user_id', userId);
+    if (subError || !submissions) return { data: [], error: subError };
+    const ids = submissions.map((s: any) => s.id);
+    if (ids.length === 0) return { data: [], error: null };
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('blog_click_events')
+      .select('*')
+      .in('blog_submission_id', ids)
+      .gte('created_at', since);
+    return { data, error };
+  },
   // User Management
   insertUser: async (userData: any) => {
     const { data, error } = await supabase

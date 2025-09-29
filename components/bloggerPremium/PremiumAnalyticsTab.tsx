@@ -1,22 +1,50 @@
 import React from 'react';
 import styles from '../../styles/BloggerProfilePremium.module.css';
 
-export default function PremiumAnalyticsTab({ blogStats, blogSubmissions, selectedTimeframe, setSelectedTimeframe }: any) {
+export default function PremiumAnalyticsTab({ blogStats, blogSubmissions, selectedTimeframe, setSelectedTimeframe, viewsToggle, setViewsToggle, clicksToggle, setClicksToggle }: any) {
   if (!blogStats) return null;
   return (
     <div className={styles.content}>
-  <h2 className={styles.brandHeading}>Advanced Analytics</h2>
+      <h2 className={styles.brandHeading}>Advanced Analytics</h2>
       <div className={styles.premiumStatsGrid}>
-        <div className={styles.statCard}>
-          <h4>Total Views</h4>
-          <span className={styles.statNumber}>{blogStats.totalViews.toLocaleString()}</span>
-          <span className={styles.statGrowth}>+{blogStats.monthlyGrowth}% this month</span>
+        <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
+          <div className={styles.statCardHeader}>
+            <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
+            <button className={styles.toggleButton}>
+              {viewsToggle === 'total' ? 'Monthly' : 'Total'}
+            </button>
+          </div>
+          <span className={styles.statNumber}>
+            {viewsToggle === 'total'
+              ? blogStats.totalViews.toLocaleString()
+              : blogStats.monthlyViews.toLocaleString()
+            }
+          </span>
+          <span className={styles.statGrowth}>
+            {viewsToggle === 'total'
+              ? `+${blogStats.monthlyGrowth}% this month`
+              : 'Current month performance'}
+          </span>
           <span className={styles.statDescription}>Views across all your approved blogs</span>
         </div>
-        <div className={styles.statCard}>
-          <h4>Total Clicks</h4>
-          <span className={styles.statNumber}>{blogStats.totalClicks.toLocaleString()}</span>
-          <span className={styles.statGrowth}>+{blogStats.monthlyClicks} this month</span>
+        <div className={styles.statCard} onClick={() => setClicksToggle(clicksToggle === 'total' ? 'monthly' : 'total')}>
+          <div className={styles.statCardHeader}>
+            <h4>{clicksToggle === 'total' ? 'Total Clicks' : 'Clicks This Month'}</h4>
+            <button className={styles.toggleButton}>
+              {clicksToggle === 'total' ? 'Monthly' : 'Total'}
+            </button>
+          </div>
+          <span className={styles.statNumber}>
+            {clicksToggle === 'total'
+              ? blogStats.totalClicks.toLocaleString()
+              : blogStats.monthlyClicks.toLocaleString()
+            }
+          </span>
+          <span className={styles.statGrowth}>
+            {clicksToggle === 'total'
+              ? `+${blogStats.monthlyClicks} this month`
+              : 'Current month performance'}
+          </span>
           <span className={styles.statDescription}>Clicks to your blog from BlogRolly</span>
         </div>
         <div className={styles.statCard}>
@@ -43,16 +71,23 @@ export default function PremiumAnalyticsTab({ blogStats, blogSubmissions, select
                 </div>
                 <div className={styles.performanceMetrics}>
                   <div className={styles.metric}>
-                    <span className={styles.metricValue}>{submission.views}</span>
-                    <span className={styles.metricLabel}>Views</span>
-                  </div>
-                  <div className={styles.metric}>
-                    <span className={styles.metricValue}>{submission.clicks}</span>
-                    <span className={styles.metricLabel}>Clicks</span>
+                    <span className={styles.metricValue}>
+                      {viewsToggle === 'total' ? (submission.views || 0) : (submission.monthlyViews || 0)}
+                    </span>
+                    <span className={styles.metricLabel}>{viewsToggle === 'total' ? 'Views' : 'Monthly Views'}</span>
                   </div>
                   <div className={styles.metric}>
                     <span className={styles.metricValue}>
-                      {submission.views ? ((submission.clicks / submission.views) * 100).toFixed(1) : 0}%
+                      {clicksToggle === 'total' ? (submission.clicks || 0) : (submission.monthlyClicks || 0)}
+                    </span>
+                    <span className={styles.metricLabel}>{clicksToggle === 'total' ? 'Clicks' : 'Monthly Clicks'}</span>
+                  </div>
+                  <div className={styles.metric}>
+                    <span className={styles.metricValue}>
+                      {viewsToggle === 'total'
+                        ? (submission.views ? ((submission.clicks / submission.views) * 100).toFixed(1) : 0)
+                        : (submission.monthlyViews ? ((submission.monthlyClicks / submission.monthlyViews) * 100).toFixed(1) : 0)
+                      }%
                     </span>
                     <span className={styles.metricLabel}>CTR</span>
                   </div>

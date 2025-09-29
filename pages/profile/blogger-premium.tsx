@@ -72,10 +72,6 @@ interface BlogStats {
 }
 
 const BloggerProfilePremium: React.FC = () => {
-  useEffect(() => {
-    // For demo/testing: always show the mock profile after loading
-    setIsLoading(false);
-  }, []);
   // Handler to toggle post activation status
   const togglePostActivation = (postId: string) => {
     setBlogSubmissions(prev => prev.map(post => {
@@ -102,12 +98,15 @@ const BloggerProfilePremium: React.FC = () => {
   const loadSavedDrafts = () => {
     // Implement logic to load saved drafts if needed
   };
+
+  // State declarations must come first
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('overview');
   const [blogSubmissions, setBlogSubmissions] = useState<BlogSubmission[]>([]);
+  const [blogSubmissionsWithMonthly, setBlogSubmissionsWithMonthly] = useState<any[] | null>(null);
   const [blogStats, setBlogStats] = useState<BlogStats | null>(null);
   const [showBlogSubmissionForm, setShowBlogSubmissionForm] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
@@ -131,6 +130,115 @@ const BloggerProfilePremium: React.FC = () => {
     github: ''
   });
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
+
+
+  // Recalculate blogStats and per-blog monthly stats using event tables for rolling 30-day monthly stats
+  useEffect(() => {
+    if (!blogSubmissions || blogSubmissions.length === 0 || !userInfo) {
+      setBlogStats(null);
+      // Also clear monthly stats on per-blog cards
+      setBlogSubmissionsWithMonthly(null);
+      return;
+    }
+    const fetchMonthlyStats = async () => {
+      // All-time totals from blogSubmissions
+      const totalViews = blogSubmissions.reduce((sum, sub) => sum + (sub.views || 0), 0);
+      const totalClicks = blogSubmissions.reduce((sum, sub) => sum + (sub.clicks || 0), 0);
+      // Rolling 30-day stats from event tables (all blogs)
+      const [viewRes, clickRes] = await Promise.all([
+        supabaseDB.getBlogViewEventsLast30Days(userInfo.id),
+        supabaseDB.getBlogClickEventsLast30Days(userInfo.id)
+      ]);
+      const monthlyViews = Array.isArray(viewRes.data) ? viewRes.data.length : 0;
+      const monthlyClicks = Array.isArray(clickRes.data) ? clickRes.data.length : 0;
+      const approvedSubmissions = blogSubmissions.filter(sub => sub.status === 'approved').length;
+      const clickThroughRate = totalViews > 0 ? ((totalClicks / totalViews) * 100) : 0;
+
+      // Per-blog monthly stats
+      const blogIdToMonthlyViews: Record<string, number> = {};
+      const blogIdToMonthlyClicks: Record<string, number> = {};
+      if (Array.isArray(viewRes.data)) {
+        for (const event of viewRes.data) {
+          if (event.blog_submission_id) {
+            blogIdToMonthlyViews[event.blog_submission_id] = (blogIdToMonthlyViews[event.blog_submission_id] || 0) + 1;
+          }
+        }
+      }
+      if (Array.isArray(clickRes.data)) {
+        for (const event of clickRes.data) {
+          if (event.blog_submission_id) {
+            blogIdToMonthlyClicks[event.blog_submission_id] = (blogIdToMonthlyClicks[event.blog_submission_id] || 0) + 1;
+          }
+        }
+      }
+      // Attach monthly stats to each blogSubmission
+      const blogSubmissionsWithMonthly = blogSubmissions.map(sub => ({
+        ...sub,
+        monthlyViews: blogIdToMonthlyViews[sub.id] || 0,
+        monthlyClicks: blogIdToMonthlyClicks[sub.id] || 0,
+      }));
+      setBlogSubmissionsWithMonthly(blogSubmissionsWithMonthly);
+
+      setBlogStats({
+        totalViews,
+        monthlyViews,
+        totalClicks,
+        monthlyClicks,
+        totalSubmissions: blogSubmissions.length,
+        approvedSubmissions,
+        clickThroughRate: parseFloat(clickThroughRate.toFixed(1)),
+        averageTimeOnSite: 2.5,
+        monthlyGrowth: 8.2,
+        topPerformingCategory: 'Tech',
+        readerRetention: 78
+      });
+    };
+    fetchMonthlyStats();
+  }, [blogSubmissions, userInfo]);
+  useEffect(() => {
+    // Fetch real user info and blog submissions from Supabase
+    const fetchData = async () => {
+      // Simulate auth/user fetch (replace with your real auth logic)
+      const userId = window.localStorage.getItem('user_id');
+      if (!userId) {
+        setIsLoading(false);
+        return;
+      }
+      // Fetch user info (replace with your real fetch if needed)
+      const { data: userProfile, error: userError } = await getBloggerProfileByUserId(userId);
+      if (userProfile) {
+        setUserInfo({
+          id: userProfile.user_id,
+          name: userProfile.display_name || userProfile.name || '',
+          email: userProfile.email || '',
+          displayName: userProfile.display_name || '',
+          bio: userProfile.bio || '',
+          joinedDate: userProfile.created_at || '',
+          avatar: userProfile.avatar_url || '',
+          blogName: userProfile.blog_name || '',
+          blogUrl: userProfile.blog_url || '',
+          topics: userProfile.categories || [],
+          roles: userProfile.roles || ['blogger'],
+          tier: 'pro',
+        });
+      }
+      // Fetch blog submissions
+      const { data: submissions, error: subError } = await supabaseDB.getUserSubmissions(userId);
+      if (submissions && Array.isArray(submissions)) {
+        // Ensure all analytics fields are numbers and default to 0
+        const mapped = submissions.map((sub: any) => ({
+          ...sub,
+          views: typeof sub.views === 'number' ? sub.views : 0,
+          clicks: typeof sub.clicks === 'number' ? sub.clicks : 0,
+          ctr: typeof sub.ctr === 'number' ? sub.ctr : 0,
+        }));
+        setBlogSubmissions(mapped);
+      }
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -276,12 +384,12 @@ const BloggerProfilePremium: React.FC = () => {
 
 
 
-  // TEMPORARY: Allow page to render with fallback mock data if no userInfo (for testing UI)
+  // Use real data if available, otherwise fallback to mock for UI testing
   let displayUserInfo = userInfo;
   let displayBlogSubmissions = blogSubmissions;
   let displayBlogStats = blogStats;
   if (!displayUserInfo) {
-    // Mock blog submissions (simulate real data)
+    // ...existing mock fallback code...
     displayBlogSubmissions = [
       {
         id: 'mock-1',
@@ -336,7 +444,6 @@ const BloggerProfilePremium: React.FC = () => {
       }
     ];
 
-    // Mock user info
     displayUserInfo = {
       id: 'mock-pro-user',
       name: 'Test Pro Blogger',
@@ -352,11 +459,19 @@ const BloggerProfilePremium: React.FC = () => {
       tier: 'pro'
     };
 
-    // Mock blog stats (aggregate from mock submissions)
+    // Calculate stats from mock data for fallback
+    const now = new Date();
+    const thisMonth = now.toISOString().slice(0, 7);
+    // Per-blog monthly stats for mock data
+    const displayBlogSubmissionsWithMonthly = displayBlogSubmissions.map(sub => ({
+      ...sub,
+      monthlyViews: sub.submittedDate && sub.submittedDate.startsWith(thisMonth) ? sub.views || 0 : 0,
+      monthlyClicks: sub.submittedDate && sub.submittedDate.startsWith(thisMonth) ? sub.clicks || 0 : 0,
+    }));
     const totalViews = displayBlogSubmissions.reduce((sum, sub) => sum + (sub.views || 0), 0);
     const totalClicks = displayBlogSubmissions.reduce((sum, sub) => sum + (sub.clicks || 0), 0);
-    const monthlyViews = displayBlogSubmissions.filter(sub => sub.submittedDate.startsWith('2025-09')).reduce((sum, sub) => sum + (sub.views || 0), 0);
-    const monthlyClicks = displayBlogSubmissions.filter(sub => sub.submittedDate.startsWith('2025-09')).reduce((sum, sub) => sum + (sub.clicks || 0), 0);
+    const monthlyViews = displayBlogSubmissionsWithMonthly.reduce((sum, sub) => sum + (sub.monthlyViews || 0), 0);
+    const monthlyClicks = displayBlogSubmissionsWithMonthly.reduce((sum, sub) => sum + (sub.monthlyClicks || 0), 0);
     const approvedSubmissions = displayBlogSubmissions.filter(sub => sub.status === 'approved').length;
     const clickThroughRate = totalViews > 0 ? ((totalClicks / totalViews) * 100) : 0;
     displayBlogStats = {
@@ -372,6 +487,8 @@ const BloggerProfilePremium: React.FC = () => {
       topPerformingCategory: 'Tech',
       readerRetention: 78
     };
+    // Use the monthly-enabled mock submissions for the two pro tabs
+    displayBlogSubmissions = displayBlogSubmissionsWithMonthly;
   }
 
   if (isLoading) {
@@ -393,7 +510,6 @@ const BloggerProfilePremium: React.FC = () => {
             userInfo={displayUserInfo}
             blogStats={displayBlogStats}
             blogSubmissions={displayBlogSubmissions}
-            viewsToggle={viewsToggle}
             setViewsToggle={setViewsToggle}
             clicksToggle={clicksToggle}
             setClicksToggle={setClicksToggle}
@@ -422,6 +538,10 @@ const BloggerProfilePremium: React.FC = () => {
             blogSubmissions={displayBlogSubmissions}
             selectedTimeframe={selectedTimeframe}
             setSelectedTimeframe={setSelectedTimeframe}
+            viewsToggle={viewsToggle}
+            setViewsToggle={setViewsToggle}
+            clicksToggle={clicksToggle}
+            setClicksToggle={setClicksToggle}
           />
         );
 
