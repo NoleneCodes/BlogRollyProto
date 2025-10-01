@@ -83,7 +83,7 @@ const BugReports = () => {
           }
           return 0;
         }
-        // fallback to string comparison
+        // fallback to string comparison for strings, arrays, or other types
         return String(aValue).localeCompare(String(bValue)) * (sortConfig.direction === 'asc' ? 1 : -1);
       });
     }
