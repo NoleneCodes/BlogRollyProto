@@ -63,24 +63,28 @@ const BugReports = () => {
     }
     if (sortConfig !== null) {
       filteredData.sort((a, b) => {
-        let aValue = a[sortConfig.key as keyof typeof a];
-        let bValue = b[sortConfig.key as keyof typeof b];
+        let aValue: any = a[sortConfig.key as keyof typeof a];
+        let bValue: any = b[sortConfig.key as keyof typeof b];
         if (sortConfig.key === 'date') {
           aValue = new Date(a.created_at).getTime();
           bValue = new Date(b.created_at).getTime();
         }
         if (sortConfig.key === 'priority') {
           const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
-          aValue = priorityOrder[a.priority as keyof typeof priorityOrder] as any;
-          bValue = priorityOrder[b.priority as keyof typeof priorityOrder] as any;
+          aValue = priorityOrder[a.priority as keyof typeof priorityOrder] ?? 0;
+          bValue = priorityOrder[b.priority as keyof typeof priorityOrder] ?? 0;
         }
-        if (aValue < bValue) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          if (aValue < bValue) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
         }
-        if (aValue > bValue) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
+        // fallback to string comparison
+        return String(aValue).localeCompare(String(bValue)) * (sortConfig.direction === 'asc' ? 1 : -1);
       });
     }
     return filteredData;
