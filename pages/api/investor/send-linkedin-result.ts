@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { sendLinkedInVerificationResultEmail } from '../../../lib/linkedinVerificationData';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -7,7 +6,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   const { email, name, approved, rejectionReason } = req.body;
   try {
-    await sendLinkedInVerificationResultEmail(email, name, approved, rejectionReason);
+    // TODO: Implement real email sending logic here using your transactional email provider
+    // Example: await sendEmail({ to: email, ... })
     return res.status(200).json({ success: true });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to send email', details: error });

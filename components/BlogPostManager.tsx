@@ -10,23 +10,41 @@ interface BlogPostManagerProps {
 }
 
 const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost, mode }) => {
+  // Helper to log admin activities
+  const logAdminActivity = async ({ actionType, targetType, targetId, details }) => {
+    try {
+      // Use the global supabase client
+      const { data: { session } } = await import('../lib/supabase').then(m => m.supabase.auth.getSession());
+      const adminUserId = session?.user?.id;
+      if (!adminUserId) return;
+      const { error } = await import('../lib/supabase').then(m => m.supabase.from('admin_activity_log').insert([
+        {
+          admin_user_id: adminUserId,
+          action_type: actionType,
+          target_type: targetType,
+          target_id: targetId,
+          details,
+        }
+      ]));
+      if (error) console.error('Failed to log admin activity:', error);
+    } catch (err) {
+      console.error('Error logging admin activity:', err);
+    }
+  };
   const [formData, setFormData] = useState<Partial<InternalBlogPost>>({
     title: existingPost?.title || '',
     author: existingPost?.author || 'BlogRolly Team',
-    authorProfile: existingPost?.authorProfile || '/about',
-    bloggerId: existingPost?.bloggerId || 'admin',
-    bloggerDisplayName: existingPost?.bloggerDisplayName || 'BlogRolly Team',
     description: existingPost?.description || '',
     category: existingPost?.category || 'Platform Updates',
     tags: existingPost?.tags || [],
     slug: existingPost?.slug || '',
-    imageUrl: existingPost?.imageUrl || '/replit.svg',
-    imageDescription: existingPost?.imageDescription || '',
-    readTime: existingPost?.readTime || '5 min read',
-    publishDate: existingPost?.publishDate || new Date().toISOString().split('T')[0],
+    image_url: existingPost?.image_url || '/replit.svg',
+    image_description: existingPost?.image_description || '',
+    read_time: existingPost?.read_time || '5 min read',
+    publish_date: existingPost?.publish_date || new Date().toISOString().split('T')[0],
     status: existingPost?.status || 'draft',
     content: existingPost?.content || '',
-    contentImages: existingPost?.contentImages || []
+    content_images: existingPost?.content_images || []
   });
 
   const [tagInput, setTagInput] = useState('');
@@ -119,7 +137,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     const imageUrl = await uploadImage(file);
     
     if (imageUrl) {
-      handleInputChange('imageUrl', imageUrl);
+  handleInputChange('image_url', imageUrl);
     }
     
     setIsUploadingMainImage(false);
@@ -140,10 +158,9 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
         id: Date.now().toString(),
         url: imageUrl,
         description: contentImageDescription.trim(),
-        position: (formData.contentImages?.length || 0) + 1
+        position: (formData.content_images?.length || 0) + 1
       };
-      
-      handleInputChange('contentImages', [...(formData.contentImages || []), newContentImage]);
+      handleInputChange('content_images', [...(formData.content_images || []), newContentImage]);
       setContentImageDescription('');
     }
     
@@ -151,8 +168,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
   };
 
   const removeContentImage = (imageId: string) => {
-    const updatedImages = formData.contentImages?.filter(img => img.id !== imageId) || [];
-    handleInputChange('contentImages', updatedImages);
+  const updatedImages = formData.content_images?.filter(img => img.id !== imageId) || [];
+  handleInputChange('content_images', updatedImages);
   };
 
   const insertImageIntoContent = (imageUrl: string, description: string) => {
@@ -174,10 +191,27 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
       status
     } as Omit<InternalBlogPost, 'id'>;
     try {
+      let result;
       if (mode === 'add') {
-        await addInternalBlogPost(postData);
+        result = await addInternalBlogPost(postData);
+        if (result?.id) {
+          await logAdminActivity({
+            actionType: 'add_blog_post',
+            targetType: 'internal_blog_post',
+            targetId: result.id,
+            details: { title: result.title, author: result.author }
+          });
+        }
       } else if (mode === 'edit' && existingPost) {
-        await updateInternalBlogPost(existingPost.id, postData);
+        result = await updateInternalBlogPost(existingPost.id, postData);
+        if (result?.id) {
+          await logAdminActivity({
+            actionType: 'edit_blog_post',
+            targetType: 'internal_blog_post',
+            targetId: result.id,
+            details: { title: result.title, author: result.author }
+          });
+        }
       }
       onClose();
       window.location.reload();
@@ -260,10 +294,10 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 Blog Card Image
               </label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {formData.imageUrl && formData.imageUrl !== '/replit.svg' && (
+                {formData.image_url && formData.image_url !== '/replit.svg' && (
                   <div style={{ width: '100%', maxWidth: '300px' }}>
                     <Image
-                      src={formData.imageUrl}
+                      src={formData.image_url}
                       alt="Blog preview"
                       width={300}
                       height={150}
@@ -303,16 +337,16 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   </label>
                   <input
                     type="url"
-                    value={formData.imageUrl}
-                    onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+                    value={formData.image_url}
+                    onChange={(e) => handleInputChange('image_url', e.target.value)}
                     placeholder="Or paste image URL"
                     style={{ flex: 1, padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                   />
                 </div>
                 <input
                   type="text"
-                  value={formData.imageDescription}
-                  onChange={(e) => handleInputChange('imageDescription', e.target.value)}
+                  value={formData.image_description}
+                  onChange={(e) => handleInputChange('image_description', e.target.value)}
                   placeholder="Image description (for accessibility)"
                   style={{ width: '100%', padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                 />
@@ -343,8 +377,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 </label>
                 <input
                   type="text"
-                  value={formData.readTime}
-                  onChange={(e) => handleInputChange('readTime', e.target.value)}
+                  value={formData.read_time}
+                  onChange={(e) => handleInputChange('read_time', e.target.value)}
                   placeholder="5 min read"
                   style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                 />
@@ -439,8 +473,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
               </label>
               <input
                 type="date"
-                value={formData.publishDate}
-                onChange={(e) => handleInputChange('publishDate', e.target.value)}
+                value={formData.publish_date}
+                onChange={(e) => handleInputChange('publish_date', e.target.value)}
                 style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
               />
             </div>
@@ -482,9 +516,9 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   </label>
                 </div>
                 
-                {formData.contentImages && formData.contentImages.length > 0 && (
+                {formData.content_images && formData.content_images.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-                    {formData.contentImages.map((image) => (
+                    {formData.content_images.map((image) => (
                       <div key={image.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.5rem' }}>
                         <Image
                           src={image.url}

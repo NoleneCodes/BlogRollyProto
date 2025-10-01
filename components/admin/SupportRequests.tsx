@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/AdminDashboard.module.css';
-import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, addEmailToThread, SupportRequest } from '../../lib/supportRequestData';
+// import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, addEmailToThread, SupportRequest } from '../../lib/supportRequestData';
+
+interface SupportRequest {
+  id: string;
+  subject: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  email?: string;
+  user_email: string;
+  status: 'open' | 'responded' | 'closed';
+  created_at: string;
+  updated_at: string;
+  admin_response?: string;
+  admin_responder?: string;
+  responded_at?: string;
+}
 
 const SupportRequests = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
@@ -12,9 +27,20 @@ const SupportRequests = () => {
   const [showResponseModal, setShowResponseModal] = useState(false);
   const [adminResponse, setAdminResponse] = useState('');
 
+  // Fallback for admin email (replace with real session logic if needed)
+  const adminEmail = typeof window !== 'undefined' && window.localStorage.getItem('adminEmail') || 'unknown-admin';
+
   useEffect(() => {
-    const requests = getAllSupportRequests();
-    setSupportRequestsData(requests);
+    async function fetchSupportRequests() {
+      try {
+        const res = await fetch('/api/get-support-requests');
+        const json = await res.json();
+        setSupportRequestsData(json.supportRequests || []);
+      } catch {
+        setSupportRequestsData([]);
+      }
+    }
+    fetchSupportRequests();
   }, []);
 
   const handleSort = (key: string) => {
@@ -38,13 +64,13 @@ const SupportRequests = () => {
         let aValue = a[sortConfig.key as keyof typeof a];
         let bValue = b[sortConfig.key as keyof typeof b];
         if (sortConfig.key === 'date') {
-          aValue = a.dateSort;
-          bValue = b.dateSort;
+          aValue = new Date(a.created_at).getTime();
+          bValue = new Date(b.created_at).getTime();
         }
         if (sortConfig.key === 'priority') {
           const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3, 'critical': 4 };
-          aValue = priorityOrder[a.priority as keyof typeof priorityOrder];
-          bValue = priorityOrder[b.priority as keyof typeof priorityOrder];
+          aValue = priorityOrder[a.priority as keyof typeof priorityOrder] ?? 0;
+          bValue = priorityOrder[b.priority as keyof typeof priorityOrder] ?? 0;
         }
         if (aValue < bValue) {
           return sortConfig.direction === 'asc' ? -1 : 1;
@@ -84,19 +110,30 @@ const SupportRequests = () => {
     }
   };
 
-  const handleStatusChange = (requestId: string, newStatus: 'open' | 'responded' | 'closed') => {
-    const success = updateSupportRequestStatus(requestId, newStatus);
-    if (success) {
-      const updatedRequests = getAllSupportRequests();
-      setSupportRequestsData(updatedRequests);
-      alert(`Support request ${requestId} status updated to ${newStatus}`);
-    } else {
+  const handleStatusChange = async (requestId: string, newStatus: 'open' | 'responded' | 'closed') => {
+    try {
+      const res = await fetch('/api/update-support-request-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId, newStatus, adminEmail })
+      });
+      const json = await res.json();
+      if (json.success) {
+        // Refresh support requests
+        const updated = await fetch('/api/get-support-requests');
+        const updatedJson = await updated.json();
+        setSupportRequestsData(updatedJson.supportRequests || []);
+        alert(`Support request ${requestId} status updated to ${newStatus}`);
+      } else {
+        alert('Failed to update request status');
+      }
+    } catch {
       alert('Failed to update request status');
     }
   };
 
   const handleViewSupportRequest = (requestId: string) => {
-    const request = getSupportRequestById(requestId);
+    const request = supportRequestsData.find(r => r.id === requestId);
     if (request) {
       setSelectedSupportRequest(request);
       setShowViewModal(true);
@@ -104,27 +141,33 @@ const SupportRequests = () => {
   };
 
   const handleRespondToRequest = (requestId: string) => {
-    const request = getSupportRequestById(requestId);
+    const request = supportRequestsData.find(r => r.id === requestId);
     if (request) {
       setSelectedSupportRequest(request);
       setShowResponseModal(true);
     }
   };
 
-  const handleSubmitResponse = () => {
+  const handleSubmitResponse = async () => {
     if (!selectedSupportRequest || !adminResponse.trim()) return;
-    const emailSuccess = addEmailToThread(selectedSupportRequest.id, {
-      from: 'admin',
-      sender: 'support@blogrolly.com',
-      content: adminResponse
-    });
-    if (emailSuccess) {
-      const updatedRequests = getAllSupportRequests();
-      setSupportRequestsData(updatedRequests);
-      setShowResponseModal(false);
-      setAdminResponse('');
-      alert('Response sent successfully!');
-    } else {
+    try {
+      const res = await fetch('/api/respond-support-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId: selectedSupportRequest.id, adminResponse, adminEmail })
+      });
+      const json = await res.json();
+      if (json.success) {
+        const updated = await fetch('/api/get-support-requests');
+        const updatedJson = await updated.json();
+        setSupportRequestsData(updatedJson.supportRequests || []);
+        setShowResponseModal(false);
+        setAdminResponse('');
+        alert('Response sent successfully!');
+      } else {
+        alert('Failed to send response');
+      }
+    } catch {
       alert('Failed to send response');
     }
   };
@@ -204,7 +247,7 @@ const SupportRequests = () => {
                 <td><strong>{request.id}</strong></td>
                 <td>{request.subject}</td>
                 <td><span className={getPriorityClass(request.priority)}>{request.priority.charAt(0).toUpperCase() + request.priority.slice(1)}</span></td>
-                <td>{request.user}</td>
+                <td>{request.user_email}</td>
                 <td>
                   <select 
                     value={request.status}
@@ -216,7 +259,7 @@ const SupportRequests = () => {
                     <option value="closed">Closed</option>
                   </select>
                 </td>
-                <td>{request.created}</td>
+                <td>{new Date(request.created_at).toLocaleDateString()}</td>
                 <td>
                   <div className={styles.supportRequestActions}>
                     <button className={styles.actionButton} onClick={() => handleViewSupportRequest(request.id)}>View</button>
@@ -250,60 +293,13 @@ const SupportRequests = () => {
                 </div>
               </div>
               <div className={styles.supportRequestMeta}>
-                <div className={styles.metaItem}><strong>User:</strong> {selectedSupportRequest.user}</div>
+                <div className={styles.metaItem}><strong>User:</strong> {selectedSupportRequest.user_email}</div>
                 {selectedSupportRequest.email && (<div className={styles.metaItem}><strong>Contact Email:</strong> {selectedSupportRequest.email}</div>)}
-                <div className={styles.metaItem}><strong>Submitted:</strong> {new Date(selectedSupportRequest.submittedAt).toLocaleString()}</div>
-                <div className={styles.metaItem}><strong>Messages:</strong> {selectedSupportRequest.emailThread?.length || 0}</div>
+                <div className={styles.metaItem}><strong>Submitted:</strong> {new Date(selectedSupportRequest.created_at).toLocaleString()}</div>
+                {/* Email thread logic would be implemented if you store messages separately in DB */}
               </div>
-              <div className={styles.supportRequestSection}>
-                <h5>Email Conversation</h5>
-                <div className={styles.emailThread}>
-                  {selectedSupportRequest.emailThread?.map((message, index) => (
-                    <div key={message.id} className={`${styles.emailMessage} ${message.from === 'admin' ? styles.adminMessage : styles.userMessage}`}>
-                      <div className={styles.messageHeader}>
-                        <span className={styles.messageSender}>{message.from === 'admin' ? '🛠️ Support Team' : '👤 User'}: {message.sender}</span>
-                        <span className={styles.messageTime}>{new Date(message.timestamp).toLocaleString()}</span>
-                      </div>
-                      <div className={styles.messageContent}>{message.content}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {selectedSupportRequest.emailThread && selectedSupportRequest.emailThread.length > 1 && (
-                <div className={styles.supportRequestSection}>
-                  <h5>Resolution Analysis</h5>
-                  <div className={styles.resolutionAnalysis}>
-                    {(() => {
-                      const lastMessage = selectedSupportRequest.emailThread[selectedSupportRequest.emailThread.length - 1];
-                      const userResponses = selectedSupportRequest.emailThread.filter(msg => msg.from === 'user');
-                      const adminResponses = selectedSupportRequest.emailThread.filter(msg => msg.from === 'admin');
-                      return (
-                        <div className={styles.resolutionDetails}>
-                          <p><strong>Admin Responses:</strong> {adminResponses.length}</p>
-                          <p><strong>User Responses:</strong> {userResponses.length}</p>
-                          <p><strong>Last Message From:</strong> {lastMessage.from === 'admin' ? 'Support Team' : 'User'}</p>
-                          <p><strong>Last Activity:</strong> {new Date(lastMessage.timestamp).toLocaleString()}</p>
-                          {lastMessage.from === 'user' && adminResponses.length > 0 && (
-                            <div className={styles.resolutionSuggestion}>
-                              <p>💡 <strong>Suggestion:</strong> User responded after support team. Review their message to determine if:</p>
-                              <ul>
-                                <li>Issue is resolved (consider closing)</li>
-                                <li>Additional assistance needed</li>
-                                <li>Follow-up questions remain</li>
-                              </ul>
-                            </div>
-                          )}
-                          {lastMessage.from === 'admin' && (
-                            <div className={styles.resolutionSuggestion}>
-                              <p>⏳ <strong>Status:</strong> Waiting for user response to latest support message.</p>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                </div>
-              )}
+              {/* Email thread UI would be implemented if you store messages separately in DB */}
+              {/* Resolution analysis UI would be implemented if you store messages separately in DB */}
             </div>
             <div className={styles.modalActions}>
               <button className={styles.approveButton} onClick={() => { setShowViewModal(false); handleRespondToRequest(selectedSupportRequest.id); }}>Respond to Request</button>

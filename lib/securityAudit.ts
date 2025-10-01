@@ -1,20 +1,69 @@
 // Security Monitoring API stubs
 export async function fetchSecurityMetrics() {
-  // TODO: Replace with real metrics aggregation
-  // Return null or empty if no real data available
-  return null;
+  // Aggregate metrics from security_audit_logs and GDPR requests
+  try {
+    const { data: events, error: eventsError } = await supabase
+      .from('security_audit_logs')
+      .select('*');
+    if (eventsError) throw eventsError;
+    const totalEvents = events.length;
+    const anomaliesDetected = events.filter(e => e.action === 'anomaly_detected').length;
+    const threatsBlocked = events.filter(e => e.action === 'threat_blocked').length;
+
+    // GDPR requests table (if exists)
+    let gdprRequests = 0;
+    try {
+      const { data: gdprData } = await supabase
+        .from('gdpr_requests')
+        .select('*');
+      gdprRequests = gdprData ? gdprData.length : 0;
+    } catch {}
+
+    return { totalEvents, anomaliesDetected, threatsBlocked, gdprRequests };
+  } catch (err) {
+    console.error('Failed to fetch security metrics:', err);
+    return null;
+  }
 }
 
 export async function fetchRecentSecurityEvents() {
-  // TODO: Replace with real event log query
-  // Return empty array if no real data available
-  return [];
+  try {
+    const { data, error } = await supabase
+      .from('security_audit_logs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (error) throw error;
+    return data || [];
+  } catch (err) {
+    console.error('Failed to fetch recent security events:', err);
+    return [];
+  }
 }
 
 export async function fetchComplianceStatus() {
-  // TODO: Replace with real compliance status query
-  // Return null or empty if no real data available
-  return null;
+  // Example: Fetch latest compliance audit from a compliance table
+  try {
+    const { data, error } = await supabase
+      .from('compliance_audit')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    if (!data || data.length === 0) return null;
+    const audit = data[0];
+    return {
+      gdpr: audit.gdpr_status,
+      sox: audit.sox_status,
+      pci: audit.pci_status,
+      lastAudit: audit.created_at,
+      violations: audit.violations,
+      recommendations: audit.recommendations
+    };
+  } catch (err) {
+    console.error('Failed to fetch compliance status:', err);
+    return null;
+  }
 }
 import { supabase } from './supabase';
 

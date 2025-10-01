@@ -2,20 +2,19 @@ export interface InternalBlogPost {
   id: string;
   title: string;
   author: string;
-  authorProfile: string;
-  bloggerId: string;
-  bloggerDisplayName: string;
   description: string;
-  category: string;
-  tags: string[];
+  category?: string;
+  tags?: string[];
   slug: string;
-  imageUrl: string;
-  imageDescription?: string;
-  readTime: string;
-  publishDate: string;
+  image_url?: string;
+  image_description?: string;
+  read_time?: string;
+  publish_date?: string;
   status: 'draft' | 'published' | 'archived';
   content: string;
-  contentImages?: ContentImage[];
+  content_images?: ContentImage[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ContentImage {
@@ -40,7 +39,7 @@ export const getInternalBlogPosts = async (): Promise<InternalBlogPost[]> => {
     .from('internal_blog_posts')
     .select('*')
     .eq('status', 'published')
-  .order('published_at', { ascending: false });
+    .order('publish_date', { ascending: false });
   if (error) throw error;
   return data || [];
 };
@@ -49,7 +48,7 @@ export const getAllInternalBlogPosts = async (): Promise<InternalBlogPost[]> => 
   const { data, error } = await supabase
     .from('internal_blog_posts')
     .select('*')
-  .order('published_at', { ascending: false });
+    .order('publish_date', { ascending: false });
   if (error) {
     console.error('Error in getAllInternalBlogPosts:', error);
     throw error;

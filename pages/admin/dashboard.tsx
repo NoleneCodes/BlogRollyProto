@@ -55,6 +55,27 @@ const AdminDashboard = () => {
   const [authChecked, setAuthChecked] = useState(false);
   const [authError, setAuthError] = useState('');
 
+  // Helper to log admin activities
+  const logAdminActivity = async ({ actionType, targetType, targetId, details }) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const adminUserId = session?.user?.id;
+      if (!adminUserId) return;
+      const { error } = await supabase.from('admin_activity_log').insert([
+        {
+          admin_user_id: adminUserId,
+          action_type: actionType,
+          target_type: targetType,
+          target_id: targetId,
+          details,
+        }
+      ]);
+      if (error) console.error('Failed to log admin activity:', error);
+    } catch (err) {
+      console.error('Error logging admin activity:', err);
+    }
+  };
+
   // Require authentication and admin authorization
   useEffect(() => {
     const checkAuth = async () => {
@@ -190,13 +211,29 @@ const AdminDashboard = () => {
 
   const handleDelete = (postId: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
-      const success = deleteInternalBlogPost(postId);
-      if (success) {
-        loadBlogPosts();
-        alert('Blog post deleted successfully!');
-      } else {
-        alert('Failed to delete blog post.');
-      }
+      (async () => {
+        const success = await deleteInternalBlogPost(postId);
+        if (success) {
+          // Log admin activity
+          const { data: { session } } = await supabase.auth.getSession();
+          const adminUserId = session?.user?.id;
+          if (adminUserId) {
+            await supabase.from('admin_activity_log').insert([
+              {
+                admin_user_id: adminUserId,
+                action_type: 'delete_blog_post',
+                target_type: 'internal_blog_post',
+                target_id: postId,
+                details: {},
+              }
+            ]);
+          }
+          loadBlogPosts();
+          alert('Blog post deleted successfully!');
+        } else {
+          alert('Failed to delete blog post.');
+        }
+      })();
     }
   };
 
@@ -446,13 +483,31 @@ const AdminDashboard = () => {
                         <div className={styles.actionButtons}>
                           <button 
                             className={styles.approveButton}
-                            onClick={() => alert('Approve functionality coming soon!')}
+                            onClick={async () => {
+                              // TODO: Replace with real approve logic
+                              await logAdminActivity({
+                                actionType: 'approve_blog_submission',
+                                targetType: 'blog_submission',
+                                targetId: submission.id,
+                                details: { title: submission.title, blogger: submission.blogger_email }
+                              });
+                              alert('Blog submission approved! (Activity logged)');
+                            }}
                           >
                             ✓ Approve
                           </button>
                           <button 
                             className={styles.rejectButton}
-                            onClick={() => alert('Reject functionality coming soon!')}
+                            onClick={async () => {
+                              // TODO: Replace with real reject logic
+                              await logAdminActivity({
+                                actionType: 'reject_blog_submission',
+                                targetType: 'blog_submission',
+                                targetId: submission.id,
+                                details: { title: submission.title, blogger: submission.blogger_email }
+                              });
+                              alert('Blog submission rejected! (Activity logged)');
+                            }}
                           >
                             ✗ Reject
                           </button>
@@ -521,7 +576,7 @@ const AdminDashboard = () => {
                           <div className={styles.blogPostMeta}>
                             <span>Category: {post.category}</span>
                             <span>Author: {post.author}</span>
-                            <span>Published: {new Date(post.publishDate).toLocaleDateString()}</span>
+                            <span>Published: {post.publish_date ? new Date(post.publish_date).toLocaleDateString() : 'N/A'}</span>
                             <span>Status: {post.status === 'published' ? 'Published' : 'Draft'}</span>
                           </div>
 

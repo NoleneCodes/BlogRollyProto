@@ -138,6 +138,34 @@ class UserActivityTracker {
   }
 }
 
+
+export async function logAdminActivity({ adminEmail, action, target, tab, timestamp }: {
+  adminEmail: string;
+  action: string;
+  target?: string;
+  tab?: string;
+  timestamp?: string;
+}) {
+  try {
+    const { error } = await supabase
+      .from('admin_activity_log')
+      .insert([
+        {
+          admin_email: adminEmail,
+          action,
+          target,
+          tab,
+          timestamp: timestamp || new Date().toISOString()
+        }
+      ]);
+    if (error) {
+      console.error('Failed to log admin activity:', error);
+    }
+  } catch (err) {
+    console.error('Error logging admin activity:', err);
+  }
+}
+
 export const activityTracker = new UserActivityTracker();
 
 export async function getReturnUserMetrics() {

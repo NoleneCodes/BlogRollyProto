@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../../styles/AdminDashboard.module.css';
-import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
+// import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
+// import { useSession } from 'next-auth/react';
 
+interface BugReport {
+  id: string;
+  title: string;
+  description: string;
+  steps_to_reproduce?: string;
+  expected_behavior?: string;
+  actual_behavior?: string;
+  browser?: string;
+  operating_system?: string;
+  additional_info?: string;
+  images?: string[];
+  priority: 'high' | 'medium' | 'low';
+  reporter: string;
+  status: 'open' | 'in-progress' | 'resolved';
+  created_at: string;
+  updated_at: string;
+}
 const BugReports = () => {
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
@@ -10,9 +28,21 @@ const BugReports = () => {
   const [selectedBugReport, setSelectedBugReport] = useState<BugReport | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
 
+
+  // Fallback for admin email (replace with real session logic if needed)
+  const adminEmail = typeof window !== 'undefined' && window.localStorage.getItem('adminEmail') || 'unknown-admin';
+
   useEffect(() => {
-    const reports = getAllBugReports();
-    setBugReportsData(reports);
+    async function fetchBugReports() {
+      try {
+        const res = await fetch('/api/get-bug-reports');
+        const json = await res.json();
+        setBugReportsData(json.bugReports || []);
+      } catch {
+        setBugReportsData([]);
+      }
+    }
+    fetchBugReports();
   }, []);
 
   const handleSort = (key: string) => {
@@ -36,8 +66,8 @@ const BugReports = () => {
         let aValue = a[sortConfig.key as keyof typeof a];
         let bValue = b[sortConfig.key as keyof typeof b];
         if (sortConfig.key === 'date') {
-          aValue = a.dateSort;
-          bValue = b.dateSort;
+          aValue = new Date(a.created_at).getTime();
+          bValue = new Date(b.created_at).getTime();
         }
         if (sortConfig.key === 'priority') {
           const priorityOrder = { 'low': 1, 'medium': 2, 'high': 3 };
@@ -81,19 +111,30 @@ const BugReports = () => {
     }
   };
 
-  const handleStatusChange = (bugId: string, newStatus: 'open' | 'in-progress' | 'resolved') => {
-    const success = updateBugReportStatus(bugId, newStatus);
-    if (success) {
-      const updatedReports = getAllBugReports();
-      setBugReportsData(updatedReports);
-      alert(`Bug ${bugId} status updated to ${newStatus}`);
-    } else {
+  const handleStatusChange = async (bugId: string, newStatus: 'open' | 'in-progress' | 'resolved') => {
+    try {
+      const res = await fetch('/api/update-bug-report-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bugId, newStatus, adminEmail })
+      });
+      const json = await res.json();
+      if (json.success) {
+        // Refresh bug reports
+        const updated = await fetch('/api/get-bug-reports');
+        const updatedJson = await updated.json();
+        setBugReportsData(updatedJson.bugReports || []);
+        alert(`Bug ${bugId} status updated to ${newStatus}`);
+      } else {
+        alert('Failed to update bug status');
+      }
+    } catch {
       alert('Failed to update bug status');
     }
   };
 
   const handleViewBugReport = (bugId: string) => {
-    const report = getBugReportById(bugId);
+    const report = bugReportsData.find(b => b.id === bugId);
     if (report) {
       setSelectedBugReport(report);
       setShowViewModal(true);
@@ -186,7 +227,7 @@ const BugReports = () => {
                     <option value="resolved">Resolved</option>
                   </select>
                 </td>
-                <td>{bug.date}</td>
+                <td>{new Date(bug.created_at).toLocaleDateString()}</td>
                 <td>
                   <button className={styles.actionButton} onClick={() => handleViewBugReport(bug.id)}>View</button>
                 </td>
@@ -218,15 +259,15 @@ const BugReports = () => {
               </div>
               <div className={styles.bugReportMeta}>
                 <div className={styles.metaItem}><strong>Reporter:</strong> {selectedBugReport.reporter}</div>
-                <div className={styles.metaItem}><strong>Submitted:</strong> {new Date(selectedBugReport.submittedAt).toLocaleString()}</div>
+                <div className={styles.metaItem}><strong>Submitted:</strong> {new Date(selectedBugReport.created_at).toLocaleString()}</div>
                 <div className={styles.metaItem}><strong>Browser:</strong> {selectedBugReport.browser || 'Not specified'}</div>
-                <div className={styles.metaItem}><strong>OS:</strong> {selectedBugReport.operatingSystem || 'Not specified'}</div>
+                <div className={styles.metaItem}><strong>OS:</strong> {selectedBugReport.operating_system || 'Not specified'}</div>
               </div>
               <div className={styles.bugReportSection}><h5>Description</h5><p>{selectedBugReport.description}</p></div>
-              {selectedBugReport.stepsToReproduce && (<div className={styles.bugReportSection}><h5>Steps to Reproduce</h5><pre>{selectedBugReport.stepsToReproduce}</pre></div>)}
-              {selectedBugReport.expectedBehavior && (<div className={styles.bugReportSection}><h5>Expected Behavior</h5><p>{selectedBugReport.expectedBehavior}</p></div>)}
-              {selectedBugReport.actualBehavior && (<div className={styles.bugReportSection}><h5>Actual Behavior</h5><p>{selectedBugReport.actualBehavior}</p></div>)}
-              {selectedBugReport.additionalInfo && (<div className={styles.bugReportSection}><h5>Additional Information</h5><p>{selectedBugReport.additionalInfo}</p></div>)}
+              {selectedBugReport.steps_to_reproduce && (<div className={styles.bugReportSection}><h5>Steps to Reproduce</h5><pre>{selectedBugReport.steps_to_reproduce}</pre></div>)}
+              {selectedBugReport.expected_behavior && (<div className={styles.bugReportSection}><h5>Expected Behavior</h5><p>{selectedBugReport.expected_behavior}</p></div>)}
+              {selectedBugReport.actual_behavior && (<div className={styles.bugReportSection}><h5>Actual Behavior</h5><p>{selectedBugReport.actual_behavior}</p></div>)}
+              {selectedBugReport.additional_info && (<div className={styles.bugReportSection}><h5>Additional Information</h5><p>{selectedBugReport.additional_info}</p></div>)}
               {selectedBugReport.images && selectedBugReport.images.length > 0 && (<div className={styles.bugReportSection}><h5>Screenshots</h5><div className={styles.bugReportImages}>{selectedBugReport.images.map((image, index) => (<img key={index} src={image} alt={`Screenshot ${index + 1}`} className={styles.bugReportImage} width={600} height={400} />))}</div></div>)}
             </div>
             <div className={styles.modalActions}>

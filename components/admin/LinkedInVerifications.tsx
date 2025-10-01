@@ -17,11 +17,19 @@ const fetchVerifications = async (): Promise<LinkedInVerification[]> => {
   return res.json();
 };
 
+import { supabase } from '../../lib/supabase';
+
 const updateVerificationStatus = async (id: string, status: 'pending' | 'approved' | 'rejected') => {
+  // Get admin user id from supabase session
+  let admin_user_id = null;
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    admin_user_id = session?.user?.id || null;
+  } catch {}
   await fetch('/api/investor/update-linkedin-status', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, status })
+    body: JSON.stringify({ id, status, admin_user_id })
   });
 };
 
@@ -43,7 +51,9 @@ const LinkedInVerifications = () => {
   const [dateView, setDateView] = useState<'1month' | '3month' | 'all'>('all');
 
   useEffect(() => {
-    fetchVerifications().then(setVerifications);
+    fetchVerifications()
+      .then(data => setVerifications(Array.isArray(data) ? data : []))
+      .catch(() => setVerifications([]));
   }, []);
 
   const handleSort = (key: string) => {

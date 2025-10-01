@@ -8,15 +8,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (userError) throw userError;
 
     // Get all bloggers
-    const { data: bloggers, error: bloggerError } = await supabase.from('blogger_profiles').select('*');
+    const { data: bloggers, error: bloggerError } = await supabase.from('bloggers').select('*');
     if (bloggerError) throw bloggerError;
 
     // Get all readers
-    const { data: readers, error: readerError } = await supabase.from('reader_profiles').select('*');
+    const { data: readers, error: readerError } = await supabase.from('readers').select('*');
     if (readerError) throw readerError;
 
     // Get all investors
-    const { data: investors, error: investorError } = await supabase.from('investor_profiles').select('*');
+    const { data: investors, error: investorError } = await supabase.from('investor_users').select('*');
     if (investorError) throw investorError;
 
     // Get all blog submissions
@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (blogError) throw blogError;
 
     // Get all premium/pro users
-    const premiumMembers = users.filter(u => u.tier === 'pro' || u.subscriptionStatus === 'active');
+    const premiumMembers = users.filter(u => u.tier === 'pro' || u.subscription_status === 'active');
 
     // Active bloggers: bloggers with at least 1 post
     const activeBloggerIds = new Set(blogPosts.filter(post => post.status === 'approved').map(post => post.user_id));
