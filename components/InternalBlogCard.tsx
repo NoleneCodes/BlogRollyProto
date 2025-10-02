@@ -7,15 +7,15 @@ interface InternalBlogPost {
   title: string;
   author: string;
   authorProfile?: string;
-  bloggerId: string;
-  bloggerDisplayName: string;
+  bloggerId?: string;
+  bloggerDisplayName?: string;
   description: string;
-  category: string;
-  tags: string[];
+  category?: string;
+  tags?: string[];
   slug: string;
   imageUrl?: string;
   readTime?: string;
-  publishDate: string;
+  publishDate?: string;
   status: 'draft' | 'published' | 'archived';
   imageDescription?: string;
 }
