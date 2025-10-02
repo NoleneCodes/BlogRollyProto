@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { IoSettingsOutline } from "react-icons/io5";
 import Layout from "../components/Layout";
@@ -143,64 +143,6 @@ const Blogroll: NextPage = () => {
       }
       if (searchFilters.tags.length > 0) {
         params.append('tags', searchFilters.tags.join(','));
-      const performSearch = useCallback(async (query: string, searchType: 'keyword' | 'ai') => {
-        if (!query.trim()) return;
-
-        setIsSearching(true);
-        try {
-          const params = new URLSearchParams();
-          params.append('q', query);
-          params.append('type', searchType);
-
-          // Add filters to search
-          if (searchFilters.category) {
-            params.append('category', searchFilters.category);
-          }
-          if (searchFilters.author) {
-            params.append('author', searchFilters.author);
-          }
-          if (searchFilters.dateRange) {
-            params.append('dateRange', searchFilters.dateRange);
-          }
-          if (searchFilters.tags.length > 0) {
-            params.append('tags', searchFilters.tags.join(','));
-          }
-
-          const response = await fetch(`/api/blogs/search?${params.toString()}`);
-          if (!response.ok) {
-            throw new Error('Search failed');
-          }
-
-          const data = await response.json();
-          // Handle API errors gracefully
-          if (data.error) {
-            console.warn('Search API returned error:', data.error);
-            setSearchResults([]);
-          } else {
-            setSearchResults(data.results || []);
-          }
-          setIsSearchActive(true);
-        } catch (error) {
-          console.error('Search error:', error);
-          setSearchResults([]);
-        } finally {
-          setIsSearching(false);
-        }
-      }, [searchFilters]);
-  setFilter(typeof category === 'string' ? category : 'all');
-  setTagFilter(""); // Reset tag filter when filtering by category
-    }
-  }, [q, type, tag, category, performSearch]);
-        params.append('category', searchFilters.category);
-      }
-      if (searchFilters.author) {
-        params.append('author', searchFilters.author);
-      }
-      if (searchFilters.dateRange) {
-        params.append('dateRange', searchFilters.dateRange);
-      }
-      if (searchFilters.tags.length > 0) {
-        params.append('tags', searchFilters.tags.join(','));
       }
 
       const response = await fetch(`/api/blogs/search?${params.toString()}`);
@@ -208,7 +150,7 @@ const Blogroll: NextPage = () => {
         throw new Error('Search failed');
       }
 
-      performSearch(q, (type as 'keyword' | 'ai') || 'keyword');
+      const data = await response.json();
       // Handle API errors gracefully
       if (data.error) {
         console.warn('Search API returned error:', data.error);
@@ -223,7 +165,7 @@ const Blogroll: NextPage = () => {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [searchFilters]);
 
   const handleNewSearch = (query: string, searchType: 'keyword' | 'ai') => {
     const searchParams = new URLSearchParams({ q: query, type: searchType });

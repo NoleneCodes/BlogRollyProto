@@ -58,7 +58,7 @@ const InvestorVerify = () => {
                 <div className={styles.loader}></div>
                 <h1>Thank you for Signing up!</h1>
                 <p>Please verify your email. This will only take a moment.</p>
-                <p> <strong>Note:</strong> If you don't see the email, please check your spam folder.</p>
+                <p> <strong>Note:</strong> If you don&apos;t see the email, please check your spam folder.</p>
                 
                  <p>Don&apos;t share this code.</p>
                  <p>It&apos;s a one-time code.</p>

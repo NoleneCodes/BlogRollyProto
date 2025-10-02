@@ -10,7 +10,6 @@ import DomainVerificationModal from './DomainVerificationModal';
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
   onDraftSaved?: () => void;
-  displayName?: string;
   bloggerId?: string;
   isBlogger?: boolean;
   hideGuidelines?: boolean;
@@ -48,16 +47,15 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     title: '',
     author: displayName || '', // Blogger's display name
     bloggerId: bloggerId || '',
-    bloggerDisplayName: displayName || '',
-    description: '',
+  bloggerDisplayName: displayName || '',
+  description: '',
     category: '',
     tags: [],
     postUrl: '',
     hasAdultContent: false
   });
   const [domainVerificationStatus, setDomainVerificationStatus] = useState<'loading' | 'verified' | 'pending' | 'failed' | null>(null);
-  const [showDomainVerification, setShowDomainVerification] = useState(false);
-  const [progress, setProgress] = useState(0);
+  
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
@@ -66,12 +64,8 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [draftSaved, setDraftSaved] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
-
-  useEffect(() => {
-    if (isBlogger && !isSignupMode) {
-      checkDomainVerification();
-    }
-  }, [isBlogger, isSignupMode]);
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const checkDomainVerification = async () => {
     try {
@@ -85,6 +79,12 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       setDomainVerificationStatus('pending');
     }
   };
+
+  useEffect(() => {
+    if (isBlogger && !isSignupMode) {
+      checkDomainVerification();
+    }
+  }, [isBlogger, isSignupMode, checkDomainVerification]);
 
   useEffect(() => {
     const requiredFields = ['title', 'description', 'postUrl', 'category'];
