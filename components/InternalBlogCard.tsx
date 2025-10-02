@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import styles from '../styles/BlogCard.module.css';
 
@@ -100,7 +101,7 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
         </p>
 
         <div className={styles.tagsContainer}>
-          {blog.tags.slice(0, 3).map((tag, index) => (
+          {(blog.tags ?? []).slice(0, 3).map((tag, index) => (
             <span key={index} className={styles.tag}>
               {tag}
             </span>
@@ -108,12 +109,9 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
         </div>
 
         <div className={styles.cardActions}>
-          <a 
-            href={`/blog/post/${blog.slug}`}
-            className={styles.readButton}
-          >
+          <Link href={`/blog/post/${blog.slug}`} className={styles.readButton}>
             Read More
-          </a>
+          </Link>
         </div>
       </div>
     </div>

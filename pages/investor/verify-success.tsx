@@ -10,9 +10,9 @@ const InvestorVerifySuccess = () => {
       <div className={styles.hero}>
         <div className={styles.successSection}>
           <h1>Thank You for Creating Your Investor Account!</h1>
-          <p>Your email has been verified. We're grateful to have you join the BlogRolly investor community.</p>
+          <p>Your email has been verified. We&apos;re grateful to have you join the BlogRolly investor community.</p>
           <p>Next, our team will review your LinkedIn profile.</p> 
-            <p>You'll receive an email notification as soon as your account is approved and you have access to the investor dashboard.</p>
+            <p>You&apos;ll receive an email notification as soon as your account is approved and you have access to the investor dashboard.</p>
           <div className={styles.buttonGroup} style={{ marginTop: 32 }}>
             <a
               href="mailto:invest@blogrolly.com"

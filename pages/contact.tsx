@@ -1,4 +1,5 @@
 import Layout from '../components/Layout';
+import Link from 'next/link';
 import SocialIcons from '../components/SocialIcons';
 import styles from '../styles/Home.module.css';
 
@@ -25,42 +26,42 @@ const Contact = () => (
 
   <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111', textAlign: 'center' }}>Submit Your Blog</h3>
         <p style={{ textAlign: 'center' }}>Are you a self-hosted blogger ready to grow your audience and get discovered?</p>
-        <a
-          href="/submit"
-          className={styles.secondaryButton}
-          style={{
-            display: 'inline-block',
-            margin: '0.5rem auto',
-            background: brandColor,
-            color: '#fff',
-            fontWeight: 700,
-            padding: '0.75rem 1.5rem',
-            borderRadius: '999px',
-            fontSize: '1.1rem',
-            boxShadow: '0 2px 8px rgba(225,29,72,0.10)',
-            border: '2px solid transparent',
-            transition: 'background 0.2s, color 0.2s, border 0.2s',
-            cursor: 'pointer',
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.background = '#fff';
-            e.currentTarget.style.color = brandColor;
-            e.currentTarget.style.border = `2px solid ${brandColor}`;
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.background = brandColor;
-            e.currentTarget.style.color = '#fff';
-            e.currentTarget.style.border = '2px solid transparent';
-          }}
-        >
-          Submit Your Blog Here
-        </a>
+          <Link
+            href="/submit"
+            className={styles.secondaryButton}
+            style={{
+              display: 'inline-block',
+              margin: '0.5rem auto',
+              background: brandColor,
+              color: '#fff',
+              fontWeight: 700,
+              padding: '0.75rem 1.5rem',
+              borderRadius: '999px',
+              fontSize: '1.1rem',
+              boxShadow: '0 2px 8px rgba(225,29,72,0.10)',
+              border: '2px solid transparent',
+              transition: 'background 0.2s, color 0.2s, border 0.2s',
+              cursor: 'pointer',
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = '#fff';
+              e.currentTarget.style.color = brandColor;
+              e.currentTarget.style.border = `2px solid ${brandColor}`;
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = brandColor;
+              e.currentTarget.style.color = '#fff';
+              e.currentTarget.style.border = '2px solid transparent';
+            }}
+          >
+            Submit Your Blog Here
+          </Link>
 
 
   <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111', textAlign: 'center' }}>FAQs & Support</h3>
         <p style={{ textAlign: 'center' }}>
           Need help using BlogRolly?<br />
-          Email: <a href="mailto:hello@blogrolly.com?subject=Help" style={{ color: brandColor, fontWeight: 500 }}>hello@blogrolly.com</a> (Subject: Help)
+           Email: <a href="mailto:hello@blogrolly.com?subject=Help" style={{ color: brandColor, fontWeight: 500 }}>hello@blogrolly.com</a> (Subject: Help)
         </p>
 
   <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111', textAlign: 'center' }}>Press & Media</h3>

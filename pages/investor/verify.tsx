@@ -60,6 +60,9 @@ const InvestorVerify = () => {
                 <p>Please verify your email. This will only take a moment.</p>
                 <p> <strong>Note:</strong> If you don't see the email, please check your spam folder.</p>
                 
+                 <p>Don't share this code.</p>
+                 <p>It's a one-time code.</p>
+                 <p>You've got this!</p>
                 <div className={styles.buttonGroup} style={{ marginTop: 32 }}>
                   <button
                     type="button"
@@ -74,7 +77,7 @@ const InvestorVerify = () => {
             {verificationStatus === 'success' && (
               <div className={styles.successSection}>
                 <h1>Thank You for Creating Your Investor Account!</h1>
-                <p>Your email has been verified. We're grateful to have you join the BlogRolly investor community.</p>
+                <p>Your email has been verified. We&apos;re grateful to have you join the BlogRolly investor community.</p>
                 <p>Next, our team will review your LinkedIn profile.</p>
                 <p>You'll receive an email notification as soon as your account is approved and you have access to the investor dashboard.</p>
                 <div className={styles.buttonGroup} style={{ marginTop: 32 }}>

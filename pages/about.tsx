@@ -12,82 +12,75 @@ const About = () => {
       description="Learn more about our mission to connect, empower, and grow independent blogs."
       canonical="https://blogrolly.com/about"
     >
-      <>
-      <div className={styles.hero}>
-        <h1 className={styles.title}>About BlogRolly</h1>
-        <p className={styles.description}>
-          Breaking Silos, Building A Network.
-        </p>
-      </div>
-      <div className={styles.pronunciationCard}>
-        <h3>Pronunciation: Blog-Roll-Lee</h3>
-        <div className={styles.definition}>
-          <strong>Definition:</strong><br />
-          Blogroll — a list of hyperlinks to blogs or websites.
+      <div>
+        <section className={styles.hero}>
+          <h1 className={styles.title}>About BlogRolly</h1>
+          <p className={styles.description}>
+            Breaking Silos, Building A Network.
+          </p>
+        </section>
+        <div className={styles.pronunciationCard}>
+          <h3>Pronunciation: Blog-Roll-Lee</h3>
+          <div className={styles.definition}>
+            <strong>Definition:</strong><br />
+            Blogroll — a list of hyperlinks to blogs or websites.
+          </div>
         </div>
-      </div><div className={styles.missionSection}>
-        <h2>Your Mission as a Blogger</h2>
-        <p>
-          You started writing because you had something to share: ideas, insights, stories worth telling. But in today’s internet, independent voices are too often buried under algorithms and noise.<br />
-          You don’t need to chase virality or bend to platform rules. You just need to be found by the right people.<br />
-          That’s where BlogRolly comes in.
-        </p>
-      </div><div className={styles.missionSection}>
-        <h2>Our Mission: A Quiet Revolution for Indie Bloggers</h2>
-        <p>
-          BlogRolly exists to reconnect the fragmented blogosphere and give independent writers the visibility they deserve.<br />
-          We’re building a network-powered ecosystem of thinkers, writers, and readers — one where creators own their platforms, grow their audiences, and amplify each other’s reach.
-        </p>
-        <ul className={styles.featureList}>
-          <li>In a world that rewards noise, we reward nuance.</li>
-          <li>In a culture obsessed with feeds, we amplify value.</li>
-          <li>In an internet dominated by rented platforms, we return power to the writer.</li>
-        </ul>
-      </div><div className={styles.missionSection}>
-        <h2>The BlogRolly Flywheel</h2>
-
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-          <BlogrollyFlywheel />
+        <div className={styles.missionSection}>
+          <h2>Your Mission as a Blogger</h2>
+          <p>
+            You started writing because you had something to share: ideas, insights, stories worth telling. But in today’s internet, independent voices are too often buried under algorithms and noise.<br />
+            You don’t need to chase virality or bend to platform rules. You just need to be found by the right people.<br />
+            That’s where BlogRolly comes in.
+          </p>
         </div>
-
-        <p style={{ textAlign: 'center' }}>
-  <strong style={{ color: '#c42142' }}>
-    At the heart of BlogRolly is a simple idea: together, we rise.
-  </strong>
-</p>
-  
-      
-        <p>When you join, you contribute to a discovery loop that multiplies everyone’s reach:</p>
-        <ol style={{ marginLeft: '1.5em', marginBottom: '1.5em' }}>
-          <li>You add your blog → the network gains topic depth and authority.</li>
-          <li>The network attracts more readers → you gain visibility and traffic.</li>
-          <li>Links back to BlogRolly strengthen the network’s SEO → boosting your listing.</li>
-          <li>More members join → the loop spins faster, lifting everyone higher.</li>
-        </ol>
-        <p>We're creating a mutual growth engine powered entirely by the blogs and creators within it.</p>
-        
-      </div><div className={styles.missionSection}>
-        <h2>Why BlogRolly Exists</h2>
-        <p>Modern bloggers want to:</p>
-        <ul style={{ listStyleType: 'none', marginLeft: '2em', paddingLeft: 0 }} className={styles.featureList}>
-          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
-            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
-            <span style={{ fontWeight: 500 }}>
-              Own their content
-            </span>
-          </li>
-          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
-            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
-            <span style={{ fontWeight: 500 }}>
-              Attract <span style={{ color: '#c42142' }}>genuine readers</span>
-            </span>
-          </li>
-          <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
-            <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
-            <span style={{ fontWeight: 500 }}>
-              Build domain authority & <span style={{ color: '#c42142' }}>partnerships</span>
-            </span>
-          </li>
+        <div className={styles.missionSection}>
+          <h2>Our Mission: A Quiet Revolution for Indie Bloggers</h2>
+          <p>
+            BlogRolly exists to reconnect the fragmented blogosphere and give independent writers the visibility they deserve.<br />
+            We’re building a network-powered ecosystem of thinkers, writers, and readers — one where creators own their platforms, grow their audiences, and amplify each other’s reach.
+          </p>
+          <ul className={styles.featureList}>
+            <li>In a world that rewards noise, we reward nuance.</li>
+            <li>In a culture obsessed with feeds, we amplify value.</li>
+            <li>In an internet dominated by rented platforms, we return power to the writer.</li>
+          </ul>
+        </div>
+        <div className={styles.missionSection}>
+          <h2>The BlogRolly Flywheel</h2>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <BlogrollyFlywheel />
+          </div>
+          <p style={{ textAlign: 'center' }}>
+            <strong style={{ color: '#c42142' }}>
+              At the heart of BlogRolly is a simple idea: together, we rise.
+            </strong>
+          </p>
+          <p>When you join, you contribute to a discovery loop that multiplies everyone’s reach:</p>
+          <ol style={{ marginLeft: '1.5em', marginBottom: '1.5em' }}>
+            <li>You add your blog → the network gains topic depth and authority.</li>
+            <li>The network attracts more readers → you gain visibility and traffic.</li>
+            <li>Links back to BlogRolly strengthen the network’s SEO → boosting your listing.</li>
+            <li>More members join → the loop spins faster, lifting everyone higher.</li>
+          </ol>
+          <p>We're creating a mutual growth engine powered entirely by the blogs and creators within it.</p>
+        </div>
+        <div className={styles.missionSection}>
+          <h2>Why BlogRolly Exists</h2>
+          <p>Modern bloggers want to:</p>
+          <ul style={{ listStyleType: 'none', marginLeft: '2em', paddingLeft: 0 }} className={styles.featureList}>
+            <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+              <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+              <span style={{ fontWeight: 500 }}>
+                Attract <span style={{ color: '#c42142' }}>genuine readers</span>
+              </span>
+            </li>
+            <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
+              <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
+              <span style={{ fontWeight: 500 }}>
+                Build domain authority & <span style={{ color: '#c42142' }}>partnerships</span>
+              </span>
+            </li>
           <li style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5em' }}>
             <span style={{ color: '#c42142', fontSize: '1.2em', marginRight: '0.7em', fontWeight: 'bold' }}>•</span>
             <span style={{ fontWeight: 500 }}>
@@ -167,7 +160,7 @@ const About = () => {
         </ul>
         <p>BlogRolly isn’t here to take your voice. We’re here to make sure it travels further.</p>
   </div>
-      </>
+      </div>
     </Layout>
   );
 };
