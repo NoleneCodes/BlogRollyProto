@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import ReaderOverviewTab from '../../components/reader/ReaderOverviewTab';
 import ReaderSavedTab from '../../components/reader/ReaderSavedTab';
 import ReaderFollowingTab from '../../components/reader/ReaderFollowingTab';
@@ -259,10 +260,12 @@ const ReaderProfile: React.FC = () => {
                 <div className={styles.profilePictureSection}>
                   <div className={styles.currentPicture}>
                     {profilePicturePreview || userInfo.avatar ? (
-                      <img 
+                      <Image 
                         src={profilePicturePreview || userInfo.avatar} 
                         alt="Profile" 
                         className={styles.previewImage}
+                        width={80}
+                        height={80}
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>

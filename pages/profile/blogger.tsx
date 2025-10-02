@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 // StripePricingModal component for dynamic script and element injection
 const StripePricingModal = ({ onClose }: { onClose: () => void }) => {
   const modalContentRef = useRef<HTMLDivElement>(null);
@@ -690,10 +691,12 @@ const BloggerProfile: React.FC = () => {
                 <div className={styles.profilePictureSection}>
                   <div className={styles.currentPicture}>
                     {profilePicturePreview || userInfo.avatar ? (
-                      <img 
+                      <Image 
                         src={profilePicturePreview || userInfo.avatar} 
                         alt="profile picture" 
                         className={styles.previewImage}
+                        width={80}
+                        height={80}
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>
@@ -954,7 +957,7 @@ const BloggerProfile: React.FC = () => {
         <StripePricingModal onClose={() => setShowStripePricingModal(false)} />
       )}
 
-// StripePricingModal component for dynamic script and element injection
+{/* StripePricingModal component for dynamic script and element injection */}
     </Layout>
   );
 };

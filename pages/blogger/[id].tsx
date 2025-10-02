@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogCard from '../../components/BlogCard';
@@ -344,7 +345,7 @@ const PublicBloggerProfile: React.FC = () => {
         <div className={styles.profileHeader}>
           <div className={styles.avatarSection}>
             {blogger.avatar ? (
-              <img src={blogger.avatar} alt={blogger.displayName} className={styles.avatar} />
+              <Image src={blogger.avatar} alt={blogger.displayName} className={styles.avatar} width={80} height={80} />
             ) : (
               <div className={styles.avatarPlaceholder}>
                 {getInitials(blogger.displayName)}

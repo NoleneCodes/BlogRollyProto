@@ -77,8 +77,8 @@ const Contact = () => (
         </p>
 <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#111', textAlign: 'center' }}>Join the Team</h3>
         <p style={{ textAlign: 'center' }}>
-          We’re building something big and you might be the missing piece.<br />
-          If you're passionate about indie media, digital sovereignty, or internet culture, we’d love to connect.<br />
+          We&apos;re building something big and you might be the missing piece.<br />
+          If you&apos;re passionate about indie media, digital sovereignty, or internet culture, we&apos;d love to connect.<br />
           Email: <a href="mailto:hello@blogrolly.com?subject=Careers" style={{ color: brandColor, fontWeight: 500 }}>hello@blogrolly.com</a> (Subject: Careers)
         </p>
 

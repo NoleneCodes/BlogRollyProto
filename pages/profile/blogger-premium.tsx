@@ -4,6 +4,7 @@
 
 // Place handler functions after state declarations (inside the component)
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
@@ -555,10 +556,12 @@ const BloggerProfilePremium: React.FC = () => {
                 <div className={styles.profilePictureSection}>
                   <div className={styles.currentPicture}>
                     {profilePicturePreview || displayUserInfo.avatar ? (
-                      <img 
+                      <Image 
                         src={profilePicturePreview || displayUserInfo.avatar} 
                         alt="profile picture" 
                         className={styles.previewImage}
+                        width={80}
+                        height={80}
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>

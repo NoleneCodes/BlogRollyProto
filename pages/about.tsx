@@ -29,9 +29,9 @@ const About = () => {
         <div className={styles.missionSection}>
           <h2>Your Mission as a Blogger</h2>
           <p>
-            You started writing because you had something to share: ideas, insights, stories worth telling. But in today’s internet, independent voices are too often buried under algorithms and noise.<br />
-            You don’t need to chase virality or bend to platform rules. You just need to be found by the right people.<br />
-            That’s where BlogRolly comes in.
+            You started writing because you had something to share: ideas, insights, stories worth telling. But in today&apos;s internet, independent voices are too often buried under algorithms and noise.<br />
+            You don&apos;t need to chase virality or bend to platform rules. You just need to be found by the right people.<br />
+            That&apos;s where BlogRolly comes in.
           </p>
         </div>
         <div className={styles.missionSection}>
@@ -63,7 +63,7 @@ const About = () => {
             <li>Links back to BlogRolly strengthen the network’s SEO → boosting your listing.</li>
             <li>More members join → the loop spins faster, lifting everyone higher.</li>
           </ol>
-          <p>We're creating a mutual growth engine powered entirely by the blogs and creators within it.</p>
+          <p>We&apos;re creating a mutual growth engine powered entirely by the blogs and creators within it.</p>
         </div>
         <div className={styles.missionSection}>
           <h2>Why BlogRolly Exists</h2>

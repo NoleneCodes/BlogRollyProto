@@ -122,32 +122,7 @@ const Blogroll: NextPage = () => {
     const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (q && typeof q === 'string') {
-      setSearchQuery(q);
-      setSearchType((type as 'keyword' | 'ai') || 'keyword');
-      performSearch(q, (type as 'keyword' | 'ai') || 'keyword');
-    } else {
-      setIsSearchActive(false);
-      setSearchResults([]);
-    }
-
-    // Handle tag filtering
-    if (tag && typeof tag === 'string') {
-      setTagFilter(tag);
-      setFilter("all"); // Reset category filter when filtering by tag
-    } else {
-      setTagFilter("");
-    }
-
-    // Handle category filtering
-    if (category && typeof category === 'string') {
-      setFilter(category);
-      setTagFilter(""); // Reset tag filter when filtering by category
-    }
-  }, [q, type, tag, category]);
-
-  const performSearch = async (query: string, searchType: 'keyword' | 'ai') => {
+  const performSearch = useCallback(async (query: string, searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
 
     setIsSearching(true);
@@ -168,6 +143,64 @@ const Blogroll: NextPage = () => {
       }
       if (searchFilters.tags.length > 0) {
         params.append('tags', searchFilters.tags.join(','));
+      const performSearch = useCallback(async (query: string, searchType: 'keyword' | 'ai') => {
+        if (!query.trim()) return;
+
+        setIsSearching(true);
+        try {
+          const params = new URLSearchParams();
+          params.append('q', query);
+          params.append('type', searchType);
+
+          // Add filters to search
+          if (searchFilters.category) {
+            params.append('category', searchFilters.category);
+          }
+          if (searchFilters.author) {
+            params.append('author', searchFilters.author);
+          }
+          if (searchFilters.dateRange) {
+            params.append('dateRange', searchFilters.dateRange);
+          }
+          if (searchFilters.tags.length > 0) {
+            params.append('tags', searchFilters.tags.join(','));
+          }
+
+          const response = await fetch(`/api/blogs/search?${params.toString()}`);
+          if (!response.ok) {
+            throw new Error('Search failed');
+          }
+
+          const data = await response.json();
+          // Handle API errors gracefully
+          if (data.error) {
+            console.warn('Search API returned error:', data.error);
+            setSearchResults([]);
+          } else {
+            setSearchResults(data.results || []);
+          }
+          setIsSearchActive(true);
+        } catch (error) {
+          console.error('Search error:', error);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
+      }, [searchFilters]);
+  setFilter(typeof category === 'string' ? category : 'all');
+  setTagFilter(""); // Reset tag filter when filtering by category
+    }
+  }, [q, type, tag, category, performSearch]);
+        params.append('category', searchFilters.category);
+      }
+      if (searchFilters.author) {
+        params.append('author', searchFilters.author);
+      }
+      if (searchFilters.dateRange) {
+        params.append('dateRange', searchFilters.dateRange);
+      }
+      if (searchFilters.tags.length > 0) {
+        params.append('tags', searchFilters.tags.join(','));
       }
 
       const response = await fetch(`/api/blogs/search?${params.toString()}`);
@@ -175,7 +208,7 @@ const Blogroll: NextPage = () => {
         throw new Error('Search failed');
       }
 
-      const data = await response.json();
+      performSearch(q, (type as 'keyword' | 'ai') || 'keyword');
       // Handle API errors gracefully
       if (data.error) {
         console.warn('Search API returned error:', data.error);
