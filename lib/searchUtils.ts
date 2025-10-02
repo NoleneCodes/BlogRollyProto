@@ -236,41 +236,15 @@ export function getSearchSuggestions(query: string): string[] {
 
 // Save search history for users
 export function saveSearchToHistory(query: string, searchType: 'keyword' | 'ai'): void {
-  // Try to sync to Supabase
-  const sessionId = getAnonymousSessionId();
+  // Always sync to Supabase
   fetch('/api/search-history', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query,
-      searchType,
-      sessionId
-    })
-  }).catch(() => {
-    // Fallback to local storage if offline or error
-    const history = getSearchHistory();
-    const newEntry = {
-      query,
-      searchType,
-      timestamp: new Date().toISOString(),
-      id: Date.now().toString()
-    };
-    const updatedHistory = [newEntry, ...history.slice(0, 9)];
-    localStorage.setItem('blogrolly_search_history', JSON.stringify(updatedHistory));
+    body: JSON.stringify({ query, searchType })
   });
 }
 
-function getAnonymousSessionId(): string {
-  let sessionId = '';
-  try {
-    sessionId = localStorage.getItem('blogrolly_session_id') || '';
-    if (!sessionId) {
-      sessionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      localStorage.setItem('blogrolly_session_id', sessionId);
-    }
-  } catch {}
-  return sessionId;
-}
+// Session ID logic now handled by backend (Supabase) or authenticated user
 
 export function getSearchHistory(): Array<{
   id: string;
@@ -278,10 +252,7 @@ export function getSearchHistory(): Array<{
   searchType: 'keyword' | 'ai';
   timestamp: string;
 }> {
-  try {
-    const history = localStorage.getItem('blogrolly_search_history');
-    return history ? JSON.parse(history) : [];
-  } catch {
-    return [];
-  }
+  // Always fetch from backend
+  // This should be replaced with an async function in your app to fetch from /api/search-history
+  return [];
 }

@@ -251,8 +251,8 @@ const BloggerProfile: React.FC = () => {
 
         setBlogStats(blogStats);
 
-        // Load saved drafts from localStorage
-        loadSavedDrafts();
+  // Load saved drafts from backend
+  loadSavedDrafts();
 
       } catch (error) {
         console.error('Auth check failed:', error);
@@ -264,13 +264,12 @@ const BloggerProfile: React.FC = () => {
     checkAuth();
   }, [router, blogSubmissions]);
 
-  const loadSavedDrafts = () => {
-    const savedDraft = localStorage.getItem('blogSubmissionDraft');
-    if (savedDraft) {
-      try {
-        const draft = JSON.parse(savedDraft);
+  const loadSavedDrafts = async () => {
+    try {
+      const res = await fetch('/api/blog-draft');
+      const draft = await res.json();
+      if (draft) {
         const { savedAt, ...draftFormData } = draft;
-
         // Only add draft if it has meaningful content
         if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
           const draftSubmission: BlogSubmission = {
@@ -303,7 +302,7 @@ const BloggerProfile: React.FC = () => {
           });
         }
       } catch (error) {
-        console.error('Error loading saved draft:', error);
+        console.error('Failed to load draft from backend:', error);
       }
     }
   };

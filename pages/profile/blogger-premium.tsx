@@ -1,11 +1,8 @@
-
-
-// ...existing code...
-
 // Place handler functions after state declarations (inside the component)
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useUser } from '@supabase/auth-helpers-react';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
@@ -131,6 +128,8 @@ const BloggerProfilePremium: React.FC = () => {
     github: ''
   });
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
+  const user = useUser();
+  const userId = user?.id || '';
 
 
   // Recalculate blogStats and per-blog monthly stats using event tables for rolling 30-day monthly stats
@@ -200,12 +199,6 @@ const BloggerProfilePremium: React.FC = () => {
     // Fetch real user info and blog submissions from Supabase
     const fetchData = async () => {
       // Simulate auth/user fetch (replace with your real auth logic)
-      const userId = window.localStorage.getItem('user_id');
-      if (!userId) {
-        setIsLoading(false);
-        return;
-      }
-      // Fetch user info (replace with your real fetch if needed)
       const { data: userProfile, error: userError } = await getBloggerProfileByUserId(userId);
       if (userProfile) {
         setUserInfo({

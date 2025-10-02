@@ -290,9 +290,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <div className={styles.sectionHeader}>
                 <h4>Recent Searches</h4>
                 <button
-                  onClick={(e) => {
+                  onClick={async (e) => {
                     e.stopPropagation();
-                    localStorage.removeItem('blogrolly_search_history');
+                    // Remove localStorage.removeItem for search history
+                    await fetch('/api/search-history', { method: 'DELETE' });
                     setSearchHistory([]);
                     setShowSuggestions(false);
                   }}

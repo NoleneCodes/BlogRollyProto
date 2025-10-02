@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '@supabase/auth-helpers-react';
 import styles from '../../styles/AdminDashboard.module.css';
 // import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
 // import { useSession } from 'next-auth/react';
@@ -27,10 +28,8 @@ const BugReports = () => {
   const [bugReportsData, setBugReportsData] = useState<BugReport[]>([]);
   const [selectedBugReport, setSelectedBugReport] = useState<BugReport | null>(null);
   const [showViewModal, setShowViewModal] = useState(false);
-
-
-  // Fallback for admin email (replace with real session logic if needed)
-  const adminEmail = typeof window !== 'undefined' && window.localStorage.getItem('adminEmail') || 'unknown-admin';
+  const user = useUser();
+  const adminEmail = user?.email || 'unknown-admin';
 
   useEffect(() => {
     async function fetchBugReports() {

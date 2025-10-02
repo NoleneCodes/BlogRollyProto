@@ -102,20 +102,23 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   }, [formData]);
 
   useEffect(() => {
-    const savedDraft = localStorage.getItem('blogSubmissionDraft');
-    if (savedDraft) {
-      const draft = JSON.parse(savedDraft);
-      const { savedAt, ...draftFormData } = draft;
-      setFormData(prev => ({ ...prev, ...draftFormData }));
-      if (savedAt) {
-        setLastSavedAt(new Date(savedAt).toLocaleString());
-      }
-    }
+    // Fetch draft from backend
+    fetch('/api/blog-draft')
+      .then(res => res.json())
+      .then(draft => {
+        if (draft) {
+          const { savedAt, ...draftFormData } = draft;
+          setFormData(prev => ({ ...prev, ...draftFormData }));
+          if (savedAt) {
+            setLastSavedAt(new Date(savedAt).toLocaleString());
+          }
+        }
+      });
   }, []);
 
   // No auto-save - only save when user clicks Save Draft button
 
-  const saveDraft = () => {
+  const saveDraft = async () => {
     const draftData = {
       title: formData.title,
       imageDescription: formData.imageDescription,
@@ -127,7 +130,11 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       savedAt: new Date().toISOString()
     };
 
-    localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
+    await fetch('/api/blog-draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(draftData)
+    });
     setDraftSaved(true);
     setLastSavedAt(new Date().toLocaleTimeString());
 
@@ -140,8 +147,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     }, 3000);
   };
 
-  const clearDraft = () => {
-    localStorage.removeItem('blogSubmissionDraft');
+  const clearDraft = async () => {
+    await fetch('/api/blog-draft', {
+      method: 'DELETE'
+    });
     setFormData({
       image: null,
       imageDescription: '',

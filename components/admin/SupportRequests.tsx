@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '@supabase/auth-helpers-react';
 import styles from '../../styles/AdminDashboard.module.css';
 // import { getAllSupportRequests, getSupportRequestById, updateSupportRequestStatus, addEmailToThread, SupportRequest } from '../../lib/supportRequestData';
 
@@ -18,6 +19,7 @@ interface SupportRequest {
 }
 
 const SupportRequests = () => {
+  const { user } = useUser();
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low' | 'critical'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'responded' | 'closed'>('all');
@@ -28,7 +30,8 @@ const SupportRequests = () => {
   const [adminResponse, setAdminResponse] = useState('');
 
   // Fallback for admin email (replace with real session logic if needed)
-  const adminEmail = typeof window !== 'undefined' && window.localStorage.getItem('adminEmail') || 'unknown-admin';
+  // Get adminEmail from backend/session (replace with actual session/user logic)
+  const adminEmail = user?.email || 'unknown-admin';
 
   useEffect(() => {
     async function fetchSupportRequests() {

@@ -114,10 +114,12 @@ const Investors: NextPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token in localStorage
-        localStorage.setItem('investorToken', data.token);
-        localStorage.setItem('investorData', JSON.stringify(data.investor));
-
+        // Store token and investor data in backend/session
+        await fetch('/api/investor/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: data.token, investor: data.investor })
+        });
         // Redirect to investor dashboard
         router.push('/investor/dashboard');
       } else {

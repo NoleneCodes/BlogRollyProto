@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import BlogCard from './BlogCard';
 import styles from '../styles/PersonalizedBlogroll.module.css';
+import { supabase, supabaseDB } from '../lib/supabase';
 
 interface BlogPost {
   id: string;
@@ -116,11 +117,8 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
 
-  const getUserId = () => {
-    // Placeholder - implement based on your auth system
-    // This could check for Replit auth headers or Supabase session
-    return localStorage.getItem('current_user_id') || null;
-  };
+  // Get current user from Supabase Auth
+  const [userId, setUserId] = useState<string | null>(null);
 
   const calculateRelevanceScore = (blog: BlogPost, preferences: UserPreferences): number => {
     let score = 0;
@@ -144,26 +142,6 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     return score;
   };
 
-  const loadUserPreferences = () => {
-    const userId = getUserId();
-    if (userId) {
-      const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
-      const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
-      if (storedPreferences) {
-        const preferences = JSON.parse(storedPreferences);
-        const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
-          categoryClicks: {},
-          tagClicks: {}
-        };
-        setUserPreferences({
-          categories: preferences.categories || [],
-          tags: preferences.tags || [],
-          engagementHistory: engagement
-        });
-      }
-    }
-  };
-
   const filterBlogsByPreferences = (blogs: BlogPost[], preferences: UserPreferences): BlogPost[] => {
     return blogs
       .map(blog => ({
@@ -174,11 +152,52 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
       .filter(blog => (blog.relevanceScore || 0) > 0);
   };
 
+  const loadUserPreferences = async () => {
+    if (!userId) {
+      setPersonalizedBlogs([...mockBlogs].sort(() => Math.random() - 0.5).slice(0, maxItems));
+      setIsLoading(false);
+      return;
+    }
+    // Fetch preferences and engagement from Supabase
+    const { data: profile, error } = await supabase
+      .from('user_profiles')
+      .select('categories, tags, engagement_history')
+      .eq('user_id', userId)
+      .single();
+    if (error || !profile) {
+      setPersonalizedBlogs([...mockBlogs].sort(() => Math.random() - 0.5).slice(0, maxItems));
+      setIsLoading(false);
+      return;
+    }
+    const preferences = {
+      categories: profile.categories || [],
+      tags: profile.tags || [],
+      engagementHistory: profile.engagement_history || { categoryClicks: {}, tagClicks: {} }
+    };
+    setUserPreferences(preferences);
+    const filtered = filterBlogsByPreferences(mockBlogs, preferences);
+    setPersonalizedBlogs(filtered.slice(0, maxItems));
+    setIsLoading(false);
+  };
+
+  // Get user session and load preferences
+  useEffect(() => {
+    const fetchSessionAndPrefs = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (data?.session?.user?.id) {
+        setUserId(data.session.user.id);
+      } else {
+        setUserId(null);
+      }
+    };
+    fetchSessionAndPrefs();
+  }, []);
 
   useEffect(() => {
-    loadUserPreferences();
-    // No return value (do not return JSX)
-  }, []);
+    if (userId !== undefined) {
+      loadUserPreferences();
+    }
+  }, [userId]);
 
   // Conditional rendering for loading and empty state
   if (isLoading) {
@@ -208,21 +227,23 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     );
   }
 
-  const handleBlogInteraction = (blogId: string, action: 'save' | 'read' | 'click') => {
+  const handleBlogInteraction = async (blogId: string, action: 'save' | 'read' | 'click') => {
     const blog = personalizedBlogs.find(b => b.id === blogId);
     if (!blog) return;
 
-    // Update engagement history
-    const userId = getUserId();
+    // Update engagement history in Supabase
     if (userId) {
-      const currentEngagement = JSON.parse(localStorage.getItem(`user_engagement_${userId}`) || '{"categoryClicks": {}, "tagClicks": {}}');
-
+      let updatedEngagement = { ...userPreferences?.engagementHistory };
       if (action === 'click') {
-        currentEngagement.categoryClicks[blog.category] = (currentEngagement.categoryClicks[blog.category] || 0) + 1;
+        updatedEngagement.categoryClicks[blog.category] = (updatedEngagement.categoryClicks[blog.category] || 0) + 1;
         blog.tags.forEach(tag => {
-          currentEngagement.tagClicks[tag] = (currentEngagement.tagClicks[tag] || 0) + 1;
+          updatedEngagement.tagClicks[tag] = (updatedEngagement.tagClicks[tag] || 0) + 1;
         });
-        localStorage.setItem(`user_engagement_${userId}`, JSON.stringify(currentEngagement));
+        await supabase
+          .from('user_profiles')
+          .update({ engagement_history: updatedEngagement })
+          .eq('user_id', userId);
+        setUserPreferences(prev => prev ? { ...prev, engagementHistory: updatedEngagement } : prev);
       }
     }
 
@@ -265,6 +286,5 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
       </div>
     </section>
   );
-}
-
+};
 export default PersonalizedBlogroll;
