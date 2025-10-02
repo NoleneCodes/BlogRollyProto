@@ -116,9 +116,45 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
 
+  const loadUserPreferences = () => {
+    // Check for authentication first
+    const userId = getUserId(); // You'll need to implement this based on your auth system
+
+    if (userId) {
+      // Try to load from localStorage (in production, fetch from Supabase)
+      const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
+      const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
+
+      if (storedPreferences) {
+        const preferences = JSON.parse(storedPreferences);
+        const engagement = engagementHistory ? JSON.parse(engagementHistory) : {
+          categoryClicks: {},
+          tagClicks: {}
+        };
+
+        setUserPreferences({
+          categories: preferences.categories || [],
+          tags: preferences.tags || [],
+          engagementHistory: engagement
+        });
+      }
+    }
+  };
+
+  const filterBlogsByPreferences = (blogs: BlogPost[], preferences: UserPreferences): BlogPost[] => {
+    return blogs
+      .map(blog => ({
+        ...blog,
+        relevanceScore: calculateRelevanceScore(blog, preferences)
+      }))
+      .sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0))
+      .filter(blog => (blog.relevanceScore || 0) > 0);
+  };
+
+
   useEffect(() => {
     loadUserPreferences();
-  }, []);
+  }, [loadUserPreferences]);
 
   useEffect(() => {
     if (userPreferences) {
@@ -129,15 +165,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
       setPersonalizedBlogs(mockBlogs.slice(0, maxItems));
     }
     setIsLoading(false);
-  }, [userPreferences, maxItems]);
-
-  const loadUserPreferences = () => {
-    // Check for authentication first
-    const userId = getUserId(); // You'll need to implement this based on your auth system
-
-    if (userId) {
-      // Try to load from localStorage (in production, fetch from Supabase)
-      const storedPreferences = localStorage.getItem(`user_preferences_${userId}`);
+  }, [userPreferences, maxItems, filterBlogsByPreferences]);
       const engagementHistory = localStorage.getItem(`user_engagement_${userId}`);
 
       if (storedPreferences) {

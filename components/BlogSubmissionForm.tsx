@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { useError } from './ErrorProvider';
 import Link from 'next/link';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
@@ -14,6 +15,7 @@ interface BlogSubmissionFormProps {
   isBlogger?: boolean;
   hideGuidelines?: boolean;
   isSignupMode?: boolean;
+  displayName?: string;
 }
 
 interface FormData {
@@ -67,7 +69,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const checkDomainVerification = async () => {
+  const checkDomainVerification = useCallback(async () => {
     try {
       const response = await fetch('/api/auth-check');
       const data = await response.json();
@@ -78,7 +80,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       showError('Failed to check domain verification. Please try again.');
       setDomainVerificationStatus('pending');
     }
-  };
+  }, [showError]);
 
   useEffect(() => {
     if (isBlogger && !isSignupMode) {
@@ -502,7 +504,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
               {errors.image && <span className={styles.error}>{errors.image}</span>}
               {imagePreview && (
                 <div className={styles.imagePreview}>
-                  <img src={imagePreview} alt="Preview" />
+                  <Image src={imagePreview} alt="Preview" width={300} height={200} style={{ objectFit: 'cover', borderRadius: '8px' }} />
                 </div>
               )}
               <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP</small>

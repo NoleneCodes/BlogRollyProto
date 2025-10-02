@@ -12,10 +12,6 @@ const BlogUrlChangeHistory: React.FC<BlogUrlChangeHistoryProps> = ({ blogSubmiss
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchUrlChanges();
-  }, [blogSubmissionId]);
-
   const fetchUrlChanges = async () => {
     try {
       setLoading(true);
@@ -33,6 +29,10 @@ const BlogUrlChangeHistory: React.FC<BlogUrlChangeHistoryProps> = ({ blogSubmiss
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUrlChanges();
+  }, [blogSubmissionId, fetchUrlChanges]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('en-US', {

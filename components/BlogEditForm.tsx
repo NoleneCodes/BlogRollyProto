@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
@@ -316,7 +317,7 @@ const BlogEditForm: React.FC<BlogEditFormProps> = ({ blog, onSave, onCancel, isV
       <div className={styles.editImageSection}>
         {editForm.imagePreview && (
           <div className={styles.editImagePreview}>
-            <img src={editForm.imagePreview} alt="Blog preview" />
+            <Image src={editForm.imagePreview} alt="Blog preview" width={300} height={200} style={{ objectFit: 'cover', borderRadius: '8px' }} />
           </div>
         )}
         <div className={styles.editImageUpload}>
