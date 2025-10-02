@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import styles from '../../styles/ReaderProfile.module.css';
 import { getBloggerFollowingCount } from '../../lib/followClient';
 
@@ -24,7 +25,7 @@ export default function ReaderOverviewTab({ userInfo, savedBlogs, followedBlogge
       <div className={styles.profileHeader}>
         <div className={styles.avatar}>
           {userInfo.avatar ? (
-            <img src={userInfo.avatar} alt="Profile" />
+            <Image src={userInfo.avatar} alt="Profile" width={64} height={64} style={{ borderRadius: '50%' }} />
           ) : (
             <div className={styles.initials}>
               {userInfo.displayName?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || userInfo.name}

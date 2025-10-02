@@ -237,29 +237,29 @@ const BloggerProfile: React.FC = () => {
           }
         ]);
 
-        // Mock blog stats
-        const totalViews = blogSubmissions.reduce((sum, blog) => sum + (blog.views || 0), 0);
-        const totalClicks = blogSubmissions.reduce((sum, blog) => sum + (blog.clicks || 0), 0);
+      // Mock blog stats
+      const totalViews = blogSubmissions.reduce((sum, blog) => sum + (blog.views || 0), 0);
+      const totalClicks = blogSubmissions.reduce((sum, blog) => sum + (blog.clicks || 0), 0);
 
-        const blogStats: BlogStats = {
-          totalViews: totalViews,
-          totalClicks: totalClicks,
-          totalSubmissions: blogSubmissions.length,
-          approvedSubmissions: blogSubmissions.filter(blog => blog.status === 'approved').length,
-          clickThroughRate: totalViews > 0 ? (totalClicks / totalViews) * 100 : 0
-        };
+      const blogStats: BlogStats = {
+        totalViews: totalViews,
+        totalClicks: totalClicks,
+        totalSubmissions: blogSubmissions.length,
+        approvedSubmissions: blogSubmissions.filter(blog => blog.status === 'approved').length,
+        clickThroughRate: totalViews > 0 ? (totalClicks / totalViews) * 100 : 0
+      };
 
-        setBlogStats(blogStats);
+      setBlogStats(blogStats);
 
-  // Load saved drafts from backend
-  loadSavedDrafts();
+      // Load saved drafts from backend
+      await loadSavedDrafts();
 
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
     checkAuth();
   }, [router, blogSubmissions]);
@@ -301,9 +301,9 @@ const BloggerProfile: React.FC = () => {
             }
           });
         }
-      } catch (error) {
-        console.error('Failed to load draft from backend:', error);
       }
+    } catch (error) {
+      console.error('Failed to load draft from backend:', error);
     }
   };
 

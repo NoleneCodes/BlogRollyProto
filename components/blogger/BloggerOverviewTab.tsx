@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from 'next/image';
 import styles from '../../styles/BloggerProfile.module.css';
 
 export default function BloggerOverviewTab({ userInfo, blogStats, blogSubmissions }: any) {
@@ -9,8 +10,8 @@ export default function BloggerOverviewTab({ userInfo, blogStats, blogSubmission
   <h2 style={{ color: '#c42142' }}>Profile Overview</h2>
       <div className={styles.profileHeader}>
         <div className={styles.avatar}>
-          {userInfo.avatar ? (
-            <img src={userInfo.avatar} alt="Profile" />
+            {userInfo.avatar ? (
+              <Image src={userInfo.avatar} alt="Profile" width={64} height={64} style={{ borderRadius: '50%' }} />
           ) : (
             <div className={styles.initials}>
               {userInfo.displayName?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || userInfo.name}

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from 'next/image';
 import styles from '../../styles/ReaderProfile.module.css';
 import { unfollowBlogger } from '../../lib/followClient';
 
@@ -21,7 +22,7 @@ export default function ReaderFollowingTab({ readerId, followedBloggers, onUnfol
               <div className={styles.bloggerInfo}>
                 <div className={styles.bloggerAvatar} style={{ borderRadius: '0.5rem', overflow: 'hidden', border: '2px solid #eee' }}>
                   {blogger.avatar ? (
-                    <img src={blogger.avatar} alt={blogger.username} style={{ borderRadius: '0', width: '48px', height: '48px', objectFit: 'cover', border: 'none' }} />
+                    <Image src={blogger.avatar} alt={blogger.username} width={48} height={48} style={{ objectFit: 'cover', borderRadius: '0', border: 'none' }} />
                   ) : (
                     <div className={styles.bloggerInitials} style={{ borderRadius: '0', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee', fontWeight: 600 }}>
                       {blogger.username.split(' ').map((n: string) => n[0]).join('').toUpperCase()}

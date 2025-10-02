@@ -19,7 +19,7 @@ interface SupportRequest {
 }
 
 const SupportRequests = () => {
-  const { user } = useUser();
+  const user = useUser();
   const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low' | 'critical'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'responded' | 'closed'>('all');

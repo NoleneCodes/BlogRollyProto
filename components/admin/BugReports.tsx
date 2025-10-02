@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@supabase/auth-helpers-react';
+import Image from 'next/image';
 import styles from '../../styles/AdminDashboard.module.css';
 // import { getAllBugReports, getBugReportById, updateBugReportStatus, BugReport } from '../../lib/bugReportData';
 // import { useSession } from 'next-auth/react';
@@ -270,8 +271,42 @@ const BugReports = () => {
               {selectedBugReport.steps_to_reproduce && (<div className={styles.bugReportSection}><h5>Steps to Reproduce</h5><pre>{selectedBugReport.steps_to_reproduce}</pre></div>)}
               {selectedBugReport.expected_behavior && (<div className={styles.bugReportSection}><h5>Expected Behavior</h5><p>{selectedBugReport.expected_behavior}</p></div>)}
               {selectedBugReport.actual_behavior && (<div className={styles.bugReportSection}><h5>Actual Behavior</h5><p>{selectedBugReport.actual_behavior}</p></div>)}
-              {selectedBugReport.additional_info && (<div className={styles.bugReportSection}><h5>Additional Information</h5><p>{selectedBugReport.additional_info}</p></div>)}
-              {selectedBugReport.images && selectedBugReport.images.length > 0 && (<div className={styles.bugReportSection}><h5>Screenshots</h5><div className={styles.bugReportImages}>{selectedBugReport.images.map((image, index) => (<img key={index} src={image} alt={`Screenshot ${index + 1}`} className={styles.bugReportImage} width={600} height={400} />))}</div></div>)}
+              {selectedBugReport.images && selectedBugReport.images.length > 0 && (
+                <div className={styles.bugReportSection}>
+                  <h5>Screenshots</h5>
+                  <div className={styles.bugReportImages}>
+                    {selectedBugReport.images.map((image, index) => (
+                      <Image
+                        key={index}
+                        src={image}
+                        alt={`Screenshot ${index + 1}`}
+                        className={styles.bugReportImage}
+                        width={600}
+                        height={400}
+                        unoptimized
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {selectedBugReport.images && selectedBugReport.images.length > 0 && (
+                <div className={styles.bugReportSection}>
+                  <h5>Screenshots</h5>
+                  <div className={styles.bugReportImages}>
+                    {selectedBugReport.images.map((image, index) => (
+                      <Image
+                        key={index}
+                        src={image}
+                        alt={`Screenshot ${index + 1}`}
+                        className={styles.bugReportImage}
+                        width={600}
+                        height={400}
+                        style={{ objectFit: 'contain', borderRadius: '8px' }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <div className={styles.modalActions}>
               <button className={styles.cancelButton} onClick={() => setShowViewModal(false)}>Close</button>
