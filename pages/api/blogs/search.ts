@@ -15,108 +15,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { 
-      q, 
-      type = 'keyword', 
-      category, 
-      tags, 
-      author, 
-      dateRange,
-      limit = '20',
-      offset = '0'
-    } = req.query;
-
-    let query = supabase
-      .from('blog_submissions')
-      .select(`
-        id,
-        title,
-        description,
-        url,
-        image_url,
-        category,
-        tags,
-        created_at,
-        views,
-        clicks,
-        user_id
-      `)
-      .eq('status', 'live')
-      .eq('is_live', true);
-
-    // Text search - use simple ILIKE search since search_vector doesn't exist
-    if (q && typeof q === 'string') {
-      const searchTerm = q.trim();
-      if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
-      }
-    }
-
-    // Category filter
-    if (category && typeof category === 'string' && category !== 'all') {
-      query = query.eq('category', category);
-    }
-
-    // Tags filter
-    if (tags && typeof tags === 'string') {
-      const tagArray = tags.split(',');
-      query = query.overlaps('tags', tagArray);
-    }
-
-    // Author search - we'll handle this with a separate query if needed
-    // For now, skip complex author filtering to avoid relationship issues
-
-    // Date range filter
-    if (dateRange && typeof dateRange === 'string') {
-      const now = new Date();
-      let startDate: Date;
-      
-      switch (dateRange) {
-        case 'week':
-          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          break;
-        case 'month':
-          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          break;
-        case 'year':
-          startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-          break;
-        default:
-          startDate = new Date(0); // No filter
-      }
-      
-      if (startDate.getTime() > 0) {
-        query = query.gte('created_at', startDate.toISOString());
-      }
-    }
-
-    // Pagination
+    const { q, type = 'keyword', category, tags, author, dateRange, limit = '20', offset = '0' } = req.query;
     const limitNum = parseInt(limit as string) || 20;
     const offsetNum = parseInt(offset as string) || 0;
-    
-    query = query
-      .range(offsetNum, offsetNum + limitNum - 1)
-      .order('created_at', { ascending: false });
+    const tagArray = tags && typeof tags === 'string' ? tags.split(',') : null;
 
-    const { data: blogs, error, count } = await query;
-
-    if (error) {
-      console.error('Search error:', error);
-      
-      // Return empty results instead of crashing
-      return res.status(200).json({
-        results: [],
-        total: 0,
-        query: q || '',
-        error: 'Search temporarily unavailable. Please try again.',
-        filters: {
-          category: category || null,
-          tags: tags ? (tags as string).split(',') : [],
-          author: author || null,
-          dateRange: dateRange || null
-        }
+    const { data: blogsRaw, error } = await supabase
+      .rpc('ranked_blog_search', {
+        search_query: q && typeof q === 'string' && q.trim() ? q.trim() : null,
+        category_filter: category && typeof category === 'string' && category !== 'all' ? category : null,
+        tags_filter: tagArray,
+        limit_count: limitNum,
+        offset_count: offsetNum
       });
-    }
+    const blogs = Array.isArray(blogsRaw) ? blogsRaw : [];
 
     // Log search analytics (don't let this crash the search)
     if (q) {
@@ -124,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await supabase.from('search_analytics').insert({
           search_query: q as string,
           search_type: type as string,
-          results_count: count || 0,
+          results_count: blogs.length,
           filters_used: {
             category: category || null,
             tags: tags ? (tags as string).split(',') : [],
@@ -139,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Transform data to match frontend expectations
-    const transformedBlogs = blogs?.map(blog => ({
+    const transformedBlogs = blogs.map(blog => ({
       id: blog.id,
       title: blog.title,
       description: blog.description,
@@ -154,12 +66,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       readTime: Math.ceil((blog.description?.length || 0) / 200),
       date: blog.created_at,
       views: blog.views || 0,
-      clicks: blog.clicks || 0
-    })) || [];
+      clicks: blog.clicks || 0,
+      rank: blog.rank
+    }));
 
     return res.status(200).json({
       results: transformedBlogs,
-      total: count || 0,
+      total: transformedBlogs.length,
       query: q || '',
       filters: {
         category: category || null,

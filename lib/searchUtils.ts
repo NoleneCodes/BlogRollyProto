@@ -236,17 +236,40 @@ export function getSearchSuggestions(query: string): string[] {
 
 // Save search history for users
 export function saveSearchToHistory(query: string, searchType: 'keyword' | 'ai'): void {
-  // TODO: Implement with Supabase
-  const history = getSearchHistory();
-  const newEntry = {
-    query,
-    searchType,
-    timestamp: new Date().toISOString(),
-    id: Date.now().toString()
-  };
+  // Try to sync to Supabase
+  const sessionId = getAnonymousSessionId();
+  fetch('/api/search-history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query,
+      searchType,
+      sessionId
+    })
+  }).catch(() => {
+    // Fallback to local storage if offline or error
+    const history = getSearchHistory();
+    const newEntry = {
+      query,
+      searchType,
+      timestamp: new Date().toISOString(),
+      id: Date.now().toString()
+    };
+    const updatedHistory = [newEntry, ...history.slice(0, 9)];
+    localStorage.setItem('blogrolly_search_history', JSON.stringify(updatedHistory));
+  });
+}
 
-  const updatedHistory = [newEntry, ...history.slice(0, 9)]; // Keep last 10 searches
-  localStorage.setItem('blogrolly_search_history', JSON.stringify(updatedHistory));
+function getAnonymousSessionId(): string {
+  let sessionId = '';
+  try {
+    sessionId = localStorage.getItem('blogrolly_session_id') || '';
+    if (!sessionId) {
+      sessionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem('blogrolly_session_id', sessionId);
+    }
+  } catch {}
+  return sessionId;
 }
 
 export function getSearchHistory(): Array<{
@@ -255,8 +278,6 @@ export function getSearchHistory(): Array<{
   searchType: 'keyword' | 'ai';
   timestamp: string;
 }> {
-  if (typeof window === 'undefined') return [];
-
   try {
     const history = localStorage.getItem('blogrolly_search_history');
     return history ? JSON.parse(history) : [];
