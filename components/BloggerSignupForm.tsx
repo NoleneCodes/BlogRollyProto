@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
@@ -377,10 +378,12 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           </label>
           <div style={{ marginBottom: '0.5rem' }}>
             {bloggerForm.profilePicture && (
-              <img
+              <Image
                 src={URL.createObjectURL(bloggerForm.profilePicture)}
                 alt="Profile Preview"
-                style={{ width: '96px', height: '96px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                width={96}
+                height={96}
+                style={{ objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
               />
             )}
           </div>

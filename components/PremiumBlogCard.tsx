@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from 'next/image';
 import BlogEditForm from './BlogEditForm';
 import styles from '../styles/PremiumBlogCard.module.css';
 
@@ -83,9 +84,11 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
       <div className={styles.premiumSubmissionCard}>
         <div className={styles.submissionImageContainer}>
           {submission.image ? (
-            <img
+            <Image
               src={submission.image}
               alt={submission.title}
+              width={120}
+              height={90}
               className={styles.submissionImage}
             />
           ) : (

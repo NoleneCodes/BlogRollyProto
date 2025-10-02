@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { supabaseDB } from '../lib/supabase';
 import styles from '../styles/BugReportModal.module.css';
+import Image from 'next/image';
 
 interface BugReportModalProps {
   isOpen: boolean;
@@ -312,7 +313,7 @@ const BugReportModal: React.FC<BugReportModalProps> = ({
                 <div className={styles.imagePreviewContainer}>
                   {imagePreviews.map((preview, index) => (
                     <div key={index} className={styles.imagePreview}>
-                      <img src={preview} alt={`Preview ${index + 1}`} />
+                      <Image src={preview} alt={`Preview ${index + 1}`} width={120} height={90} style={{ objectFit: 'cover', borderRadius: '8px' }} />
                       <button
                         type="button"
                         onClick={() => removeImage(index)}

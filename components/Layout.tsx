@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import { initGA, trackPageView } from '../lib/analytics';
 import BugReportModal from './BugReportModal';
 import styles from '../styles/Layout.module.css';
@@ -148,8 +149,8 @@ const Layout: React.FC<LayoutProps> = ({
               <Link href="/" passHref legacyBehavior>
                 <a className={styles.logoLink}>
                 <div className={styles.logoContainer}>
-                  <img src="/DigitalBR.svg" alt="BlogRolly Logo" className={styles.logoIcon} />
-                  <img src="/DigitalText.svg" alt="BlogRolly" className={styles.logoText} />
+                  <Image src="/DigitalBR.svg" alt="BlogRolly Logo" width={40} height={40} className={styles.logoIcon} />
+                  <Image src="/DigitalText.svg" alt="BlogRolly" width={120} height={40} className={styles.logoText} />
                 </div>
               </a>
               </Link>
