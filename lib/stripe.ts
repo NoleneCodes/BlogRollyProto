@@ -1,10 +1,8 @@
-import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-08-27.basil',
-})
-
-export { stripe }
+// Backend Stripe SDK (only for server-side usage)
+import Stripe from 'stripe';
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2025-09-30.clover',
+});
 
 // Stripe pricing configuration
 export const STRIPE_PRICES = {
@@ -50,15 +48,5 @@ export const stripePayments = {
       cancel_at_period_end: true,
     })
     return subscription
-  }
-}
-
-// Client-side Stripe utilities
-export const clientStripe = {
-  redirectToCheckout: async (sessionId: string) => {
-    const { loadStripe } = await import('@stripe/stripe-js')
-    const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-    const { error } = await stripe!.redirectToCheckout({ sessionId })
-    if (error) console.error('Stripe checkout error:', error)
   }
 }
