@@ -159,7 +159,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   useEffect(() => {
-    setSearchHistory(getSearchHistory());
+    async function fetchHistory() {
+      const history = await getSearchHistory();
+      setSearchHistory(history);
+    }
+    fetchHistory();
   }, []);
 
   useEffect(() => {
@@ -189,8 +193,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const handleSearch = (searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
 
-    saveSearchToHistory(query, searchType);
-    setSearchHistory(getSearchHistory());
+  saveSearchToHistory(query, searchType);
+  getSearchHistory().then(setSearchHistory);
 
     if (onSearch) {
       onSearch(query, searchType);
