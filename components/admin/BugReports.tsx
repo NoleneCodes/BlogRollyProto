@@ -33,16 +33,20 @@ const BugReports = () => {
   const adminEmail = user?.email || 'unknown-admin';
 
   useEffect(() => {
-    async function fetchBugReports() {
-      try {
-        const res = await fetch('/api/get-bug-reports');
-        const json = await res.json();
-        setBugReportsData(json.bugReports || []);
-      } catch {
-        setBugReportsData([]);
+      async function fetchBugReports() {
+        try {
+          const res = await fetch('/api/get-bug-reports');
+          if (!res.ok) {
+            throw new Error(`Failed to fetch bug reports: ${res.status}`);
+          }
+          const json = await res.json();
+          setBugReportsData(json.bugReports || []);
+        } catch (error) {
+          console.error('Error fetching bug reports:', error);
+          setBugReportsData([]);
+        }
       }
-    }
-    fetchBugReports();
+      fetchBugReports();
   }, []);
 
   const handleSort = (key: string) => {

@@ -262,11 +262,15 @@ const BloggerProfile: React.FC = () => {
   };
 
     checkAuth();
-  }, [router, blogSubmissions]);
+  }, [router]);
 
   const loadSavedDrafts = async () => {
     try {
       const res = await fetch('/api/blog-draft');
+      if (!res.ok) {
+        console.warn(`No draft found or server error: ${res.status}`);
+        return; // Exit gracefully if no draft
+      }
       const draft = await res.json();
       if (draft) {
         const { savedAt, ...draftFormData } = draft;
@@ -639,7 +643,7 @@ const BloggerProfile: React.FC = () => {
                   </div>
                   <div className={styles.statCard}>
                     <h4>Click-through Rate</h4>
-                    <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
+                    <span className={styles.statNumber}>{blogStats.clickThroughRate.toFixed(2)}%</span>
                     <p className={styles.statDescription}>Percentage of views that resulted in clicks</p>
                   </div>
                 </div>

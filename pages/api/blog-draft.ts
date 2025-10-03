@@ -7,9 +7,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     data: { user },
     error: userError
   } = await supabase.auth.getUser();
-  if (userError || !user) return res.status(401).json({ error: 'Unauthorized' });
 
   if (req.method === 'POST') {
+    if (userError || !user) return res.status(401).json({ error: 'Unauthorized' });
     const draft = { ...req.body, user_id: user.id };
     const { error } = await supabase
       .from('blog_drafts')
@@ -19,6 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'GET') {
+    if (userError || !user) {
+      // Return empty draft object for unauthenticated users
+      return res.status(200).json({ title: '', description: '', postUrl: '', category: '', imageDescription: '' });
+    }
     const { data, error } = await supabase
       .from('blog_drafts')
       .select('*')
