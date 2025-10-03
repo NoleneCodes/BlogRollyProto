@@ -1,4 +1,5 @@
 import React from 'react';
+import BillingPromoBanner from '../BillingPromoBanner';
 import styles from '../../styles/BloggerProfile.module.css';
 
 interface BillingSubscriptionProps {
@@ -10,19 +11,7 @@ interface BillingSubscriptionProps {
 const BillingSubscription: React.FC<BillingSubscriptionProps> = ({ setShowStripePricingModal }) => (
   <div className={styles.content}>
     <h2 style={{ color: '#c42142' }}>Billing & Subscription</h2>
-    <div style={{
-      background: '#fbeaf0', // light brand background
-      color: '#c42142', // brand text color
-      borderRadius: '6px',
-      padding: '0.75rem 1rem',
-      margin: '0.5rem 0 1rem 0',
-      fontWeight: 500,
-      fontSize: '1rem',
-      textAlign: 'center',
-      boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
-    }}>
-      Use code <strong>EarlyAdopter</strong> at checkout to get 50% off our annual plan
-    </div>
+  {/* <BillingPromoBanner code="EarlyAdopter" /> */}
     <p style={{ margin: '1rem 0', color: '#374151', fontSize: '1.08rem' }}>
       Choose the plan that supports your blogging journey
     </p>
