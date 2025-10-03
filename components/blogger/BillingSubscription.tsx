@@ -1,5 +1,4 @@
 import React from 'react';
-import BillingPromoBanner from '../BillingPromoBanner';
 import styles from '../../styles/BloggerProfile.module.css';
 
 interface BillingSubscriptionProps {
