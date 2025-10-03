@@ -372,7 +372,7 @@ export const supabaseDB = {
 
   getSubmissionsByStatus: async (status: BlogStatus) => {
     const { data, error } = await supabase
-      .from('user_subscription_status')
+      .from('blog_submissions')
       .select('*')
       .eq('status', status)
       .order('submitted_at', { ascending: false });
@@ -381,7 +381,7 @@ export const supabaseDB = {
 
   getPendingSubmissionsForReview: async () => {
     const { data, error } = await supabase
-      .from('user_subscription_status')
+      .from('blog_submissions')
       .select('*')
       .eq('status', 'pending')
       .order('submitted_at', { ascending: true });

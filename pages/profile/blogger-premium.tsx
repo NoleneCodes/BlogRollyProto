@@ -70,6 +70,40 @@ interface BlogStats {
 }
 
 const BloggerProfilePremium: React.FC = () => {
+  // State declarations must come first
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const router = useRouter();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('overview');
+  const [blogSubmissions, setBlogSubmissions] = useState<BlogSubmission[]>([]);
+  const [blogSubmissionsWithMonthly, setBlogSubmissionsWithMonthly] = useState<any[] | null>(null);
+  const [blogStats, setBlogStats] = useState<BlogStats | null>(null);
+  const [showBlogSubmissionForm, setShowBlogSubmissionForm] = useState(false);
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+  const [editingBlog, setEditingBlog] = useState<string | null>(null);
+  const [showHowItWorksPopup, setShowHowItWorksPopup] = useState<boolean>(false);
+  const [showSubmissionGuidelinesPopup, setShowSubmissionGuidelinesPopup] = useState<boolean>(false);
+  const [selectedTimeframe, setSelectedTimeframe] = useState<string>('30d');
+  const [viewsToggle, setViewsToggle] = useState<'total' | 'monthly'>('total');
+  const [clicksToggle, setClicksToggle] = useState<'total' | 'monthly'>('total');
+  const [showContactSupportPopup, setShowContactSupportPopup] = useState<boolean>(false);
+  const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
+  const [showTopicEditPopup, setShowTopicEditPopup] = useState(false);
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const [socialLinks, setSocialLinks] = useState({
+    twitter: '',
+    linkedin: '',
+    instagram: '',
+    youtube: '',
+    tiktok: '',
+    github: ''
+  });
+  const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
+  const user = useUser();
+  const userId = user?.id || '';
+
   // Handler to toggle post activation status
   const togglePostActivation = (postId: string) => {
     setBlogSubmissions(prev => prev.map(post => {
@@ -96,8 +130,6 @@ const BloggerProfilePremium: React.FC = () => {
   const loadSavedDrafts = () => {
     // Implement logic to load saved drafts if needed
   };
-
-  // State declarations must come first
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);

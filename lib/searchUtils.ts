@@ -246,13 +246,19 @@ export function saveSearchToHistory(query: string, searchType: 'keyword' | 'ai')
 
 // Session ID logic now handled by backend (Supabase) or authenticated user
 
-export function getSearchHistory(): Array<{
+
+export async function getSearchHistory(): Promise<Array<{
   id: string;
   query: string;
   searchType: 'keyword' | 'ai';
   timestamp: string;
-}> {
-  // Always fetch from backend
-  // This should be replaced with an async function in your app to fetch from /api/search-history
-  return [];
+}>> {
+  try {
+    const res = await fetch('/api/search-history');
+    if (!res.ok) return [];
+    const history = await res.json();
+    return Array.isArray(history) ? history : [];
+  } catch {
+    return [];
+  }
 }

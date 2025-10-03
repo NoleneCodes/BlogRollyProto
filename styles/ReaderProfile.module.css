@@ -533,8 +533,10 @@
   line-height: 1.4;
 }
 
+
 .input,
-.select {
+.select,
+.textarea {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #d1d5db;
@@ -544,7 +546,6 @@
 .textarea {
   resize: vertical;
   min-height: 100px;
-  width: 100%;
   box-sizing: border-box;
 }
 

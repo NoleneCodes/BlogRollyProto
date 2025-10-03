@@ -41,7 +41,7 @@ export default async function handler(
         // Get customer and subscription details
         const customerResponse = await stripe.customers.retrieve(session.customer as string)
         const customer = (customerResponse as any).email ? (customerResponse as any) : (customerResponse as any).data
-  const checkoutSubscription = await stripe.subscriptions.retrieve(session.subscription as string) as Stripe.Subscription
+  const checkoutSubscription = await stripe.subscriptions.retrieve(session.subscription as string)
         if (customer && typeof customer === 'object' && customer.email) {
         if (typeof customer === 'object' && 'email' in customer && customer.email) {
           // Find user by email
