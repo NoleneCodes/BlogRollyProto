@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import Stripe from 'stripe';
 import { stripe } from '../../../lib/stripe'
 import { buffer } from 'micro'
 import { supabaseDB } from '../../../lib/supabase'
@@ -40,7 +41,7 @@ export default async function handler(
         // Get customer and subscription details
         const customerResponse = await stripe.customers.retrieve(session.customer as string)
         const customer = (customerResponse as any).email ? (customerResponse as any) : (customerResponse as any).data
-        const checkoutSubscription = await stripe.subscriptions.retrieve(session.subscription as string)
+  const checkoutSubscription = await stripe.subscriptions.retrieve(session.subscription as string)
         if (customer && typeof customer === 'object' && customer.email) {
         if (typeof customer === 'object' && 'email' in customer && customer.email) {
           // Find user by email
@@ -53,9 +54,24 @@ export default async function handler(
             // Update blogger profile with Stripe details
             await supabaseDB.updateBloggerStripeInfo(user.id, {
               stripe_customer_id: customer.id,
+              stripe_subscription_id: checkoutSubscription.id,
               subscription_status: 'active',
               subscription_id: checkoutSubscription.id,
-              subscription_end_date: new Date((checkoutSubscription as any).current_period_end ? (checkoutSubscription as any).current_period_end * 1000 : Date.now()).toISOString()
+              subscription_end_date: new Date((checkoutSubscription as any).current_period_end ? (checkoutSubscription as any).current_period_end * 1000 : Date.now()).toISOString(),
+              subscription_plan: checkoutSubscription.items.data[0]?.price.nickname || null
+            })
+
+            // Insert into subscription_history
+            await supabaseDB.insertSubscriptionHistory({
+              user_id: user.id,
+              stripe_customer_id: customer.id,
+              stripe_subscription_id: checkoutSubscription.id,
+              plan: checkoutSubscription.items.data[0]?.price.nickname || null,
+              status: checkoutSubscription.status,
+              period_start: (checkoutSubscription as any).current_period_start ? new Date((checkoutSubscription as any).current_period_start * 1000).toISOString() : null,
+              period_end: (checkoutSubscription as any).current_period_end ? new Date((checkoutSubscription as any).current_period_end * 1000).toISOString() : null,
+              event_type: 'checkout.session.completed',
+              raw_event: event
             })
 
             // Verify tier is synced with subscription status
@@ -77,7 +93,7 @@ export default async function handler(
 
         if (invoice.subscription && invoice.customer) {
           const customer = await stripe.customers.retrieve(invoice.customer as string)
-          const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string)
+          const subscription = await stripe.subscriptions.retrieve(invoice.subscription as string) as Stripe.Subscription
 
           if (
             typeof customer === 'object' &&
@@ -91,7 +107,21 @@ export default async function handler(
               // Update subscription end date
               await supabaseDB.updateBloggerStripeInfo(user.id, {
                 subscription_status: 'active',
-                subscription_end_date: new Date((subscription as any).current_period_end * 1000).toISOString()
+                subscription_end_date: new Date((subscription as any).current_period_end * 1000).toISOString(),
+                stripe_subscription_id: subscription.id,
+                subscription_plan: subscription.items.data[0]?.price.nickname || null
+              })
+
+              await supabaseDB.insertSubscriptionHistory({
+                user_id: user.id,
+                stripe_customer_id: customer.id,
+                stripe_subscription_id: subscription.id,
+                plan: subscription.items.data[0]?.price.nickname || null,
+                status: subscription.status,
+                period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
+                event_type: 'invoice.payment_succeeded',
+                raw_event: event
               })
 
               // Verify tier is synced with subscription status
@@ -121,7 +151,7 @@ export default async function handler(
 
         if (failedInvoice.customer) {
           const customer = await stripe.customers.retrieve(failedInvoice.customer as string)
-          const subscription = await stripe.subscriptions.retrieve(failedInvoice.subscription as string)
+          const subscription = await stripe.subscriptions.retrieve(failedInvoice.subscription as string) as Stripe.Subscription
 
           const customerObj = (customer as any).email ? (customer as any) : (customer as any).data;
           if (typeof customerObj === 'object' && customerObj.email) {
@@ -130,7 +160,21 @@ export default async function handler(
             if (user) {
               // Update subscription status
               await supabaseDB.updateBloggerStripeInfo(user.id, {
-                subscription_status: 'past_due'
+                subscription_status: 'past_due',
+                stripe_subscription_id: subscription.id,
+                subscription_plan: subscription.items.data[0]?.price.nickname || null
+              })
+
+              await supabaseDB.insertSubscriptionHistory({
+                user_id: user.id,
+                stripe_customer_id: customer.id,
+                stripe_subscription_id: subscription.id,
+                plan: subscription.items.data[0]?.price.nickname || null,
+                status: subscription.status,
+                period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
+                event_type: 'invoice.payment_failed',
+                raw_event: event
               })
 
               const planName = subscription.items.data[0]?.price.nickname || 'Pro Plan'
@@ -168,7 +212,7 @@ export default async function handler(
 
       case 'customer.subscription.deleted':
       case 'customer.subscription.updated':
-        const subscription = event.data.object
+  const subscription = event.data.object as Stripe.Subscription
         console.log('Subscription event:', event.type, subscription.id)
 
         if (subscription.customer) {
@@ -189,7 +233,21 @@ export default async function handler(
                 // Update blogger profile
                 await supabaseDB.updateBloggerStripeInfo(user.id, {
                   subscription_status: 'canceled',
-                  subscription_end_date: new Date(subscription.ended_at ? subscription.ended_at * 1000 : Date.now()).toISOString()
+                  subscription_end_date: new Date(subscription.ended_at ? subscription.ended_at * 1000 : Date.now()).toISOString(),
+                  stripe_subscription_id: subscription.id,
+                  subscription_plan: subscription.items.data[0]?.price.nickname || null
+                })
+
+                await supabaseDB.insertSubscriptionHistory({
+                  user_id: user.id,
+                  stripe_customer_id: customer.id,
+                  stripe_subscription_id: subscription.id,
+                  plan: subscription.items.data[0]?.price.nickname || null,
+                  status: subscription.status,
+                  period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                  period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
+                  event_type: event.type,
+                  raw_event: event
                 })
 
                 // Get user's current live blog count for delisting email
@@ -225,7 +283,21 @@ export default async function handler(
                 // Update subscription info for other status changes
                 await supabaseDB.updateBloggerStripeInfo(user.id, {
                   subscription_status: subscription.status as any,
-                  subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString()
+                  subscription_end_date: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
+                  stripe_subscription_id: subscription.id,
+                  subscription_plan: subscription.items.data[0]?.price.nickname || null
+                })
+
+                await supabaseDB.insertSubscriptionHistory({
+                  user_id: user.id,
+                  stripe_customer_id: customer.id,
+                  stripe_subscription_id: subscription.id,
+                  plan: subscription.items.data[0]?.price.nickname || null,
+                  status: subscription.status,
+                  period_start: (subscription as any).current_period_start ? new Date((subscription as any).current_period_start * 1000).toISOString() : null,
+                  period_end: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : null,
+                  event_type: event.type,
+                  raw_event: event
                 })
                 // Verify tier is synced with subscription status
                 await supabaseDB.verifyAndSyncUserTier(user.id)

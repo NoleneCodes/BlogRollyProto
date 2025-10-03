@@ -15,6 +15,7 @@ import { paymentSuccessfulTemplate } from './subscription-payments/paymentSucces
 import { paymentFailedFirstNoticeTemplate } from './subscription-payments/paymentFailedFirstNotice';
 import { paymentFailedFinalNoticeTemplate } from './subscription-payments/paymentFailedFinalNotice';
 import { blogDelistedPaymentTemplate } from './subscription-payments/blogDelistedPayment';
+import { linkedinVerificationResultTemplate } from './investor-onboarding/linkedinVerificationResult';
 
 // Email service configuration
 export const MAILCHIMP_CONFIG = {
@@ -56,13 +57,37 @@ export const emailTemplates = {
   paymentSuccessful: paymentSuccessfulTemplate,
   paymentFailedFirstNotice: paymentFailedFirstNoticeTemplate,
   paymentFailedFinalNotice: paymentFailedFinalNoticeTemplate,
-  blogDelistedPayment: blogDelistedPaymentTemplate
+  blogDelistedPayment: blogDelistedPaymentTemplate,
+
+  // LinkedIn Verification
+  linkedinVerificationResult: linkedinVerificationResultTemplate
 };
 
 // Email service functions with Resend SDK
 import { resend, RESEND_CONFIG, INVESTOR_EMAIL_CONFIG, SUPPORT_EMAIL_CONFIG } from '../resend-client';
 
 export const emailService = {
+  sendLinkedinVerificationResult: async (email: string, investorName: string, approved: boolean, rejectionReason?: string) => {
+    try {
+      const { subject, html } = emailTemplates.linkedinVerificationResult(investorName, approved, rejectionReason);
+
+      const { data, error } = await resend.emails.send({
+        from: RESEND_CONFIG.fromEmail,
+        to: email,
+        subject,
+        html
+      });
+
+      if (error) {
+        throw new Error(`Resend SDK error: ${error.message}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Send LinkedIn verification result email error:', error);
+      throw error;
+    }
+  },
   //  User Onboarding
   sendWelcomeEmail: async (email: string, firstName: string, userType: 'reader' | 'blogger') => {
     try {
@@ -469,4 +494,7 @@ export interface EmailTemplateData {
   paymentFailedFirstNotice: { firstName: string; planName: string; amount: string; retryDate: string };
   paymentFailedFinalNotice: { firstName: string; planName: string; amount: string; delistDate: string };
   blogDelistedPayment: { firstName: string; blogCount: number; amount: string };
+
+  // LinkedIn Verification
+  linkedinVerificationResult: { firstName: string; status: string; profileUrl: string; };
 }

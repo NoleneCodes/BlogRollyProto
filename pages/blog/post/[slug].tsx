@@ -63,14 +63,14 @@ const BlogPostPage: FC<BlogPostPageProps> = ({ post }) => {
 
             <div className={styles.blogPostMeta}>
               <span className={styles.blogPostAuthor}>
-                By {post.bloggerDisplayName || post.author}
+                By {post.author}
               </span>
               <span className={styles.blogPostDate}>
-                {formatDate(post.publishDate)}
+                {formatDate(post.publish_date)}
               </span>
-              {post.readTime && (
+              {post.read_time && (
                 <span className={styles.blogPostReadTime}>
-                  • {post.readTime}
+                  • {post.read_time}
                 </span>
               )}
             </div>
@@ -84,11 +84,11 @@ const BlogPostPage: FC<BlogPostPageProps> = ({ post }) => {
             </div>
           </div>
 
-          {post.imageUrl && (
+          {post.image_url && (
             <div className={styles.blogImage}>
               <Image 
-                src={post.imageUrl} 
-                alt={post.imageDescription || post.title} 
+                src={post.image_url}
+                alt={post.image_description || post.title}
                 width={800}
                 height={400}
                 style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', margin: '1rem 0' }}
@@ -128,7 +128,8 @@ const BlogPostPage: FC<BlogPostPageProps> = ({ post }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = getAllInternalBlogPosts();
+
+  const posts = await getAllInternalBlogPosts();
   const paths = posts.map((post) => ({
     params: { slug: post.slug },
   }));
@@ -141,7 +142,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<BlogPostPageProps> = async ({ params }) => {
   const slug = params?.slug as string;
-  const post = getInternalBlogPostBySlug(slug);
+  const post = await getInternalBlogPostBySlug(slug);
 
   // If no post found, return 404
   if (!post) {
@@ -152,9 +153,9 @@ export const getStaticProps: GetStaticProps<BlogPostPageProps> = async ({ params
     props: {
       post: {
         ...post,
-        imageUrl: post.imageUrl ?? null, // ✅ fixes the serialization error
-        imageDescription: post.imageDescription ?? null,
-        readTime: post.readTime ?? null,
+  imageUrl: post.image_url ?? null, // fixes the serialization error
+  imageDescription: post.image_description ?? null,
+  readTime: post.read_time ?? null,
       },
     },
   };

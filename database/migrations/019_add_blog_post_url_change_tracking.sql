@@ -3,36 +3,58 @@
 -- Track when blog post URLs are changed and capture the reason
 
 -- Create table for tracking blog post URL changes
-CREATE TABLE blog_post_url_changes (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  blog_submission_id UUID REFERENCES blog_submissions(id) ON DELETE CASCADE,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  old_url VARCHAR(500) NOT NULL,
-  new_url VARCHAR(500) NOT NULL,
-  change_reason TEXT NOT NULL,
-  changed_by UUID REFERENCES users(id), -- Could be user themselves or admin
-  changed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
 
--- Create indexes for performance
-CREATE INDEX idx_blog_post_url_changes_submission_id ON blog_post_url_changes(blog_submission_id);
-CREATE INDEX idx_blog_post_url_changes_user_id ON blog_post_url_changes(user_id);
-CREATE INDEX idx_blog_post_url_changes_changed_at ON blog_post_url_changes(changed_at);
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'blog_post_url_changes') THEN
+    CREATE TABLE blog_post_url_changes (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      blog_submission_id UUID REFERENCES blog_submissions(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      old_url VARCHAR(500) NOT NULL,
+      new_url VARCHAR(500) NOT NULL,
+      change_reason TEXT NOT NULL,
+      changed_by UUID REFERENCES users(id),
+      changed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_blog_post_url_changes_submission_id ON blog_post_url_changes(blog_submission_id);
+CREATE INDEX IF NOT EXISTS idx_blog_post_url_changes_user_id ON blog_post_url_changes(user_id);
+CREATE INDEX IF NOT EXISTS idx_blog_post_url_changes_changed_at ON blog_post_url_changes(changed_at);
 
 -- Enable RLS
 ALTER TABLE blog_post_url_changes ENABLE ROW LEVEL SECURITY;
 
--- RLS policies
-CREATE POLICY "Users can view their own URL changes" ON blog_post_url_changes 
-  FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can insert their own URL changes" ON blog_post_url_changes 
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'blog_post_url_changes' AND policyname = 'Users can view their own URL changes') THEN
+    CREATE POLICY "Users can view their own URL changes" ON blog_post_url_changes 
+      FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+END $$;
 
--- Admin policy (assumes admin role exists)
-CREATE POLICY "Admins can view all URL changes" ON blog_post_url_changes 
-  FOR ALL USING (auth.jwt() ->> 'user_role' = 'admin');
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'blog_post_url_changes' AND policyname = 'Users can insert their own URL changes') THEN
+    CREATE POLICY "Users can insert their own URL changes" ON blog_post_url_changes 
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'blog_post_url_changes' AND policyname = 'Admins can view all URL changes') THEN
+    CREATE POLICY "Admins can view all URL changes" ON blog_post_url_changes 
+      FOR ALL USING (auth.jwt() ->> 'user_role' = 'admin');
+  END IF;
+END $$;
 
 -- Function to automatically log URL changes
 CREATE OR REPLACE FUNCTION log_blog_post_url_change()

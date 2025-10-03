@@ -1,7 +1,7 @@
 
 -- Migration 003: Add Admin Users Table
 
-CREATE TABLE admin_users (
+CREATE TABLE IF NOT EXISTS admin_users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
@@ -14,8 +14,8 @@ CREATE TABLE admin_users (
 );
 
 -- Indexes
-CREATE INDEX idx_admin_users_email ON admin_users(email);
-CREATE INDEX idx_admin_users_active ON admin_users(is_active);
+CREATE INDEX IF NOT EXISTS idx_admin_users_email ON admin_users(email);
+CREATE INDEX IF NOT EXISTS idx_admin_users_active ON admin_users(is_active);
 
 -- RLS Policy
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;

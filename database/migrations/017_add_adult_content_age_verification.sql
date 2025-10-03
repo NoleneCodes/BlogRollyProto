@@ -2,14 +2,6 @@
 -- Migration 017: Add age verification requirements for adult content
 -- Ensures both bloggers and readers are age verified for 18+ content
 
--- Add age verification constraint to blog_submissions for adult content
-ALTER TABLE blog_submissions ADD CONSTRAINT check_adult_content_blogger_age_verified 
-CHECK (
-  has_adult_content = FALSE OR 
-  (has_adult_content = TRUE AND user_id IN (
-    SELECT user_id FROM user_profiles WHERE age_verified = TRUE
-  ))
-);
 
 -- Add trigger to validate blogger age before inserting/updating adult content
 CREATE OR REPLACE FUNCTION validate_adult_content_blogger_age()
@@ -30,10 +22,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_validate_adult_content_blogger_age
-  BEFORE INSERT OR UPDATE ON blog_submissions
-  FOR EACH ROW
-  EXECUTE FUNCTION validate_adult_content_blogger_age();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'trigger_validate_adult_content_blogger_age') THEN
+    CREATE TRIGGER trigger_validate_adult_content_blogger_age
+      BEFORE INSERT OR UPDATE ON blog_submissions
+      FOR EACH ROW
+      EXECUTE FUNCTION validate_adult_content_blogger_age();
+  END IF;
+END $$;
 
 -- Add function to check if user can view adult content
 CREATE OR REPLACE FUNCTION user_can_view_adult_content(check_user_id UUID)
@@ -56,6 +54,17 @@ FOR SELECT USING (
   has_adult_content = FALSE OR 
   (has_adult_content = TRUE AND user_can_view_adult_content(auth.uid()))
 );
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'blog_submissions' AND policyname = 'Users can view adult content if age verified') THEN
+    CREATE POLICY "Users can view adult content if age verified" ON blog_submissions
+      FOR SELECT USING (
+        has_adult_content = FALSE OR 
+        (has_adult_content = TRUE AND user_can_view_adult_content(auth.uid()))
+      );
+  END IF;
+END $$;
 
 -- Update adult_blog_submissions table to include age verification tracking
 ALTER TABLE adult_blog_submissions ADD COLUMN IF NOT EXISTS blogger_age_verified_at TIMESTAMP WITH TIME ZONE;

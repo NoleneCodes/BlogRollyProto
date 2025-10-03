@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import { useSupabaseAuth } from '../../hooks/useSupabaseAuth';
@@ -24,12 +24,12 @@ const AdminLogin: React.FC = () => {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [authStatus, setAuthStatus] = useState<'loading' | 'authenticated' | 'unauthorized' | 'error'>('loading');
 
-  const checkAdminAuth = async () => {
+  const checkAdminAuth = useCallback(async () => {
     if (!user || isChecking) return;
-    
+        
     setIsChecking(true);
     setLoginError(null);
-    
+        
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
@@ -43,13 +43,13 @@ const AdminLogin: React.FC = () => {
           'Content-Type': 'application/json'
         }
       });
-      
+            
       if (!response.ok) {
         throw new Error(`Authorization check failed: ${response.status}`);
       }
-      
+            
       const data: AdminUser = await response.json();
-      
+            
       if (data.authenticated && data.authorized) {
         setAuthStatus('authenticated');
         // Use window.location for reliable redirect
@@ -65,7 +65,7 @@ const AdminLogin: React.FC = () => {
     } finally {
       setIsChecking(false);
     }
-  };
+  }, [user, isChecking]);
 
   useEffect(() => {
     if (user && !isChecking) {

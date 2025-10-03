@@ -236,30 +236,28 @@ export function getSearchSuggestions(query: string): string[] {
 
 // Save search history for users
 export function saveSearchToHistory(query: string, searchType: 'keyword' | 'ai'): void {
-  // TODO: Implement with Supabase
-  const history = getSearchHistory();
-  const newEntry = {
-    query,
-    searchType,
-    timestamp: new Date().toISOString(),
-    id: Date.now().toString()
-  };
-
-  const updatedHistory = [newEntry, ...history.slice(0, 9)]; // Keep last 10 searches
-  localStorage.setItem('blogrolly_search_history', JSON.stringify(updatedHistory));
+  // Always sync to Supabase
+  fetch('/api/search-history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, searchType })
+  });
 }
 
-export function getSearchHistory(): Array<{
+// Session ID logic now handled by backend (Supabase) or authenticated user
+
+
+export async function getSearchHistory(): Promise<Array<{
   id: string;
   query: string;
   searchType: 'keyword' | 'ai';
   timestamp: string;
-}> {
-  if (typeof window === 'undefined') return [];
-
+}>> {
   try {
-    const history = localStorage.getItem('blogrolly_search_history');
-    return history ? JSON.parse(history) : [];
+    const res = await fetch('/api/search-history');
+    if (!res.ok) return [];
+    const history = await res.json();
+    return Array.isArray(history) ? history : [];
   } catch {
     return [];
   }

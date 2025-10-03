@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { stripePayments, STRIPE_PRICES, clientStripe } from '../lib/stripe';
+import { stripePayments, STRIPE_PRICES } from '../lib/stripe';
+import { clientStripe } from '../lib/clientStripe';
 import { trackPremiumUpgrade } from '../lib/analytics';
 import styles from '../styles/PremiumUpgrade.module.css';
 

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
+import { useError } from './ErrorProvider';
 import Link from 'next/link';
 import { MAIN_CATEGORIES, TAGS } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
@@ -9,11 +11,11 @@ import DomainVerificationModal from './DomainVerificationModal';
 interface BlogSubmissionFormProps {
   onSubmit?: (formData: FormData) => void;
   onDraftSaved?: () => void;
-  displayName?: string;
   bloggerId?: string;
   isBlogger?: boolean;
   hideGuidelines?: boolean;
   isSignupMode?: boolean;
+  displayName?: string;
 }
 
 interface FormData {
@@ -40,22 +42,22 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   isSignupMode = false
 }) => {
   // All hooks at top level
+  const { showError } = useError();
   const [formData, setFormData] = useState<FormData>({
     image: null,
     imageDescription: '',
     title: '',
     author: displayName || '', // Blogger's display name
     bloggerId: bloggerId || '',
-    bloggerDisplayName: displayName || '',
-    description: '',
+  bloggerDisplayName: displayName || '',
+  description: '',
     category: '',
     tags: [],
     postUrl: '',
     hasAdultContent: false
   });
   const [domainVerificationStatus, setDomainVerificationStatus] = useState<'loading' | 'verified' | 'pending' | 'failed' | null>(null);
-  const [showDomainVerification, setShowDomainVerification] = useState(false);
-  const [progress, setProgress] = useState(0);
+  
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
@@ -64,14 +66,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   const [draftSaved, setDraftSaved] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    if (isBlogger && !isSignupMode) {
-      checkDomainVerification();
-    }
-  }, [isBlogger, isSignupMode]);
-
-  const checkDomainVerification = async () => {
+  const checkDomainVerification = useCallback(async () => {
     try {
       const response = await fetch('/api/auth-check');
       const data = await response.json();
@@ -79,10 +77,16 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         setDomainVerificationStatus(data.bloggerProfile.domain_verification_status || 'pending');
       }
     } catch (error) {
-      console.error('Failed to check domain verification:', error);
+      showError('Failed to check domain verification. Please try again.');
       setDomainVerificationStatus('pending');
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    if (isBlogger && !isSignupMode) {
+      checkDomainVerification();
+    }
+  }, [isBlogger, isSignupMode, checkDomainVerification]);
 
   useEffect(() => {
     const requiredFields = ['title', 'description', 'postUrl', 'category'];
@@ -98,20 +102,23 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
   }, [formData]);
 
   useEffect(() => {
-    const savedDraft = localStorage.getItem('blogSubmissionDraft');
-    if (savedDraft) {
-      const draft = JSON.parse(savedDraft);
-      const { savedAt, ...draftFormData } = draft;
-      setFormData(prev => ({ ...prev, ...draftFormData }));
-      if (savedAt) {
-        setLastSavedAt(new Date(savedAt).toLocaleString());
-      }
-    }
+    // Fetch draft from backend
+    fetch('/api/blog-draft')
+      .then(res => res.json())
+      .then(draft => {
+        if (draft) {
+          const { savedAt, ...draftFormData } = draft;
+          setFormData(prev => ({ ...prev, ...draftFormData }));
+          if (savedAt) {
+            setLastSavedAt(new Date(savedAt).toLocaleString());
+          }
+        }
+      });
   }, []);
 
   // No auto-save - only save when user clicks Save Draft button
 
-  const saveDraft = () => {
+  const saveDraft = async () => {
     const draftData = {
       title: formData.title,
       imageDescription: formData.imageDescription,
@@ -123,7 +130,11 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       savedAt: new Date().toISOString()
     };
 
-    localStorage.setItem('blogSubmissionDraft', JSON.stringify(draftData));
+    await fetch('/api/blog-draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(draftData)
+    });
     setDraftSaved(true);
     setLastSavedAt(new Date().toLocaleTimeString());
 
@@ -136,8 +147,10 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
     }, 3000);
   };
 
-  const clearDraft = () => {
-    localStorage.removeItem('blogSubmissionDraft');
+  const clearDraft = async () => {
+    await fetch('/api/blog-draft', {
+      method: 'DELETE'
+    });
     setFormData({
       image: null,
       imageDescription: '',
@@ -251,7 +264,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
       
       setErrors(prev => ({ ...prev, postUrl: '' }));
     } catch (error) {
-      console.error('Domain validation error:', error);
+      showError('Unable to validate domain. Please try again.');
       setErrors(prev => ({ 
         ...prev, 
         postUrl: 'Unable to validate domain. Please try again.' 
@@ -358,7 +371,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
         // Clear draft after successful submission
         localStorage.removeItem('blogSubmissionDraft');
       } catch (error) {
-        console.error('Submission error:', error);
+        showError('Failed to submit blog post. Please try again.');
         setErrors(prev => ({ 
           ...prev, 
           image: 'Failed to process image upload. Please try again.' 
@@ -500,7 +513,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
               {errors.image && <span className={styles.error}>{errors.image}</span>}
               {imagePreview && (
                 <div className={styles.imagePreview}>
-                  <img src={imagePreview} alt="Preview" />
+                  <Image src={imagePreview} alt="Preview" width={300} height={200} style={{ objectFit: 'cover', borderRadius: '8px' }} />
                 </div>
               )}
               <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP</small>

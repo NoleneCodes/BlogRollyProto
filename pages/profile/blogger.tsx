@@ -1,4 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+// StripePricingModal component for dynamic script and element injection
+const StripePricingModal = ({ onClose }: { onClose: () => void }) => {
+  const modalContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Only add script if not already present
+    if (!document.querySelector("script[src='https://js.stripe.com/v3/pricing-table.js']")) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/pricing-table.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    // Remove any previous pricing table
+    if (modalContentRef.current) {
+      modalContentRef.current.innerHTML = '';
+  const pricingTable = document.createElement('stripe-pricing-table');
+  pricingTable.setAttribute('pricing-table-id', 'prctbl_1SEBhnDyKgK2ioTOkBlk2WY1');
+  pricingTable.setAttribute('publishable-key', 'pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL');
+  modalContentRef.current.appendChild(pricingTable);
+    }
+  }, []);
+
+  return (
+    <div className={styles.blogSubmissionOverlay}>
+      <div className={styles.blogSubmissionContainer}>
+        <div className={styles.blogSubmissionHeader}>
+          <h3>Upgrade to Premium</h3>
+          <button 
+            className={styles.closeButton}
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
+        <div className={styles.stripePricingModalContent} ref={modalContentRef} />
+      </div>
+    </div>
+  );
+};
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
@@ -9,6 +49,8 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
 import styles from '../../styles/BloggerProfile.module.css';
+import BillingSubscription from '../../components/blogger/BillingSubscription';
+import BloggerOverviewTab from '../../components/blogger/BloggerOverviewTab';
 import PremiumFeatureGuard from '../../components/PremiumFeatureGuard';
 
 interface UserInfo {
@@ -16,11 +58,12 @@ interface UserInfo {
   name: string;
   email: string;
   username?: string;
+  displayName?: string;
   bio?: string;
   joinedDate: string;
   avatar?: string;
   blogName?: string;
-  blogUrl: string;
+  blogUrl?: string;
   topics: string[];
   roles: string[];
 }
@@ -88,7 +131,6 @@ const BloggerProfile: React.FC = () => {
   const [showBugReportPopup, setShowBugReportPopup] = useState<boolean>(false);
   const [showStripePricingModal, setShowStripePricingModal] = useState<boolean>(false);
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
-  const [stripeScriptLoaded, setStripeScriptLoaded] = useState(false);
 
 
   useEffect(() => {
@@ -100,7 +142,7 @@ const BloggerProfile: React.FC = () => {
           id: 'demo-blogger-123',
           name: 'Demo Blogger',
           email: 'blogger@example.com',
-          username: 'Demo Blogger',
+          displayName: 'Demo Blogger',
           bio: 'Passionate writer sharing insights on tech and lifestyle',
           joinedDate: '2024-01-10',
           blogName: 'Tech & Life Insights',
@@ -111,7 +153,20 @@ const BloggerProfile: React.FC = () => {
 
         // Mock blog submissions
         setBlogSubmissions([
-         
+          {
+            id: '1',
+            title: 'The Future of Remote Work',
+            url: 'https://techlifeinsights.com/remote-work-future',
+            category: 'Tech',
+            tags: ['remote work', 'technology', 'future'],
+            status: 'approved',
+            submittedDate: '2024-01-15',
+            views: 1250,
+            clicks: 89,
+            isActive: true,
+            description: 'Exploring how remote work is reshaping the modern workplace and what it means for the future.',
+            image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=400&h=200&fit=crop'
+          },
           {
             id: '2',
             title: 'Building Better Morning Routines',
@@ -182,53 +237,43 @@ const BloggerProfile: React.FC = () => {
           }
         ]);
 
-        // Mock blog stats
-        const totalViews = blogSubmissions.reduce((sum, blog) => sum + (blog.views || 0), 0);
-        const totalClicks = blogSubmissions.reduce((sum, blog) => sum + (blog.clicks || 0), 0);
+      // Mock blog stats
+      const totalViews = blogSubmissions.reduce((sum, blog) => sum + (blog.views || 0), 0);
+      const totalClicks = blogSubmissions.reduce((sum, blog) => sum + (blog.clicks || 0), 0);
 
-        const blogStats: BlogStats = {
-          totalViews: totalViews,
-          totalClicks: totalClicks,
-          totalSubmissions: blogSubmissions.length,
-          approvedSubmissions: blogSubmissions.filter(blog => blog.status === 'approved').length,
-          clickThroughRate: totalViews > 0 ? (totalClicks / totalViews) * 100 : 0
-        };
+      const blogStats: BlogStats = {
+        totalViews: totalViews,
+        totalClicks: totalClicks,
+        totalSubmissions: blogSubmissions.length,
+        approvedSubmissions: blogSubmissions.filter(blog => blog.status === 'approved').length,
+        clickThroughRate: totalViews > 0 ? (totalClicks / totalViews) * 100 : 0
+      };
 
-        setBlogStats(blogStats);
+      setBlogStats(blogStats);
 
-        // Load saved drafts from localStorage
-        loadSavedDrafts();
+      // Load saved drafts from backend
+      await loadSavedDrafts();
 
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    } catch (error) {
+      console.error('Auth check failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
     checkAuth();
   }, [router]);
 
-  useEffect(() => {
-  if (!(window as any).StripePricingTable) {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/pricing-table.js';
-      script.async = true;
-      script.onload = () => setStripeScriptLoaded(true);
-      document.body.appendChild(script);
-    } else {
-      setStripeScriptLoaded(true);
-    }
-  }, []);
-
-  const loadSavedDrafts = () => {
-    // Load draft from localStorage
-    const savedDraft = typeof window !== 'undefined' ? localStorage.getItem('blogSubmissionDraft') : null;
-    if (savedDraft) {
-      try {
-        const draft = JSON.parse(savedDraft);
+  const loadSavedDrafts = async () => {
+    try {
+      const res = await fetch('/api/blog-draft');
+      if (!res.ok) {
+        console.warn(`No draft found or server error: ${res.status}`);
+        return; // Exit gracefully if no draft
+      }
+      const draft = await res.json();
+      if (draft) {
         const { savedAt, ...draftFormData } = draft;
-        
         // Only add draft if it has meaningful content
         if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
           const draftSubmission: BlogSubmission = {
@@ -260,9 +305,9 @@ const BloggerProfile: React.FC = () => {
             }
           });
         }
-      } catch (error) {
-        console.error('Error loading saved draft:', error);
       }
+    } catch (error) {
+      console.error('Failed to load draft from backend:', error);
     }
   };
 
@@ -477,45 +522,11 @@ const BloggerProfile: React.FC = () => {
     switch (activeSection) {
       case 'overview':
         return (
-          <div className={styles.content}>
-            <h2>Profile Overview</h2>
-            <div className={styles.profileHeader}>
-              <div className={styles.avatar}>
-                {userInfo.avatar ? (
-                  <img src={userInfo.avatar} alt="Profile" />
-                ) : (
-                  <div className={styles.initials}>
-                    {getInitials(userInfo.username || userInfo.name)}
-                  </div>
-                )}
-              </div>
-              <div className={styles.profileInfo}>
-                <h3>{userInfo.username || userInfo.name}</h3>
-                <p className={styles.blogName}>{userInfo.blogName}</p>
-                <p className={styles.bio}>{userInfo.bio}</p>
-              </div>
-            </div>
-            {blogStats && (
-              <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                  <h4>Total Views</h4>
-                  <span className={styles.statNumber}>{blogStats.totalViews.toLocaleString()}</span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Total Clicks</h4>
-                  <span className={styles.statNumber}>{blogStats.totalClicks}</span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Click Rate</h4>
-                  <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Active Blogs</h4>
-                  <span className={styles.statNumber}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}/3</span>
-                </div>
-              </div>
-            )}
-          </div>
+          <BloggerOverviewTab
+            userInfo={userInfo}
+            blogStats={blogStats}
+            blogSubmissions={blogSubmissions}
+          />
         );
 
       case 'blogroll':
@@ -632,7 +643,7 @@ const BloggerProfile: React.FC = () => {
                   </div>
                   <div className={styles.statCard}>
                     <h4>Click-through Rate</h4>
-                    <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
+                    <span className={styles.statNumber}>{blogStats.clickThroughRate.toFixed(2)}%</span>
                     <p className={styles.statDescription}>Percentage of views that resulted in clicks</p>
                   </div>
                 </div>
@@ -676,21 +687,23 @@ const BloggerProfile: React.FC = () => {
       case 'settings':
         return (
           <div className={styles.content}>
-            <h2>Account Settings</h2>
+            <h2 style={{ color: '#c42142' }}>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
                 <label>Profile Picture</label>
                 <div className={styles.profilePictureSection}>
                   <div className={styles.currentPicture}>
                     {profilePicturePreview || userInfo.avatar ? (
-                      <img 
+                      <Image 
                         src={profilePicturePreview || userInfo.avatar} 
-                        alt="Profile" 
+                        alt="profile picture" 
                         className={styles.previewImage}
+                        width={80}
+                        height={80}
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>
-                        {getInitials(userInfo.username || userInfo.name)}
+                        {getInitials(userInfo.displayName || userInfo.name)}
                       </div>
                     )}
                   </div>
@@ -766,45 +779,13 @@ const BloggerProfile: React.FC = () => {
 
       case 'billing':
         return (
-          <div className={styles.content}>
-            <h2>Billing & Subscription</h2>
-            <div className={styles.billingSection}>
-              <div className={styles.currentPlan}>
-                <h3>Current Plan: Free Tier</h3>
-                <p>You&apos;re currently on our free tier with basic analytics and up to 5 blog submissions per month.</p>
-                <div className={styles.planFeatures}>
-                  <ul>
-                    <li>List up to 3 blogs</li>
-                    <li>Basic analytics</li>
-                    <li>Community support</li>
-                  </ul>
-                </div>
-              </div>
-              <div className={styles.upgradeSection}>
-                <h3>Upgrade to Pro</h3>
-                <div className={styles.proFeatures}>
-                  <ul>
-                    <li>Unlimited blog listings</li>
-                    <li>Advanced analytics and insights</li>
-                    <li>Priority review for submissions</li>
-                    <li>Priority Support</li>
-                  </ul>
-                </div>
-                <button 
-                  className={styles.upgradeButton}
-                  onClick={() => setShowStripePricingModal(true)}
-                >
-                  Upgrade to Pro
-                </button>
-              </div>
-            </div>
-          </div>
+          <BillingSubscription setShowStripePricingModal={setShowStripePricingModal} />
         );
 
       case 'help':
         return (
           <div className={styles.content}>
-            <h2>Help & Support</h2>
+            <h2 style={{ color: '#c42142' }}>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
                 <h3>Report a Bug</h3>
@@ -940,7 +921,7 @@ const BloggerProfile: React.FC = () => {
                 <BlogSubmissionForm 
                   onSubmit={handleBlogSubmit}
                   onDraftSaved={loadSavedDrafts}
-                  displayName={userInfo.username}
+                  displayName={userInfo.displayName}
                   bloggerId={userInfo.id}
                   isBlogger={true}
                 />
@@ -976,42 +957,12 @@ const BloggerProfile: React.FC = () => {
 
       {/* Stripe Pricing Modal */}
       {showStripePricingModal && (
-        <div className={styles.blogSubmissionOverlay}>
-          <div className={styles.blogSubmissionContainer}>
-            <div className={styles.blogSubmissionHeader}>
-              <h3>Upgrade to Premium</h3>
-              <button 
-                className={styles.closeButton}
-                onClick={() => setShowStripePricingModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className={styles.stripePricingModalContent}>
-              {stripeScriptLoaded && typeof window !== 'undefined' && (
-                <stripe-pricing-table 
-                  pricing-table-id="prctbl_1RmgGoDyKgK2ioTOXJv76mNC"
-                  publishable-key="pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL">
-                </stripe-pricing-table>
-              )}
-            </div>
-          </div>
-        </div>
+        <StripePricingModal onClose={() => setShowStripePricingModal(false)} />
       )}
+
+{/* StripePricingModal component for dynamic script and element injection */}
     </Layout>
   );
 };
 
 export default BloggerProfile;
-
-// Add custom JSX type for Stripe Pricing Table web component
-declare module 'react' {
-  namespace JSX {
-    interface IntrinsicElements {
-      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-        'pricing-table-id': string;
-        'publishable-key': string;
-      };
-    }
-  }
-}

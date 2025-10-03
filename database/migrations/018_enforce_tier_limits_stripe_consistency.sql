@@ -54,12 +54,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Add trigger to validate tier limits on insert/update
-DROP TRIGGER IF EXISTS validate_tier_limits_stripe_trigger ON user_tier_limits;
-CREATE TRIGGER validate_tier_limits_stripe_trigger
-    BEFORE INSERT OR UPDATE OF tier ON user_tier_limits
-    FOR EACH ROW
-    EXECUTE FUNCTION validate_tier_limits_with_stripe();
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger WHERE tgname = 'validate_tier_limits_stripe_trigger') THEN
+        CREATE TRIGGER validate_tier_limits_stripe_trigger
+            BEFORE INSERT OR UPDATE OF tier ON user_tier_limits
+            FOR EACH ROW
+            EXECUTE FUNCTION validate_tier_limits_with_stripe();
+    END IF;
+END $$;
 
 -- Create function to sync tier limits when Stripe status changes
 CREATE OR REPLACE FUNCTION sync_tier_limits_on_stripe_change()
@@ -121,8 +126,8 @@ RETURNS TABLE(
     current_tier_limits user_tier,
     current_user_tier user_tier,
     should_be_tier user_tier,
-    stripe_customer_id TEXT,
-    subscription_status TEXT,
+    stripe_customer_id character varying(100),
+    subscription_status character varying(100),
     subscription_end_date TIMESTAMPTZ,
     inconsistent BOOLEAN
 ) AS $$
@@ -196,17 +201,58 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Add foreign key constraint to ensure user_tier_limits references valid users
-ALTER TABLE user_tier_limits 
-ADD CONSTRAINT IF NOT EXISTS fk_user_tier_limits_user_id 
-FOREIGN KEY (user_id) REFERENCES user_profiles(user_id) ON DELETE CASCADE;
 
--- Add constraint to ensure tier limits are consistent with user profile tier
-ALTER TABLE user_tier_limits 
-ADD CONSTRAINT IF NOT EXISTS check_tier_consistent_with_profile 
-CHECK (
-    tier = (SELECT tier FROM user_profiles WHERE user_profiles.user_id = user_tier_limits.user_id)
-);
+-- Remove duplicate user_id rows in user_profiles (keep the row with the lowest ctid)
+DO $$
+DECLARE
+    dupe_count integer;
+BEGIN
+    -- Only run if there are duplicates
+    SELECT COUNT(*) INTO dupe_count FROM (
+        SELECT user_id FROM user_profiles GROUP BY user_id HAVING COUNT(*) > 1
+    ) t;
+    IF dupe_count > 0 THEN
+        DELETE FROM user_profiles a
+        USING user_profiles b
+        WHERE a.user_id = b.user_id
+            AND a.ctid > b.ctid;
+    END IF;
+END $$;
+
+-- Add unique constraint on user_id if not present
+DO $$
+DECLARE
+    has_unique boolean := false;
+BEGIN
+    SELECT TRUE INTO has_unique FROM (
+        SELECT tc.constraint_type, kcu.table_name, tc.constraint_name, array_agg(kcu.column_name) as cols
+        FROM information_schema.table_constraints tc
+            JOIN information_schema.key_column_usage kcu
+                ON tc.constraint_name = kcu.constraint_name AND tc.table_name = kcu.table_name
+        WHERE tc.table_name = 'user_profiles'
+            AND (tc.constraint_type = 'PRIMARY KEY' OR tc.constraint_type = 'UNIQUE')
+        GROUP BY tc.constraint_type, kcu.table_name, tc.constraint_name
+        HAVING array_agg(kcu.column_name)::text[] = ARRAY['user_id']::text[]
+    ) sub LIMIT 1;
+    IF NOT has_unique THEN
+        ALTER TABLE user_profiles ADD CONSTRAINT user_profiles_user_id_key UNIQUE (user_id);
+    END IF;
+END $$;
+
+-- Add foreign key constraint to ensure user_tier_limits references valid users
+DO $$
+BEGIN
+        IF NOT EXISTS (
+                SELECT 1 FROM information_schema.table_constraints 
+                WHERE table_name = 'user_tier_limits' AND constraint_name = 'fk_user_tier_limits_user_id') THEN
+                ALTER TABLE user_tier_limits 
+                        ADD CONSTRAINT fk_user_tier_limits_user_id 
+                        FOREIGN KEY (user_id) REFERENCES user_profiles(user_id) ON DELETE CASCADE;
+        END IF;
+END $$;
+
+
+-- (Removed invalid check constraint with subquery. Consistency is enforced by triggers and sync logic.)
 
 -- Add index for better performance on Stripe-related queries
 CREATE INDEX IF NOT EXISTS idx_blogger_profiles_stripe_subscription 
@@ -222,9 +268,9 @@ SELECT fix_tier_limits_stripe_inconsistencies();
 CREATE OR REPLACE VIEW user_tier_limits_stripe_status AS
 SELECT 
     utl.user_id,
-    up.first_name,
-    up.surname,
-    up.username,
+    u.first_name,
+    u.surname,
+    u.username,
     utl.tier as tier_limits_tier,
     up.tier as profile_tier,
     utl.max_live_posts,
@@ -256,6 +302,7 @@ SELECT
     END as tier_stripe_consistent
 FROM user_tier_limits utl
 JOIN user_profiles up ON utl.user_id = up.user_id
+JOIN users u ON up.user_id = u.id
 LEFT JOIN blogger_profiles bp ON utl.user_id = bp.user_id;
 
 -- Add comments to document the changes
@@ -270,9 +317,17 @@ COMMENT ON TRIGGER sync_tier_limits_stripe_trigger ON blogger_profiles IS 'Autom
 COMMENT ON VIEW user_tier_limits_stripe_status IS 'Provides easy monitoring of user tier limits and Stripe subscription consistency';
 
 -- Add constraint to ensure max_live_posts matches tier
-ALTER TABLE user_tier_limits 
-ADD CONSTRAINT IF NOT EXISTS check_max_live_posts_matches_tier 
-CHECK (
-    (tier = 'free' AND max_live_posts = 3) OR 
-    (tier = 'pro' AND max_live_posts = 999999)
-);
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE table_name = 'user_tier_limits' AND constraint_name = 'check_max_live_posts_matches_tier') THEN
+        ALTER TABLE user_tier_limits 
+            ADD CONSTRAINT check_max_live_posts_matches_tier 
+            CHECK (
+                (tier = 'free' AND max_live_posts = 3) OR 
+                (tier = 'pro' AND max_live_posts = 999999)
+            );
+    END IF;
+END $$;

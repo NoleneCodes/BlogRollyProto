@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { addBugReport } from '../lib/bugReportData';
 import styles from '../styles/ReaderProfile.module.css';
 
@@ -135,7 +136,7 @@ const BugReportPopup: React.FC<BugReportPopupProps> = ({ isOpen, onClose }) => {
       <div className={styles.popupContent}>
         <div className={styles.popupHeader}>
           <h3>Report a Bug</h3>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <button className={styles.closeButton} aria-label="Close" onClick={onClose}>×</button>
         </div>
         
         <div className={styles.popupBody}>
@@ -263,7 +264,7 @@ const BugReportPopup: React.FC<BugReportPopupProps> = ({ isOpen, onClose }) => {
                 <div className={styles.imagePreviewContainer}>
                   {imagePreviews.map((preview, index) => (
                     <div key={index} className={styles.imagePreview}>
-                      <img src={preview} alt={`Preview ${index + 1}`} />
+                      <Image src={preview} alt={`Preview ${index + 1}`} width={120} height={90} style={{ objectFit: 'cover', borderRadius: '8px' }} />
                       <button
                         type="button"
                         onClick={() => removeImage(index)}

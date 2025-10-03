@@ -18,28 +18,26 @@ const InvestorDashboard = () => {
 
   useEffect(() => {
     // Check if user is authenticated
-    const token = localStorage.getItem('investorToken');
-    const investorData = localStorage.getItem('investorData');
-
-    if (!token || !investorData) {
-      router.push('/investors');
-      return;
-    }
-
-    try {
-      setInvestor(JSON.parse(investorData));
-    } catch (error) {
-      console.error('Error parsing investor data:', error);
-      router.push('/investors');
-      return;
-    }
-
-    setIsLoading(false);
+    // Replace localStorage with backend/session logic
+    fetch('/api/investor/session')
+      .then(res => res.json())
+      .then(({ token, investor }) => {
+        if (!token || !investor) {
+          router.push('/investors');
+          return;
+        }
+        setInvestor(investor);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching investor session:', error);
+        router.push('/investors');
+      });
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('investorToken');
-    localStorage.removeItem('investorData');
+  const handleLogout = async () => {
+    // Replace localStorage removal with backend/session logout
+    await fetch('/api/investor/session', { method: 'DELETE' });
     router.push('/investors');
   };
 

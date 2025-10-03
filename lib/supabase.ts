@@ -1,5 +1,15 @@
-// Supabase configuration and client setup
+
 import { createClient } from '@supabase/supabase-js'
+// Supabase configuration and client setup
+// Helper functions
+export const getBloggerProfileByUserId = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('blogger_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .single();
+  return { data, error };
+};
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -223,6 +233,43 @@ export const supabaseAuth = {
 };
 
 export const supabaseDB = {
+  // Fetch all blog view events for a user's blogs in the last 30 days
+  getBlogViewEventsLast30Days: async (userId: string) => {
+    // Get all blog_submission ids for this user
+    const { data: submissions, error: subError } = await supabase
+      .from('blog_submissions')
+      .select('id')
+      .eq('user_id', userId);
+    if (subError || !submissions) return { data: [], error: subError };
+    const ids = submissions.map((s: any) => s.id);
+    if (ids.length === 0) return { data: [], error: null };
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('blog_view_events')
+      .select('*')
+      .in('blog_submission_id', ids)
+      .gte('created_at', since);
+    return { data, error };
+  },
+
+  // Fetch all blog click events for a user's blogs in the last 30 days
+  getBlogClickEventsLast30Days: async (userId: string) => {
+    // Get all blog_submission ids for this user
+    const { data: submissions, error: subError } = await supabase
+      .from('blog_submissions')
+      .select('id')
+      .eq('user_id', userId);
+    if (subError || !submissions) return { data: [], error: subError };
+    const ids = submissions.map((s: any) => s.id);
+    if (ids.length === 0) return { data: [], error: null };
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+      .from('blog_click_events')
+      .select('*')
+      .in('blog_submission_id', ids)
+      .gte('created_at', since);
+    return { data, error };
+  },
   // User Management
   insertUser: async (userData: any) => {
     const { data, error } = await supabase
@@ -326,10 +373,7 @@ export const supabaseDB = {
   getSubmissionsByStatus: async (status: BlogStatus) => {
     const { data, error } = await supabase
       .from('blog_submissions')
-      .select(`
-        *,
-        user_profiles!inner(first_name, surname, tier)
-      `)
+      .select('*')
       .eq('status', status)
       .order('submitted_at', { ascending: false });
     return { data, error };
@@ -338,11 +382,7 @@ export const supabaseDB = {
   getPendingSubmissionsForReview: async () => {
     const { data, error } = await supabase
       .from('blog_submissions')
-      .select(`
-        *,
-        user_profiles!inner(first_name, surname, tier),
-        blog_reviews(*)
-      `)
+      .select('*')
       .eq('status', 'pending')
       .order('submitted_at', { ascending: true });
     return { data, error };
@@ -652,12 +692,34 @@ export const supabaseDB = {
     subscription_status?: 'active' | 'canceled' | 'past_due';
     subscription_id?: string;
     subscription_end_date?: string;
+    stripe_subscription_id?: string;
+    subscription_plan?: string;
   }) => {
     const { data, error } = await supabase
       .from('blogger_profiles')
       .update(stripeInfo)
       .eq('user_id', userId)
       .select();
+    return { data, error };
+  },
+
+  insertSubscriptionHistory: async (history: {
+    user_id: string;
+    stripe_customer_id?: string;
+    stripe_subscription_id?: string;
+    plan?: string;
+    status?: string;
+    period_start?: string | null;
+    period_end?: string | null;
+    event_type: string;
+    raw_event: any;
+  }) => {
+    const { data, error } = await supabase
+      .from('subscription_history')
+      .insert({
+        ...history,
+        raw_event: history.raw_event ? JSON.stringify(history.raw_event) : null
+      });
     return { data, error };
   },
 
@@ -784,10 +846,7 @@ export const supabaseDB = {
   getAllSurveyFeedback: async () => {
     const { data, error } = await supabase
       .from('survey_feedback')
-      .select(`
-        *,
-        user_profiles!inner(first_name, surname, username)
-      `)
+      .select('*')
       .order('submitted_at', { ascending: false });
     return { data, error };
   },

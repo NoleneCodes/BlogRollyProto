@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BlogSubmissionForm from './BlogSubmissionForm';
@@ -375,6 +376,17 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             Profile Picture
             <span className={styles.optional}>(Optional)</span>
           </label>
+          <div style={{ marginBottom: '0.5rem' }}>
+            {bloggerForm.profilePicture && (
+              <Image
+                src={URL.createObjectURL(bloggerForm.profilePicture)}
+                alt="Profile Preview"
+                width={96}
+                height={96}
+                style={{ objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+              />
+            )}
+          </div>
           <input
             type="file"
             accept=".jpg,.jpeg,.png,.webp"

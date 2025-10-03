@@ -47,20 +47,42 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger to validate domain on insert and update
-DROP TRIGGER IF EXISTS validate_blog_domain_trigger ON blog_submissions;
-CREATE TRIGGER validate_blog_domain_trigger
-    BEFORE INSERT OR UPDATE OF url ON blog_submissions
-    FOR EACH ROW
-    EXECUTE FUNCTION validate_blog_post_domain();
 
--- Add index for better performance on domain checks
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger WHERE tgname = 'validate_blog_domain_trigger') THEN
+        CREATE TRIGGER validate_blog_domain_trigger
+            BEFORE INSERT OR UPDATE OF url ON blog_submissions
+            FOR EACH ROW
+            EXECUTE FUNCTION validate_blog_post_domain();
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_blog_submissions_user_url ON blog_submissions(user_id, url);
 
--- Add constraint to ensure URLs are HTTPS and have paths
-ALTER TABLE blog_submissions ADD CONSTRAINT IF NOT EXISTS check_url_format 
-    CHECK (url ~ '^https://[^/]+/.+');
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints WHERE table_name = 'blog_submissions' AND constraint_name = 'check_url_format') THEN
+        ALTER TABLE blog_submissions ADD CONSTRAINT check_url_format 
+            CHECK (url ~ '^https://[^/]+/.+');
+    END IF;
+END $$;
 
--- Add comment explaining the constraint
-COMMENT ON CONSTRAINT check_url_format ON blog_submissions IS 'Ensures blog post URLs are HTTPS and include a path beyond the domain';
-COMMENT ON FUNCTION validate_blog_post_domain() IS 'Validates that blog post URLs match the bloggers verified domain';
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_catalog.pg_description d
+        JOIN pg_catalog.pg_class c ON c.oid = d.objoid
+        JOIN pg_catalog.pg_constraint co ON co.conrelid = c.oid AND co.conname = 'check_url_format'
+        WHERE c.relname = 'blog_submissions' AND d.description = 'Ensures blog post URLs are HTTPS and include a path beyond the domain'
+    ) THEN
+        COMMENT ON CONSTRAINT check_url_format ON blog_submissions IS 'Ensures blog post URLs are HTTPS and include a path beyond the domain';
+    END IF;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_catalog.pg_description d
+        JOIN pg_catalog.pg_proc p ON p.oid = d.objoid
+        WHERE p.proname = 'validate_blog_post_domain' AND d.description = 'Validates that blog post URLs match the bloggers verified domain'
+    ) THEN
+        COMMENT ON FUNCTION validate_blog_post_domain() IS 'Validates that blog post URLs match the bloggers verified domain';
+    END IF;
+END $$;

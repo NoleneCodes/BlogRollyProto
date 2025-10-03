@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { InternalBlogPost, addInternalBlogPost, updateInternalBlogPost, deleteInternalBlogPost, ContentImage } from '../lib/internalBlogData';
 import styles from '../styles/BloggerProfilePremium.module.css';
 
@@ -9,26 +10,58 @@ interface BlogPostManagerProps {
 }
 
 const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost, mode }) => {
+  // Helper to log admin activities
+  const logAdminActivity = async ({ actionType, targetType, targetId, details }) => {
+    try {
+      // Use the global supabase client
+      const { data: { session } } = await import('../lib/supabase').then(m => m.supabase.auth.getSession());
+      const adminUserId = session?.user?.id;
+      if (!adminUserId) return;
+      const { error } = await import('../lib/supabase').then(m => m.supabase.from('admin_activity_log').insert([
+        {
+          admin_user_id: adminUserId,
+          action_type: actionType,
+          target_type: targetType,
+          target_id: targetId,
+          details,
+        }
+      ]));
+      if (error) console.error('Failed to log admin activity:', error);
+    } catch (err) {
+      console.error('Error logging admin activity:', err);
+    }
+  };
   const [formData, setFormData] = useState<Partial<InternalBlogPost>>({
     title: existingPost?.title || '',
     author: existingPost?.author || 'BlogRolly Team',
-    authorProfile: existingPost?.authorProfile || '/about',
-    bloggerId: existingPost?.bloggerId || 'admin',
-    bloggerDisplayName: existingPost?.bloggerDisplayName || 'BlogRolly Team',
     description: existingPost?.description || '',
     category: existingPost?.category || 'Platform Updates',
     tags: existingPost?.tags || [],
     slug: existingPost?.slug || '',
-    imageUrl: existingPost?.imageUrl || '/replit.svg',
-    imageDescription: existingPost?.imageDescription || '',
-    readTime: existingPost?.readTime || '5 min read',
-    publishDate: existingPost?.publishDate || new Date().toISOString().split('T')[0],
-    isPublished: existingPost?.isPublished ?? true,
+    image_url: existingPost?.image_url || '/replit.svg',
+    image_description: existingPost?.image_description || '',
+    read_time: existingPost?.read_time || '5 min read',
+    publish_date: existingPost?.publish_date || new Date().toISOString().split('T')[0],
+    status: existingPost?.status || 'draft',
     content: existingPost?.content || '',
-    contentImages: existingPost?.contentImages || []
+    content_images: existingPost?.content_images || []
   });
 
   const [tagInput, setTagInput] = useState('');
+  const [showTagPopup, setShowTagPopup] = useState(false);
+
+  const predefinedTags = [
+    "Founder’s Notes",
+    "Behind the Scenes",
+    "Blogger Growth",
+    "Monetisation",
+    "Content Strategy",
+    "Tools & Tech",
+    "Community Building",
+    "Independent Voices",
+    "Blogger Spotlight",
+    "Product Updates"
+  ];
   const [isUploadingMainImage, setIsUploadingMainImage] = useState(false);
   const [isUploadingContentImage, setIsUploadingContentImage] = useState(false);
   const [contentImageDescription, setContentImageDescription] = useState('');
@@ -50,6 +83,16 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     }
   };
 
+  const handleSelectTag = (tag: string) => {
+    if (!formData.tags?.includes(tag)) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...(prev.tags || []), tag]
+      }));
+    }
+    setShowTagPopup(false);
+  };
+
   const handleRemoveTag = (tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
@@ -68,7 +111,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     formData.append('image', file);
 
     try {
-      const response = await fetch('/api/upload-image', {
+      const response = await fetch('/api/upload-image-cloudinary', {
         method: 'POST',
         body: formData,
       });
@@ -94,7 +137,7 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     const imageUrl = await uploadImage(file);
     
     if (imageUrl) {
-      handleInputChange('imageUrl', imageUrl);
+  handleInputChange('image_url', imageUrl);
     }
     
     setIsUploadingMainImage(false);
@@ -115,10 +158,9 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
         id: Date.now().toString(),
         url: imageUrl,
         description: contentImageDescription.trim(),
-        position: (formData.contentImages?.length || 0) + 1
+        position: (formData.content_images?.length || 0) + 1
       };
-      
-      handleInputChange('contentImages', [...(formData.contentImages || []), newContentImage]);
+      handleInputChange('content_images', [...(formData.content_images || []), newContentImage]);
       setContentImageDescription('');
     }
     
@@ -126,8 +168,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
   };
 
   const removeContentImage = (imageId: string) => {
-    const updatedImages = formData.contentImages?.filter(img => img.id !== imageId) || [];
-    handleInputChange('contentImages', updatedImages);
+  const updatedImages = formData.content_images?.filter(img => img.id !== imageId) || [];
+  handleInputChange('content_images', updatedImages);
   };
 
   const insertImageIntoContent = (imageUrl: string, description: string) => {
@@ -136,30 +178,46 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
     handleInputChange('content', currentContent + imageMarkdown);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSave = async (status: 'draft' | 'published') => {
     if (!formData.title || !formData.description || !formData.content) {
       alert('Please fill in all required fields');
       return;
     }
-
     const slug = formData.slug || generateSlug(formData.title);
-    
     const postData = {
       ...formData,
       slug,
       tags: formData.tags || [],
+      status
     } as Omit<InternalBlogPost, 'id'>;
-
-    if (mode === 'add') {
-      addInternalBlogPost(postData);
-    } else if (mode === 'edit' && existingPost) {
-      updateInternalBlogPost(existingPost.id, postData);
+    try {
+      let result;
+      if (mode === 'add') {
+        result = await addInternalBlogPost(postData);
+        if (result?.id) {
+          await logAdminActivity({
+            actionType: 'add_blog_post',
+            targetType: 'internal_blog_post',
+            targetId: result.id,
+            details: { title: result.title, author: result.author }
+          });
+        }
+      } else if (mode === 'edit' && existingPost) {
+        result = await updateInternalBlogPost(existingPost.id, postData);
+        if (result?.id) {
+          await logAdminActivity({
+            actionType: 'edit_blog_post',
+            targetType: 'internal_blog_post',
+            targetId: result.id,
+            details: { title: result.title, author: result.author }
+          });
+        }
+      }
+      onClose();
+      window.location.reload();
+    } catch (error) {
+      alert('Failed to save blog post. Please try again.');
     }
-
-    onClose();
-    window.location.reload(); // Refresh to show changes
   };
 
   return (
@@ -176,7 +234,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
         </div>
 
         <div className={styles.blogSubmissionContent}>
-          <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
+          <form onSubmit={e => { e.preventDefault(); handleSave('published'); }} style={{ padding: '2rem' }}>
+
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
                 Title *
@@ -185,6 +244,20 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 type="text"
                 value={formData.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
+                style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
+                required
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
+                Author Name *
+              </label>
+              <input
+                type="text"
+                value={formData.author}
+                onChange={(e) => handleInputChange('author', e.target.value)}
+                placeholder="Enter author name"
                 style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                 required
               />
@@ -221,18 +294,21 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 Blog Card Image
               </label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {formData.imageUrl && formData.imageUrl !== '/replit.svg' && (
+                {formData.image_url && formData.image_url !== '/replit.svg' && (
                   <div style={{ width: '100%', maxWidth: '300px' }}>
-                    <img 
-                      src={formData.imageUrl} 
-                      alt="Blog preview" 
-                      style={{ 
-                        width: '100%', 
-                        height: '150px', 
-                        objectFit: 'cover', 
+                    <Image
+                      src={formData.image_url}
+                      alt="Blog preview"
+                      width={300}
+                      height={150}
+                      style={{
+                        width: '100%',
+                        height: '150px',
+                        objectFit: 'cover',
                         borderRadius: '8px',
                         border: '1px solid #d1d5db'
-                      }} 
+                      }}
+                      loading="lazy"
                     />
                   </div>
                 )}
@@ -261,16 +337,16 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   </label>
                   <input
                     type="url"
-                    value={formData.imageUrl}
-                    onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+                    value={formData.image_url}
+                    onChange={(e) => handleInputChange('image_url', e.target.value)}
                     placeholder="Or paste image URL"
                     style={{ flex: 1, padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                   />
                 </div>
                 <input
                   type="text"
-                  value={formData.imageDescription}
-                  onChange={(e) => handleInputChange('imageDescription', e.target.value)}
+                  value={formData.image_description}
+                  onChange={(e) => handleInputChange('image_description', e.target.value)}
                   placeholder="Image description (for accessibility)"
                   style={{ width: '100%', padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                 />
@@ -301,8 +377,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 </label>
                 <input
                   type="text"
-                  value={formData.readTime}
-                  onChange={(e) => handleInputChange('readTime', e.target.value)}
+                  value={formData.read_time}
+                  onChange={(e) => handleInputChange('read_time', e.target.value)}
                   placeholder="5 min read"
                   style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
                 />
@@ -320,16 +396,50 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Add a tag"
                   style={{ flex: 1, padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag();
+                    }
+                  }}
+                  aria-label="Add tag input"
                 />
                 <button
                   type="button"
-                  onClick={handleAddTag}
-                  style={{ padding: '0.5rem 1rem', background: '#c42142', color: 'white', border: 'none', borderRadius: '8px' }}
+                  onClick={() => setShowTagPopup(true)}
+                  style={{ padding: '0.5rem 1rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px' }}
+                  aria-label="Open tag selection popup"
                 >
-                  Add
+                  Select Tag
                 </button>
               </div>
+              {showTagPopup && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowTagPopup(false)}>
+                  <div style={{ background: 'white', borderRadius: '12px', padding: '2rem', minWidth: '320px', boxShadow: '0 2px 16px rgba(0,0,0,0.15)' }} onClick={e => e.stopPropagation()}>
+                    <h4 style={{ marginBottom: '1rem' }}>Select a Tag</h4>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                      {predefinedTags.map((tag) => (
+                        <li key={tag} style={{ marginBottom: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => handleSelectTag(tag)}
+                            style={{ width: '100%', padding: '0.5rem 1rem', background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '8px', cursor: 'pointer', textAlign: 'left' }}
+                          >
+                            {tag}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={() => setShowTagPopup(false)}
+                      style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: '#c42142', color: 'white', border: 'none', borderRadius: '8px' }}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {formData.tags?.map((tag, index) => (
                   <span 
@@ -363,8 +473,8 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
               </label>
               <input
                 type="date"
-                value={formData.publishDate}
-                onChange={(e) => handleInputChange('publishDate', e.target.value)}
+                value={formData.publish_date}
+                onChange={(e) => handleInputChange('publish_date', e.target.value)}
                 style={{ width: '100%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '8px' }}
               />
             </div>
@@ -406,14 +516,17 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                   </label>
                 </div>
                 
-                {formData.contentImages && formData.contentImages.length > 0 && (
+                {formData.content_images && formData.content_images.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-                    {formData.contentImages.map((image) => (
+                    {formData.content_images.map((image) => (
                       <div key={image.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '0.5rem' }}>
-                        <img 
-                          src={image.url} 
+                        <Image
+                          src={image.url}
                           alt={image.description}
+                          width={200}
+                          height={100}
                           style={{ width: '100%', height: '100px', objectFit: 'cover', borderRadius: '4px', marginBottom: '0.5rem' }}
+                          loading="lazy"
                         />
                         <p style={{ fontSize: '0.875rem', margin: '0 0 0.5rem 0', color: '#6b7280' }}>{image.description}</p>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -474,14 +587,9 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <input
-                  type="checkbox"
-                  checked={formData.isPublished}
-                  onChange={(e) => handleInputChange('isPublished', e.target.checked)}
-                />
-                Published
-              </label>
+              <span style={{ fontWeight: 600 }}>
+                Status: {formData.status === 'published' ? 'Published' : 'Draft'}
+              </span>
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
@@ -499,11 +607,18 @@ const BlogPostManager: React.FC<BlogPostManagerProps> = ({ onClose, existingPost
                 Cancel
               </button>
               <button
+                type="button"
+                onClick={() => handleSave('draft')}
+                style={{ padding: '0.75rem 1.5rem', background: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: 600 }}
+              >
+                Save as Draft
+              </button>
+              <button
                 type="submit"
                 className={styles.primaryButton}
                 style={{ padding: '0.75rem 1.5rem' }}
               >
-                {mode === 'add' ? 'Add Post' : 'Update Post'}
+                {mode === 'add' ? 'Publish Post' : 'Update & Publish'}
               </button>
             </div>
           </form>

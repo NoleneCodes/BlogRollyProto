@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import ReaderOverviewTab from '../../components/reader/ReaderOverviewTab';
+import ReaderSavedTab from '../../components/reader/ReaderSavedTab';
+import ReaderFollowingTab from '../../components/reader/ReaderFollowingTab';
+import ReaderHistoryTab from '../../components/reader/ReaderHistoryTab';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import BugReportPopup from '../../components/BugReportPopup';
@@ -66,110 +71,34 @@ const ReaderProfile: React.FC = () => {
   const [showContactSupportPopup, setShowContactSupportPopup] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const fetchProfileData = async () => {
       try {
-        // Temporarily bypass auth check for design review
-        // const response = await fetch('/api/auth-check');
-        // if (response.ok) {
-        //   const data = await response.json();
-        //   if (data.authenticated) {
-            // Mock user data for design review
-            setUserInfo({
-              id: 'demo-user-123',
-              name: 'Demo User',
-              email: 'demo@example.com',
-              displayName: 'Demo User',
-              bio: 'Passionate reader exploring diverse topics',
-              joinedDate: '2024-01-15',
-              topics: ['Tech', 'Health & Wellness', 'Books & Media'],
-              roles: ['reader', 'blogger'],
-              tier: 'free' // Change to 'pro' to test premium routing
-            });
+        // Fetch user info (replace with your actual API endpoint)
+        const userRes = await fetch('/api/reader/info');
+        const userData = await userRes.json();
+        setUserInfo(userData);
 
-            // Mock saved blogs data
-            setSavedBlogs([
-              {
-                id: '1',
-                title: 'The Future of Web Development',
-                author: 'Jane Smith',
-                savedDate: '2024-01-20',
-                url: '/blog/future-web-dev',
-                category: 'Tech'
-              },
-              {
-                id: '2',
-                title: 'Mindful Living in a Digital Age',
-                author: 'Alex Johnson',
-                savedDate: '2024-01-18',
-                url: '/blog/mindful-living',
-                category: 'Health & Wellness'
-              }
-            ]);
+        // Fetch saved blogs from API
+        const { getSavedBlogs } = await import('../../lib/savedBlogsClient');
+        const savedData = await getSavedBlogs(userData.id);
+        setSavedBlogs(savedData.blogs || []);
 
-            // Mock reading history
-            setReadingHistory([
-              {
-                id: '1',
-                title: 'The Future of Web Development',
-                author: 'Jane Smith',
-                readDate: '2024-01-20',
-                url: '/blog/future-web-dev',
-                timeSpent: 8
-              },
-              {
-                id: '2',
-                title: 'Building Better Habits',
-                author: 'Mike Wilson',
-                readDate: '2024-01-19',
-                url: '/blog/better-habits',
-                timeSpent: 12
-              }
-            ]);
+        // Fetch reading history from API
+        const { getReadingHistory } = await import('../../lib/readingHistoryClient');
+        const historyData = await getReadingHistory(userData.id);
+        setReadingHistory(historyData.history || []);
 
-            setFollowedBloggers([
-              {
-                id: '1',
-                username: 'Jane Smith',
-                blogName: 'Tech Insights Daily',
-                blogUrl: 'https://techinsights.com',
-                bio: 'Frontend developer sharing the latest in web technology',
-                followedDate: '2024-01-15',
-                category: 'Tech'
-              },
-              {
-                id: '2',
-                username: 'Alex Johnson',
-                blogName: 'Mindful Moments',
-                blogUrl: 'https://mindfulmoments.blog',
-                bio: 'Wellness coach helping you live mindfully',
-                followedDate: '2024-01-10',
-                category: 'Health & Wellness'
-              },
-              {
-                id: '3',
-                username: 'Sarah Davis',
-                blogName: 'Book Lover&apos;s Corner',
-                blogUrl: 'https://bookloverscorner.com',
-                bio: 'Avid reader reviewing the latest fiction and non-fiction',
-                followedDate: '2024-01-08',
-                category: 'Books & Media'
-              }
-            ]);
-          // } else {
-          //   router.push('/auth');
-          // }
-        // } else {
-        //   router.push('/auth');
-        // }
+        // Fetch followed bloggers
+        const followRes = await import('../../lib/followClient');
+        const followData = await followRes.getBloggerFollowingCount(userData.id);
+        setFollowedBloggers(followData.bloggers || []);
       } catch (error) {
-        console.error('Auth check failed:', error);
-        // router.push('/auth');
+        console.error('Failed to fetch profile data:', error);
       } finally {
         setIsLoading(false);
       }
     };
-
-    checkAuth();
+    fetchProfileData();
   }, [router]);
 
   const handleLogout = () => {
@@ -263,154 +192,37 @@ const ReaderProfile: React.FC = () => {
     switch (activeSection) {
       case 'overview':
         return (
-          <div className={styles.content}>
-            <h2>Profile Overview</h2>
-            <div className={styles.profileHeader}>
-              <div className={styles.avatar}>
-                {userInfo.avatar ? (
-                  <img src={userInfo.avatar} alt="Profile" />
-                ) : (
-                  <div className={styles.initials}>
-                    {getInitials(userInfo.displayName || userInfo.name)}
-                  </div>
-                )}
-              </div>
-              <div className={styles.profileInfo}>
-                <h3>{userInfo.displayName || userInfo.name}</h3>
-                <p className={styles.bio}>{userInfo.bio}</p>
-              </div>
-            </div>
-            <div className={styles.statsGrid}>
-              <div className={styles.statCard}>
-                <h4>Saved Blogs</h4>
-                <span className={styles.statNumber}>{savedBlogs.length}</span>
-              </div>
-              <div className={styles.statCard}>
-                <h4>Following</h4>
-                <span className={styles.statNumber}>{followedBloggers.length}</span>
-              </div>
-              <div className={styles.statCard}>
-                <h4>Blogs Read</h4>
-                <span className={styles.statNumber}>{readingHistory.length}</span>
-              </div>
-              <div className={styles.statCard}>
-                <h4>Topics Following</h4>
-                <span className={styles.statNumber}>{userInfo.topics.length}</span>
-              </div>
-            </div>
-          </div>
+          <ReaderOverviewTab
+            userInfo={userInfo}
+            savedBlogs={savedBlogs}
+            followedBloggers={followedBloggers}
+            readingHistory={readingHistory}
+          />
         );
-
       case 'saved':
         return (
-          <div className={styles.content}>
-            <h2>Saved Blogs</h2>
-            {savedBlogs.length === 0 ? (
-              <p className={styles.emptyState}>You haven&apos;t saved any blogs yet. Start exploring!</p>
-            ) : (
-              <div className={styles.blogList}>
-                {savedBlogs.map(blog => (
-                  <div key={blog.id} className={styles.blogItem}>
-                    <div className={styles.blogDetails}>
-                      <h4>{blog.title}</h4>
-                      <p>by {blog.author}</p>
-                      <span className={styles.category}>{blog.category}</span>
-                      <span className={styles.date}>Saved {new Date(blog.savedDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className={styles.blogActions}>
-                      <a href={blog.url} className={styles.readButton}>Read</a>
-                      <button 
-                        onClick={() => removeSavedBlog(blog.id)}
-                        className={styles.removeButton}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReaderSavedTab
+            readerId={userInfo.id}
+          />
         );
-
       case 'following':
         return (
-          <div className={styles.content}>
-            <h2>Following</h2>
-            {followedBloggers.length === 0 ? (
-              <p className={styles.emptyState}>You&apos;re not following any bloggers yet. Discover and follow bloggers you love!</p>
-            ) : (
-              <div className={styles.followingList}>
-                {followedBloggers.map(blogger => (
-                  <div key={blogger.id} className={styles.followingItem}>
-                    <div className={styles.bloggerInfo}>
-                      <div className={styles.bloggerAvatar}>
-                        {blogger.avatar ? (
-                          <img src={blogger.avatar} alt={blogger.username} />
-                        ) : (
-                          <div className={styles.bloggerInitials}>
-                            {getInitials(blogger.username)}
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles.bloggerDetails}>
-                        <h4>{blogger.username}</h4>
-                        <p className={styles.blogName}>{blogger.blogName}</p>
-                        {blogger.bio && <p className={styles.bloggerBio}>{blogger.bio}</p>}
-                        <div className={styles.bloggerMeta}>
-                          <span className={styles.category}>{blogger.category}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={styles.bloggerActions}>
-                      <a href={`/blogger/${blogger.id}`} className={styles.visitButton}>
-                        View Profile
-                      </a>
-                      <button 
-                        onClick={() => unfollowBlogger(blogger.id)}
-                        className={styles.unfollowButton}
-                      >
-                        Unfollow
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReaderFollowingTab
+            followedBloggers={followedBloggers}
+            unfollowBlogger={unfollowBlogger}
+          />
         );
-
       case 'history':
         return (
-          <div className={styles.content}>
-            <h2>Reading History</h2>
-            {readingHistory.length === 0 ? (
-              <p className={styles.emptyState}>No reading history yet. Start reading to build your history!</p>
-            ) : (
-              <div className={styles.historyList}>
-                {readingHistory.map(item => (
-                  <div key={item.id} className={styles.historyItem}>
-                    <div className={styles.historyDetails}>
-                      <h4>{item.title}</h4>
-                      <p>by {item.author}</p>
-                      {item.timeSpent && (
-                        <span className={styles.timeSpent}>{item.timeSpent} min read</span>
-                      )}
-                    </div>
-                    <div className={styles.historyActions}>
-                      <a href={item.url} className={styles.revisitButton}>Revisit</a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ReaderHistoryTab
+            readingHistory={readingHistory}
+          />
         );
 
       case 'preferences':
         return (
           <div className={styles.content}>
-            <h2>Preferences</h2>
+            <h2 style={{ color: '#c42142' }}>Preferences</h2>
             <div className={styles.preferencesSection}>
               <h3>Topics You Follow</h3>
               <div className={styles.topicTags}>
@@ -441,17 +253,19 @@ const ReaderProfile: React.FC = () => {
       case 'settings':
         return (
           <div className={styles.content}>
-            <h2>Account Settings</h2>
+            <h2 style={{ color: '#c42142' }}>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
                 <label>Profile Picture</label>
                 <div className={styles.profilePictureSection}>
                   <div className={styles.currentPicture}>
                     {profilePicturePreview || userInfo.avatar ? (
-                      <img 
+                      <Image 
                         src={profilePicturePreview || userInfo.avatar} 
                         alt="Profile" 
                         className={styles.previewImage}
+                        width={80}
+                        height={80}
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>
@@ -514,7 +328,7 @@ const ReaderProfile: React.FC = () => {
       case 'help':
         return (
           <div className={styles.content}>
-            <h2>Help & Support</h2>
+            <h2 style={{ color: '#c42142' }}>Help & Support</h2>
             <div className={styles.helpSection}>
               <div className={styles.helpItem}>
                 <h3>Contact Support</h3>
@@ -701,13 +515,9 @@ const ReaderProfile: React.FC = () => {
             >
               Help
             </button>
-            <button 
-              className={`${styles.navItem} ${styles.logout}`}
-              onClick={handleLogout}
-            >
-              Log Out
-            </button>
-            {userInfo.roles.includes('blogger') && (
+          </nav>
+          <div className={styles.accountActionsSection}>
+            {Array.isArray(userInfo.roles) && userInfo.roles.includes('blogger') && (
               <button 
                 className={`${styles.navItem} ${styles.switch}`}
                 onClick={() => {
@@ -719,7 +529,13 @@ const ReaderProfile: React.FC = () => {
                 Switch to Blogger
               </button>
             )}
-          </nav>
+            <button 
+              className={`${styles.navItem} ${styles.logout}`}
+              onClick={handleLogout}
+            >
+              Log Out
+            </button>
+          </div>
         </aside>
         <main className={styles.main}>
           {renderContent()}

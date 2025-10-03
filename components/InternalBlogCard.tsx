@@ -1,4 +1,6 @@
 import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import styles from '../styles/BlogCard.module.css';
 
 interface InternalBlogPost {
@@ -6,16 +8,16 @@ interface InternalBlogPost {
   title: string;
   author: string;
   authorProfile?: string;
-  bloggerId: string;
-  bloggerDisplayName: string;
+  bloggerId?: string;
+  bloggerDisplayName?: string;
   description: string;
-  category: string;
-  tags: string[];
+  category?: string;
+  tags?: string[];
   slug: string;
   imageUrl?: string;
   readTime?: string;
-  publishDate: string;
-  isPublished: boolean;
+  publishDate?: string;
+  status: 'draft' | 'published' | 'archived';
   imageDescription?: string;
 }
 
@@ -56,9 +58,15 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
       <div className={styles.imageContainer}>
         {blog.imageUrl && (
           <div className={styles.blogImage}>
-            <img 
-              src={blog.imageUrl} 
-              alt={blog.imageDescription || blog.title} 
+            <Image
+              src={blog.imageUrl}
+              alt={blog.imageDescription || blog.title}
+              width={600}
+              height={400}
+              style={{ objectFit: 'cover' }}
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 600px"
+              priority={false}
             />
           </div>
         )}
@@ -93,7 +101,7 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
         </p>
 
         <div className={styles.tagsContainer}>
-          {blog.tags.slice(0, 3).map((tag, index) => (
+          {(blog.tags ?? []).slice(0, 3).map((tag, index) => (
             <span key={index} className={styles.tag}>
               {tag}
             </span>
@@ -101,12 +109,9 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
         </div>
 
         <div className={styles.cardActions}>
-          <a 
-            href={`/blog/post/${blog.slug}`}
-            className={styles.readButton}
-          >
+          <Link href={`/blog/post/${blog.slug}`} className={styles.readButton}>
             Read More
-          </a>
+          </Link>
         </div>
       </div>
     </div>

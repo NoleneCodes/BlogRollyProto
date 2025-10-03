@@ -73,7 +73,7 @@ const ContactSupportPopup: React.FC<ContactSupportPopupProps> = ({ isOpen, onClo
       <div className={styles.popupContent}>
         <div className={styles.popupHeader}>
           <h3>Contact Support</h3>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <button className={styles.closeButton} aria-label="Close" onClick={onClose}>×</button>
         </div>
         
         <div className={styles.popupBody}>

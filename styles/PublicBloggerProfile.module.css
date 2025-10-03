@@ -1,3 +1,15 @@
+/* Account Settings Input Styling */
+.input, .textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #374151;
+  background: #f8fafc;
+  margin-bottom: 0.5rem;
+  transition: border-color 0.2s ease;
+}
 .profileContainer {
   max-width: 1200px;
   margin: 0 auto;
@@ -21,7 +33,7 @@
 .avatar {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
+  border-radius: 12px;
   object-fit: cover;
   border: 4px solid #f1f5f9;
 }
@@ -29,7 +41,7 @@
 .avatarPlaceholder {
   width: 120px;
   height: 120px;
-  border-radius: 50%;
+  border-radius: 12px;
   background: #c42142;
   color: white;
   display: flex;

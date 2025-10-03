@@ -1,6 +1,6 @@
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase, supabaseDB } from '../../lib/supabase';
+import { logSecurityEvent } from '../../lib/securityAudit';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -25,6 +25,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       availability = await supabaseDB.checkBlogPostUrlAvailability(url, excludeId);
     }
+
+    await logSecurityEvent({
+      event_type: 'api_access',
+      severity: 'medium',
+      ip_address: Array.isArray(req.headers['x-forwarded-for'])
+        ? req.headers['x-forwarded-for'][0]
+        : (req.headers['x-forwarded-for'] as string) || req.connection?.remoteAddress || 'unknown',
+      user_agent: req.headers['user-agent'] || 'unknown',
+      request_path: req.url,
+      request_method: req.method,
+      response_status: res.statusCode,
+      details: { endpoint: 'check-url-availability' },
+      compliance_flags: []
+    });
 
     return res.status(200).json({
       isAvailable: availability.isAvailable,

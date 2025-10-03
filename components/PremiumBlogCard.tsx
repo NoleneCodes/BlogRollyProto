@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from 'next/image';
 import BlogEditForm from './BlogEditForm';
 import styles from '../styles/PremiumBlogCard.module.css';
 
@@ -23,13 +24,16 @@ interface BlogSubmission {
 }
 
 interface PremiumBlogCardProps {
-  submission: BlogSubmission;
+  submission: BlogSubmission & { monthlyViews?: number; monthlyClicks?: number };
   isEditing: boolean;
   onEdit: (blogId: string) => void;
   onSaveEdit: (blogId: string, updatedData: any) => void;
   onCancelEdit: () => void;
   onToggleActivation: (blogId: string) => void;
   showMetrics?: boolean;
+  // Only for pro profile blogroll/analytics, not public
+  viewsToggle?: 'total' | 'monthly';
+  clicksToggle?: 'total' | 'monthly';
 }
 
 const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
@@ -39,7 +43,9 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
   onSaveEdit,
   onCancelEdit,
   onToggleActivation,
-  showMetrics = true
+  showMetrics = true,
+  viewsToggle,
+  clicksToggle,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -78,9 +84,11 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
       <div className={styles.premiumSubmissionCard}>
         <div className={styles.submissionImageContainer}>
           {submission.image ? (
-            <img
+            <Image
               src={submission.image}
               alt={submission.title}
+              width={120}
+              height={90}
               className={styles.submissionImage}
             />
           ) : (
@@ -148,15 +156,28 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
           {showMetrics && submission.status === 'approved' && submission.isActive && (
             <div className={styles.premiumMetrics}>
               <div className={styles.metricItem}>
-                <span className={styles.metricValue}>{submission.views || 0}</span>
-                <span className={styles.metricLabel}>Views</span>
+                <span className={styles.metricValue}>
+                  {viewsToggle === 'monthly'
+                    ? (submission.monthlyViews || 0)
+                    : (submission.views || 0)}
+                </span>
+                <span className={styles.metricLabel}>{viewsToggle === 'monthly' ? 'Monthly Views' : 'Views'}</span>
               </div>
               <div className={styles.metricItem}>
-                <span className={styles.metricValue}>{submission.clicks || 0}</span>
-                <span className={styles.metricLabel}>Clicks</span>
+                <span className={styles.metricValue}>
+                  {clicksToggle === 'monthly'
+                    ? (submission.monthlyClicks || 0)
+                    : (submission.clicks || 0)}
+                </span>
+                <span className={styles.metricLabel}>{clicksToggle === 'monthly' ? 'Monthly Clicks' : 'Clicks'}</span>
               </div>
               <div className={styles.metricItem}>
-                <span className={styles.metricValue}>{submission.ctr || 0}%</span>
+                <span className={styles.metricValue}>
+                  {viewsToggle === 'monthly'
+                    ? (submission.monthlyViews ? ((submission.monthlyClicks / submission.monthlyViews) * 100).toFixed(1) : 0)
+                    : (submission.views ? ((submission.clicks / submission.views) * 100).toFixed(1) : 0)
+                  }%
+                </span>
                 <span className={styles.metricLabel}>CTR</span>
               </div>
             </div>

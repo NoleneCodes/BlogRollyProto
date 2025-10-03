@@ -1,4 +1,3 @@
-
 -- BlogRolly Database Schema
 -- Migration 006: Link user-profile tier column with Stripe status information
 
@@ -38,14 +37,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Add trigger to validate tier changes
-DROP TRIGGER IF EXISTS validate_tier_stripe_trigger ON user_profiles;
-CREATE TRIGGER validate_tier_stripe_trigger
-    BEFORE INSERT OR UPDATE OF tier ON user_profiles
-    FOR EACH ROW
-    EXECUTE FUNCTION validate_tier_with_stripe();
 
--- Add function to sync tier when blogger profile changes
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger WHERE tgname = 'validate_tier_stripe_trigger') THEN
+        CREATE TRIGGER validate_tier_stripe_trigger
+            BEFORE INSERT OR UPDATE OF tier ON user_profiles
+            FOR EACH ROW
+            EXECUTE FUNCTION validate_tier_with_stripe();
+    END IF;
+END $$;
+
 CREATE OR REPLACE FUNCTION sync_tier_on_subscription_change()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -79,6 +82,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Add trigger for syncing tier on subscription change (idempotent)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'sync_tier_on_subscription_change_trigger') THEN
+    CREATE TRIGGER sync_tier_on_subscription_change_trigger
+      AFTER UPDATE OF subscription_status, subscription_end_date ON blogger_profiles
+      FOR EACH ROW
+      EXECUTE FUNCTION sync_tier_on_subscription_change();
+  END IF;
+END $$;
+
 -- Add trigger to sync tier when subscription status changes
 DROP TRIGGER IF EXISTS sync_tier_subscription_trigger ON blogger_profiles;
 CREATE TRIGGER sync_tier_subscription_trigger
@@ -92,7 +107,7 @@ RETURNS TABLE(
     user_id UUID,
     current_tier user_tier,
     should_be_tier user_tier,
-    subscription_status TEXT,
+    subscription_status VARCHAR(20),
     subscription_end_date TIMESTAMPTZ
 ) AS $$
 BEGIN
@@ -165,12 +180,14 @@ COMMENT ON TRIGGER validate_tier_stripe_trigger ON user_profiles IS 'Ensures tie
 COMMENT ON TRIGGER sync_tier_subscription_trigger ON blogger_profiles IS 'Automatically updates user tier when subscription status changes';
 
 -- Add view for easy monitoring of subscription/tier status
-CREATE OR REPLACE VIEW user_subscription_status AS
+DROP VIEW IF EXISTS user_subscription_status CASCADE;
+-- Recreate view as RLS-enforced (default, do NOT specify SECURITY DEFINER or INVOKER)
+CREATE VIEW user_subscription_status AS
 SELECT 
     up.user_id,
-    up.first_name,
-    up.surname,
-    up.username,
+    u.first_name,
+    u.surname,
+    u.username,
     up.tier,
     bp.stripe_customer_id,
     bp.subscription_status,
@@ -194,6 +211,7 @@ SELECT
         ELSE FALSE
     END as tier_subscription_consistent
 FROM user_profiles up
+JOIN users u ON up.user_id = u.id
 LEFT JOIN blogger_profiles bp ON up.user_id = bp.user_id;
 
 COMMENT ON VIEW user_subscription_status IS 'Provides easy monitoring of user tier and Stripe subscription consistency';

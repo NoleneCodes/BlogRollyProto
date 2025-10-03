@@ -1,3 +1,7 @@
+.footerTagline {
+  color: #c42142;
+  font-weight: 600;
+}
 .container {
   min-height: 100vh;
   display: flex;
@@ -163,13 +167,13 @@
 
 .footerSection p {
   margin: 0;
-  color: #666;
+  color: #c42142;
   line-height: 1.5;
 }
 
 .footerSection a {
   display: block;
-  color: #666;
+  color: #c42142;
   text-decoration: none;
   margin-bottom: 0.5rem;
   transition: color 0.2s ease;
@@ -189,7 +193,7 @@
 
 .footerBottom p {
   margin: 0;
-  color: #666;
+  color: #c42142;
   font-size: 0.9rem;
 }
 

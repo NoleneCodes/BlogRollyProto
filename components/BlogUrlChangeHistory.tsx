@@ -12,11 +12,7 @@ const BlogUrlChangeHistory: React.FC<BlogUrlChangeHistoryProps> = ({ blogSubmiss
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchUrlChanges();
-  }, [blogSubmissionId]);
-
-  const fetchUrlChanges = async () => {
+  const fetchUrlChanges = React.useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabaseDB.getBlogPostUrlChanges(blogSubmissionId);
@@ -32,7 +28,11 @@ const BlogUrlChangeHistory: React.FC<BlogUrlChangeHistoryProps> = ({ blogSubmiss
     } finally {
       setLoading(false);
     }
-  };
+  }, [blogSubmissionId]);
+
+  useEffect(() => {
+    fetchUrlChanges();
+  }, [blogSubmissionId, fetchUrlChanges]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('en-US', {

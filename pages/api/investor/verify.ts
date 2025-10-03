@@ -15,15 +15,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Find investor by verification token
-    const { data: investor, error: findError } = await supabase
-      .from('investor_users')
-      .select('id, email, name, is_verified')
-      .eq('verification_token', token)
-      .single();
+
+      const { data: investor, error: findError } = await supabase
+        .from('investor_users')
+        .select('id, email, name, is_verified, token_expires_at')
+        .eq('verification_token', token)
+        .single();
 
     if (findError || !investor) {
       return res.status(400).json({ error: 'Invalid or expired verification token' });
     }
+
+      // Check if token is expired
+      if (investor.token_expires_at && new Date() > new Date(investor.token_expires_at)) {
+        return res.status(400).json({ error: 'Verification token has expired. Please request a new verification email.' });
+      }
 
     if (investor.is_verified) {
       return res.status(200).json({ 

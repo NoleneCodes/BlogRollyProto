@@ -1,5 +1,8 @@
+// Place handler functions after state declarations (inside the component)
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useUser } from '@supabase/auth-helpers-react';
 import Layout from '../../components/Layout';
 import BlogSubmissionForm from '../../components/BlogSubmissionForm';
 import HowItWorksPopup from '../../components/HowItWorksPopup';
@@ -8,7 +11,15 @@ import ContactSupportPopup from '../../components/ContactSupportPopup';
 import BugReportModal from '../../components/BugReportModal';
 import PremiumBlogCard from '../../components/PremiumBlogCard';
 import styles from '../../styles/BloggerProfilePremium.module.css';
+import ProBillingSubscription from '../../components/bloggerPremium/ProBillingSubscription';
+import FeedbackPopup from '../../components/FeedbackPopup';
+import PremiumOverviewTab from '../../components/bloggerPremium/PremiumOverviewTab';
+import PremiumBlogrollTab from '../../components/bloggerPremium/PremiumBlogrollTab';
+import PremiumAnalyticsTab from '../../components/bloggerPremium/PremiumAnalyticsTab';
+import ProHelpSupport from '../../components/bloggerPremium/ProHelpSupport';
+import ProSocialLinks from '../../components/bloggerPremium/ProSocialLinks';
 import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
+import { getBloggerProfileByUserId, supabaseDB } from '../../lib/supabase';
 import { FaTwitter, FaLinkedin, FaInstagram, FaYoutube, FaTiktok, FaGithub } from 'react-icons/fa';
 
 interface UserInfo {
@@ -59,11 +70,14 @@ interface BlogStats {
 }
 
 const BloggerProfilePremium: React.FC = () => {
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  // State declarations must come first
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('overview');
   const [blogSubmissions, setBlogSubmissions] = useState<BlogSubmission[]>([]);
+  const [blogSubmissionsWithMonthly, setBlogSubmissionsWithMonthly] = useState<any[] | null>(null);
   const [blogStats, setBlogStats] = useState<BlogStats | null>(null);
   const [showBlogSubmissionForm, setShowBlogSubmissionForm] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
@@ -86,213 +100,11 @@ const BloggerProfilePremium: React.FC = () => {
     tiktok: '',
     github: ''
   });
-
   const [blogrollFilter, setBlogrollFilter] = useState<string>('all');
+  const user = useUser();
+  const userId = user?.id || '';
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Mock pro blogger user data
-        setUserInfo({
-          id: 'pro-blogger-123',
-          name: 'Pro Blogger',
-          email: 'pro@example.com',
-          displayName: 'Pro Content Creator',
-          bio: 'Professional content creator and thought leader in tech innovation',
-          joinedDate: '2023-06-15',
-          blogName: 'Innovation Insights Pro',
-          blogUrl: 'https://innovationinsightspro.com',
-          topics: ['Tech', 'Innovation', 'Business', 'AI'],
-          roles: ['blogger'],
-          tier: 'pro'
-        });
-
-        // Initialize social links
-        setSocialLinks({
-          twitter: 'https://twitter.com/problogger',
-          linkedin: 'https://linkedin.com/in/problogger',
-          instagram: '',
-          youtube: '',
-          tiktok: '',
-          github: 'https://github.com/problogger'
-        });
-
-        // Mock pro blog submissions (unlimited)
-        setBlogSubmissions([
-          {
-            id: '1',
-            title: 'The Future of AI in Enterprise Software',
-            url: 'https://innovationinsightspro.com/ai-enterprise-future',
-            category: 'Tech',
-            status: 'approved',
-            submittedDate: '2024-01-15',
-            views: 5250,
-            clicks: 430,
-            isActive: true,
-            description: 'Comprehensive analysis of how AI is transforming enterprise software development.',
-            image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=200&fit=crop',
-            ctr: 8.2,
-            bounceRate: 24.8,
-            tags: ['AI', 'Enterprise', 'Software Development', 'Future Tech']
-          },
-          {
-            id: '2',
-            title: 'Building Scalable SaaS Architecture',
-            url: 'https://innovationinsightspro.com/scalable-saas',
-            category: 'Tech',
-            status: 'approved',
-            submittedDate: '2024-01-20',
-            views: 3890,
-            clicks: 312,
-            isActive: true,
-            description: 'Deep dive into architectural patterns for building scalable SaaS applications.',
-            image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop',
-            ctr: 8.0,
-            bounceRate: 18.5,
-            tags: ['SaaS', 'Architecture', 'Scalability']
-          },
-          {
-            id: '3',
-            title: 'Leadership in Remote Teams',
-            url: 'https://innovationinsightspro.com/remote-leadership',
-            category: 'Business',
-            status: 'approved',
-            submittedDate: '2024-01-18',
-            views: 2650,
-            clicks: 198,
-            isActive: true,
-            description: 'Essential strategies for leading and managing distributed teams effectively.',
-            image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=200&fit=crop',
-            ctr: 7.5,
-            bounceRate: 28.3,
-            tags: ['Leadership', 'Remote Work', 'Team Management']
-          },
-          {
-            id: '4',
-            title: 'Machine Learning for Product Managers',
-            url: 'https://innovationinsightspro.com/ml-product-management',
-            category: 'AI',
-            status: 'approved',
-            submittedDate: '2024-01-22',
-            views: 4120,
-            clicks: 367,
-            isActive: true,
-            description: 'How product managers can leverage ML to build better products.',
-            image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400&h=200&fit=crop',
-            ctr: 8.9,
-            bounceRate: 15.2
-          },
-          {
-            id: '5',
-            title: 'Startup Growth Hacking Strategies',
-            url: 'https://innovationinsightspro.com/growth-hacking',
-            category: 'Business',
-            status: 'approved',
-            submittedDate: '2024-01-25',
-            views: 1890,
-            clicks: 143,
-            isActive: true,
-            description: 'Proven growth strategies that helped startups scale from 0 to millions.',
-            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop',
-            ctr: 7.6,
-            bounceRate: 32.1
-          },
-          {
-            id: '6',
-            title: 'The Evolution of DevOps Culture',
-            url: 'https://innovationinsightspro.com/devops-culture',
-            category: 'Tech',
-            status: 'pending',
-            submittedDate: '2024-01-28',
-            views: 0,
-            clicks: 0,
-            description: 'How DevOps culture is evolving and what it means for engineering teams.',
-            image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=200&fit=crop',
-            ctr: 0,
-            bounceRate: 0
-          }
-        ]);
-
-        // Mock pro blog stats
-        setBlogStats({
-          totalViews: 17800,
-          monthlyViews: 4250,
-          totalClicks: 1450,
-          monthlyClicks: 312,
-          totalSubmissions: 15,
-          approvedSubmissions: 12,
-          clickThroughRate: 8.1,
-          averageTimeOnSite: 5.4,
-          monthlyGrowth: 23.7,
-          topPerformingCategory: 'Tech',
-          readerRetention: 68.3
-        });
-
-        // Load saved drafts from localStorage
-        loadSavedDrafts();
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
-  const loadSavedDrafts = () => {
-    const savedDraft = localStorage.getItem('blogSubmissionDraft');
-    if (savedDraft) {
-      try {
-        const draft = JSON.parse(savedDraft);
-        const { savedAt, ...draftFormData } = draft;
-
-        // Only add draft if it has meaningful content
-        if (draftFormData.title || draftFormData.description || draftFormData.postUrl) {
-          const draftSubmission: BlogSubmission = {
-            id: 'draft-' + Date.now().toString(),
-            title: draftFormData.title || 'Untitled Draft',
-            url: draftFormData.postUrl || '',
-            category: draftFormData.category || 'Other',
-            status: 'draft',
-            submittedDate: new Date().toISOString().split('T')[0],
-            views: 0,
-            clicks: 0,
-            description: draftFormData.description || 'Draft in progress...',
-            image: null,
-            imageDescription: draftFormData.imageDescription || '',
-            ctr: 0,
-            bounceRate: 0
-          };
-
-          setBlogSubmissions(prev => {
-            // Check if draft already exists to avoid duplicates
-            const existingDraftIndex = prev.findIndex(sub => sub.status === 'draft' && sub.title === draftSubmission.title);
-            if (existingDraftIndex >= 0) {
-              // Update existing draft
-              const updated = [...prev];
-              updated[existingDraftIndex] = draftSubmission;
-              return updated;
-            } else {
-              // Add new draft
-              return [draftSubmission, ...prev];
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error loading saved draft:', error);
-      }
-    }
-  };
-
-  const handleLogout = () => {
-    router.push('/');
-  };
-
-  const handleSwitchToReader = () => {
-    router.push('/profile/reader');
-  };
-
+  // Handler to toggle post activation status
   const togglePostActivation = (postId: string) => {
     setBlogSubmissions(prev => prev.map(post => {
       if (post.id === postId && post.status === 'approved') {
@@ -302,20 +114,132 @@ const BloggerProfilePremium: React.FC = () => {
     }));
   };
 
+  // Handler to switch to reader view (placeholder)
+  const handleSwitchToReader = () => {
+    alert('Switching to reader view...');
+    // Implement navigation logic as needed
+  };
+
+  // Handler to log out (placeholder)
+  const handleLogout = () => {
+    alert('Logging out...');
+    // Implement logout logic as needed
+  };
+
+  // Handler for loading saved drafts (placeholder)
+  const loadSavedDrafts = () => {
+    // Implement logic to load saved drafts if needed
+  };
+
+
+  // Recalculate blogStats and per-blog monthly stats using event tables for rolling 30-day monthly stats
+  useEffect(() => {
+    if (!blogSubmissions || blogSubmissions.length === 0 || !userInfo) {
+      setBlogStats(null);
+      // Also clear monthly stats on per-blog cards
+      setBlogSubmissionsWithMonthly(null);
+      return;
+    }
+    const fetchMonthlyStats = async () => {
+      // All-time totals from blogSubmissions
+      const totalViews = blogSubmissions.reduce((sum, sub) => sum + (sub.views || 0), 0);
+      const totalClicks = blogSubmissions.reduce((sum, sub) => sum + (sub.clicks || 0), 0);
+      // Rolling 30-day stats from event tables (all blogs)
+      const [viewRes, clickRes] = await Promise.all([
+        supabaseDB.getBlogViewEventsLast30Days(userInfo.id),
+        supabaseDB.getBlogClickEventsLast30Days(userInfo.id)
+      ]);
+      const monthlyViews = Array.isArray(viewRes.data) ? viewRes.data.length : 0;
+      const monthlyClicks = Array.isArray(clickRes.data) ? clickRes.data.length : 0;
+      const approvedSubmissions = blogSubmissions.filter(sub => sub.status === 'approved').length;
+      const clickThroughRate = totalViews > 0 ? ((totalClicks / totalViews) * 100) : 0;
+
+      // Per-blog monthly stats
+      const blogIdToMonthlyViews: Record<string, number> = {};
+      const blogIdToMonthlyClicks: Record<string, number> = {};
+      if (Array.isArray(viewRes.data)) {
+        for (const event of viewRes.data) {
+          if (event.blog_submission_id) {
+            blogIdToMonthlyViews[event.blog_submission_id] = (blogIdToMonthlyViews[event.blog_submission_id] || 0) + 1;
+          }
+        }
+      }
+      if (Array.isArray(clickRes.data)) {
+        for (const event of clickRes.data) {
+          if (event.blog_submission_id) {
+            blogIdToMonthlyClicks[event.blog_submission_id] = (blogIdToMonthlyClicks[event.blog_submission_id] || 0) + 1;
+          }
+        }
+      }
+      // Attach monthly stats to each blogSubmission
+      const blogSubmissionsWithMonthly = blogSubmissions.map(sub => ({
+        ...sub,
+        monthlyViews: blogIdToMonthlyViews[sub.id] || 0,
+        monthlyClicks: blogIdToMonthlyClicks[sub.id] || 0,
+      }));
+      setBlogSubmissionsWithMonthly(blogSubmissionsWithMonthly);
+
+      setBlogStats({
+        totalViews,
+        monthlyViews,
+        totalClicks,
+        monthlyClicks,
+        totalSubmissions: blogSubmissions.length,
+        approvedSubmissions,
+        clickThroughRate: parseFloat(clickThroughRate.toFixed(1)),
+        averageTimeOnSite: 2.5,
+        monthlyGrowth: 8.2,
+        topPerformingCategory: 'Tech',
+        readerRetention: 78
+      });
+    };
+    fetchMonthlyStats();
+  }, [blogSubmissions, userInfo]);
+  useEffect(() => {
+    // Fetch real user info and blog submissions from Supabase
+    const fetchData = async () => {
+      // Simulate auth/user fetch (replace with your real auth logic)
+      const { data: userProfile, error: userError } = await getBloggerProfileByUserId(userId);
+      if (userProfile) {
+        setUserInfo({
+          id: userProfile.user_id,
+          name: userProfile.display_name || userProfile.name || '',
+          email: userProfile.email || '',
+          displayName: userProfile.display_name || '',
+          bio: userProfile.bio || '',
+          joinedDate: userProfile.created_at || '',
+          avatar: userProfile.avatar_url || '',
+          blogName: userProfile.blog_name || '',
+          blogUrl: userProfile.blog_url || '',
+          topics: userProfile.categories || [],
+          roles: userProfile.roles || ['blogger'],
+          tier: 'pro',
+        });
+      }
+      // Fetch blog submissions
+      const { data: submissions, error: subError } = await supabaseDB.getUserSubmissions(userId);
+      if (submissions && Array.isArray(submissions)) {
+        // Ensure all analytics fields are numbers and default to 0
+        const mapped = submissions.map((sub: any) => ({
+          ...sub,
+          views: typeof sub.views === 'number' ? sub.views : 0,
+          clicks: typeof sub.clicks === 'number' ? sub.clicks : 0,
+          ctr: typeof sub.ctr === 'number' ? sub.ctr : 0,
+        }));
+        setBlogSubmissions(mapped);
+      }
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
+
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved': return '#10b981';
-      case 'pending': return '#f59e0b';
-      case 'draft': return '#6b7280';
-      case 'rejected': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
+  // ...existing code...
+  // ...existing code...
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -453,270 +377,188 @@ const BloggerProfilePremium: React.FC = () => {
   };
 
 
+
+  // Use real data if available, otherwise fallback to mock for UI testing
+  let displayUserInfo = userInfo;
+  let displayBlogSubmissions = blogSubmissions;
+  let displayBlogStats = blogStats;
+  if (!displayUserInfo) {
+    // ...existing mock fallback code...
+    displayBlogSubmissions = [
+      {
+        id: 'mock-1',
+        title: 'How to Grow Your Blog Audience in 2025',
+        url: 'https://mockproblog.com/grow-audience',
+        category: 'Tech',
+        status: 'approved',
+        submittedDate: '2025-08-01',
+        views: 1200,
+        clicks: 180,
+        isActive: true,
+        description: 'A comprehensive guide to growing your blog audience with actionable tips.',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+        imageDescription: 'Laptop and coffee',
+        ctr: 15,
+        bounceRate: 40,
+        tags: ['Growth', 'Audience']
+      },
+      {
+        id: 'mock-2',
+        title: 'Monetizing Your Blog: Pro Strategies',
+        url: 'https://mockproblog.com/monetize',
+        category: 'Lifestyle',
+        status: 'approved',
+        submittedDate: '2025-08-15',
+        views: 900,
+        clicks: 120,
+        isActive: false,
+        description: 'Learn how to monetize your blog with these proven strategies.',
+        image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6',
+        imageDescription: 'Money and notebook',
+        ctr: 13.3,
+        bounceRate: 35,
+        tags: ['Monetization', 'Strategy']
+      },
+      {
+        id: 'mock-3',
+        title: 'The Best Blogging Tools for Pros',
+        url: 'https://mockproblog.com/tools',
+        category: 'Tech',
+        status: 'pending',
+        submittedDate: '2025-09-01',
+        views: 300,
+        clicks: 30,
+        isActive: true,
+        description: 'A roundup of the best tools every pro blogger should use.',
+        image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2',
+        imageDescription: 'Desk with tech gadgets',
+        ctr: 10,
+        bounceRate: 50,
+        tags: ['Tools', 'Productivity']
+      }
+    ];
+
+    displayUserInfo = {
+      id: 'mock-pro-user',
+      name: 'Test Pro Blogger',
+      email: 'pro@example.com',
+      displayName: 'Test Pro Blogger',
+      bio: 'This is a mock pro blogger profile for UI testing.',
+      joinedDate: '2024-01-15',
+      avatar: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91',
+      blogName: 'Mock Pro Blog',
+      blogUrl: 'https://mockproblog.com',
+      topics: ['Lifestyle', 'Tech'],
+      roles: ['blogger'],
+      tier: 'pro'
+    };
+
+    // Calculate stats from mock data for fallback
+    const now = new Date();
+    const thisMonth = now.toISOString().slice(0, 7);
+    // Per-blog monthly stats for mock data
+    const displayBlogSubmissionsWithMonthly = displayBlogSubmissions.map(sub => ({
+      ...sub,
+      monthlyViews: sub.submittedDate && sub.submittedDate.startsWith(thisMonth) ? sub.views || 0 : 0,
+      monthlyClicks: sub.submittedDate && sub.submittedDate.startsWith(thisMonth) ? sub.clicks || 0 : 0,
+    }));
+    const totalViews = displayBlogSubmissions.reduce((sum, sub) => sum + (sub.views || 0), 0);
+    const totalClicks = displayBlogSubmissions.reduce((sum, sub) => sum + (sub.clicks || 0), 0);
+    const monthlyViews = displayBlogSubmissionsWithMonthly.reduce((sum, sub) => sum + (sub.monthlyViews || 0), 0);
+    const monthlyClicks = displayBlogSubmissionsWithMonthly.reduce((sum, sub) => sum + (sub.monthlyClicks || 0), 0);
+    const approvedSubmissions = displayBlogSubmissions.filter(sub => sub.status === 'approved').length;
+    const clickThroughRate = totalViews > 0 ? ((totalClicks / totalViews) * 100) : 0;
+    displayBlogStats = {
+      totalViews,
+      monthlyViews,
+      totalClicks,
+      monthlyClicks,
+      totalSubmissions: displayBlogSubmissions.length,
+      approvedSubmissions,
+      clickThroughRate: parseFloat(clickThroughRate.toFixed(1)),
+      averageTimeOnSite: 2.5,
+      monthlyGrowth: 8.2,
+      topPerformingCategory: 'Tech',
+      readerRetention: 78
+    };
+    // Use the monthly-enabled mock submissions for the two pro tabs
+    displayBlogSubmissions = displayBlogSubmissionsWithMonthly;
+  }
+
   if (isLoading) {
     return (
       <Layout title="Pro Blogger Profile - Blogrolly">
         <div className={styles.loading}>
-          <h2>Loading your pro profile...</h2>
+          <h2>Loading your profile...</h2>
         </div>
       </Layout>
     );
   }
 
-  if (!userInfo) {
-    return null;
-  }
-
   const renderContent = () => {
+    // Use displayBlogStats and displayBlogSubmissions for both real and mock
     switch (activeSection) {
       case 'overview':
         return (
-          <div className={styles.content}>
-            <h2>Profile Overview</h2>
-            <div className={styles.profileHeader}>
-              <div className={styles.avatar}>
-                {userInfo.avatar ? (
-                  <img src={userInfo.avatar} alt="Profile" />
-                ) : (
-                  <div className={styles.initials}>
-                    {getInitials(userInfo.displayName || userInfo.name)}
-                  </div>
-                )}
-              </div>
-              <div className={styles.profileInfo}>
-                <h3>{userInfo.displayName || userInfo.name}</h3>
-                <p className={styles.blogName}>{userInfo.blogName}</p>
-                <p className={styles.bio}>{userInfo.bio}</p>
-              </div>
-            </div>
-            {blogStats && (
-              <div className={styles.proStatsGrid}>
-                <div className={styles.statCard} onClick={() => setViewsToggle(viewsToggle === 'total' ? 'monthly' : 'total')}>
-                  <div className={styles.statCardHeader}>
-                    <h4>{viewsToggle === 'total' ? 'Total Views' : 'Views This Month'}</h4>
-                    <button className={styles.toggleButton}>
-                      {viewsToggle === 'total' ? 'Monthly' : 'Total'}
-                    </button>
-                  </div>
-                  <span className={styles.statNumber}>
-                    {viewsToggle === 'total' 
-                      ? blogStats.totalViews.toLocaleString() 
-                      : blogStats.monthlyViews.toLocaleString()
-                    }
-                  </span>
-                  <span className={styles.statGrowth}>
-                    {viewsToggle === 'total' 
-                      ? `+${blogStats.monthlyGrowth}% this month` 
-                      : 'Current month performance'
-                    }
-                  </span>
-                </div>
-                <div className={styles.statCard} onClick={() => setClicksToggle(clicksToggle === 'total' ? 'monthly' : 'total')}>
-                  <div className={styles.statCardHeader}>
-                    <h4>{clicksToggle === 'total' ? 'Total Clicks' : 'Clicks This Month'}</h4>
-                    <button className={styles.toggleButton}>
-                      {clicksToggle === 'total' ? 'Monthly' : 'Total'}
-                    </button>
-                  </div>
-                  <span className={styles.statNumber}>
-                    {clicksToggle === 'total' 
-                      ? blogStats.totalClicks.toLocaleString() 
-                      : blogStats.monthlyClicks.toLocaleString()
-                    }
-                  </span>
-                  <span className={styles.statGrowth}>
-                    {clicksToggle === 'total' 
-                      ? 'All-time performance' 
-                      : 'Current month performance'
-                    }
-                  </span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Click Rate</h4>
-                  <span className={styles.statNumber}>{blogStats.clickThroughRate}%</span>
-                </div>
-                <div className={styles.statCard}>
-                  <h4>Active Blogs</h4>
-                  <span className={styles.statNumber}>{blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length}</span>
-                  <span className={styles.statDescription}>Unlimited</span>
-                </div>
-              </div>
-            )}
-          </div>
+          <PremiumOverviewTab
+            userInfo={displayUserInfo}
+            blogStats={displayBlogStats}
+            blogSubmissions={displayBlogSubmissions}
+            setViewsToggle={setViewsToggle}
+            clicksToggle={clicksToggle}
+            setClicksToggle={setClicksToggle}
+          />
         );
-
       case 'blogroll':
         return (
-          <div className={styles.content}>
-            <div className={styles.sectionHeader}>
-              <h2>My Blogroll</h2>
-              <button 
-                className={styles.primaryButton}
-                onClick={() => setShowBlogSubmissionForm(true)}
-              >
-                Submit New Blog
-              </button>
-            </div>
-
-            {blogSubmissions.length === 0 ? (
-              <p className={styles.emptyState}>No blog submissions yet. Submit your first blog post!</p>
-            ) : (
-              <>
-                <div className={styles.blogrollFilters}>
-                  <div className={styles.filterButtons}>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'all' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('all')}
-                    >
-                      All ({blogSubmissions.length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'draft' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('draft')}
-                    >
-                      Drafts ({blogSubmissions.filter(post => post.status === 'draft').length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'live' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('live')}
-                    >
-                      Live ({blogSubmissions.filter(post => post.status === 'approved' && post.isActive).length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'deactivated' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('deactivated')}
-                    >
-                      Inactive ({blogSubmissions.filter(post => post.status === 'approved' && !post.isActive).length})
-                    </button>
-                    <button 
-                      className={`${styles.filterButton} ${blogrollFilter === 'pending' ? styles.active : ''}`}
-                      onClick={() => setBlogrollFilter('pending')}
-                    >
-                      Pending ({blogSubmissions.filter(post => post.status === 'pending').length})
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.submissionsList}>
-                  {blogSubmissions
-                    .filter(submission => {
-                      if (blogrollFilter === 'all') return true;
-                      if (blogrollFilter === 'draft') return submission.status === 'draft';
-                      if (blogrollFilter === 'live') return submission.status === 'approved' && submission.isActive;
-                      if (blogrollFilter === 'deactivated') return submission.status === 'approved' && !submission.isActive;
-                      if (blogrollFilter === 'pending') return submission.status === 'pending';
-                      return true;
-                    })
-                    .map(submission => (
-                      <PremiumBlogCard
-                        key={submission.id}
-                        submission={submission}
-                        isEditing={editingBlog === submission.id}
-                        onEdit={handleEditBlog}
-                        onSaveEdit={handleSaveBlogEdit}
-                        onCancelEdit={handleCancelBlogEdit}
-                        onToggleActivation={togglePostActivation}
-                        showMetrics={true}
-                      />
-                    ))}
-                </div>
-              </>
-            )}
-          </div>
+          <PremiumBlogrollTab
+            blogSubmissions={displayBlogSubmissions}
+            blogrollFilter={blogrollFilter}
+            setBlogrollFilter={setBlogrollFilter}
+            editingBlog={editingBlog}
+            startEditingBlog={handleEditBlog}
+            cancelEditingBlog={handleCancelBlogEdit}
+            saveEditedBlog={handleSaveBlogEdit}
+            handleEditField={() => {}}
+            handleSaveEdit={() => {}}
+            togglePostActivation={togglePostActivation}
+            setShowBlogSubmissionForm={setShowBlogSubmissionForm}
+          />
         );
-
       case 'analytics':
         return (
-          <div className={styles.content}>
-            <div className={styles.sectionHeader}>
-              <h2>Analytics</h2>
-              <select 
-                value={selectedTimeframe}
-                onChange={(e) => setSelectedTimeframe(e.target.value)}
-                className={styles.timeframeSelect}
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
-            </div>
-
-            {blogStats && (
-              <>
-                <div className={styles.analyticsGrid}>
-                  <div className={styles.analyticsCard}>
-                    <h4>Performance Overview</h4>
-                    <div className={styles.performanceMetrics}>
-                      <div className={styles.performanceItem}>
-                        <span className={styles.performanceLabel}>Avg. CTR</span>
-                        <span className={styles.performanceValue}>{blogStats.clickThroughRate}%</span>
-                        <span className={styles.performanceGrowth}>+0.8% vs last period</span>
-                      </div>
-
-                      <div className={styles.performanceItem}>
-                        <span className={styles.performanceLabel}>Monthly Growth</span>
-                        <span className={styles.performanceValue}>+{blogStats.monthlyGrowth}%</span>
-                        <span className={styles.performanceGrowth}>Traffic growth rate</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.analyticsCard}>
-                    <h4>Top Performing Content</h4>
-                    <div className={styles.topContent}>
-                      {blogSubmissions
-                        .filter(sub => sub.status === 'approved' && sub.isActive)
-                        .sort((a, b) => (b.views || 0) - (a.views || 0))
-                        .slice(0, 3)
-                        .map(submission => (
-                          <div key={submission.id} className={styles.topContentItem}>
-                            <div className={styles.contentTitle}>{submission.title}</div>
-                            <div className={styles.contentStats}>
-                              <span>{submission.views} views</span>
-                              <span>{submission.clicks} clicks</span>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-
-                  <div className={styles.analyticsCard}>
-                    <h4>Audience Insights</h4>
-                    <div className={styles.audienceInsights}>
-                      <div className={styles.insightItem}>
-                        <span className={styles.insightLabel}>Top Category</span>
-                        <span className={styles.insightValue}>{blogStats.topPerformingCategory}</span>
-                      </div>
-                      <div className={styles.insightItem}>
-                        <span className={styles.insightLabel}>Monthly Growth</span>
-                        <span className={styles.insightValue}>+{blogStats.monthlyGrowth}%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          <PremiumAnalyticsTab
+            blogStats={displayBlogStats}
+            blogSubmissions={displayBlogSubmissions}
+            selectedTimeframe={selectedTimeframe}
+            setSelectedTimeframe={setSelectedTimeframe}
+            viewsToggle={viewsToggle}
+            setViewsToggle={setViewsToggle}
+            clicksToggle={clicksToggle}
+            setClicksToggle={setClicksToggle}
+          />
         );
 
       case 'settings':
         return (
           <div className={styles.content}>
-            <h2>Account Settings</h2>
+            <h2 style={{ color: '#c42142' }}>Account Settings</h2>
             <div className={styles.settingsForm}>
               <div className={styles.formGroup}>
                 <label>Profile Picture</label>
                 <div className={styles.profilePictureSection}>
                   <div className={styles.currentPicture}>
-                    {profilePicturePreview || userInfo.avatar ? (
-                      <img 
-                        src={profilePicturePreview || userInfo.avatar} 
-                        alt="Profile" 
+                    {profilePicturePreview || displayUserInfo.avatar ? (
+                      <Image 
+                        src={profilePicturePreview || displayUserInfo.avatar} 
+                        alt="profile picture" 
                         className={styles.previewImage}
+                        width={80}
+                        height={80}
                       />
                     ) : (
                       <div className={styles.previewPlaceholder}>
-                        {getInitials(userInfo.displayName || userInfo.name)}
+                        {getInitials(displayUserInfo.displayName || displayUserInfo.name)}
                       </div>
                     )}
                   </div>
@@ -741,7 +583,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <label>Username</label>
                 <input 
                   type="text" 
-                  defaultValue={userInfo.displayName} 
+                  defaultValue={displayUserInfo.displayName} 
                   className={styles.input}
                 />
               </div>
@@ -749,7 +591,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <label>Email</label>
                 <input 
                   type="email" 
-                  defaultValue={userInfo.email} 
+                  defaultValue={displayUserInfo.email} 
                   className={styles.input}
                 />
               </div>
@@ -757,7 +599,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <label>Blog Name</label>
                 <input 
                   type="text" 
-                  defaultValue={userInfo.blogName} 
+                  defaultValue={displayUserInfo.blogName} 
                   className={styles.input}
                 />
               </div>
@@ -766,7 +608,7 @@ const BloggerProfilePremium: React.FC = () => {
                 <div className={styles.blogUrlSection}>
                   <input 
                     type="url" 
-                    value={userInfo.blogUrl} 
+                    value={displayUserInfo.blogUrl} 
                     className={`${styles.input} ${styles.readOnlyInput}`}
                     readOnly
                   />
@@ -778,7 +620,7 @@ const BloggerProfilePremium: React.FC = () => {
               <div className={styles.formGroup}>
                 <label>Bio</label>
                 <textarea 
-                  defaultValue={userInfo.bio} 
+                  defaultValue={displayUserInfo.bio} 
                   className={styles.textarea}
                   rows={4}
                   maxLength={500}
@@ -791,8 +633,8 @@ const BloggerProfilePremium: React.FC = () => {
                 <small className={styles.hint}>Topics that describe your blog content</small>
                 <div className={styles.topicsDisplaySection}>
                   <div className={styles.topicTags}>
-                    {userInfo.topics && userInfo.topics.length > 0 ? (
-                      userInfo.topics.map(topic => (
+                    {displayUserInfo.topics && displayUserInfo.topics.length > 0 ? (
+                      displayUserInfo.topics.map(topic => (
                         <span key={topic} className={styles.topicTag}>
                           {topic}
                           <button 
@@ -819,90 +661,7 @@ const BloggerProfilePremium: React.FC = () => {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Social Links</label>
-                <small className={styles.hint}>Add your social media and professional links</small>
-                <div className={styles.socialLinksGrid}>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaTwitter /></span>
-                      Twitter/X
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.twitter}
-                      onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
-                      placeholder="https://twitter.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaLinkedin /></span>
-                      LinkedIn
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.linkedin}
-                      onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
-                      placeholder="https://linkedin.com/in/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaInstagram /></span>
-                      Instagram
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.instagram}
-                      onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
-                      placeholder="https://instagram.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaYoutube /></span>
-                      YouTube
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.youtube}
-                      onChange={(e) => handleSocialLinkChange('youtube', e.target.value)}
-                      placeholder="https://youtube.com/@yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaTiktok /></span>
-                      TikTok
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.tiktok}
-                      onChange={(e) => handleSocialLinkChange('tiktok', e.target.value)}
-                      placeholder="https://tiktok.com/@yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                  <div className={styles.socialLinkItem}>
-                    <label className={styles.socialLabel}>
-                      <span className={styles.socialIcon}><FaGithub /></span>
-                      GitHub
-                    </label>
-                    <input
-                      type="url"
-                      value={socialLinks.github}
-                      onChange={(e) => handleSocialLinkChange('github', e.target.value)}
-                      placeholder="https://github.com/yourusername"
-                      className={styles.socialInput}
-                    />
-                  </div>
-                </div>
-              </div>
+              <ProSocialLinks socialLinks={socialLinks} handleSocialLinkChange={handleSocialLinkChange} />
 
               <button className={styles.saveButton} onClick={handleSaveSettings}>
                 Save Changes
@@ -913,87 +672,17 @@ const BloggerProfilePremium: React.FC = () => {
 
       case 'billing':
         return (
-          <div className={styles.content}>
-            <h2>Membership</h2>
-            <div className={styles.billingSection}>
-              <div className={styles.currentPlan}>
-                <div className={styles.planHeader}>
-                  <h3>Current Plan: Pro</h3>                  
-                </div>
-                <p>You&apos;re subscribed to our Pro plan with unlimited listings and priority support.</p>
-                <div className={styles.planFeatures}>
-                  <ul>
-                    <li>✅ Unlimited blog submissions</li>
-                    <li>✅ Advanced analytics and insights</li>
-                    <li>✅ Priority review for submissions</li>                 
-                    <li>✅ Priority support</li>
-                    <li>✅ Export analytics data</li>
-                    <li>✅ Custom profile themes (coming soon)</li>
-                  </ul>
-                  <p>More Pro features coming soon... Feel free to make suggestions</p>
-
-                </div>
-                <div className={styles.billingInfo}>
-                  <p><strong>Next billing date:</strong> February 15, 2024</p>
-                  <p><strong>Amount:</strong> $19/month</p>
-                  <p><strong>Payment method:</strong> •••• 4242</p>
-                </div>
-                <div className={styles.billingActions}>
-                  <button className={styles.manageButton}>Manage Subscription</button>
-                  <button className={styles.invoicesButton}>View Invoices</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProBillingSubscription onOpenFeedback={() => setShowFeedbackPopup(true)} />
         );
 
       case 'help':
         return (
-          <div className={styles.content}>
-            <h2>Help & Support</h2>
-            <div className={styles.helpSection}>
-              <div className={styles.helpItem}>
-                <h3>Report a Bug</h3>
-                <p>Help us improve BlogRolly by reporting any bugs or issues you encounter</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowBugReportPopup(true)}
-                >
-                  Report a Bug
-                </button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>Submission Guidelines</h3>
-                <p>Learn about our content guidelines and best practices for blog submissions</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowSubmissionGuidelinesPopup(true)}
-                >
-                  View Guidelines
-                </button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>How It Works</h3>
-                <p>Learn about our submission and review process for getting your blog featured</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowHowItWorksPopup(true)}
-                >
-                  Learn How It Works
-                </button>
-              </div>
-              <div className={styles.helpItem}>
-                <h3>Contact Support</h3>
-                <p>Get help from our support team</p>
-                <button 
-                  className={styles.helpButton}
-                  onClick={() => setShowContactSupportPopup(true)}
-                >
-                  Contact Us
-                </button>
-              </div>
-            </div>
-          </div>
+          <ProHelpSupport
+            setShowBugReportPopup={setShowBugReportPopup}
+            setShowSubmissionGuidelinesPopup={setShowSubmissionGuidelinesPopup}
+            setShowHowItWorksPopup={setShowHowItWorksPopup}
+            setShowContactSupportPopup={setShowContactSupportPopup}
+          />
         );
 
       default:
@@ -1085,8 +774,8 @@ const BloggerProfilePremium: React.FC = () => {
                 <BlogSubmissionForm 
                   onSubmit={handleBlogSubmit}
                   onDraftSaved={loadSavedDrafts}
-                  displayName={userInfo.displayName}
-                  bloggerId={userInfo.id}
+                  displayName={displayUserInfo.displayName}
+                  bloggerId={displayUserInfo.id}
                   isBlogger={true}
                 />
               </div>
@@ -1107,10 +796,11 @@ const BloggerProfilePremium: React.FC = () => {
         onClose={() => setShowSubmissionGuidelinesPopup(false)}
       />
 
-      {/* Contact Support Popup */}
-      <ContactSupportPopup
-        isOpen={showContactSupportPopup}
-        onClose={() => setShowContactSupportPopup(false)}
+
+      {/* Feedback Popup */}
+      <FeedbackPopup
+        isOpen={showFeedbackPopup}
+        onClose={() => setShowFeedbackPopup(false)}
       />
 
       {/* Bug Report Modal */}

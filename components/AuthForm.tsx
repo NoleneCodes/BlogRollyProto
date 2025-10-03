@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+// Import Supabase client (adjust path as needed)
+import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
 import BloggerSignupForm from './BloggerSignupForm';
@@ -34,11 +36,42 @@ interface SignInFormData {
   password: string;
 }
 
+// Initialize Supabase client (replace with your actual keys or use env vars)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+type AuthMode = 'selection' | 'signin' | 'signup' | 'resetPassword';
+
 const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [authMode, setAuthMode] = useState<'selection' | 'signin' | 'signup'>('selection');
+  const [authMode, setAuthMode] = useState<AuthMode>('selection');
+  // Reset password state
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetStatus, setResetStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [resetError, setResetError] = useState('');
+  // Handle password reset submit
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetStatus('idle');
+    setResetError('');
+    if (!resetEmail) {
+      setResetError('Email is required');
+      return;
+    }
+    // Send password reset email via Supabase
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/reset-password` : undefined
+    });
+    if (error) {
+      setResetStatus('error');
+      setResetError(error.message);
+    } else {
+      setResetStatus('success');
+    }
+  };
   const [activeTab, setActiveTab] = useState<'reader' | 'blogger'>('reader');
 
   // Reader form state
@@ -166,7 +199,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
+    // Basic email format validation
     if (!signInForm.email) newErrors.email = 'Email is required';
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(signInForm.email)) newErrors.email = 'Enter a valid email address';
     if (!signInForm.password) newErrors.password = 'Password is required';
 
     if (Object.keys(newErrors).length > 0) {
@@ -174,20 +209,30 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       return;
     }
 
-    // TODO: Implement Supabase authentication
-    console.log('Sign in attempted:', signInForm);
+    // Real Supabase authentication
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: signInForm.email,
+      password: signInForm.password
+    });
 
-    // Mock successful authentication - replace with actual Supabase logic
-    // For now, assume all users are readers unless they have blogger role
-    const userRoles = ['reader']; // This would come from your database
-
-    if (userRoles.includes('blogger')) {
-      router.push('/profile/blogger');
-    } else {
-      router.push('/profile/reader');
+    if (error) {
+      // Show a friendly error for invalid credentials
+      let message = error.message;
+      if (
+        message.toLowerCase().includes('invalid login credentials') ||
+        message.toLowerCase().includes('invalid email or password') ||
+        message.toLowerCase().includes('invalid credentials')
+      ) {
+        message = 'Hmm, those details don\'t match. Want to try again?';
+      }
+      setErrors({ general: message });
+      return;
     }
 
-    alert('Sign in successful! Welcome back!');
+    // Optionally fetch user roles/profile from your DB if needed
+    // For now, just redirect to reader profile
+    router.push('/profile/reader');
+    // Optionally: setUserInfo({ ... })
   };
 
   const handleReaderSubmit = async (e: React.FormEvent) => {
@@ -288,6 +333,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
           <p>Welcome back to Blogrolly</p>
 
           <form onSubmit={handleSignIn} className={styles.form}>
+            {errors.general && (
+              <div className={styles.formGroup}>
+                <span className={styles.error}>{errors.general}</span>
+              </div>
+            )}
             <div className={styles.formGroup}>
               <label className={styles.label}>
                 Email Address *
@@ -334,6 +384,52 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               onClick={() => setAuthMode('signup')}
             >
               Don&apos;t have an account? Sign up
+            </button>
+            <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
+            <button
+              className={styles.linkButton}
+              onClick={() => setAuthMode('resetPassword')}
+            >
+              Forgot password?
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Reset password form
+  if (authMode === 'resetPassword') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.authCard}>
+          <h2>Reset Password</h2>
+          <p>Enter your email address and we’ll send you a link to reset your password.</p>
+          <form onSubmit={handleResetPassword} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Email Address *</label>
+              <input
+                type="email"
+                value={resetEmail}
+                onChange={e => setResetEmail(e.target.value)}
+                className={styles.textInput}
+                required
+              />
+            </div>
+            {resetError && <span className={styles.error}>{resetError}</span>}
+            {resetStatus === 'success' && (
+              <span className={styles.success}>Password reset email sent! Please check your inbox.</span>
+            )}
+            <button type="submit" className={styles.submitButton}>
+              Send Reset Link
+            </button>
+          </form>
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button
+              className={styles.linkButton}
+              onClick={() => setAuthMode('signin')}
+            >
+              ← Back to Sign In
             </button>
           </div>
         </div>

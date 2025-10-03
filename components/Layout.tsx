@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import { initGA, trackPageView } from '../lib/analytics';
 import BugReportModal from './BugReportModal';
 import styles from '../styles/Layout.module.css';
@@ -10,6 +11,9 @@ import styles from '../styles/Layout.module.css';
 interface LayoutProps {
   children: React.ReactNode;
   title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
 }
 
 interface UserInfo {
@@ -18,7 +22,13 @@ interface UserInfo {
   roles: string[];
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
+const Layout: React.FC<LayoutProps> = ({
+  children,
+  title = 'BlogRolly',
+  description = 'Discover and organize your favorite blogs with BlogRolly',
+  image = '/DigitalBR.svg',
+  canonical
+}) => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -101,10 +111,35 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="Discover and organize your favorite blogs with BlogRolly" />
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={image} />
+        <meta property="og:url" content={canonical || (typeof window !== 'undefined' ? window.location.href : '')} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={image} />
+        {canonical && <link rel="canonical" href={canonical} />}
         <link rel="icon" href="/DigitalBR.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/DigitalBR.svg" />
         <link rel="manifest" href="/manifest.json" />
+        {/* Organization Structured Data */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          'name': 'BlogRolly',
+          'url': 'https://blogrolly.com',
+          'logo': 'https://blogrolly.com/DigitalBR.svg',
+          'sameAs': [
+            'https://x.com/BlogRolly',
+            'https://www.facebook.com/blogrolly',
+            'https://www.tiktok.com/@blogrolly',
+            'https://www.instagram.com/blogrolly/'
+          ],
+          'description': 'Where independent blogs grow stronger together.'
+        }) }} />
       </Head>
 
       <div className={styles.container}>
@@ -114,18 +149,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
               <Link href="/" passHref legacyBehavior>
                 <a className={styles.logoLink}>
                 <div className={styles.logoContainer}>
-                  <img src="/DigitalBR.svg" alt="BlogRolly Logo" className={styles.logoIcon} />
-                  <img src="/DigitalText.svg" alt="BlogRolly" className={styles.logoText} />
+                  <Image src="/DigitalBR.svg" alt="BlogRolly Logo" width={40} height={40} className={styles.logoIcon} />
+                  <Image src="/DigitalText.svg" alt="BlogRolly" width={120} height={40} className={styles.logoText} />
                 </div>
               </a>
               </Link>
             </div>
             <div className={styles.navLinks}>
-              <Link href="/blogroll" passHref legacyBehavior><a className={styles.navLink}>The Blogroll</a></Link>
-              <Link href="/about" passHref legacyBehavior><a className={styles.navLink}>About</a></Link>
-              <Link href="/investors" passHref legacyBehavior><a className={styles.navLink}>Investors</a></Link>
-              <Link href="/blog" passHref legacyBehavior><a className={styles.navLink}>Our Blog</a></Link>
-              <Link href="/submit" passHref legacyBehavior><a className={styles.navLink}>Submit a Blog</a></Link>
+              <Link href="/blogroll" passHref legacyBehavior><a className={styles.navLink} aria-label="Blogroll" aria-current={router.pathname === '/blogroll' ? 'page' : undefined}>The Blogroll</a></Link>
+              <Link href="/about" passHref legacyBehavior><a className={styles.navLink} aria-label="About" aria-current={router.pathname === '/about' ? 'page' : undefined}>About</a></Link>
+              <Link href="/investors" passHref legacyBehavior><a className={styles.navLink} aria-label="Investors" aria-current={router.pathname === '/investors' ? 'page' : undefined}>Investors</a></Link>
+              <Link href="/blog" passHref legacyBehavior><a className={styles.navLink} aria-label="Our Blog" aria-current={router.pathname === '/blog' ? 'page' : undefined}>Our Blog</a></Link>
+              <Link href="/submit" passHref legacyBehavior><a className={styles.navLink} aria-label="Submit a Blog" aria-current={router.pathname === '/submit' ? 'page' : undefined}>Submit a Blog</a></Link>
               {!isLoading && (
                 userInfo ? (
                   <>
@@ -195,14 +230,14 @@ const Layout: React.FC<LayoutProps> = ({ children, title = 'BlogRolly' }) => {
           <div className={styles.footerContent}>
             <div className={styles.footerSection}>
               <h4>BlogRolly</h4>
-              <p>Blogging, The Human Way</p>
+              <p className={styles.footerTagline}>Where independent blogs grow stronger together.</p>
             </div>
             <div className={styles.footerSection}>
               <h4>Web Nav</h4>
               <Link href="/about" passHref legacyBehavior><a>About Us</a></Link>
               <Link href="/blogroll" passHref legacyBehavior><a>The Blogroll</a></Link>
               <Link href="/blog" passHref legacyBehavior><a>Our Blog</a></Link>
-              <a href="#">Contact Us</a>
+              <Link href="/contact" passHref legacyBehavior><a>Contact Us</a></Link>
               <a href="#" onClick={(e) => { e.preventDefault(); setShowBugReportPopup(true); }}>Report a Bug</a>
             </div>
             <div className={styles.footerSection}>

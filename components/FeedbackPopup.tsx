@@ -54,7 +54,7 @@ const FeedbackPopup: React.FC<FeedbackPopupProps> = ({ isOpen, onClose }) => {
       <div className={styles.popupContent}>
         <div className={styles.popupHeader}>
           <h3>Send Feedback</h3>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+          <button className={styles.closeButton} aria-label="Close" onClick={onClose}>×</button>
         </div>
         
         <div className={styles.popupBody}>

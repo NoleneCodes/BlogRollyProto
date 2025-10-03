@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { IoSettingsOutline } from "react-icons/io5";
 import Layout from "../components/Layout";
@@ -122,32 +122,7 @@ const Blogroll: NextPage = () => {
     const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (q && typeof q === 'string') {
-      setSearchQuery(q);
-      setSearchType((type as 'keyword' | 'ai') || 'keyword');
-      performSearch(q, (type as 'keyword' | 'ai') || 'keyword');
-    } else {
-      setIsSearchActive(false);
-      setSearchResults([]);
-    }
-
-    // Handle tag filtering
-    if (tag && typeof tag === 'string') {
-      setTagFilter(tag);
-      setFilter("all"); // Reset category filter when filtering by tag
-    } else {
-      setTagFilter("");
-    }
-
-    // Handle category filtering
-    if (category && typeof category === 'string') {
-      setFilter(category);
-      setTagFilter(""); // Reset tag filter when filtering by category
-    }
-  }, [q, type, tag, category]);
-
-  const performSearch = async (query: string, searchType: 'keyword' | 'ai') => {
+  const performSearch = useCallback(async (query: string, searchType: 'keyword' | 'ai') => {
     if (!query.trim()) return;
 
     setIsSearching(true);
@@ -190,7 +165,7 @@ const Blogroll: NextPage = () => {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [searchFilters]);
 
   const handleNewSearch = (query: string, searchType: 'keyword' | 'ai') => {
     const searchParams = new URLSearchParams({ q: query, type: searchType });
@@ -358,7 +333,11 @@ const Blogroll: NextPage = () => {
   const CATEGORIES = MAIN_CATEGORIES.filter(category => category !== 'Other');
 
   return (
-    <Layout title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}>
+    <Layout 
+      title={searchQuery ? `Search: ${searchQuery} - The Blogroll - Blogrolly` : "The Blogroll - Blogrolly"}
+      description={searchQuery ? `Search results for “${searchQuery}” in the BlogRolly blogroll. Discover blogs by category, topic, or niche.` : "Browse the BlogRolly blogroll to explore trending blogs, new voices, and independent bloggers across every category."}
+      canonical="https://blogrolly.com/blogroll"
+    >
       <div className={styles.hero}>
         <h1 className={styles.title}>The Blogroll</h1>
         <p className={styles.description}>
