@@ -5,6 +5,8 @@ interface BillingSubscriptionProps {
   setShowStripePricingModal: (show: boolean) => void;
 }
 
+
+
 const BillingSubscription: React.FC<BillingSubscriptionProps> = ({ setShowStripePricingModal }) => (
   <div className={styles.content}>
     <h2 style={{ color: '#c42142' }}>Billing & Subscription</h2>

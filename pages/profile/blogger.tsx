@@ -15,10 +15,10 @@ const StripePricingModal = ({ onClose }: { onClose: () => void }) => {
     // Remove any previous pricing table
     if (modalContentRef.current) {
       modalContentRef.current.innerHTML = '';
-      const pricingTable = document.createElement('stripe-pricing-table');
-      pricingTable.setAttribute('pricing-table-id', 'prctbl_1RmgGoDyKgK2ioTOXJv76mNC');
-      pricingTable.setAttribute('publishable-key', 'pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL');
-      modalContentRef.current.appendChild(pricingTable);
+  const pricingTable = document.createElement('stripe-pricing-table');
+  pricingTable.setAttribute('pricing-table-id', 'prctbl_1SEBhnDyKgK2ioTOkBlk2WY1');
+  pricingTable.setAttribute('publishable-key', 'pk_live_51RmdBHDyKgK2ioTOQUE5HobCaWumlQZBswYQE02RvD9NOyOc1uKoRxuadHu8hS9i8MIbfMTOdi7oSHrGSJr444MD00A8xUCfbL');
+  modalContentRef.current.appendChild(pricingTable);
     }
   }, []);
 
