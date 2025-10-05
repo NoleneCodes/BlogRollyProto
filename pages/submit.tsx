@@ -110,7 +110,7 @@ const Submit: NextPage = () => {
       <div className={styles.hero}>
         <h1 className={styles.title}>Submit a Blog</h1>
         <p className={styles.description}>
-          Share your favourite blog with the Blogrolly community
+          Share your blog with the Blogrolly community
         </p>
       </div>
 
@@ -142,7 +142,7 @@ const Submit: NextPage = () => {
 
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <button 
-              onClick={handleSignInClick}
+              onClick={() => router.push('/signin')}
               style={{
                 background: '#c42142',
                 color: 'white',
@@ -167,7 +167,7 @@ const Submit: NextPage = () => {
                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(196, 33, 66, 0.25)';
               }}
             >
-              Sign Up as Blogger
+              Sign in as Blogger
             </button>
           </div>
 

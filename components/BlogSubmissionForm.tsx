@@ -411,7 +411,7 @@ const BlogSubmissionForm: React.FC<BlogSubmissionFormProps> = ({
             Only registered bloggers can submit blog posts. Please sign up as a blogger first.
             <Link href="/auth?tab=blogger" passHref legacyBehavior>
               <a style={{ background: '#c42142', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '6px', textDecoration: 'none', display: 'inline-block' }}>
-                Sign Up as Blogger
+                Sign In as Blogger
               </a>
             </Link>
           </p>

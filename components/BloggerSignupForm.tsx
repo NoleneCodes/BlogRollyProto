@@ -234,16 +234,17 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    // Part 1 validation (required)
-    if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
-    if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
-    if (!bloggerForm.email) newErrors.email = 'Email is required';
-    if (!bloggerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    else if (!validateAge(bloggerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
-    if (!bloggerForm.password) newErrors.password = 'Password is required';
-    else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+  // Part 1 validation (required)
+  if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
+  if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
+  if (!bloggerForm.email) newErrors.email = 'Email is required';
+  if (!bloggerForm.username) newErrors.username = 'Username is required';
+  if (!bloggerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+  else if (!validateAge(bloggerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
+  if (!bloggerForm.password) newErrors.password = 'Password is required';
+  else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+  if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+  else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
     // Username uniqueness check
     if (bloggerForm.username) {
@@ -407,6 +408,22 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
+            Username *
+          </label>
+          <input
+            type="text"
+            value={bloggerForm.username}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
+            className={styles.textInput}
+            required
+            placeholder="Choose your unique username"
+          />
+          {errors.username && <span className={styles.error}>{errors.username}</span>}
+          <small className={styles.hint}>Your unique identifier on the platform. This will be your public username.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
             Password *
           </label>
           <input
@@ -482,21 +499,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Username
-            <span className={styles.optional}></span>
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.username}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
-            className={styles.textInput}
-            placeholder="Choose your unique username"
-          />
-          {errors.username && <span className={styles.error}>{errors.username}</span>}
-          <small className={styles.hint}>Your unique identifier on the platform. Can be added later.</small>
-        </div>
+        {/* Username field moved above, after date of birth */}
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
