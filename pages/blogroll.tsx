@@ -101,6 +101,30 @@ const POPULAR_TAGS = [
 ].filter(tag => tag !== 'Other');
 
 const Blogroll: NextPage = () => {
+  // Use Supabase auth for user ID
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      // Import supabase client
+      const { supabase } = await import('../lib/supabase');
+      const { data } = await supabase.auth.getUser();
+      setUserId(data?.user?.id || null);
+    };
+    fetchUser();
+  }, []);
+  const [readingHistory, setReadingHistory] = useState<string[]>([]);
+
+  // Fetch reading history from DB
+  useEffect(() => {
+    if (!userId) return;
+    fetch(`/api/reading-history`, {
+      headers: { 'x-user-id': userId }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setReadingHistory(data.blogIds || []);
+      });
+  }, [userId]);
   const router = useRouter();
   const { q, type, tag, category } = router.query;
 
@@ -285,16 +309,26 @@ const Blogroll: NextPage = () => {
     }
   };
 
-  const markAsRead = (blogId: string) => {
-    if (isSearchActive) {
-      setSearchResults(prev => prev.map(blog => 
-        blog.id === blogId ? { ...blog, isRead: true } : blog
-      ));
-    } else {
-      setBlogs(prev => prev.map(blog => 
-        blog.id === blogId ? { ...blog, isRead: true } : blog
-      ));
-    }
+  // Mark blog as read in DB
+  const markAsRead = async (blogId: string) => {
+    if (!userId) return;
+    await fetch(`/api/reading-history`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-user-id': userId },
+      body: JSON.stringify({ blogId })
+    });
+    setReadingHistory(prev => [...prev, blogId]);
+  };
+
+  // Remove blog from reading history in DB
+  const removeFromReadingHistory = async (blogId: string) => {
+    if (!userId) return;
+    await fetch(`/api/reading-history`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'x-user-id': userId },
+      body: JSON.stringify({ blogId })
+    });
+    setReadingHistory(prev => prev.filter(id => id !== blogId));
   };
 
     const fetchBlogs = async () => {
@@ -454,13 +488,14 @@ const Blogroll: NextPage = () => {
         {displayBlogs.map((blog) => (
           <div key={blog.id}>
             <BlogCard
-              blog={blog}
+              blog={{ ...blog, isRead: readingHistory.includes(blog.id) }}
               onToggleSave={toggleSave}
               onMarkAsRead={markAsRead}
               showAuthor={true}
               showSaveButton={true}
+              // Pass remove function for read badge
+              removeFromReadingHistory={removeFromReadingHistory}
             />
-
             {/* AI Search Additional Info */}
             {isSearchActive && searchType === 'ai' && 'aiRelevanceReason' in blog && (
               <div style={{
