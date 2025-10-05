@@ -105,8 +105,9 @@ const Blogroll: NextPage = () => {
   const { q, type, tag, category } = router.query;
 
   const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
-  const [filter, setFilter] = useState<string>("all");
-  const [tagFilter, setTagFilter] = useState<string>("");
+  // filter and tagFilter now derive from query string
+  const filter = typeof category === 'string' && category !== '' ? category : "all";
+  const tagFilter = typeof tag === 'string' && tag !== '' ? tag : "";
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchType, setSearchType] = useState<'keyword' | 'ai'>('keyword');
   const [searchResults, setSearchResults] = useState<SearchResult[] | AISearchResult[]>([]);
@@ -316,12 +317,10 @@ const Blogroll: NextPage = () => {
   };
   let filteredBlogs = blogs;
 
-  // Apply category filter
+  // Always filter by category/tag from query string
   if (filter !== "all") {
     filteredBlogs = filteredBlogs.filter(blog => blog.category === filter);
   }
-
-  // Apply tag filter
   if (tagFilter) {
     filteredBlogs = filteredBlogs.filter(blog => 
       blog.tags.some(blogTag => blogTag.toLowerCase() === tagFilter.toLowerCase())
