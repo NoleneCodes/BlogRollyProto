@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
@@ -6,6 +7,11 @@ import BlogSubmissionForm from './BlogSubmissionForm';
 import SurveyPopup from './SurveyPopup';
 import { MAIN_CATEGORIES, validateCustomInput } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
+
+// Initialize Supabase client (replace with your actual keys or use env vars)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface BloggerSignupFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -265,10 +271,60 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       return;
     }
 
-    // TODO: Implement Supabase integration
-    console.log('Blogger form submitted:', bloggerForm);
-  // Redirect to personalized blogger account page after successful signup
-  router.push(`/blogger/${bloggerForm.username}`);
+    // Supabase signup
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: bloggerForm.email,
+      password: bloggerForm.password,
+      options: {
+        data: {
+          first_name: bloggerForm.firstName,
+          surname: bloggerForm.surname,
+          username: bloggerForm.username,
+          date_of_birth: bloggerForm.dateOfBirth,
+          role: 'blogger',
+          tier: 'free'
+        }
+      }
+    });
+
+    if (signUpError) {
+      setErrors({ general: signUpError.message });
+      return;
+    }
+
+    // Get user id from signup response
+    const userId = signUpData?.user?.id;
+    if (!userId) {
+      setErrors({ general: 'Could not create user account. Please try again.' });
+      return;
+    }
+
+    // Insert user profile
+    await supabase.from('user_profiles').insert({
+      user_id: userId,
+      first_name: bloggerForm.firstName,
+      surname: bloggerForm.surname,
+      username: bloggerForm.username,
+      date_of_birth: bloggerForm.dateOfBirth,
+      age_verified: true,
+      role: 'blogger',
+      tier: 'free',
+      bio: bloggerForm.bio
+    });
+
+    // Insert blogger profile
+    await supabase.from('blogger_profiles').insert({
+      user_id: userId,
+      blog_url: bloggerForm.blogUrl,
+      blog_name: bloggerForm.blogName,
+      blog_description: bloggerForm.bio,
+      categories: bloggerForm.topics,
+      is_verified: false
+    });
+
+    alert('Account created successfully! Welcome to BlogRolly!');
+    // Redirect to personalized blogger dashboard
+    router.push(`/blogger/${bloggerForm.username}`);
   };
 
   return (

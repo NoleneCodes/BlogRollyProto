@@ -269,12 +269,57 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       return;
     }
 
-    // TODO: Implement Supabase authentication
-    console.log('Reader form submitted:', readerForm);
-    alert('Account created successfully! Welcome to BlogRolly!');
+    // Supabase signup
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: readerForm.email,
+      password: readerForm.password,
+      options: {
+        data: {
+          first_name: readerForm.firstName,
+          surname: readerForm.surname,
+          username: readerForm.username,
+          date_of_birth: readerForm.dateOfBirth,
+          role: 'reader',
+          tier: 'free'
+        }
+      }
+    });
 
-  // Redirect to personalized reader dashboard
-  router.push(`/reader/${readerForm.username}`);
+    if (signUpError) {
+      setErrors({ general: signUpError.message });
+      return;
+    }
+
+    // Get user id from signup response
+    const userId = signUpData?.user?.id;
+    if (!userId) {
+      setErrors({ general: 'Could not create user account. Please try again.' });
+      return;
+    }
+
+    // Insert user profile
+    await supabase.from('user_profiles').insert({
+      user_id: userId,
+      first_name: readerForm.firstName,
+      surname: readerForm.surname,
+      username: readerForm.username,
+      date_of_birth: readerForm.dateOfBirth,
+      age_verified: true,
+      role: 'reader',
+      tier: 'free'
+    });
+
+    // Insert reader profile
+    await supabase.from('reader_profiles').insert({
+      user_id: userId,
+      topics: readerForm.topics,
+      other_topic: readerForm.otherTopic,
+      subscribe_to_updates: readerForm.subscribeToUpdates
+    });
+
+    alert('Account created successfully! Welcome to BlogRolly!');
+    // Redirect to personalized reader dashboard
+    router.push(`/reader/${readerForm.username}`);
   };
 
   if (isLoading) {
