@@ -55,6 +55,11 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, errors, signInForm, s
           Sign In
         </button>
       </form>
+      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <a href="/reset-password" className={styles.linkButton}>
+          Forgot password?
+        </a>
+      </div>
     </div>
   </div>
 );

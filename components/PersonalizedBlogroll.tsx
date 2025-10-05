@@ -231,26 +231,42 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     const blog = personalizedBlogs.find(b => b.id === blogId);
     if (!blog) return;
 
-    // Update engagement history in Supabase
+    // For logged-in users, update engagement history in Supabase
     if (userId) {
-      let updatedEngagement = { ...userPreferences?.engagementHistory };
+      // Ensure engagementHistory and nested objects exist
+      let updatedEngagement = {
+        categoryClicks: {},
+        tagClicks: {},
+        ...(userPreferences?.engagementHistory || {})
+      };
       if (action === 'click') {
-        updatedEngagement.categoryClicks[blog.category] = (updatedEngagement.categoryClicks[blog.category] || 0) + 1;
+        updatedEngagement.categoryClicks[blog.category] =
+          (updatedEngagement.categoryClicks[blog.category] || 0) + 1;
         blog.tags.forEach(tag => {
-          updatedEngagement.tagClicks[tag] = (updatedEngagement.tagClicks[tag] || 0) + 1;
+          updatedEngagement.tagClicks[tag] =
+            (updatedEngagement.tagClicks[tag] || 0) + 1;
         });
         await supabase
           .from('user_profiles')
           .update({ engagement_history: updatedEngagement })
           .eq('user_id', userId);
-        setUserPreferences(prev => prev ? { ...prev, engagementHistory: updatedEngagement } : prev);
+        setUserPreferences(prev =>
+          prev ? { ...prev, engagementHistory: updatedEngagement } : prev
+        );
       }
     }
 
+    // For non-logged-in users, just update local state (simulate engagement)
+    if (!userId && action === 'click') {
+      // Optionally, you could show a tooltip or prompt to sign up for tracking
+      // For now, just update local state
+      // No-op for engagement, but you could add analytics here if desired
+    }
+
     // Update local state
-    setPersonalizedBlogs(prev => prev.map(b => 
-      b.id === blogId ? { 
-        ...b, 
+    setPersonalizedBlogs(prev => prev.map(b =>
+      b.id === blogId ? {
+        ...b,
         isSaved: action === 'save' ? !b.isSaved : b.isSaved,
         isRead: action === 'read' ? true : b.isRead
       } : b

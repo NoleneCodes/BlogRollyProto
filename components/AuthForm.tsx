@@ -375,7 +375,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     );
   }
 
-  // Mode selection screen
+        // Supabase signup with error handling
   if (authMode === 'selection') {
     return (
       <div className={styles.container}>
@@ -416,38 +416,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   // Sign in form
   if (authMode === 'signin') {
-    return (
-      <>
-        <SignInForm
-          onSubmit={handleSignIn}
-          errors={errors}
-          signInForm={signInForm}
-          setSignInForm={setSignInForm}
-        />
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <button 
-            className={styles.linkButton}
-            onClick={() => setAuthMode('selection')}
-          >
-            ← Back to options
-          </button>
-          <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
-          <button 
-            className={styles.linkButton}
-            onClick={() => setAuthMode('signup')}
-          >
-            Don&apos;t have an account? Sign up
-          </button>
-          <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
-          <button
-            className={styles.linkButton}
-            onClick={() => setAuthMode('resetPassword')}
-          >
-            Forgot password?
-          </button>
-        </div>
-      </>
-    );
+    router.push('/signin');
+    return null;
   }
 
   // Reset password form

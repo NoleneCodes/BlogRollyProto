@@ -300,28 +300,63 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       return;
     }
 
+    let profileInsertSuccess = false;
+    let bloggerInsertSuccess = false;
+    let profileErrorMsg = '';
     // Insert user profile
-    await supabase.from('user_profiles').insert({
-      user_id: userId,
-      first_name: bloggerForm.firstName,
-      surname: bloggerForm.surname,
-      username: bloggerForm.username,
-      date_of_birth: bloggerForm.dateOfBirth,
-      age_verified: true,
-      role: 'blogger',
-      tier: 'free',
-      bio: bloggerForm.bio
-    });
+    try {
+      const { error: profileError } = await supabase.from('user_profiles').insert({
+        user_id: userId,
+        first_name: bloggerForm.firstName,
+        surname: bloggerForm.surname,
+        username: bloggerForm.username,
+        date_of_birth: bloggerForm.dateOfBirth,
+        age_verified: true,
+        role: 'blogger',
+        tier: 'free',
+        bio: bloggerForm.bio
+      });
+      if (!profileError) profileInsertSuccess = true;
+      else profileErrorMsg = profileError.message;
+    } catch (err) {
+      profileErrorMsg = 'Failed to create user profile.';
+    }
 
     // Insert blogger profile
-    await supabase.from('blogger_profiles').insert({
-      user_id: userId,
-      blog_url: bloggerForm.blogUrl,
-      blog_name: bloggerForm.blogName,
-      blog_description: bloggerForm.bio,
-      categories: bloggerForm.topics,
-      is_verified: false
-    });
+    try {
+      const { error: bloggerError } = await supabase.from('blogger_profiles').insert({
+        user_id: userId,
+        blog_url: bloggerForm.blogUrl,
+        blog_name: bloggerForm.blogName,
+        blog_description: bloggerForm.bio,
+        categories: bloggerForm.topics,
+        is_verified: false
+      });
+      if (!bloggerError) bloggerInsertSuccess = true;
+      else profileErrorMsg += ' ' + bloggerError.message;
+    } catch (err) {
+      profileErrorMsg += ' Failed to create blogger profile.';
+    }
+
+    // If either insert failed, clean up auth user
+    if (!profileInsertSuccess || !bloggerInsertSuccess) {
+      try {
+        await supabase.auth.admin.deleteUser(userId);
+      } catch (err) {
+        // Ignore cleanup errors
+      }
+      setErrors({ general: 'Account creation failed. ' + profileErrorMsg });
+      return;
+    }
+
+    // Log engagement
+    try {
+      await fetch('/api/user/engagement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, event: 'signup', role: 'blogger' })
+      });
+    } catch (err) {}
 
     alert('Account created successfully! Welcome to BlogRolly!');
     // Redirect to personalized blogger dashboard
