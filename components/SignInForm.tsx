@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from '../styles/AuthForm.module.css';
 
 interface SignInFormProps {
@@ -56,9 +57,9 @@ const SignInForm: React.FC<SignInFormProps> = ({ onSubmit, errors, signInForm, s
         </button>
       </form>
       <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <a href="/reset-password" className={styles.linkButton}>
+        <Link href="/reset-password" className={styles.linkButton}>
           Forgot password?
-        </a>
+        </Link>
       </div>
     </div>
   </div>
