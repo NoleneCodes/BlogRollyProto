@@ -273,8 +273,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     console.log('Reader form submitted:', readerForm);
     alert('Account created successfully! Welcome to BlogRolly!');
 
-    // Redirect to reader profile
-    router.push('/profile/reader');
+  // Redirect to personalized reader dashboard
+  router.push(`/reader/${readerForm.username}`);
   };
 
   if (isLoading) {

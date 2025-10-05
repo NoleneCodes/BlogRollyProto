@@ -239,6 +239,19 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
     else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
+    // Username uniqueness check
+    if (bloggerForm.username) {
+      try {
+        const res = await fetch(`/api/check-username?username=${encodeURIComponent(bloggerForm.username)}`);
+        const data = await res.json();
+        if (!res.ok || data.exists) {
+          newErrors.username = 'This username is already taken. Please choose another.';
+        }
+      } catch (err) {
+        newErrors.username = 'Could not check username. Please try again.';
+      }
+    }
+
     // Part 2 validation (optional, but validate if filled)
     if (bloggerForm.blogUrl && !validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
 
@@ -254,7 +267,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
     // TODO: Implement Supabase integration
     console.log('Blogger form submitted:', bloggerForm);
-    alert('Account created successfully! Your profile can be completed from your dashboard.');
+  // Redirect to personalized blogger account page after successful signup
+  router.push(`/blogger/${bloggerForm.username}`);
   };
 
   return (
