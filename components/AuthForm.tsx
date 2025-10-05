@@ -251,6 +251,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     if (readerForm.topics.length === 0) newErrors.topics = 'Please select at least one topic';
     if (!readerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
 
+    // Username uniqueness check
+    if (readerForm.username) {
+      try {
+        const res = await fetch(`/api/check-username?username=${encodeURIComponent(readerForm.username)}`);
+        const data = await res.json();
+        if (!res.ok || data.exists) {
+          newErrors.username = 'This username is already taken. Please choose another.';
+        }
+      } catch (err) {
+        newErrors.username = 'Could not check username. Please try again.';
+      }
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
