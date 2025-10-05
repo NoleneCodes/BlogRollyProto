@@ -9,10 +9,10 @@ export const proWelcomeTemplate = {
       <li>✅ Unlimited blog submissions</li>
       <li>✅ Advanced analytics and insights</li>
       <li>✅ Priority review for submissions</li>
-      <li>✅ Traffic optimization insights</li>
+      <li>✅ Traffic optimisation insights</li>
       <li>✅ Priority support</li>
     </ul>
-    <a href="${process.env.NEXT_PUBLIC_APP_URL}/profile/blogger-premium" style="background: #c42142; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+    <a href="${process.env.NEXT_PUBLIC_APP_URL}/signin" style="background: #c42142; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
       Access Pro Dashboard
     </a>
     <p>The BlogRolly Team</p>

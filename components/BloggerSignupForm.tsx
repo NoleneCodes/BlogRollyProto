@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
@@ -6,6 +7,11 @@ import BlogSubmissionForm from './BlogSubmissionForm';
 import SurveyPopup from './SurveyPopup';
 import { MAIN_CATEGORIES, validateCustomInput } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
+
+// Initialize Supabase client (replace with your actual keys or use env vars)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface BloggerSignupFormProps {
   onAuthenticated?: (userInfo: UserInfo) => void;
@@ -228,16 +234,30 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    // Part 1 validation (required)
-    if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
-    if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
-    if (!bloggerForm.email) newErrors.email = 'Email is required';
-    if (!bloggerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    else if (!validateAge(bloggerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
-    if (!bloggerForm.password) newErrors.password = 'Password is required';
-    else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+  // Part 1 validation (required)
+  if (!bloggerForm.firstName) newErrors.firstName = 'First name is required';
+  if (!bloggerForm.surname) newErrors.surname = 'Surname is required';
+  if (!bloggerForm.email) newErrors.email = 'Email is required';
+  if (!bloggerForm.username) newErrors.username = 'Username is required';
+  if (!bloggerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+  else if (!validateAge(bloggerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
+  if (!bloggerForm.password) newErrors.password = 'Password is required';
+  else if (bloggerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+  if (!bloggerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+  else if (bloggerForm.password !== bloggerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+
+    // Username uniqueness check
+    if (bloggerForm.username) {
+      try {
+        const res = await fetch(`/api/check-username?username=${encodeURIComponent(bloggerForm.username)}`);
+        const data = await res.json();
+        if (!res.ok || data.exists) {
+          newErrors.username = 'This username is already taken. Please choose another.';
+        }
+      } catch (err) {
+        newErrors.username = 'Could not check username. Please try again.';
+      }
+    }
 
     // Part 2 validation (optional, but validate if filled)
     if (bloggerForm.blogUrl && !validateUrl(bloggerForm.blogUrl)) newErrors.blogUrl = 'Please enter a valid URL (https://yourdomain.com)';
@@ -252,9 +272,95 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       return;
     }
 
-    // TODO: Implement Supabase integration
-    console.log('Blogger form submitted:', bloggerForm);
-    alert('Account created successfully! Your profile can be completed from your dashboard.');
+    // Supabase signup
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: bloggerForm.email,
+      password: bloggerForm.password,
+      options: {
+        data: {
+          first_name: bloggerForm.firstName,
+          surname: bloggerForm.surname,
+          username: bloggerForm.username,
+          date_of_birth: bloggerForm.dateOfBirth,
+          role: 'blogger',
+          tier: 'free'
+        }
+      }
+    });
+
+    if (signUpError) {
+      setErrors({ general: signUpError.message });
+      return;
+    }
+
+    // Get user id from signup response
+    const userId = signUpData?.user?.id;
+    if (!userId) {
+      setErrors({ general: 'Could not create user account. Please try again.' });
+      return;
+    }
+
+    let profileInsertSuccess = false;
+    let bloggerInsertSuccess = false;
+    let profileErrorMsg = '';
+    // Insert user profile
+    try {
+      const { error: profileError } = await supabase.from('user_profiles').insert({
+        user_id: userId,
+        first_name: bloggerForm.firstName,
+        surname: bloggerForm.surname,
+        username: bloggerForm.username,
+        date_of_birth: bloggerForm.dateOfBirth,
+        age_verified: true,
+        role: 'blogger',
+        tier: 'free',
+        bio: bloggerForm.bio
+      });
+      if (!profileError) profileInsertSuccess = true;
+      else profileErrorMsg = profileError.message;
+    } catch (err) {
+      profileErrorMsg = 'Failed to create user profile.';
+    }
+
+    // Insert blogger profile
+    try {
+      const { error: bloggerError } = await supabase.from('blogger_profiles').insert({
+        user_id: userId,
+        blog_url: bloggerForm.blogUrl,
+        blog_name: bloggerForm.blogName,
+        blog_description: bloggerForm.bio,
+        categories: bloggerForm.topics,
+        is_verified: false
+      });
+      if (!bloggerError) bloggerInsertSuccess = true;
+      else profileErrorMsg += ' ' + bloggerError.message;
+    } catch (err) {
+      profileErrorMsg += ' Failed to create blogger profile.';
+    }
+
+    // If either insert failed, clean up auth user
+    if (!profileInsertSuccess || !bloggerInsertSuccess) {
+      try {
+        await supabase.auth.admin.deleteUser(userId);
+      } catch (err) {
+        // Ignore cleanup errors
+      }
+      setErrors({ general: 'Account creation failed. ' + profileErrorMsg });
+      return;
+    }
+
+    // Log engagement
+    try {
+      await fetch('/api/user/engagement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, event: 'signup', role: 'blogger' })
+      });
+    } catch (err) {}
+
+    alert('Account created successfully! Welcome to BlogRolly!');
+    // Redirect to personalized blogger dashboard
+    router.push(`/blogger/${bloggerForm.username}`);
   };
 
   return (
@@ -337,6 +443,22 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
+            Username *
+          </label>
+          <input
+            type="text"
+            value={bloggerForm.username}
+            onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
+            className={styles.textInput}
+            required
+            placeholder="Choose your unique username"
+          />
+          {errors.username && <span className={styles.error}>{errors.username}</span>}
+          <small className={styles.hint}>Your unique identifier on the platform. This will be your public username.</small>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
             Password *
           </label>
           <input
@@ -412,21 +534,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Username
-            <span className={styles.optional}></span>
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.username}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
-            className={styles.textInput}
-            placeholder="Choose your unique username"
-          />
-          {errors.username && <span className={styles.error}>{errors.username}</span>}
-          <small className={styles.hint}>Your unique identifier on the platform. Can be added later.</small>
-        </div>
+        {/* Username field moved above, after date of birth */}
 
         <div className={styles.formGroup}>
           <label className={styles.label}>

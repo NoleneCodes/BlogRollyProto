@@ -31,6 +31,7 @@ interface BlogCardProps {
   showAuthor?: boolean;
   showSaveButton?: boolean;
   compact?: boolean;
+  removeFromReadingHistory?: (blogId: string) => void;
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({
@@ -39,7 +40,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
   onMarkAsRead,
   showAuthor = true,
   showSaveButton = true,
-  compact = false
+  compact = false,
+  removeFromReadingHistory
 }) => {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
@@ -52,11 +54,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
     return truncated + '...';
   };
 
-  const handleReadMore = () => {
-    if (onMarkAsRead) {
-      onMarkAsRead(blog.id);
-    }
-  };
+
+  // isRead is now passed from parent via blog.isRead
 
   const handleToggleSave = () => {
     if (onToggleSave) {
@@ -88,6 +87,14 @@ const BlogCard: React.FC<BlogCardProps> = ({
         {blog.isRead && (
           <div className={styles.readBadge}>
             Read
+            {removeFromReadingHistory && (
+              <button
+                className={styles.removeReadButton}
+                title="Remove from reading history"
+                onClick={e => { e.stopPropagation(); e.preventDefault(); removeFromReadingHistory(blog.id); }}
+                style={{ marginLeft: 8, background: 'none', border: 'none', color: '#c42142', cursor: 'pointer', fontSize: '12px' }}
+              >✕</button>
+            )}
           </div>
         )}
       </div>
@@ -125,7 +132,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             className={styles.readButton}
-            onClick={handleReadMore}
+            onClick={() => onMarkAsRead && onMarkAsRead(blog.id)}
           >
             Read More
           </a>

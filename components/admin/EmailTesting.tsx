@@ -26,6 +26,15 @@ const EmailTesting = () => {
   const [testFirstName, setTestFirstName] = useState('');
   const [emailTestLoading, setEmailTestLoading] = useState(false);
   const [emailTestResults, setEmailTestResults] = useState<any[]>([]);
+  const [testLastName, setTestLastName] = useState('');
+  const [testUsername, setTestUsername] = useState('');
+  const [testBlogTitle, setTestBlogTitle] = useState('');
+  const [testBlogUrl, setTestBlogUrl] = useState('');
+  const [testCategory, setTestCategory] = useState('');
+  const [testPaymentAmount, setTestPaymentAmount] = useState('');
+  const [testLinkedinUrl, setTestLinkedinUrl] = useState('');
+  const [testSupportMessage, setTestSupportMessage] = useState('');
+  const [testBugDescription, setTestBugDescription] = useState('');
 
   const sendTestEmail = async (template: any) => {
     if (!testEmail) {
@@ -34,10 +43,109 @@ const EmailTesting = () => {
     }
     setEmailTestLoading(true);
     try {
+      // For test emails, send email, firstName, and mock values for all required fields
+      let payload: any = {
+        // Universal fields
+        email: testEmail,
+        firstName: testFirstName,
+        lastName: 'TestLast',
+        username: 'testuser',
+        blogTitle: 'Test Blog',
+        blogUrl: 'https://testblog.com',
+        category: 'Lifestyle',
+        bugDescription: 'Test bug description',
+        resetLink: 'https://blogrolly.com/reset-password?token=demo',
+        reportId: 'BUG-67890',
+        verificationStatus: 'verified',
+        approvedBy: 'Test Admin',
+        approvedDate: '2025-10-05',
+        reviewId: 'REVIEW-12345',
+        reviewStatus: 'approved',
+        reviewMessage: 'Test review message',
+        // Support Request Reply
+        ticketId: 'TICKET-12345',
+        supportMessage: 'Test support message',
+        replyMessage: 'Test reply message',
+        replySubject: 'Test reply subject',
+        replyType: 'General',
+        replyPriority: 'High',
+        supportSubject: 'Test support subject',
+        supportType: 'General',
+        supportPriority: 'High',
+        replyEmail: testEmail,
+        replyFirstName: testFirstName,
+        replyLastName: 'TestLast',
+        // LinkedIn Verification Result
+        linkedinUrl: 'https://linkedin.com/in/testuser',
+        linkedinStatus: 'verified',
+        linkedinMessage: 'Test LinkedIn message',
+        linkedinProfile: 'https://linkedin.com/in/testuser',
+        linkedinVerificationDate: '2025-10-05',
+        linkedinVerificationMessage: 'Verified successfully',
+        linkedinFirstName: testFirstName,
+        linkedinLastName: 'TestLast',
+        linkedinEmail: testEmail,
+        // Blog Deactivated
+        deactivationReason: 'Test deactivation',
+        blogDeactivationDate: '2025-10-05',
+        blogDeactivationMessage: 'Deactivated for testing',
+        deactivateDetails: 'Test deactivate details',
+        deactivatedBy: 'Test Admin',
+        deactivatedEmail: testEmail,
+        deactivatedFirstName: testFirstName,
+        deactivatedLastName: 'TestLast',
+        // Blog URL Changed
+        blogUrlOld: 'https://oldblog.com',
+        blogUrlNew: 'https://testblog.com',
+        blogUrlChangeDate: '2025-10-05',
+        blogUrlChangeMessage: 'Changed for testing',
+        urlChangeReason: 'Test change',
+        changeDetails: 'Test change details',
+        changedBy: 'Test Admin',
+        changedEmail: testEmail,
+        changedFirstName: testFirstName,
+        changedLastName: 'TestLast',
+        // Blog Delisted Payment
+        paymentAmount: '25.00',
+        delistedReason: 'Test delisted reason',
+        delistedDate: '2025-10-05',
+        delistedMessage: 'Delisted for testing',
+        delistedBy: 'Test Admin',
+        delistedEmail: testEmail,
+        delistedFirstName: testFirstName,
+        delistedLastName: 'TestLast',
+        // Payment Emails
+        paymentType: 'Credit Card',
+        paymentDate: '2025-10-05',
+        paymentAmountDue: '0.00',
+        paymentAmountPaid: '25.00',
+        paymentFailureReason: 'Insufficient funds',
+        paymentFinalNotice: true,
+        paymentStatus: 'success',
+        paymentReference: 'PAY-12345',
+        failedReason: 'Test payment failed reason',
+        finalNotice: true,
+        paymentBy: 'Test Admin',
+        paymentEmail: testEmail,
+        paymentFirstName: testFirstName,
+        paymentLastName: 'TestLast',
+        // Blog Rejected
+        blogSubmissionId: 'SUB-54321',
+        rejectionReason: 'Not enough content',
+        reviewDetails: 'Test review details',
+        reviewDetailsMessage: 'Review details for testing',
+        reviewDetailsDate: '2025-10-05',
+        reviewDetailsStatus: 'approved',
+        reviewDetailsAdmin: 'Test Admin',
+        reviewDetailsId: 'REVIEW-54321',
+        reviewEmail: testEmail,
+        reviewFirstName: testFirstName,
+        reviewLastName: 'TestLast'
+      };
       const response = await fetch(template.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: testEmail, firstName: testFirstName || 'Test User' })
+        body: JSON.stringify(payload)
       });
       const result = await response.json();
       const testResult = {

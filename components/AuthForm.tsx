@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 import styles from '../styles/AuthForm.module.css';
+import SignInForm from './SignInForm';
 import BloggerSignupForm from './BloggerSignupForm';
 import { MAIN_CATEGORIES, validateCustomInput, formatCustomInput } from '../lib/categories-tags';
 import { CustomCategoryInput } from './CustomCategoryInput';
@@ -128,11 +129,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   }, [onAuthenticated]);
 
   // Handle tab parameter from URL
-  useEffect(() => {
-    if (router.query.tab === 'blogger') {
-      setActiveTab('blogger');
-      setAuthMode('signup');
-    }
+    useEffect(() => {
+      if (router.query.tab === 'blogger') {
+        setActiveTab('blogger');
+        setAuthMode('signup');
+      }
   }, [router.query]);
 
   const validateAge = (dateOfBirth: string) => {
@@ -229,39 +230,128 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       return;
     }
 
-    // Optionally fetch user roles/profile from your DB if needed
-    // For now, just redirect to reader profile
-    router.push('/profile/reader');
-    // Optionally: setUserInfo({ ... })
+    // Fetch user profile to determine role
+    let userId = data?.user?.id;
+    if (!userId) {
+      setErrors({ general: 'Could not find user. Please try again.' });
+      return;
+    }
+
+    // Try to get user profile from Supabase
+    const { data: profileData, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('role, username')
+      .eq('user_id', userId)
+      .single();
+
+    if (profileError || !profileData) {
+      // Fallback: redirect to reader dashboard
+      router.push('/profile/reader');
+      return;
+    }
+
+    // Redirect based on role, using username for personalized dashboard
+    if (profileData.role === 'blogger') {
+      if (profileData.username) {
+        router.push(`/blogger/${profileData.username}`);
+      } else {
+        router.push('/account-error');
+      }
+    } else {
+      if (profileData.username) {
+        router.push(`/reader/${profileData.username}`);
+      } else {
+        router.push('/account-error');
+      }
+    }
   };
 
   const handleReaderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    if (!readerForm.email) newErrors.email = 'Email is required';
-    if (!readerForm.password) newErrors.password = 'Password is required';
-    else if (readerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
-    if (!readerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (readerForm.password !== readerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    if (!readerForm.firstName) newErrors.firstName = 'First name is required';
-    if (!readerForm.surname) newErrors.surname = 'Surname is required';
-    if (!readerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    else if (!validateAge(readerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
-    if (readerForm.topics.length === 0) newErrors.topics = 'Please select at least one topic';
-    if (!readerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
+  if (!readerForm.email) newErrors.email = 'Email is required';
+  if (!readerForm.password) newErrors.password = 'Password is required';
+  else if (readerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+  if (!readerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
+  else if (readerForm.password !== readerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
+  if (!readerForm.firstName) newErrors.firstName = 'First name is required';
+  if (!readerForm.surname) newErrors.surname = 'Surname is required';
+  if (!readerForm.username) newErrors.username = 'Username is required';
+  if (!readerForm.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
+  else if (!validateAge(readerForm.dateOfBirth)) newErrors.dateOfBirth = 'You must be 18 or older';
+  if (readerForm.topics.length === 0) newErrors.topics = 'Please select at least one topic';
+  if (!readerForm.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
+
+    // Username uniqueness check
+    if (readerForm.username) {
+      try {
+        const res = await fetch(`/api/check-username?username=${encodeURIComponent(readerForm.username)}`);
+        const data = await res.json();
+        if (!res.ok || data.exists) {
+          newErrors.username = 'This username is already taken. Please choose another.';
+        }
+      } catch (err) {
+        newErrors.username = 'Could not check username. Please try again.';
+      }
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    // TODO: Implement Supabase authentication
-    console.log('Reader form submitted:', readerForm);
-    alert('Account created successfully! Welcome to BlogRolly!');
+    // Supabase signup
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: readerForm.email,
+      password: readerForm.password,
+      options: {
+        data: {
+          first_name: readerForm.firstName,
+          surname: readerForm.surname,
+          username: readerForm.username,
+          date_of_birth: readerForm.dateOfBirth,
+          role: 'reader',
+          tier: 'free'
+        }
+      }
+    });
 
-    // Redirect to reader profile
-    router.push('/profile/reader');
+    if (signUpError) {
+      setErrors({ general: signUpError.message });
+      return;
+    }
+
+    // Get user id from signup response
+    const userId = signUpData?.user?.id;
+    if (!userId) {
+      setErrors({ general: 'Could not create user account. Please try again.' });
+      return;
+    }
+
+    // Insert user profile
+    await supabase.from('user_profiles').insert({
+      user_id: userId,
+      first_name: readerForm.firstName,
+      surname: readerForm.surname,
+      username: readerForm.username,
+      date_of_birth: readerForm.dateOfBirth,
+      age_verified: true,
+      role: 'reader',
+      tier: 'free'
+    });
+
+    // Insert reader profile
+    await supabase.from('reader_profiles').insert({
+      user_id: userId,
+      topics: readerForm.topics,
+      other_topic: readerForm.otherTopic,
+      subscribe_to_updates: readerForm.subscribeToUpdates
+    });
+
+    alert('Account created successfully! Welcome to BlogRolly!');
+    // Redirect to personalized reader dashboard
+    router.push(`/reader/${readerForm.username}`);
   };
 
   if (isLoading) {
@@ -285,7 +375,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     );
   }
 
-  // Mode selection screen
+        // Supabase signup with error handling
   if (authMode === 'selection') {
     return (
       <div className={styles.container}>
@@ -304,7 +394,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <button 
               className={styles.modeButton}
-              onClick={() => setAuthMode('signin')}
+              onClick={() => router.push('/signin')}
             >
               <h3>Sign In</h3>
               <p>Already have an account? Sign in to access your dashboard and submissions.</p>
@@ -326,76 +416,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   // Sign in form
   if (authMode === 'signin') {
-    return (
-      <div className={styles.container}>
-        <div className={styles.authCard}>
-          <h2>Sign In</h2>
-          <p>Welcome back to Blogrolly</p>
-
-          <form onSubmit={handleSignIn} className={styles.form}>
-            {errors.general && (
-              <div className={styles.formGroup}>
-                <span className={styles.error}>{errors.general}</span>
-              </div>
-            )}
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Email Address *
-              </label>
-              <input
-                type="email"
-                value={signInForm.email}
-                onChange={(e) => setSignInForm(prev => ({ ...prev, email: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.email && <span className={styles.error}>{errors.email}</span>}
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Password *
-              </label>
-              <input
-                type="password"
-                value={signInForm.password}
-                onChange={(e) => setSignInForm(prev => ({ ...prev, password: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.password && <span className={styles.error}>{errors.password}</span>}
-            </div>
-
-            <button type="submit" className={styles.submitButton}>
-              Sign In
-            </button>
-          </form>
-
-          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <button 
-              className={styles.linkButton}
-              onClick={() => setAuthMode('selection')}
-            >
-              ← Back to options
-            </button>
-            <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
-            <button 
-              className={styles.linkButton}
-              onClick={() => setAuthMode('signup')}
-            >
-              Don&apos;t have an account? Sign up
-            </button>
-            <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
-            <button
-              className={styles.linkButton}
-              onClick={() => setAuthMode('resetPassword')}
-            >
-              Forgot password?
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    router.push('/signin');
+    return null;
   }
 
   // Reset password form
@@ -553,16 +575,18 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Username (optional)
+                Username *
               </label>
               <input
                 type="text"
                 value={readerForm.username}
                 onChange={(e) => setReaderForm(prev => ({ ...prev, username: e.target.value }))}
                 className={styles.textInput}
+                required
                 placeholder="Pick a name readers can see"
               />
-              <small className={styles.hint}>Pick a name readers can see (optional).</small>
+              {errors.username && <span className={styles.error}>{errors.username}</span>}
+              <small className={styles.hint}>Pick a name readers can see. This will be your public username.</small>
             </div>
 
             <div className={styles.formGroup}>

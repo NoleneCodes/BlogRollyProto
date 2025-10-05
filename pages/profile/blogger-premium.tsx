@@ -231,7 +231,7 @@ const BloggerProfilePremium: React.FC = () => {
       setIsLoading(false);
     };
     fetchData();
-  }, []);
+  }, [userId]);
 
 
   const getInitials = (name: string) => {

@@ -262,7 +262,7 @@ const BloggerProfile: React.FC = () => {
   };
 
     checkAuth();
-  }, [router]);
+  }, [router, blogSubmissions]);
 
   const loadSavedDrafts = async () => {
     try {
