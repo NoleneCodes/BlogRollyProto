@@ -197,7 +197,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     if (userId !== undefined) {
       loadUserPreferences();
     }
-  }, [userId, loadUserPreferences]);
+  }, [userId]);
 
   // Conditional rendering for loading and empty state
   if (isLoading) {
