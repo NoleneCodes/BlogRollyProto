@@ -1,17 +1,16 @@
 const sharp = require('sharp');
 
-sharp('public/DigitalBR.svg')
-  .resize(192, 192)
-  .png()
-  .toFile('public/DigitalBR-192.png')
-  .catch(err => {
-    console.error('Error converting SVG to 192x192 PNG:', err);
-  });
+const INPUT_SVG_PATH = 'public/DigitalBR.svg';
 
-sharp('public/DigitalBR.svg')
-  .resize(512, 512)
-  .png()
-  .toFile('public/DigitalBR-512.png')
-  .catch(err => {
-    console.error('Error converting SVG to 512x512 PNG:', err);
-  });
+function convertSvgToPng(inputPath, outputPath, width, height) {
+  sharp(inputPath)
+    .resize(width, height)
+    .png()
+    .toFile(outputPath)
+    .catch(err => {
+      console.error(`Error converting SVG to ${width}x${height} PNG:`, err);
+    });
+}
+
+convertSvgToPng(INPUT_SVG_PATH, 'public/DigitalBR-192.png', 192, 192);
+convertSvgToPng(INPUT_SVG_PATH, 'public/DigitalBR-512.png', 512, 512);
