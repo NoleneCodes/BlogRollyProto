@@ -152,7 +152,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
       .filter(blog => (blog.relevanceScore || 0) > 0);
   };
 
-  const loadUserPreferences = async () => {
+  const loadUserPreferences = React.useCallback(async () => {
     if (!userId) {
       setPersonalizedBlogs([...mockBlogs].sort(() => Math.random() - 0.5).slice(0, maxItems));
       setIsLoading(false);
@@ -178,7 +178,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     const filtered = filterBlogsByPreferences(mockBlogs, preferences);
     setPersonalizedBlogs(filtered.slice(0, maxItems));
     setIsLoading(false);
-  };
+  }, [userId, maxItems]);
 
   // Get user session and load preferences
   useEffect(() => {
@@ -197,7 +197,7 @@ const PersonalizedBlogroll: React.FC<PersonalizedBlogrollProps> = ({
     if (userId !== undefined) {
       loadUserPreferences();
     }
-  }, [userId]);
+  }, [userId, loadUserPreferences]);
 
   // Conditional rendering for loading and empty state
   if (isLoading) {
