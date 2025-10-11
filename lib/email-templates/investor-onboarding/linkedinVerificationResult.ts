@@ -1,5 +1,5 @@
 export const linkedinVerificationResultTemplate = (investorName: string, approved: boolean, rejectionReason?: string) => {
-  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investor/dashboard`;
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investors/dashboard`;
 
   const rejectionReasons = {
     'incomplete_profile': 'Your LinkedIn profile appears to be incomplete or missing key professional information',

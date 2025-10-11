@@ -90,6 +90,7 @@ const PremiumBlogCard: React.FC<PremiumBlogCardProps> = ({
               width={120}
               height={90}
               className={styles.submissionImage}
+              priority={true}
             />
           ) : (
             <div className={styles.submissionImagePlaceholder}>

@@ -1,4 +1,7 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
+import { supabaseAuth } from '../lib/supabase';
+import AuthPromptPopup from './AuthPromptPopup';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '../styles/BlogCard.module.css';
@@ -43,6 +46,34 @@ const BlogCard: React.FC<BlogCardProps> = ({
   compact = false,
   removeFromReadingHistory
 }) => {
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    supabaseAuth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data?.session);
+    });
+    const { data: listener } = supabaseAuth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    return () => {
+      listener?.subscription?.unsubscribe();
+    };
+  }, []);
+
+  const handleSaveClick = () => {
+    console.log('Save button clicked. isLoggedIn:', isLoggedIn);
+    if (!isLoggedIn) {
+      console.log('User not logged in. Showing AuthPromptPopup.');
+      setShowAuthPopup(true);
+      return;
+    }
+    if (onToggleSave) {
+      console.log('User is logged in. Saving blog:', blog.id);
+      onToggleSave(blog.id);
+    }
+  };
+
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     // Find the last space before the maxLength to avoid cutting words
@@ -54,17 +85,11 @@ const BlogCard: React.FC<BlogCardProps> = ({
     return truncated + '...';
   };
 
-
   // isRead is now passed from parent via blog.isRead
-
-  const handleToggleSave = () => {
-    if (onToggleSave) {
-      onToggleSave(blog.id);
-    }
-  };
 
   return (
     <div className={`${styles.blogCard} ${compact ? styles.compact : ''}`}>
+      {showAuthPopup && <AuthPromptPopup onClose={() => setShowAuthPopup(false)} />}
       <div className={styles.imageContainer}>
         {blog.image && (
           <Image
@@ -74,9 +99,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
             width={600}
             height={400}
             style={{ objectFit: 'cover' }}
-            loading="lazy"
             sizes="(max-width: 768px) 100vw, 600px"
-            priority={false}
+            priority={true}
           />
         )}
         <div className={styles.categoryTag}>
@@ -139,7 +163,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
 
           {showSaveButton && onToggleSave && (
             <button 
-              onClick={handleToggleSave}
+              onClick={handleSaveClick}
               className={`${styles.saveButton} ${blog.isSaved ? styles.saved : ''}`}
               title={blog.isSaved ? 'Remove from saved' : 'Save blog'}
             >

@@ -18,7 +18,6 @@ const InvestorVerifySuccess = () => {
               href="mailto:invest@blogrolly.com"
               className={styles.secondaryButton}
             >
-        
             Investor Relations
             </a>
           </div>

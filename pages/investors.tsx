@@ -121,7 +121,7 @@ const Investors: NextPage = () => {
           body: JSON.stringify({ token: data.token, investor: data.investor })
         });
         // Redirect to investor dashboard
-        router.push('/investor/dashboard');
+  router.push('/investors');
       } else {
         setSubmitStatus('error');
         setSubmitMessage(data.error || 'Login failed');

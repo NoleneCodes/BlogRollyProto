@@ -66,7 +66,7 @@ const InternalBlogCard: React.FC<InternalBlogCardProps> = ({
               style={{ objectFit: 'cover' }}
               loading="lazy"
               sizes="(max-width: 768px) 100vw, 600px"
-              priority={false}
+              priority={true}
             />
           </div>
         )}

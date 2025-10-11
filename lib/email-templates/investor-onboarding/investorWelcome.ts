@@ -1,7 +1,7 @@
 
 export const investorWelcomeTemplate = (investorName: string, verificationToken: string) => {
-  const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investor/verify?token=${verificationToken}`;
-  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investor/dashboard`;
+  const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investors/verify?token=${verificationToken}`;
+  const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/investors/dashboard`;
 
   return {
     subject: 'Welcome to BlogRolly Investor Portal - Please Verify Your Email',

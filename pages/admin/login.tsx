@@ -14,8 +14,20 @@ interface AdminUser {
 }
 
 const AdminLogin: React.FC = () => {
+  const [showLoginFallback, setShowLoginFallback] = useState(false);
   const router = useRouter();
   const { user, loading, error, signIn } = useSupabaseAuth();
+  // Fallback effect: show login form if loading takes too long
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setShowLoginFallback(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoginFallback(false);
+    }
+  }, [loading]);
   const [isChecking, setIsChecking] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -67,13 +79,12 @@ const AdminLogin: React.FC = () => {
     }
   }, [user, isChecking]);
 
+  // Only set unauthorized if not loading and no user
   useEffect(() => {
-    if (user && !isChecking) {
-      checkAdminAuth();
-    } else if (!user && !loading) {
+    if (!user && !loading) {
       setAuthStatus('unauthorized');
     }
-  }, [user, loading, checkAdminAuth, isChecking]);
+  }, [user, loading]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,9 +97,11 @@ const AdminLogin: React.FC = () => {
 
     try {
       const result = await signIn(loginForm.email, loginForm.password);
-      
       if (result.error) {
         setLoginError(result.error.message);
+      } else {
+        // After successful login, check admin authorization
+        await checkAdminAuth();
       }
     } catch (error) {
       setLoginError('Login failed. Please try again.');
@@ -103,34 +116,10 @@ const AdminLogin: React.FC = () => {
     }));
   };
 
-  if (loading || isChecking || authStatus === 'loading') {
-    return (
-      <Layout title="Admin Login - BlogRolly">
-        <div className={styles.adminLogin}>
-          <div className={styles.loginContainer}>
-            <div className={styles.loading}>
-              <h2>Checking authentication...</h2>
-              <p>Please wait...</p>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
 
   if (authStatus === 'authenticated') {
-    return (
-      <Layout title="Admin Login - BlogRolly">
-        <div className={styles.adminLogin}>
-          <div className={styles.loginContainer}>
-            <div className={styles.authorized}>
-              <h2>Access Granted</h2>
-              <p>Redirecting to admin dashboard...</p>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
+    // Redirect handled in checkAdminAuth, just return null
+    return null;
   }
 
   return (
@@ -141,68 +130,41 @@ const AdminLogin: React.FC = () => {
             <h1>BlogRolly Admin</h1>
             <p>Sign in with your BlogRolly admin account</p>
           </div>
-
-          {!user ? (
-            <form onSubmit={handleLogin} className={styles.loginForm}>
-              <h2>Admin Sign In</h2>
-              
-              <div className={styles.formGroup}>
-                <label htmlFor="email">Email Address</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={loginForm.email}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={loginForm.password}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-
-              <button type="submit" className={styles.loginButton}>
-                Sign In to Admin
-              </button>
-
-              {(loginError || error) && (
-                <div className={styles.error}>
-                  <p>{loginError || error}</p>
-                </div>
-              )}
-            </form>
-          ) : (
-            <div className={styles.accessDenied}>
-              <h2>Access Denied</h2>
-              <p>{loginError || 'You do not have permission to access the admin dashboard.'}</p>
-              <div className={styles.userInfo}>
-                <p><strong>Email:</strong> {user.email}</p>
-              </div>
-              <p className={styles.helpText}>
-                Only BlogRolly administrators can access this area. If you believe this is an error, please contact support.
-              </p>
-              
-              <button 
-                onClick={() => {
-                  setLoginForm({ email: '', password: '' });
-                  setLoginError(null);
-                  window.location.href = '/';
-                }} 
-                className={styles.signOutButton}
-              >
-                Return to Home
-              </button>
+          <form onSubmit={handleLogin} className={styles.loginForm} autoComplete="on">
+            <h2>Admin Sign In</h2>
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email Address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={loginForm.email}
+                onChange={handleInputChange}
+                required
+              />
             </div>
-          )}
+            <div className={styles.formGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                value={loginForm.password}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <button type="submit" className={styles.loginButton}>
+              Sign In to Admin
+            </button>
+            {(loginError || error) && (
+              <div className={styles.error}>
+                <p>{loginError || error}</p>
+              </div>
+            )}
+          </form>
         </div>
       </div>
     </Layout>

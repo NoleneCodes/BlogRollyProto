@@ -27,7 +27,7 @@ const InvestorVerify = () => {
           // If LinkedIn verification is required, redirect there
           if (data.nextStep === 'linkedin_verification') {
             setTimeout(() => {
-              router.push(`/investor/linkedin-verification?email=${encodeURIComponent(data.investor.email)}`);
+              router.push(`/investors/linkedin-verification?email=${encodeURIComponent(data.investor.email)}`);
             }, 3000);
           } else {
             // Otherwise redirect to login
@@ -59,10 +59,9 @@ const InvestorVerify = () => {
                 <h1>Thank you for Signing up!</h1>
                 <p>Please verify your email. This will only take a moment.</p>
                 <p> <strong>Note:</strong> If you don&apos;t see the email, please check your spam folder.</p>
-                
-                 <p>Don&apos;t share this code.</p>
-                 <p>It&apos;s a one-time code.</p>
-                 <p>You&apos;ve got this!</p>
+                <p>Don&apos;t share this code.</p>
+                <p>It&apos;s a one-time code.</p>
+                <p>You&apos;ve got this!</p>
                 <div className={styles.buttonGroup} style={{ marginTop: 32 }}>
                   <button
                     type="button"
@@ -92,7 +91,6 @@ const InvestorVerify = () => {
             )}
             {verificationStatus === 'error' && (
               <div className={styles.errorSection}>
-                
                 <h1>Verification Failed</h1>
                 <p>{message}</p>
                 <p>Please contact our support team if you continue to have issues.</p>

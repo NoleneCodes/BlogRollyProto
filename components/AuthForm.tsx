@@ -237,6 +237,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       return;
     }
 
+    // Update last_login timestamp
+    await supabase
+      .from('users')
+      .update({ last_login: new Date().toISOString() })
+      .eq('id', userId);
+
     // Try to get user profile from Supabase
     const { data: profileData, error: profileError } = await supabase
       .from('user_profiles')
