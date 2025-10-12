@@ -1,21 +1,109 @@
-import React from "react";
+import React, { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 
 
 const JoinInvestorCommunity = ({
   activeTab,
   setActiveTab,
-  submitStatus,
-  submitMessage,
-  handleSignupSubmit,
-  handleLoginSubmit,
-  investorForm,
-  handleInputChange,
-  isSubmitting,
-  loginForm,
-  setLoginForm,
   styles
-}: any) => (
+}: any) => {
+  const [submitStatus, setSubmitStatus] = useState("");
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [investorForm, setInvestorForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+    investmentRange: "",
+    investorType: "",
+    linkedinUrl: "",
+    interests: "",
+    message: "",
+    password: "",
+    confirmPassword: ""
+  });
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setInvestorForm((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSignupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("");
+    setSubmitMessage("");
+    if (investorForm.password !== investorForm.confirmPassword) {
+      setSubmitStatus("error");
+      setSubmitMessage("Passwords do not match.");
+      setIsSubmitting(false);
+      return;
+    }
+    // Supabase sign up
+    const { data, error } = await supabase.auth.signUp({
+      email: investorForm.email,
+      password: investorForm.password
+    });
+    if (error) {
+      setSubmitStatus("error");
+      setSubmitMessage(error.message);
+      setIsSubmitting(false);
+      return;
+    }
+    const userId = data?.user?.id;
+    if (!userId) {
+      setSubmitStatus("error");
+      setSubmitMessage("User creation failed.");
+      setIsSubmitting(false);
+      return;
+    }
+    // Insert investor profile
+    const { error: profileError } = await supabase.from("investor_profiles").insert({
+      user_id: userId,
+      first_name: investorForm.firstName,
+      last_name: investorForm.lastName,
+      email: investorForm.email,
+      company: investorForm.company,
+      investment_range: investorForm.investmentRange,
+      investor_type: investorForm.investorType,
+      linkedin_url: investorForm.linkedinUrl,
+      interests: investorForm.interests,
+      message: investorForm.message
+    });
+    if (profileError) {
+      setSubmitStatus("error");
+      setSubmitMessage(profileError.message);
+      setIsSubmitting(false);
+      return;
+    }
+    setSubmitStatus("success");
+    setSubmitMessage("Account created! Please check your email to verify your account.");
+    setIsSubmitting(false);
+  };
+
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("");
+    setSubmitMessage("");
+    const { error } = await supabase.auth.signInWithPassword({
+      email: loginForm.email,
+      password: loginForm.password
+    });
+    if (error) {
+      setSubmitStatus("error");
+      setSubmitMessage(error.message);
+      setIsSubmitting(false);
+      return;
+    }
+    setSubmitStatus("success");
+    setSubmitMessage("Login successful!");
+    setIsSubmitting(false);
+  };
+  return (
   <div className={styles.investorSignupSection}>
     <h2>Join the Investor Community</h2>
     <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
@@ -61,7 +149,7 @@ const JoinInvestorCommunity = ({
       </div>
     )}
     {activeTab === 'signup' && submitStatus !== 'success' && (
-      <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
+  <form onSubmit={handleSignupSubmit} className={styles.investorForm}>
         <div className={styles.formRow}>
           <input
             type="text"
@@ -184,7 +272,7 @@ const JoinInvestorCommunity = ({
       </form>
     )}
     {activeTab === 'login' && (
-      <form onSubmit={handleLoginSubmit} className={styles.investorForm}>
+  <form onSubmit={handleLoginSubmit} className={styles.investorForm}>
         <div className={styles.formRow}>
           <input
             type="email"
@@ -213,6 +301,7 @@ const JoinInvestorCommunity = ({
       </form>
     )}
   </div>
-);
+  );
+};
 
 export default JoinInvestorCommunity;

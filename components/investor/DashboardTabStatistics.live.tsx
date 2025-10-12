@@ -68,7 +68,7 @@ const DashboardTabStatistics = () => {
         if (r.category) categoryCounts[r.category] = (categoryCounts[r.category] || 0) + 1;
       });
       const topCategories = Object.entries(categoryCounts)
-        .sort((a, b) => b[1] - a[1])
+  .sort((a, b) => Number(b[1]) - Number(a[1]))
         .slice(0, 3)
         .map(([cat]) => cat);
 
@@ -207,7 +207,7 @@ const DashboardTabStatistics = () => {
         <div className={styles.statisticsList}>
           <div className={styles.metricCard}>
             <span className={styles.metricTitle}>Headcount</span>
-            <span className={styles.metricValue}>6 full-time, 2 part-time</span>
+            <span className={styles.metricValue}>1 Full-Time</span>
           </div>
         </div>
       </div>
