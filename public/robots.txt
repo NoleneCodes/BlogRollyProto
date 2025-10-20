@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /profile/
-Sitemap: https://blogrolly.com/sitemap.xml
+Sitemap: /sitemap.xml
