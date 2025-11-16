@@ -7,20 +7,30 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { username } = req.query;
+  
   if (!username || typeof username !== 'string') {
     return res.status(400).json({ error: 'Username required' });
   }
 
-  // Check username in user_profiles table
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('id')
-    .eq('username', username)
-    .limit(1);
+  try {
+    // ✅ Fix: Check username in users table (not user_profiles)
+    const { data, error } = await supabase
+      .from('users')  // Changed from 'user_profiles' to 'users'
+      .select('id')
+      .eq('username', username)
+      .eq('is_active', true)  // Only check active users
+      .maybeSingle();  // Better than limit(1)
 
-  if (error) {
-    return res.status(500).json({ error: 'Database error' });
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    // Return whether username exists
+    res.status(200).json({ exists: !!data });
+    
+  } catch (error) {
+    console.error('API error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
-
-  res.status(200).json({ exists: data && data.length > 0 });
 }

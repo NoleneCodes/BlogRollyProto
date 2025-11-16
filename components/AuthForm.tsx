@@ -100,8 +100,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-
-
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -200,75 +198,126 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
-    // Basic email format validation
-    if (!signInForm.email) newErrors.email = 'Email is required';
-    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(signInForm.email)) newErrors.email = 'Enter a valid email address';
-    if (!signInForm.password) newErrors.password = 'Password is required';
+    // Basic validation - allow email OR username
+    if (!signInForm.email) {
+      newErrors.email = 'Email or username is required';
+    }
+    if (!signInForm.password) {
+      newErrors.password = 'Password is required';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    // Real Supabase authentication
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: signInForm.email,
-      password: signInForm.password
-    });
+    const loginInput = signInForm.email.trim();
+    let emailToUse = loginInput;
 
-    if (error) {
-      // Show a friendly error for invalid credentials
-      let message = error.message;
-      if (
-        message.toLowerCase().includes('invalid login credentials') ||
-        message.toLowerCase().includes('invalid email or password') ||
-        message.toLowerCase().includes('invalid credentials')
-      ) {
-        message = 'Hmm, those details don\'t match. Want to try again?';
+    // Check if input looks like an email (contains @ and .)
+    const isEmail = loginInput.includes('@') && loginInput.includes('.');
+    
+    if (!isEmail) {
+      // Input is likely a username, need to find the corresponding email
+      try {
+        console.log('🔍 Looking up email for username:', loginInput);
+        
+        const response = await fetch('/api/lookup-email-by-username', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: loginInput })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.found) {
+          setErrors({ 
+            general: 'Username not found. Please check your username or use your email address instead.' 
+          });
+          return;
+        }
+
+        emailToUse = data.email;
+        console.log('🔍 Found email for username, proceeding with authentication');
+
+      } catch (error) {
+        console.error('Username lookup error:', error);
+        setErrors({ 
+          general: 'Error looking up username. Please try using your email address.' 
+        });
+        return;
       }
-      setErrors({ general: message });
-      return;
     }
 
-    // Fetch user profile to determine role
-    let userId = data?.user?.id;
-    if (!userId) {
-      setErrors({ general: 'Could not find user. Please try again.' });
-      return;
-    }
+    // Proceed with email-based authentication
+    try {
+      console.log('🔍 Attempting authentication with email:', emailToUse);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailToUse,
+        password: signInForm.password
+      });
 
-    // Update last_login timestamp
-    await supabase
-      .from('users')
-      .update({ last_login: new Date().toISOString() })
-      .eq('id', userId);
+      if (error) {
+        // Show a friendly error for invalid credentials
+        let message = error.message;
+        if (
+          message.toLowerCase().includes('invalid login credentials') ||
+          message.toLowerCase().includes('invalid email or password') ||
+          message.toLowerCase().includes('invalid credentials')
+        ) {
+          if (isEmail) {
+            message = 'Hmm, those details don\'t match. Want to try again?';
+          } else {
+            message = 'Username or password incorrect. Please try again.';
+          }
+        }
+        setErrors({ general: message });
+        return;
+      }
 
-    // Try to get user profile from Supabase
-    const { data: profileData, error: profileError } = await supabase
-      .from('user_profiles')
-      .select('role, username')
-      .eq('user_id', userId)
-      .single();
+      // Fetch user profile to determine role
+      let userId = data?.user?.id;
+      if (!userId) {
+        setErrors({ general: 'Could not find user. Please try again.' });
+        return;
+      }
 
-    if (profileError || !profileData) {
-      // Fallback: redirect to reader dashboard
-      router.push('/profile/reader');
-      return;
-    }
+      console.log('🔍 Authentication successful, updating login timestamp');
 
-    // Redirect based on role, using username for personalized dashboard
-    if (profileData.role === 'blogger') {
-      if (profileData.username) {
-        router.push(`/blogger/${profileData.username}`);
+      // Update last_login timestamp
+      await supabase
+        .from('users')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', userId);
+
+      // Get user profile from Supabase
+      const { data: profileData, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('role, username')
+        .eq('user_id', userId)
+        .single();
+
+      if (profileError || !profileData) {
+        console.log('🔍 No profile found, redirecting to reader dashboard');
+        router.push('/profile/reader');
+        return;
+      }
+
+      console.log('🔍 Profile found, redirecting based on role:', profileData.role);
+
+      // Redirect based on role to the correct profile pages
+      if (profileData.role === 'blogger') {
+        router.push('/profile/blogger');
       } else {
-        router.push('/account-error');
+        router.push('/profile/reader');
       }
-    } else {
-      if (profileData.username) {
-        router.push(`/reader/${profileData.username}`);
-      } else {
-        router.push('/account-error');
-      }
+
+    } catch (error) {
+      console.error('Authentication error:', error);
+      setErrors({ general: 'Something went wrong. Please try again.' });
     }
   };
 
@@ -356,8 +405,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     });
 
     alert('Account created successfully! Welcome to BlogRolly!');
-    // Redirect to personalized reader dashboard
-    router.push(`/reader/${readerForm.username}`);
+    // Redirect to reader profile page
+    router.push('/profile/reader');
   };
 
   if (isLoading) {
@@ -400,7 +449,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
             <button 
               className={styles.modeButton}
-              onClick={() => router.push('/signin')}
+              onClick={() => setAuthMode('signin')}
             >
               <h3>Sign In</h3>
               <p>Already have an account? Sign in to access your dashboard and submissions.</p>
@@ -422,8 +471,61 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   // Sign in form
   if (authMode === 'signin') {
-    router.push('/signin');
-    return null;
+    return (
+      <div className={styles.container}>
+        <div className={styles.authCard}>
+          <h2>Sign In</h2>
+          <p>Welcome back to Blogrolly</p>
+
+          <form onSubmit={handleSignIn} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Email or Username *</label>
+              <input
+                type="text"
+                value={signInForm.email}
+                onChange={(e) => setSignInForm(prev => ({ ...prev, email: e.target.value }))}
+                className={styles.textInput}
+                placeholder="Enter your email or username"
+                required
+              />
+              {errors.email && <span className={styles.error}>{errors.email}</span>}
+              <small className={styles.hint}>You can sign in with either your email address or username</small>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Password *</label>
+              <input
+                type="password"
+                value={signInForm.password}
+                onChange={(e) => setSignInForm(prev => ({ ...prev, password: e.target.value }))}
+                className={styles.textInput}
+                required
+              />
+              {errors.password && <span className={styles.error}>{errors.password}</span>}
+            </div>
+
+            {errors.general && (
+              <div className={styles.formGroup}>
+                <span className={styles.error}>{errors.general}</span>
+              </div>
+            )}
+
+            <button type="submit" className={styles.submitButton}>
+              Sign In
+            </button>
+          </form>
+
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button 
+              className={styles.linkButton}
+              onClick={() => setAuthMode('resetPassword')}
+            >
+              Forgot your password?
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Reset password form
@@ -432,7 +534,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
       <div className={styles.container}>
         <div className={styles.authCard}>
           <h2>Reset Password</h2>
-          <p>Enter your email address and we’ll send you a link to reset your password.</p>
+          <p>Enter your email address and we'll send you a link to reset your password.</p>
           <form onSubmit={handleResetPassword} className={styles.form}>
             <div className={styles.formGroup}>
               <label className={styles.label}>Email Address *</label>
@@ -595,20 +697,48 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
               <small className={styles.hint}>Pick a name readers can see. This will be your public username.</small>
             </div>
 
+            {/* FIXED CATEGORIES SECTION */}
             <div className={styles.formGroup}>
               <label className={styles.label}>Topics You&apos;re Into *</label>
               <div className={styles.checkboxGrid}>
-                {MAIN_CATEGORIES.map(category => (
-                  <label key={category} className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      checked={readerForm.topics.includes(category)}
-                      onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
-                      className={styles.checkbox}
-                    />
-                    <span className={styles.checkboxText}>{category}</span>
-                  </label>
-                ))}
+                {MAIN_CATEGORIES && Array.isArray(MAIN_CATEGORIES) ? (
+                  MAIN_CATEGORIES.map((category, index) => {
+                    // Handle both object format {id, name, description} and string format
+                    const categoryName = typeof category === 'object' && category !== null 
+                      ? category.name 
+                      : category;
+                    const categoryKey = typeof category === 'object' && category !== null 
+                      ? category.id || index 
+                      : category;
+                    
+                    return (
+                      <label key={categoryKey} className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          checked={readerForm.topics.includes(categoryName)}
+                          onChange={(e) => handleReaderTopicChange(categoryName, e.target.checked)}
+                          className={styles.checkbox}
+                        />
+                        <span className={styles.checkboxText}>{categoryName}</span>
+                      </label>
+                    );
+                  })
+                ) : (
+                  // Fallback categories if MAIN_CATEGORIES is not available
+                  ['Lifestyle', 'Health & Wellness', 'Business & Finance', 'Tech & Digital Life', 
+                   'Creative & Arts', 'Education & Learning', 'Travel & Adventure', 
+                   'Food & Cooking', 'Entertainment', 'Other'].map(category => (
+                    <label key={category} className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        checked={readerForm.topics.includes(category)}
+                        onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
+                        className={styles.checkbox}
+                      />
+                      <span className={styles.checkboxText}>{category}</span>
+                    </label>
+                  ))
+                )}
               </div>
 
               <CustomCategoryInput

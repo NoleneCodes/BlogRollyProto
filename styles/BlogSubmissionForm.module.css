@@ -7,6 +7,33 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+/* ENHANCED: Container and header styling */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.header h2 {
+  margin: 0 0 16px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
 .guidelinesSection {
   margin-bottom: 2rem;
   text-align: left;
@@ -35,6 +62,14 @@
   color: #a01d38;
 }
 
+/* ENHANCED: Guidelines section at bottom */
+.guidelines {
+  padding: 16px 24px;
+  background: #f0f9ff;
+  border-top: 1px solid #e0f2fe;
+  text-align: center;
+}
+
 .progressContainer {
   margin-bottom: 2rem;
 }
@@ -51,7 +86,8 @@
 .progressFill {
   height: 100%;
   background: linear-gradient(90deg, #c42142, #e53e61);
-  transition: width 0.3s ease;
+  transition: width 0.5s ease;
+  border-radius: 4px;
 }
 
 .progressInfo {
@@ -66,6 +102,7 @@
   font-size: 0.875rem;
   color: #6b7280;
   font-weight: 500;
+  text-align: center;
 }
 
 .draftStatus {
@@ -90,16 +127,32 @@
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex: 1;
+  padding: 12px 24px;
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .draftButton:hover:not(:disabled) {
   background: #e5e7eb;
   border-color: #9ca3af;
+  border-color: #d1d5db;
 }
 
 .draftButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background: #d1d5db;
+  border-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .draftSaved {
@@ -130,10 +183,17 @@
   gap: 2rem;
 }
 
+/* ENHANCED: Form groups */
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.formGroup:last-child {
+  border-bottom: none;
 }
 
 .label {
@@ -142,6 +202,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
 }
 
 .optional {
@@ -157,11 +222,25 @@
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.2s ease;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
 }
 
 .textInput:focus {
   outline: none;
   border-color: #c42142;
+  box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
+}
+
+/* ENHANCED: Input error state */
+.inputError {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
 }
 
 .readonly {
@@ -192,6 +271,8 @@
   gap: 12px;
   cursor: pointer;
   font-weight: normal;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .checkbox {
@@ -212,17 +293,33 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s ease;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
 }
 
 .textarea:focus {
   outline: none;
   border-color: #c42142;
+  box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
 }
 
-.readonly {
-  background-color: #f9fafb;
+/* ENHANCED: Reading time display */
+.readingTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: #6b7280;
-  cursor: not-allowed;
+  font-size: 13px;
+  font-weight: normal;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: #f3f4f6;
+  border-radius: 12px;
 }
 
 .fileInput {
@@ -250,6 +347,42 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ENHANCED: Suggested tags */
+.suggestedTags {
+  margin-bottom: 16px;
+}
+
+.suggestedTags label {
+  color: #4b5563;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.tagSuggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tagSuggestion {
+  padding: 6px 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #0369a1;
+  font-weight: 500;
+}
+
+.tagSuggestion:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
 }
 
 .tagsContainer {
@@ -290,6 +423,105 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* ENHANCED: Tag container styling */
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.tagButton {
+  padding: 8px 12px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.tagButton:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+}
+
+.tagSelected {
+  background: #c42142 !important;
+  border-color: #c42142 !important;
+  color: white !important;
+}
+
+.tagSelected:hover {
+  background: #a01835 !important;
+  border-color: #a01835 !important;
+}
+
+/* ENHANCED: Selected tags display */
+.selectedTags {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.selectedTags strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.selectedTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #c42142;
+  color: white;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.removeTag {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  margin-left: 4px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.removeTag:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .tagInputContainer {
   position: relative;
 }
@@ -322,6 +554,54 @@
   background-color: #f3f4f6;
 }
 
+/* ENHANCED: Validation messages */
+.validationMessage {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+}
+
+.validationMessage.success {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #16a34a;
+}
+
+/* ENHANCED: Character count */
+.charCount {
+  text-align: right;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ENHANCED: Field hints */
+.fieldHint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ENHANCED: Action buttons */
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  padding: 24px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
 .submitButton {
   background-color: #c42142;
   color: white;
@@ -333,15 +613,33 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: 1rem;
+  flex: 2;
+  padding: 12px 24px;
+  background: #c42142;
+  color: white;
+  border: 2px solid #c42142;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.submitButton:hover:not(.disabled) {
+.submitButton:hover:not(.disabled):not(:disabled) {
   background-color: #a01835;
+  border-color: #a01835;
+  transform: translateY(-1px);
 }
 
-.submitButton.disabled {
+.submitButton.disabled,
+.submitButton:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
+  background: #d1d5db;
+  border-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .error {
@@ -414,19 +712,102 @@
   cursor: not-allowed;
 }
 
-.tagSelected {
-  background-color: #c42142 !important;
-  color: white !important;
-  border-color: #c42142 !important;
+/* ENHANCED: Animation for form state changes */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+.suggestedTags {
+  animation: slideIn 0.3s ease;
+}
+
+.validationMessage {
+  animation: slideIn 0.2s ease;
+}
+
+/* ENHANCED: Focus management */
+.formGroup:focus-within label {
+  color: #c42142;
+}
+
+/* ENHANCED: Loading states */
+.submitButton:disabled {
+  position: relative;
+  overflow: hidden;
+}
+
+.submitButton:disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top-color: #9ca3af;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .formContainer {
     padding: 1rem;
+    margin: 12px;
+    margin: 0;
   }
 
   .form {
     gap: 1.5rem;
+    border-radius: 8px;
+  }
+
+  .header {
+    padding: 16px 16px 12px;
+  }
+
+  .header h2 {
+    font-size: 20px;
+  }
+
+  .formGroup {
+    padding: 12px 16px;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .draftButton,
+  .submitButton {
+    flex: none;
+  }
+
+  .tagContainer {
+    max-height: 150px;
+  }
+
+  .tagSuggestions {
+    gap: 6px;
+  }
+
+  .tagSuggestion {
+    padding: 5px 10px;
+    font-size: 12px;
   }
 
   .imagePreview {
@@ -449,5 +830,35 @@
   .tagCategoryTag {
     font-size: 0.75rem;
     padding: 0.2rem 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h2 {
+    font-size: 18px;
+  }
+
+  .formGroup label {
+    font-size: 13px;
+  }
+
+  .formGroup input,
+  .formGroup textarea,
+  .formGroup select {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .tagList {
+    gap: 4px;
+  }
+
+  .selectedTag {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .actionButtons {
+    gap: 8px;
   }
 }

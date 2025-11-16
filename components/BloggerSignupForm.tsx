@@ -80,8 +80,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   const [isPart1Complete, setIsPart1Complete] = useState(false);
   const [customTopic, setCustomTopic] = useState('');
 
-
-
   const monetizationOptions = [
     'Ads', 'Affiliate Links', 'Products/Services', 'None Yet'
   ];
@@ -589,21 +587,49 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <label className={styles.label}>
             Primary Topics / Niche
             <span className={styles.optional}></span>
-
           </label>
           <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
+          
+          {/* FIXED CATEGORIES SECTION */}
           <div className={styles.checkboxGrid}>
-            {MAIN_CATEGORIES.map(category => (
-              <label key={category} className={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  checked={bloggerForm.topics.includes(category)}
-                  onChange={(e) => handleBloggerTopicChange(category, e.target.checked)}
-                  className={styles.checkbox}
-                />
-                <span className={styles.checkboxText}>{category}</span>
-              </label>
-            ))}
+            {MAIN_CATEGORIES && Array.isArray(MAIN_CATEGORIES) ? (
+              MAIN_CATEGORIES.map((category, index) => {
+                // Handle both object format {id, name, description} and string format
+                const categoryName = typeof category === 'object' && category !== null 
+                  ? category.name 
+                  : category;
+                const categoryKey = typeof category === 'object' && category !== null 
+                  ? category.id || index 
+                  : category;
+                
+                return (
+                  <label key={categoryKey} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={bloggerForm.topics.includes(categoryName)}
+                      onChange={(e) => handleBloggerTopicChange(categoryName, e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.checkboxText}>{categoryName}</span>
+                  </label>
+                );
+              })
+            ) : (
+              // Fallback categories if MAIN_CATEGORIES is not available
+              ['Lifestyle', 'Health & Wellness', 'Business & Finance', 'Tech & Digital Life', 
+               'Creative & Arts', 'Education & Learning', 'Travel & Adventure', 
+               'Food & Cooking', 'Entertainment', 'Other'].map(category => (
+                <label key={category} className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={bloggerForm.topics.includes(category)}
+                    onChange={(e) => handleBloggerTopicChange(category, e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.checkboxText}>{category}</span>
+                </label>
+              ))
+            )}
           </div>
 
           <CustomCategoryInput
@@ -614,8 +640,6 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             maxWords={3}
             label="Add your custom topic (one word at a time, max 3 words)"
           />
-
-
         </div>
 
         <div className={styles.sectionTitle}>

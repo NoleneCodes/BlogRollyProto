@@ -142,7 +142,7 @@ const Submit: NextPage = () => {
 
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <button 
-              onClick={() => router.push('/signin')}
+              onClick={() => router.push('/auth')}
               style={{
                 background: '#c42142',
                 color: 'white',

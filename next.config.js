@@ -11,6 +11,12 @@ const nextConfig = {
 			'images.unsplash.com'
 		], // Allow Cloudinary, Picsum, and Unsplash demo images
 		formats: ['image/avif', 'image/webp'],
+		 remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
 	},
 };
 

@@ -95,10 +95,19 @@ const mockBlogs: BlogPost[] = [
 ];
 
 // Get popular tags from centralized file
+// ✅ Get popular tags safely and future-proofed from centralized file
+if (!TAGS?.['Themes & Topics'] || !TAGS?.['Vibe / Tone']) {
+  console.warn(
+    '⚠️ Missing expected "Themes & Topics" or "Vibe / Tone" keys in TAGS. Available keys:',
+    TAGS ? Object.keys(TAGS) : 'TAGS is undefined'
+  );
+}
+
 const POPULAR_TAGS = [
-  ...TAGS['Themes & Topics'].slice(0, 20),
-  ...TAGS['Vibe / Tone'].slice(0, 8)
+  ...(TAGS?.['Themes & Topics'] || []).slice(0, 20),
+  ...(TAGS?.['Vibe / Tone'] || []).slice(0, 8)
 ].filter(tag => tag !== 'Other');
+
 
 const Blogroll: NextPage = () => {
   // Use Supabase auth for user ID
