@@ -322,12 +322,30 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   };
 
   const handleReaderSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  console.log('🔍 handleReaderSubmit function called!');
+  e.preventDefault();
+  console.log('🔍 Form submission started, form data:', readerForm);
+    
     const newErrors: Record<string, string> = {};
 
   if (!readerForm.email) newErrors.email = 'Email is required';
-  if (!readerForm.password) newErrors.password = 'Password is required';
-  else if (readerForm.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
+  if (!readerForm.password) {
+  newErrors.password = 'Password is required';
+} else if (readerForm.password.length < 12) {
+  newErrors.password = 'Password must be at least 12 characters long';
+} else {
+  // Check for common weak patterns
+  const isWeak = /^(password|123456|qwerty|admin|letmein)/i.test(readerForm.password);
+  const hasUpperCase = /[A-Z]/.test(readerForm.password);
+  const hasNumbers = /\d/.test(readerForm.password);
+  const hasSpecialChars = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(readerForm.password);
+  
+  if (isWeak) {
+    newErrors.password = 'This password is too common. Please choose something more unique.';
+  } else if (!hasUpperCase || !hasNumbers || !hasSpecialChars) {
+    newErrors.password = 'Password must include uppercase letters, numbers, and special characters';
+  }
+}
   if (!readerForm.confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
   else if (readerForm.password !== readerForm.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
   if (!readerForm.firstName) newErrors.firstName = 'First name is required';
@@ -341,72 +359,136 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     // Username uniqueness check
     if (readerForm.username) {
       try {
+        console.log('🔍 Checking username availability...');
         const res = await fetch(`/api/check-username?username=${encodeURIComponent(readerForm.username)}`);
         const data = await res.json();
+        console.log('🔍 Username check result:', { exists: data.exists, username: readerForm.username });
+        
         if (!res.ok || data.exists) {
           newErrors.username = 'This username is already taken. Please choose another.';
         }
       } catch (err) {
+        console.error('❌ Username check error:', err);
         newErrors.username = 'Could not check username. Please try again.';
       }
     }
 
     if (Object.keys(newErrors).length > 0) {
+      console.log('❌ Validation errors:', newErrors);
       setErrors(newErrors);
       return;
     }
+    console.log('✅ Validation passed, proceeding to signup...');
 
-    // Supabase signup
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email: readerForm.email,
-      password: readerForm.password,
-      options: {
-        data: {
-          first_name: readerForm.firstName,
-          surname: readerForm.surname,
-          username: readerForm.username,
-          date_of_birth: readerForm.dateOfBirth,
-          role: 'reader',
-          tier: 'free'
+    try {
+      console.log('🔍 Starting Supabase auth signup...');
+      
+      // Supabase signup
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: readerForm.email,
+        password: readerForm.password,
+        options: {
+          data: {
+            first_name: readerForm.firstName,
+            surname: readerForm.surname,
+            username: readerForm.username,
+            date_of_birth: readerForm.dateOfBirth,
+            role: 'reader',
+            tier: 'free'
+          }
         }
+      });
+
+      console.log('🔍 Signup result:', { 
+        user: signUpData?.user?.id, 
+        session: !!signUpData?.session,
+        error: signUpError?.message 
+      });
+
+      if (signUpError) {
+        console.error('❌ Signup error:', signUpError);
+        setErrors({ general: signUpError.message });
+        return;
       }
-    });
 
-    if (signUpError) {
-      setErrors({ general: signUpError.message });
-      return;
+      // Get user id from signup response
+      const userId = signUpData?.user?.id;
+      if (!userId) {
+        console.error('❌ No user ID returned from signup');
+        setErrors({ general: 'Could not create user account. Please try again.' });
+        return;
+      }
+
+      console.log('✅ Created auth user:', userId);
+
+      // Insert user profile
+      console.log('🔍 Creating user profile...');
+      const { error: profileError } = await supabase.from('user_profiles').insert({
+        user_id: userId,
+        first_name: readerForm.firstName,
+        surname: readerForm.surname,
+        username: readerForm.username,
+        date_of_birth: readerForm.dateOfBirth,
+        age_verified: true,
+        role: 'reader',
+        tier: 'free',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+
+      if (profileError) {
+        console.error('❌ Profile creation error:', profileError);
+        setErrors({ general: 'Failed to create profile. Please try again.' });
+        return;
+      }
+
+      console.log('✅ Created user profile');
+
+      // Insert reader profile
+      console.log('🔍 Creating reader profile...');
+      const { error: readerError } = await supabase.from('reader_profiles').insert({
+        user_id: userId,
+        topics: readerForm.topics,
+        other_topic: readerForm.otherTopic,
+        subscribe_to_updates: readerForm.subscribeToUpdates,
+        notification_preferences: {
+          email: true,
+          push: false
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+
+      if (readerError) {
+        console.error('⚠️ Reader profile creation error:', readerError);
+        console.warn('Reader profile creation failed but continuing...');
+      } else {
+        console.log('✅ Created reader profile');
+      }
+
+      console.log('✅ Account creation completed successfully!');
+      alert('Account created successfully! Welcome to BlogRolly!');
+      
+      // Wait a moment for session to be established
+      console.log('🔍 Waiting for session to be established...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Check if we have a session before redirecting
+      const { data: { session: newSession }, error: sessionError } = await supabase.auth.getSession();
+      console.log('🔍 Post-signup session check:', { 
+        hasSession: !!newSession, 
+        sessionError: sessionError?.message 
+      });
+
+      console.log('🔍 Attempting redirect to /profile/reader...');
+      
+      // Force a hard redirect to ensure the session is available
+      window.location.href = '/profile/reader';
+
+    } catch (error) {
+      console.error('❌ Unexpected signup error:', error);
+      setErrors({ general: 'An unexpected error occurred. Please try again.' });
     }
-
-    // Get user id from signup response
-    const userId = signUpData?.user?.id;
-    if (!userId) {
-      setErrors({ general: 'Could not create user account. Please try again.' });
-      return;
-    }
-
-    // Insert user profile
-    await supabase.from('user_profiles').insert({
-      user_id: userId,
-      first_name: readerForm.firstName,
-      surname: readerForm.surname,
-      username: readerForm.username,
-      date_of_birth: readerForm.dateOfBirth,
-      age_verified: true,
-      role: 'reader',
-      tier: 'free'
-    });
-
-    // Insert reader profile
-    await supabase.from('reader_profiles').insert({
-      user_id: userId,
-      topics: readerForm.topics,
-      other_topic: readerForm.otherTopic,
-      subscribe_to_updates: readerForm.subscribeToUpdates
-    });
-
-    alert('Account created successfully! Welcome to BlogRolly!');
-    // Redirect to reader profile page
-    router.push('/profile/reader');
   };
 
   if (isLoading) {
@@ -663,7 +745,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 required
               />
               {errors.password && <span className={styles.error}>{errors.password}</span>}
-              <small className={styles.hint}>Must be at least 8 characters long.</small>
+              <small className={styles.hint}>
+  Must be at least 12 characters with uppercase, numbers, and special characters. 
+  Avoid common words like "password" or "123456".
+</small>
             </div>
 
             <div className={styles.formGroup}>

@@ -13,13 +13,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // ✅ Fix: Check username in users table (not user_profiles)
+    // ✅ Fixed: Check username in user_profiles table with correct columns
     const { data, error } = await supabase
-      .from('users')  // Changed from 'user_profiles' to 'users'
+      .from('user_profiles')  // Use the correct table
       .select('id')
       .eq('username', username)
-      .eq('is_active', true)  // Only check active users
-      .maybeSingle();  // Better than limit(1)
+      // Remove the deleted_at and is_active filters since they don't exist
+      .maybeSingle();
 
     if (error) {
       console.error('Database error:', error);

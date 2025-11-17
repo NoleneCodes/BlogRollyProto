@@ -19,11 +19,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Look up the user profile by username
+    // ✅ Fixed: Look up the user profile by username without deleted_at filter
     const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
       .select('user_id')
       .eq('username', username.toLowerCase().trim())
+      // Removed .is('deleted_at', null) since the column doesn't exist
       .single();
 
     if (profileError || !profile) {
