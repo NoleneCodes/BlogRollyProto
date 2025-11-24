@@ -1,0 +1,364 @@
+/* Submit.module.css - Submit page with dark mode support */
+
+/* Overall page wrapper */
+.pageWrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .pageWrapper {
+  background: #18191a;
+}
+
+.hero {
+  background: linear-gradient(135deg, #c42142 0%, #e63946 100%);
+  color: white;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: 0;
+}
+
+/* Dark mode hero */
+:global(.dark) .hero {
+  background: #621121;
+}
+
+.title {
+  margin: 0 0 1rem 0;
+  line-height: 1.15;
+  font-size: 3.5rem;
+  color: white;
+}
+
+.description {
+  margin: 0 0 3rem 0;
+  line-height: 1.6;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.loadingContainer {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #ffffff;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .loadingContainer {
+  background: #18191a;
+}
+
+.loadingTitle {
+  font-size: 2rem;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+:global(.dark) .loadingTitle {
+  color: #d1d5db;
+}
+
+.formContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.authRequiredSection {
+  padding: 3rem 1rem;
+  background-color: #f9fafb;
+  margin: 2rem 0;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .authRequiredSection {
+  background-color: #242526;
+}
+
+.authContent {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.authTitle {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #374151;
+  text-align: center;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .authTitle {
+  color: #ffffff;
+}
+
+.authDescription {
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.6;
+  transition: color 0.2s;
+}
+
+:global(.dark) .authDescription {
+  color: #d1d5db;
+}
+
+.signInButtonContainer {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.signInButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.25);
+  min-width: 250px;
+}
+
+.signInButton:hover {
+  background: #a01835;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(196, 33, 66, 0.35);
+}
+
+:global(.dark) .signInButton {
+  background: #ff6b6b;
+  color: #18191a;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+}
+
+:global(.dark) .signInButton:hover {
+  background: #ff5252;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.35);
+}
+
+.reasonsSection {
+  margin-bottom: 3rem;
+}
+
+.reasonsTitle {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  color: #374151;
+  text-align: center;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .reasonsTitle {
+  color: #ffffff;
+}
+
+.reasonsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.reasonItem {
+  padding: 1rem;
+}
+
+.reasonHeading {
+  color: #c42142;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .reasonHeading {
+  color: #ff6b6b;
+}
+
+.reasonText {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  transition: color 0.2s;
+}
+
+:global(.dark) .reasonText {
+  color: #d1d5db;
+}
+
+.processSection {
+  margin-bottom: 2rem;
+}
+
+.processTitle {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  color: #374151;
+  text-align: center;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .processTitle {
+  color: #ffffff;
+}
+
+.processGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.processStep {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.processStep:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .processStep {
+  background-color: #18191a;
+  border-color: #3e4042;
+}
+
+:global(.dark) .processStep:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.stepNumber {
+  background-color: #c42142;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 auto 1rem auto;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .stepNumber {
+  background-color: #ff6b6b;
+  color: #18191a;
+}
+
+.stepTitle {
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .stepTitle {
+  color: #ffffff;
+}
+
+.stepText {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .stepText {
+  color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+
+  .authRequiredSection {
+    margin: 1rem 0;
+    padding: 2rem 1rem;
+  }
+
+  .authTitle {
+    font-size: 1.5rem;
+  }
+
+  .authDescription {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .signInButton {
+    font-size: 1rem;
+    padding: 0.875rem 2rem;
+    min-width: 200px;
+  }
+
+  .reasonsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .processGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .processStep {
+    padding: 1rem;
+  }
+
+  .reasonsTitle,
+  .processTitle {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .authRequiredSection {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .signInButton {
+    width: 100%;
+    max-width: 300px;
+  }
+}

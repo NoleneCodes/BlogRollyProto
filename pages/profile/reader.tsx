@@ -11,6 +11,47 @@ import FeedbackPopup from '../../components/FeedbackPopup';
 import ContactSupportPopup from '../../components/ContactSupportPopup';
 import styles from '../../styles/ReaderProfile.module.css';
 import { MAIN_CATEGORIES, TAGS } from '../../lib/categories-tags';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+interface SavedBlog {
+  id: string;
+  title: string;
+  author: string;
+  savedDate: string;
+  url: string;
+  category: string;
+  description?: string;
+  image?: string;
+  notes?: string;
+}
+
+interface ReadingHistory {
+  id: string;
+  title: string;
+  author: string;
+  readDate: string;
+  url: string;
+  timeSpent?: number;
+  category: string;
+  description?: string;
+  image?: string;
+}
+
+interface FollowedBlogger {
+  id: string;
+  username: string;
+  blogName: string;
+  blogUrl: string;
+  avatar?: string;
+  bio?: string;
+  followedDate: string;
+  category: string;
+}
 
 interface UserInfo {
   id: string;
@@ -25,35 +66,6 @@ interface UserInfo {
   tier?: 'free' | 'pro';
 }
 
-interface SavedBlog {
-  id: string;
-  title: string;
-  author: string;
-  savedDate: string;
-  url: string;
-  category: string;
-}
-
-interface ReadingHistory {
-  id: string;
-  title: string;
-  author: string;
-  readDate: string;
-  url: string;
-  timeSpent?: number;
-}
-
-interface FollowedBlogger {
-  id: string;
-  username: string;
-  blogName: string;
-  blogUrl: string;
-  avatar?: string;
-  bio?: string;
-  followedDate: string;
-  category: string;
-}
-
 const ReaderProfile: React.FC = () => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -66,81 +78,108 @@ const ReaderProfile: React.FC = () => {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [showBugReportPopup, setShowBugReportPopup] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [showContactSupportPopup, setShowContactSupportPopup] = useState(false);
-
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        // Fetch user info (replace with your actual API endpoint)
-        const userRes = await fetch('/api/reader/info');
-        const userData = await userRes.json();
-        setUserInfo(userData);
-
-        // Fetch saved blogs from API
-        const { getSavedBlogs } = await import('../../lib/savedBlogsClient');
-        const savedData = await getSavedBlogs(userData.id);
-        setSavedBlogs(savedData.blogs || []);
-
-        // Fetch reading history from API
-        const { getReadingHistory } = await import('../../lib/readingHistoryClient');
-        const historyData = await getReadingHistory(userData.id);
-        setReadingHistory(historyData.history || []);
-
-        // Fetch followed bloggers
-        const followRes = await import('../../lib/followClient');
-        const followData = await followRes.getBloggerFollowingCount(userData.id);
-        setFollowedBloggers(followData.bloggers || []);
-      } catch (error) {
-        console.error('Failed to fetch profile data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProfileData();
-  }, [router]);
-
-  const handleLogout = () => {
-    // Implement logout logic
-    router.push('/');
-  };
-
-  const removeSavedBlog = (blogId: string) => {
-    setSavedBlogs(prev => prev.filter(blog => blog.id !== blogId));
-  };
-
-  const unfollowBlogger = (bloggerId: string) => {
-    setFollowedBloggers(prev => prev.filter(blogger => blogger.id !== bloggerId));
-  };
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const handleEditTopics = () => {
-    setSelectedTopics([...userInfo!.topics]);
-    setShowTopicEditPopup(true);
-  };
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        console.log('🔍 Fetching profile data...');
+        
+        // Check authentication first
+        const { data: { session }, error: authError } = await supabase.auth.getSession();
+        
+        if (authError || !session) {
+          console.log('❌ No authenticated session, redirecting to auth');
+          router.push('/auth');
+          return;
+        }
 
-  const handleTopicToggle = (topic: string) => {
-    setSelectedTopics(prev => 
-      prev.includes(topic) 
-        ? prev.filter(t => t !== topic)
-        : [...prev, topic]
-    );
-  };
+        console.log('✅ User authenticated:', session.user.id);
 
-  const handleSaveTopics = () => {
-    if (userInfo) {
-      setUserInfo(prev => prev ? { ...prev, topics: selectedTopics } : null);
-    }
-    setShowTopicEditPopup(false);
-  };
+        // Fetch user profile data from database
+        const { data: userProfile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
 
-  const handleCancelTopicEdit = () => {
-    setShowTopicEditPopup(false);
-  };
+        if (profileError) {
+          console.error('❌ Error fetching user profile:', profileError);
+          // Fallback to API endpoint
+          const userRes = await fetch('/api/reader/info');
+          const userData = await userRes.json();
+          setUserInfo(userData);
+        } else {
+          console.log('✅ User profile loaded from database');
+          
+          // Get reader-specific data
+          const { data: readerProfile } = await supabase
+            .from('reader_profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+
+          // Format user data
+          const userData: UserInfo = {
+            id: session.user.id,
+            name: `${userProfile.first_name || ''} ${userProfile.surname || ''}`.trim(),
+            email: session.user.email || '',
+            displayName: userProfile.username || userProfile.first_name,
+            bio: userProfile.bio || '',
+            joinedDate: userProfile.created_at,
+            avatar: userProfile.profile_image_url || '',
+            topics: readerProfile?.topics || [],
+            roles: [userProfile.role],
+            tier: userProfile.tier || 'free'
+          };
+
+          setUserInfo(userData);
+          console.log('✅ User data loaded:', userData);
+        }
+
+        // Fetch saved blogs using enhanced client
+        if (userInfo?.id) {
+          try {
+            const { getSavedBlogs } = await import('../../lib/savedBlogsClient');
+            const savedData = await getSavedBlogs(userInfo.id);
+            setSavedBlogs(savedData.blogs || []);
+          } catch (error) {
+            console.error('Error fetching saved blogs:', error);
+          }
+
+          try {
+            const { getReadingHistory } = await import('../../lib/readingHistoryClient');
+            const historyData = await getReadingHistory(userInfo.id);
+            setReadingHistory(historyData.history || []);
+          } catch (error) {
+            console.error('Error fetching reading history:', error);
+          }
+
+          try {
+            const { getFollowedBloggers } = await import('../../lib/followClient');
+            const followData = await getFollowedBloggers(userInfo.id);
+            setFollowedBloggers(followData.bloggers || []);
+          } catch (error) {
+            console.error('Error fetching followed bloggers:', error);
+          }
+        }
+
+      } catch (error) {
+        console.error('❌ Failed to fetch profile data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, [router]);
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -165,13 +204,161 @@ const ReaderProfile: React.FC = () => {
     }
   };
 
-  const handleSaveSettings = () => {
-    // TODO: Implement actual save functionality with Supabase
-    if (profilePictureFile) {
-      // Update user avatar in userInfo for immediate UI update
-      setUserInfo(prev => prev ? { ...prev, avatar: profilePicturePreview } : null);
+  const uploadProfilePicture = async (file: File, userId: string): Promise<string | null> => {
+    try {
+      setIsUploading(true);
+      console.log('🔍 Uploading profile picture...');
+
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      // Upload to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('profile-pictures')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError);
+        return null;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('profile-pictures')
+        .getPublicUrl(filePath);
+
+      console.log('✅ Profile picture uploaded:', urlData.publicUrl);
+      return urlData.publicUrl;
+
+    } catch (error) {
+      console.error('❌ Error uploading profile picture:', error);
+      return null;
+    } finally {
+      setIsUploading(false);
     }
-    alert('Settings saved successfully!');
+  };
+
+  const handleSaveSettings = async () => {
+    if (!userInfo) return;
+
+    try {
+      console.log('🔍 Saving user settings...');
+      let avatarUrl = userInfo.avatar;
+
+      // Upload profile picture if one was selected
+      if (profilePictureFile) {
+        const uploadedUrl = await uploadProfilePicture(profilePictureFile, userInfo.id);
+        if (uploadedUrl) {
+          avatarUrl = uploadedUrl;
+        } else {
+          alert('Failed to upload profile picture. Please try again.');
+          return;
+        }
+      }
+
+      // Update user profile in database
+      const { error: updateError } = await supabase
+        .from('user_profiles')
+        .update({
+          profile_image_url: avatarUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userInfo.id);
+
+      if (updateError) {
+        console.error('❌ Error updating profile:', updateError);
+        alert('Failed to save settings. Please try again.');
+        return;
+      }
+
+      console.log('✅ Settings saved successfully');
+
+      // Update local state
+      setUserInfo(prev => prev ? { ...prev, avatar: avatarUrl } : null);
+      setProfilePictureFile(null);
+      setProfilePicturePreview(null);
+      
+      alert('Settings saved successfully!');
+
+    } catch (error) {
+      console.error('❌ Error saving settings:', error);
+      alert('Failed to save settings. Please try again.');
+    }
+  };
+
+  const handleTopicToggle = (topic: string) => {
+    setSelectedTopics(prev => 
+      prev.includes(topic) 
+        ? prev.filter(t => t !== topic)
+        : [...prev, topic]
+    );
+  };
+
+  const handleEditTopics = () => {
+    if (userInfo) {
+      setSelectedTopics([...userInfo.topics]);
+      setShowTopicEditPopup(true);
+    }
+  };
+
+  const handleSaveTopics = async () => {
+    if (!userInfo) return;
+
+    try {
+      console.log('🔍 Saving topic preferences...');
+
+      // Update reader profile with new topics
+      const { error: updateError } = await supabase
+        .from('reader_profiles')
+        .update({
+          topics: selectedTopics,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userInfo.id);
+
+      if (updateError) {
+        console.error('❌ Error updating topics:', updateError);
+        alert('Failed to save topics. Please try again.');
+        return;
+      }
+
+      console.log('✅ Topics saved successfully');
+
+      // Update local state
+      setUserInfo(prev => prev ? { ...prev, topics: selectedTopics } : null);
+      setShowTopicEditPopup(false);
+
+    } catch (error) {
+      console.error('❌ Error saving topics:', error);
+      alert('Failed to save topics. Please try again.');
+    }
+  };
+
+  const handleCancelTopicEdit = () => {
+    setShowTopicEditPopup(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      router.push('/');
+    }
+  };
+
+  const removeSavedBlog = (blogId: string) => {
+    setSavedBlogs(prev => prev.filter(blog => blog.id !== blogId));
+  };
+
+  const unfollowBlogger = (bloggerId: string) => {
+    setFollowedBloggers(prev => prev.filter(blogger => blogger.id !== bloggerId));
   };
 
   if (isLoading) {
@@ -185,8 +372,65 @@ const ReaderProfile: React.FC = () => {
   }
 
   if (!userInfo) {
-    return null;
+    return (
+      <Layout title="Profile - Blogrolly">
+        <div className={styles.loading}>
+          <h2>Please sign in to view your profile</h2>
+          <button onClick={() => router.push('/auth')}>Go to Sign In</button>
+        </div>
+      </Layout>
+    );
   }
+
+  const renderSettings = () => (
+    <div className={styles.content}>
+      <h2 style={{ color: '#c42142' }}>Account Settings</h2>
+      <div className={styles.settingsSection}>
+        <div className={styles.settingItem}>
+          <h3>Profile Picture</h3>
+          <div className={styles.profilePictureSection}>
+            <div className={styles.currentPicture}>
+              {(profilePicturePreview || userInfo.avatar) ? (
+                <Image
+                  src={profilePicturePreview || userInfo.avatar!}
+                  alt="Profile"
+                  width={80}
+                  height={80}
+                  className={styles.profileImage}
+                />
+              ) : (
+                <div className={styles.defaultAvatar}>
+                  {getInitials(userInfo.name)}
+                </div>
+              )}
+            </div>
+            <div className={styles.pictureControls}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+                className={styles.fileInput}
+                id="profile-picture"
+                disabled={isUploading}
+              />
+              <label htmlFor="profile-picture" className={styles.uploadButton}>
+                {isUploading ? 'Uploading...' : 'Choose New Picture'}
+              </label>
+              <small className={styles.hint}>Max 2MB, JPG/PNG/WebP only</small>
+            </div>
+          </div>
+        </div>
+        
+        <button 
+          className={styles.saveButton} 
+          onClick={handleSaveSettings}
+          disabled={isUploading}
+        >
+          {isUploading ? 'Saving...' : 'Save Settings'}
+        </button>
+      </div>
+    </div>
+  );
 
   const renderContent = () => {
     switch (activeSection) {
@@ -218,7 +462,6 @@ const ReaderProfile: React.FC = () => {
             readingHistory={readingHistory}
           />
         );
-
       case 'preferences':
         return (
           <div className={styles.content}>
@@ -230,101 +473,14 @@ const ReaderProfile: React.FC = () => {
                   <span key={topic} className={styles.topicTag}>{topic}</span>
                 ))}
               </div>
-              <button className={styles.editButton} onClick={handleEditTopics}>Edit Topics</button>
-            </div>
-            <div className={styles.preferencesSection}>
-              <h3>Newsletter Frequency</h3>
-              <p className={styles.sectionDescription}>Get a digest of popular and insightful blogs based on your topic interests</p>
-              <div className={styles.frequencyButtons}>
-                <button className={`${styles.frequencyButton} ${styles.active}`}>
-                  Weekly
-                </button>
-                <button className={styles.frequencyButton}>
-                  Monthly
-                </button>
-                <button className={styles.frequencyButton}>
-                  None
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'settings':
-        return (
-          <div className={styles.content}>
-            <h2 style={{ color: '#c42142' }}>Account Settings</h2>
-            <div className={styles.settingsForm}>
-              <div className={styles.formGroup}>
-                <label>Profile Picture</label>
-                <div className={styles.profilePictureSection}>
-                  <div className={styles.currentPicture}>
-                    {profilePicturePreview || userInfo.avatar ? (
-                      <Image 
-                        src={profilePicturePreview || userInfo.avatar} 
-                        alt="Profile" 
-                        className={styles.previewImage}
-                        width={80}
-                        height={80}
-                      />
-                    ) : (
-                      <div className={styles.previewPlaceholder}>
-                        {getInitials(userInfo.displayName || userInfo.name)}
-                      </div>
-                    )}
-                  </div>
-                  <div className={styles.pictureUpload}>
-                    <input
-                      type="file"
-                      id="profilePicture"
-                      accept=".jpg,.jpeg,.png,.webp"
-                      onChange={handleProfilePictureChange}
-                      className={styles.fileInput}
-                    />
-                    <label htmlFor="profilePicture" className={styles.uploadButton}>
-                      Choose New Picture
-                    </label>
-                    <small className={styles.uploadHint}>
-                      Max size: 2MB. Formats: JPG, PNG, WebP
-                    </small>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.formGroup}>
-                <label>Display Name</label>
-                <input 
-                  type="text" 
-                  defaultValue={userInfo.displayName} 
-                  className={styles.input}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Email</label>
-                <input 
-                  type="email" 
-                  defaultValue={userInfo.email} 
-                  className={styles.input}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Bio</label>
-                <textarea 
-                  defaultValue={userInfo.bio} 
-                  className={styles.textarea}
-                  rows={3}
-                />
-              </div>
-              <button className={styles.saveButton} onClick={handleSaveSettings}>
-                Save Changes
+              <button className={styles.editTopicsButton} onClick={handleEditTopics}>
+                Edit Topics
               </button>
             </div>
-            <div className={styles.dangerZone}>
-              <h3>Danger Zone</h3>
-              <button className={styles.deleteButton}>Delete Account</button>
-            </div>
           </div>
         );
-
+      case 'settings':
+        return renderSettings();
       case 'help':
         return (
           <div className={styles.content}>
@@ -363,9 +519,8 @@ const ReaderProfile: React.FC = () => {
             </div>
           </div>
         );
-
       default:
-        return null;
+        return renderSettings();
     }
   };
 
@@ -387,7 +542,7 @@ const ReaderProfile: React.FC = () => {
               </div>
               <div className={styles.popupBody}>
                 <p className={styles.popupDescription}>
-                  Select the topics you&apos;re interested in. This helps us personalise your blog recommendations.
+                  Select the topics you're interested in. This helps us personalise your blog recommendations.
                 </p>
 
                 <div className={styles.topicSection}>
@@ -403,30 +558,6 @@ const ReaderProfile: React.FC = () => {
                         />
                         <span className={styles.topicText}>{category}</span>
                       </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.topicSection}>
-                  <h4>Specific Topics & Tags</h4>
-                  <div className={styles.tagCategories}>
-                    {Object.entries(TAGS).map(([categoryName, tags]) => (
-                      <details key={categoryName} className={styles.tagCategory}>
-                        <summary className={styles.tagCategoryTitle}>{categoryName}</summary>
-                        <div className={styles.tagCategoryGrid}>
-                          {tags.filter(tag => tag !== 'Other').map(tag => (
-                            <label key={tag} className={styles.topicLabel}>
-                              <input
-                                type="checkbox"
-                                checked={selectedTopics.includes(tag)}
-                                onChange={() => handleTopicToggle(tag)}
-                                className={styles.topicCheckbox}
-                              />
-                              <span className={styles.topicText}>{tag}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </details>
                     ))}
                   </div>
                 </div>
@@ -521,7 +652,6 @@ const ReaderProfile: React.FC = () => {
               <button 
                 className={`${styles.navItem} ${styles.switch}`}
                 onClick={() => {
-                  // Route to appropriate blogger dashboard based on tier
                   const targetRoute = userInfo.tier === 'pro' ? '/profile/blogger-premium' : '/profile/blogger';
                   router.push(targetRoute);
                 }}

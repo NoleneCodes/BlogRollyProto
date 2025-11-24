@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import BlogSubmissionForm from "../components/BlogSubmissionForm";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Submit.module.css";
 
 interface UserInfo {
   id: string;
@@ -28,7 +28,7 @@ const Submit: NextPage = () => {
               id: data.userId,
               name: data.userName,
               roles: data.userRoles ? data.userRoles.split(',') : [],
-              displayName: data.userName // This would come from user profile in real implementation
+              displayName: data.userName
             };
             setUserInfo(user);
           }
@@ -48,7 +48,6 @@ const Submit: NextPage = () => {
   };
 
   const handleBlogSubmit = (formData: any) => {
-    // TODO: Submit to backend with blogger information
     console.log('Blog submitted by blogger:', {
       ...formData,
       bloggerId: userInfo?.id,
@@ -64,8 +63,8 @@ const Submit: NextPage = () => {
         description="Submit your blog to BlogRolly and grow your audience. Add your blog, share your story, and connect with readers who are searching for new voices."
         canonical="https://blogrolly.com/submit"
       >
-        <div className={styles.hero}>
-          <h1 className={styles.title}>Loading...</h1>
+        <div className={styles.loadingContainer}>
+          <h1 className={styles.loadingTitle}>Loading...</h1>
         </div>
       </Layout>
     );
@@ -75,13 +74,12 @@ const Submit: NextPage = () => {
   const isBlogger = userInfo && (
     userInfo.roles.includes('blogger') || 
     userInfo.roles.includes('admin') ||
-    // For demo purposes, consider all authenticated users as potential bloggers
     userInfo.id
   );
 
   if (userInfo && isBlogger) {
     return (
-  <Layout title="Submit a Blog - Blogrolly" canonical="https://blogrolly.com/submit">
+      <Layout title="Submit a Blog - Blogrolly" canonical="https://blogrolly.com/submit">
         <div className={styles.hero}>
           <h1 className={styles.title}>Submit a Blog</h1>
           <p className={styles.description}>
@@ -89,11 +87,7 @@ const Submit: NextPage = () => {
           </p>
         </div>
 
-        <div style={{ 
-          maxWidth: '800px', 
-          margin: '0 auto', 
-          padding: '0 1rem' 
-        }}>
+        <div className={styles.formContainer}>
           <BlogSubmissionForm 
             onSubmit={handleBlogSubmit}
             displayName={userInfo.displayName || userInfo.name}
@@ -106,7 +100,7 @@ const Submit: NextPage = () => {
   }
 
   return (
-  <Layout title="Submit a Blog - Blogrolly" canonical="https://blogrolly.com/submit">
+    <Layout title="Submit a Blog - Blogrolly" canonical="https://blogrolly.com/submit">
       <div className={styles.hero}>
         <h1 className={styles.title}>Submit a Blog</h1>
         <p className={styles.description}>
@@ -114,240 +108,105 @@ const Submit: NextPage = () => {
         </p>
       </div>
 
-      <div style={{ 
-        padding: '3rem 1rem',
-        backgroundColor: '#f9fafb',
-        margin: '2rem 0',
-        borderRadius: '12px'
-      }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-          <h2 style={{ 
-            fontSize: '1.8rem', 
-            marginBottom: '1rem',
-            color: '#374151',
-            textAlign: 'center'
-          }}>
+      <div className={styles.authRequiredSection}>
+        <div className={styles.authContent}>
+          <h2 className={styles.authTitle}>
             Blogger Account Required
           </h2>
-          <p style={{ 
-            fontSize: '1.1rem', 
-            marginBottom: '2.5rem',
-            color: '#6b7280',
-            textAlign: 'center',
-            lineHeight: '1.6'
-          }}>
+          <p className={styles.authDescription}>
             To submit a blog post to BlogRolly, you&apos;ll need to sign up as a blogger. 
             This helps us keep the content authentic, high quality, and properly credited.
           </p>
 
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div className={styles.signInButtonContainer}>
             <button 
               onClick={() => router.push('/auth')}
-              style={{
-                background: '#c42142',
-                color: 'white',
-                border: 'none',
-                padding: '1rem 2.5rem',
-                borderRadius: '8px',
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 4px 12px rgba(196, 33, 66, 0.25)',
-                minWidth: '250px'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = '#a01835';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 16px rgba(196, 33, 66, 0.35)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = '#c42142';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(196, 33, 66, 0.25)';
-              }}
+              className={styles.signInButton}
             >
               Sign in as Blogger
             </button>
           </div>
 
           {/* Why Blogger Accounts Only */}
-          <div style={{ marginBottom: '3rem' }}>
-            <h3 style={{
-              fontSize: '1.4rem',
-              marginBottom: '1.5rem',
-              color: '#374151',
-              textAlign: 'center'
-            }}>
+          <div className={styles.reasonsSection}>
+            <h3 className={styles.reasonsTitle}>
               Why Blogger Accounts Only?
             </h3>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '1.5rem',
-              textAlign: 'left'
-            }}>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
+            <div className={styles.reasonsGrid}>
+              <div className={styles.reasonItem}>
+                <h4 className={styles.reasonHeading}>
                   Content Ownership
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
+                <p className={styles.reasonText}>
                   Only blog owners can submit their own work
                 </p>
               </div>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
+              <div className={styles.reasonItem}>
+                <h4 className={styles.reasonHeading}>
                   Quality Assurance
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
+                <p className={styles.reasonText}>
                   Verified bloggers help us keep standards high
                 </p>
               </div>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
+              <div className={styles.reasonItem}>
+                <h4 className={styles.reasonHeading}>
                   Author Attribution
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
+                <p className={styles.reasonText}>
                   We link directly to your blog and give you full credit
                 </p>
               </div>
-              <div>
-                <h4 style={{ color: '#c42142', fontWeight: '600', marginBottom: '0.5rem' }}>
+              <div className={styles.reasonItem}>
+                <h4 className={styles.reasonHeading}>
                   Community Building
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0 }}>
+                <p className={styles.reasonText}>
                   Connect with other writers and grow your audience
                 </p>
               </div>
             </div>
           </div>
 
-
           {/* How It Works */}
-          <div>
-            <h3 style={{
-              fontSize: '1.4rem',
-              marginBottom: '1.5rem',
-              color: '#374151',
-              textAlign: 'center'
-            }}>
+          <div className={styles.processSection}>
+            <h3 className={styles.processTitle}>
               How It Works
             </h3>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '1.5rem',
-              textAlign: 'center'
-            }}>
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                border: '2px solid #f3f4f6'
-              }}>
-                <div style={{
-                  backgroundColor: '#c42142',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  margin: '0 auto 1rem auto'
-                }}>
-                  1
-                </div>
-                <h4 style={{ color: '#374151', fontWeight: '600', marginBottom: '0.5rem' }}>
+            <div className={styles.processGrid}>
+              <div className={styles.processStep}>
+                <div className={styles.stepNumber}>1</div>
+                <h4 className={styles.stepTitle}>
                   Create a Blogger Account
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0, fontSize: '0.95rem' }}>
+                <p className={styles.stepText}>
                   Get access to your dashboard and manage submissions
                 </p>
               </div>
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                border: '2px solid #f3f4f6'
-              }}>
-                <div style={{
-                  backgroundColor: '#c42142',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  margin: '0 auto 1rem auto'
-                }}>
-                  2
-                </div>
-                <h4 style={{ color: '#374151', fontWeight: '600', marginBottom: '0.5rem' }}>
+              <div className={styles.processStep}>
+                <div className={styles.stepNumber}>2</div>
+                <h4 className={styles.stepTitle}>
                   Submit a Blog Post
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0, fontSize: '0.95rem' }}>
+                <p className={styles.stepText}>
                   Share a live post from your main blog (not a teaser or redirect)
                 </p>
               </div>
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                border: '2px solid #f3f4f6'
-              }}>
-                <div style={{
-                  backgroundColor: '#c42142',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  margin: '0 auto 1rem auto'
-                }}>
-                  3
-                </div>
-                <h4 style={{ color: '#374151', fontWeight: '600', marginBottom: '0.5rem' }}>
+              <div className={styles.processStep}>
+                <div className={styles.stepNumber}>3</div>
+                <h4 className={styles.stepTitle}>
                   We Review It
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0, fontSize: '0.95rem' }}>
+                <p className={styles.stepText}>
                   A real person checks your post for quality, safety, and working links
                 </p>
               </div>
-              <div style={{
-                padding: '1.5rem',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                border: '2px solid #f3f4f6'
-              }}>
-                <div style={{
-                  backgroundColor: '#c42142',
-                  color: 'white',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  margin: '0 auto 1rem auto'
-                }}>
-                  4
-                </div>
-                <h4 style={{ color: '#374151', fontWeight: '600', marginBottom: '0.5rem' }}>
+              <div className={styles.processStep}>
+                <div className={styles.stepNumber}>4</div>
+                <h4 className={styles.stepTitle}>
                   Get Listed
                 </h4>
-                <p style={{ color: '#6b7280', lineHeight: '1.5', margin: 0, fontSize: '0.95rem' }}>
+                <p className={styles.stepText}>
                   If approved, your blog appears on the Blogroll where readers can find and follow your work
                 </p>
               </div>
