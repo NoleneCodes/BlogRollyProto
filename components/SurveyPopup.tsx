@@ -77,11 +77,8 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
     setIsSubmitting(true);
 
     try {
-      // Get user ID - in a real app, this would come from authentication context
-      // For now, we'll use a placeholder since this is called during signup
-      const userId = 'temp_user_id'; // This should be replaced with actual user ID after account creation
+      const userId = 'temp_user_id';
 
-      // Save survey data to database
       const { data, error } = await supabaseDB.insertSurveyFeedback({
         user_id: userId,
         blogger_experience: surveyData.bloggerExperience,
@@ -118,9 +115,9 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
 
   return (
     <div className={styles.popupOverlay}>
-      <div className={styles.popupContent} style={{ maxWidth: '800px', maxHeight: '90vh' }}>
+      <div className={styles.surveyPopupContent}>
         <div className={styles.popupHeader}>
-          <h3>Blogger Community Survey</h3>
+          <h3 className={styles.popupTitle}>Blogger Community Survey</h3>
           <button
             type="button"
             className={styles.closeButton}
@@ -130,287 +127,290 @@ const SurveyPopup: React.FC<SurveyPopupProps> = ({ isOpen, onClose, onComplete }
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form} style={{ padding: '2rem' }}>
-          <p style={{ color: '#6b7280', marginBottom: '2rem', lineHeight: '1.6' }}>
-            Help us understand our blogging community better! This survey takes 3-5 minutes and helps us improve our platform for bloggers like you.
-          </p>
+        <div className={styles.surveyScrollContainer}>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <p className={styles.surveyDescription}>
+              Help us understand our blogging community better! This survey takes 3-5 minutes and helps us improve our platform for bloggers like you.
+            </p>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              How long have you been blogging? *
-            </label>
-            <select
-              value={surveyData.bloggerExperience}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, bloggerExperience: e.target.value }))}
-              className={styles.textInput}
-              required
-            >
-              <option value="">Select experience level</option>
-              <option value="0-6months">0-6 months</option>
-              <option value="6months-1year">6 months - 1 year</option>
-              <option value="1-2years">1-2 years</option>
-              <option value="2-5years">2-5 years</option>
-              <option value="5plus">5+ years</option>
-            </select>
-            {errors.bloggerExperience && <span className={styles.error}>{errors.bloggerExperience}</span>}
-          </div>
+            {/* Row 1: Experience and Goal */}
+            <div className={styles.formGridTwo}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>How long have you been blogging? *</label>
+                <select
+                  value={surveyData.bloggerExperience}
+                  onChange={(e) => setSurveyData(prev => ({ ...prev, bloggerExperience: e.target.value }))}
+                  className={styles.input}
+                  required
+                >
+                  <option value="">Select experience level</option>
+                  <option value="0-6months">0-6 months</option>
+                  <option value="6months-1year">6 months - 1 year</option>
+                  <option value="1-2years">1-2 years</option>
+                  <option value="2-5years">2-5 years</option>
+                  <option value="5plus">5+ years</option>
+                </select>
+                {errors.bloggerExperience && <span className={styles.error}>{errors.bloggerExperience}</span>}
+              </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              What&apos;s your primary goal with blogging? *
-            </label>
-            <select
-              value={surveyData.primaryGoal}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, primaryGoal: e.target.value }))}
-              className={styles.textInput}
-              required
-            >
-              <option value="">Select primary goal</option>
-              <option value="personal-expression">Personal expression/journaling</option>
-              <option value="build-audience">Build an audience</option>
-              <option value="monetise">Monetise my content</option>
-              <option value="business-marketing">Business/marketing</option>
-              <option value="share-expertise">Share expertise/teach</option>
-              <option value="creative-outlet">Creative outlet</option>
-              <option value="networking">Networking/community building</option>
-            </select>
-            {errors.primaryGoal && <span className={styles.error}>{errors.primaryGoal}</span>}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              What&apos;s your approximate monthly audience size? *
-            </label>
-            <select
-              value={surveyData.audienceSize}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, audienceSize: e.target.value }))}
-              className={styles.textInput}
-              required
-            >
-              <option value="">Select audience size</option>
-              <option value="0-100">0-100 visitors</option>
-              <option value="100-1000">100-1,000 visitors</option>
-              <option value="1000-5000">1,000-5,000 visitors</option>
-              <option value="5000-10000">5,000-10,000 visitors</option>
-              <option value="10000-50000">10,000-50,000 visitors</option>
-              <option value="50000plus">50,000+ visitors</option>
-            </select>
-            {errors.audienceSize && <span className={styles.error}>{errors.audienceSize}</span>}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              How often do you publish new content? *
-            </label>
-            <select
-              value={surveyData.contentFrequency}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, contentFrequency: e.target.value }))}
-              className={styles.textInput}
-              required
-            >
-              <option value="">Select posting frequency</option>
-              <option value="daily">Daily</option>
-              <option value="few-times-week">Few times a week</option>
-              <option value="weekly">Weekly</option>
-              <option value="bi-weekly">Bi-weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="sporadic">Sporadic/when inspired</option>
-            </select>
-            {errors.contentFrequency && <span className={styles.error}>{errors.contentFrequency}</span>}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              How do readers currently discover your blog? * (Select all that apply)
-            </label>
-            <div className={styles.checkboxGrid}>
-              {[
-                'Search engines (Google, etc.)',
-                'Social media (Twitter, Instagram, etc.)',
-                'Word of mouth/referrals',
-                'Other blog directories',
-                'Email newsletter',
-                'Podcast mentions',
-                'Online communities/forums',
-                'Direct traffic (bookmarks)',
-                'Guest posting',
-                'Not sure/struggling with discovery'
-              ].map(method => (
-                <label key={method} className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={surveyData.discoveryMethods.includes(method)}
-                    onChange={(e) => handleCheckboxChange('discoveryMethods', method, e.target.checked)}
-                    className={styles.checkbox}
-                  />
-                  <span className={styles.checkboxText}>{method}</span>
-                </label>
-              ))}
+              <div className={styles.formGroup}>
+                <label className={styles.label}>What's your primary goal with blogging? *</label>
+                <select
+                  value={surveyData.primaryGoal}
+                  onChange={(e) => setSurveyData(prev => ({ ...prev, primaryGoal: e.target.value }))}
+                  className={styles.input}
+                  required
+                >
+                  <option value="">Select primary goal</option>
+                  <option value="personal-expression">Personal expression/journaling</option>
+                  <option value="build-audience">Build an audience</option>
+                  <option value="monetise">Monetise my content</option>
+                  <option value="business-marketing">Business/marketing</option>
+                  <option value="share-expertise">Share expertise/teach</option>
+                  <option value="creative-outlet">Creative outlet</option>
+                  <option value="networking">Networking/community building</option>
+                </select>
+                {errors.primaryGoal && <span className={styles.error}>{errors.primaryGoal}</span>}
+              </div>
             </div>
-            {errors.discoveryMethods && <span className={styles.error}>{errors.discoveryMethods}</span>}
-          </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              What&apos;s your biggest challenge as a blogger? *
-            </label>
-            <textarea
-              value={surveyData.challengesFaced}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, challengesFaced: e.target.value }))}
-              className={styles.textarea}
-              rows={3}
-              placeholder="e.g., finding readers, consistent posting, monetisation, etc."
-              maxLength={500}
-              required
-            />
-            {errors.challengesFaced && <span className={styles.error}>{errors.challengesFaced}</span>}
-            <small className={styles.hint}>{surveyData.challengesFaced.length}/500 characters</small>
-          </div>
+            {/* Row 2: Audience and Frequency */}
+            <div className={styles.formGridTwo}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>What's your approximate monthly audience size? *</label>
+                <select
+                  value={surveyData.audienceSize}
+                  onChange={(e) => setSurveyData(prev => ({ ...prev, audienceSize: e.target.value }))}
+                  className={styles.input}
+                  required
+                >
+                  <option value="">Select audience size</option>
+                  <option value="0-100">0-100 visitors</option>
+                  <option value="100-1000">100-1,000 visitors</option>
+                  <option value="1000-5000">1,000-5,000 visitors</option>
+                  <option value="5000-10000">5,000-10,000 visitors</option>
+                  <option value="10000-50000">10,000-50,000 visitors</option>
+                  <option value="50000plus">50,000+ visitors</option>
+                </select>
+                {errors.audienceSize && <span className={styles.error}>{errors.audienceSize}</span>}
+              </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Which platforms do you use to promote your blog? (Select all that apply)
-            </label>
-            <div className={styles.checkboxGrid}>
-              {[
-                'Twitter/X',
-                'Instagram',
-                'Facebook',
-                'LinkedIn',
-                'Pinterest',
-                'TikTok',
-                'YouTube',
-                'Reddit',
-                'Discord',
-                'Email newsletter',
-                'None currently'
-              ].map(platform => (
-                <label key={platform} className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={surveyData.platformsUsed.includes(platform)}
-                    onChange={(e) => handleCheckboxChange('platformsUsed', platform, e.target.checked)}
-                    className={styles.checkbox}
-                  />
-                  <span className={styles.checkboxText}>{platform}</span>
-                </label>
-              ))}
+              <div className={styles.formGroup}>
+                <label className={styles.label}>How often do you publish new content? *</label>
+                <select
+                  value={surveyData.contentFrequency}
+                  onChange={(e) => setSurveyData(prev => ({ ...prev, contentFrequency: e.target.value }))}
+                  className={styles.input}
+                  required
+                >
+                  <option value="">Select posting frequency</option>
+                  <option value="daily">Daily</option>
+                  <option value="few-times-week">Few times a week</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="bi-weekly">Bi-weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="sporadic">Sporadic/when inspired</option>
+                </select>
+                {errors.contentFrequency && <span className={styles.error}>{errors.contentFrequency}</span>}
+              </div>
             </div>
-          </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              How do you currently monetise your blog? * (Select all that apply)
-            </label>
-            <div className={styles.checkboxGrid}>
-              {[
-                'Display advertising (Google AdSense, etc.)',
-                'Affiliate marketing',
-                'Sponsored posts/brand partnerships',
-                'Digital products (courses, ebooks, etc.)',
-                'Physical products',
-                'Subscription/membership content',
-                'Email newsletter monetisation',
-                'Consulting/coaching services',
-                'Speaking engagements',
-                'Freelance writing from blog exposure',
-                'Donations/tips',
-                'Other monetisation method',
-                'Not yet monetised',
-                'Not interested in monetising'
-              ].map(method => (
-                <label key={method} className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={surveyData.currentMonetizationMethods?.includes(method) || false}
-                    onChange={(e) => handleCheckboxChange('currentMonetizationMethods', method, e.target.checked)}
-                    className={styles.checkbox}
-                  />
-                  <span className={styles.checkboxText}>{method}</span>
-                </label>
-              ))}
+            {/* Discovery Methods - 2 Column Checkboxes */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>How do readers currently discover your blog? * (Select all that apply)</label>
+              <div className={styles.topicsGridTwoColumn}>
+                {[
+                  'Search engines (Google, etc.)',
+                  'Social media (Twitter, Instagram, etc.)',
+                  'Word of mouth/referrals',
+                  'Other blog directories',
+                  'Email newsletter',
+                  'Podcast mentions',
+                  'Online communities/forums',
+                  'Direct traffic (bookmarks)',
+                  'Guest posting',
+                  'Not sure/struggling with discovery'
+                ].map(method => (
+                  <label key={method} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={surveyData.discoveryMethods.includes(method)}
+                      onChange={(e) => handleCheckboxChange('discoveryMethods', method, e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.checkboxText}>{method}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.discoveryMethods && <span className={styles.error}>{errors.discoveryMethods}</span>}
             </div>
-            {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
 
-            {surveyData.currentMonetizationMethods.includes('Other monetisation method') && (
-              <div style={{ marginTop: '1rem' }}>
-                <label className={styles.label}>
-                  Please specify your other monetisation method:
-                </label>
-                <input
-                  type="text"
-                  value={otherMonetizationMethod}
-                  onChange={(e) => setOtherMonetizationMethod(e.target.value)}
-                  className={styles.textInput}
-                  placeholder="Describe your monetisation method"
-                  maxLength={100}
-                />
-                <small className={styles.hint}>{otherMonetizationMethod.length}/100 characters</small>
+            {/* Challenges - Full Width */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>What's your biggest challenge as a blogger? *</label>
+              <textarea
+                value={surveyData.challengesFaced}
+                onChange={(e) => setSurveyData(prev => ({ ...prev, challengesFaced: e.target.value }))}
+                className={styles.textarea}
+                rows={3}
+                placeholder="e.g., finding readers, consistent posting, monetisation, etc."
+                maxLength={500}
+                required
+              />
+              {errors.challengesFaced && <span className={styles.error}>{errors.challengesFaced}</span>}
+              <small className={styles.hint}>{surveyData.challengesFaced.length}/500 characters</small>
+            </div>
+
+            {/* Platforms - 2 Column Checkboxes */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Which platforms do you use to promote your blog? * (Select all that apply)</label>
+              <div className={styles.topicsGridTwoColumn}>
+                {[
+                  'Twitter/X',
+                  'Instagram',
+                  'Facebook',
+                  'LinkedIn',
+                  'Pinterest',
+                  'TikTok',
+                  'YouTube',
+                  'Reddit',
+                  'Discord',
+                  'Email newsletter',
+                  'None currently'
+                ].map(platform => (
+                  <label key={platform} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={surveyData.platformsUsed.includes(platform)}
+                      onChange={(e) => handleCheckboxChange('platformsUsed', platform, e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.checkboxText}>{platform}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.platformsUsed && <span className={styles.error}>{errors.platformsUsed}</span>}
+            </div>
+
+            {/* Monetization Methods - 2 Column Checkboxes */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>How do you currently monetise your blog? * (Select all that apply)</label>
+              <div className={styles.topicsGridTwoColumn}>
+                {[
+                  'Display advertising (Google AdSense, etc.)',
+                  'Affiliate marketing',
+                  'Sponsored posts/brand partnerships',
+                  'Digital products (courses, ebooks, etc.)',
+                  'Physical products',
+                  'Subscription/membership content',
+                  'Email newsletter monetisation',
+                  'Consulting/coaching services',
+                  'Speaking engagements',
+                  'Freelance writing from blog exposure',
+                  'Donations/tips',
+                  'Other monetisation method',
+                  'Not yet monetised',
+                  'Not interested in monetising'
+                ].map(method => (
+                  <label key={method} className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      checked={surveyData.currentMonetizationMethods?.includes(method) || false}
+                      onChange={(e) => handleCheckboxChange('currentMonetizationMethods', method, e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.checkboxText}>{method}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.currentMonetizationMethods && <span className={styles.error}>{errors.currentMonetizationMethods}</span>}
+
+              {surveyData.currentMonetizationMethods.includes('Other monetisation method') && (
+                <div style={{ marginTop: '1rem' }}>
+                  <label className={styles.label}>Please specify your other monetisation method:</label>
+                  <input
+                    type="text"
+                    value={otherMonetizationMethod}
+                    onChange={(e) => setOtherMonetizationMethod(e.target.value)}
+                    className={styles.input}
+                    placeholder="Describe your monetisation method"
+                    maxLength={100}
+                  />
+                  <small className={styles.hint}>{otherMonetizationMethod.length}/100 characters</small>
+                </div>
+              )}
+            </div>
+
+            {/* Community Interest */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>How important is connecting with other bloggers to you? *</label>
+              <select
+                value={surveyData.communityInterest}
+                onChange={(e) => setSurveyData(prev => ({ ...prev, communityInterest: e.target.value }))}
+                className={styles.input}
+                required
+              >
+                <option value="">Select importance level</option>
+                <option value="very-important">Very important</option>
+                <option value="somewhat-important">Somewhat important</option>
+                <option value="neutral">Neutral</option>
+                <option value="not-very-important">Not very important</option>
+                <option value="prefer-solo">Prefer working solo</option>
+              </select>
+              {errors.communityInterest && <span className={styles.error}>{errors.communityInterest}</span>}
+            </div>
+
+            {/* Additional Features */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                What features would you like to see in a blog directory platform?
+                <span className={styles.optional}> (Optional)</span>
+              </label>
+              <textarea
+                value={surveyData.additionalFeatures}
+                onChange={(e) => setSurveyData(prev => ({ ...prev, additionalFeatures: e.target.value }))}
+                className={styles.textarea}
+                rows={3}
+                placeholder="e.g., analytics, collaboration tools, monetisation support, etc."
+                maxLength={500}
+              />
+              <small className={styles.hint}>{surveyData.additionalFeatures.length}/500 characters</small>
+            </div>
+
+            {/* Feedback */}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>
+                Any additional feedback or suggestions?
+                <span className={styles.optional}> (Optional)</span>
+              </label>
+              <textarea
+                value={surveyData.feedback}
+                onChange={(e) => setSurveyData(prev => ({ ...prev, feedback: e.target.value }))}
+                className={styles.textarea}
+                rows={3}
+                placeholder="Share any thoughts about blogging or what you'd like to see from Blogrolly"
+                maxLength={500}
+              />
+              <small className={styles.hint}>{surveyData.feedback.length}/500 characters</small>
+            </div>
+
+            {errors.submit && (
+              <div className={styles.errorMessage}>
+                <span className={styles.error}>{errors.submit}</span>
               </div>
             )}
-          </div>
 
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              How important is connecting with other bloggers to you? *
-            </label>
-            <select
-              value={surveyData.communityInterest}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, communityInterest: e.target.value }))}
-              className={styles.textInput}
-              required
-            >
-              <option value="">Select importance level</option>
-              <option value="very-important">Very important</option>
-              <option value="somewhat-important">Somewhat important</option>
-              <option value="neutral">Neutral</option>
-              <option value="not-very-important">Not very important</option>
-              <option value="prefer-solo">Prefer working solo</option>
-            </select>
-            {errors.communityInterest && <span className={styles.error}>{errors.communityInterest}</span>}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              What features would you like to see in a blog directory platform?
-              <span className={styles.optional}>(Optional)</span>
-            </label>
-            <textarea
-              value={surveyData.additionalFeatures}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, additionalFeatures: e.target.value }))}
-              className={styles.textarea}
-              rows={3}
-              placeholder="e.g., analytics, collaboration tools, monetisation support, etc."
-              maxLength={500}
-            />
-            <small className={styles.hint}>{surveyData.additionalFeatures.length}/500 characters</small>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Any additional feedback or suggestions?
-              <span className={styles.optional}>(Optional)</span>
-            </label>
-            <textarea
-              value={surveyData.feedback}
-              onChange={(e) => setSurveyData(prev => ({ ...prev, feedback: e.target.value }))}
-              className={styles.textarea}
-              rows={3}
-              placeholder="Share any thoughts about blogging or what you'd like to see from Blogrolly"
-              maxLength={500}
-            />
-            <small className={styles.hint}>{surveyData.feedback.length}/500 characters</small>
-          </div>
-
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
-            <button type="button" onClick={onClose} className={styles.linkButton}>
-              Cancel
-            </button>
-            <button type="submit" className={styles.submitButton}>
-              Complete Survey
-            </button>
-          </div>
-        </form>
+            {/* Submit Buttons */}
+            <div className={styles.surveyButtonContainer}>
+              <button type="button" onClick={onClose} className={styles.cancelButton}>
+                Cancel
+              </button>
+              <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Complete Survey'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

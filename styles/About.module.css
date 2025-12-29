@@ -44,7 +44,7 @@
 }
 
 .pronunciationCard {
-  background: #f9fafb;
+  background: #d7dee5;
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   padding: 1.5rem;
@@ -94,7 +94,7 @@
 /* Submit page style sections */
 .authRequiredSection {
   padding: 3rem 1rem;
-  background-color: #f9fafb;
+  background-color: #d7dee5;
   margin: 2rem 0;
   border-radius: 12px;
   transition: background-color 0.2s;

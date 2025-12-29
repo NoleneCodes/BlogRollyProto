@@ -48,7 +48,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [authMode, setAuthMode] = useState<AuthMode>('selection');
+  const [authMode, setAuthMode] = useState<AuthMode>('selection'); // Start with selection screen
   // Reset password state
   const [resetEmail, setResetEmail] = useState('');
   const [resetStatus, setResetStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -74,8 +74,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     }
   };
   const [activeTab, setActiveTab] = useState<'reader' | 'blogger'>('reader');
-
-  // Reader form state
   const [readerForm, setReaderForm] = useState<ReaderFormData>({
     email: '',
     password: '',
@@ -127,11 +125,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   }, [onAuthenticated]);
 
   // Handle tab parameter from URL
-    useEffect(() => {
-      if (router.query.tab === 'blogger') {
-        setActiveTab('blogger');
-        setAuthMode('signup');
-      }
+  useEffect(() => {
+    if (router.query.tab === 'blogger') {
+      setActiveTab('blogger');
+      setAuthMode('signup');
+    }
   }, [router.query]);
 
   const validateAge = (dateOfBirth: string) => {
@@ -493,9 +491,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   if (isLoading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
+      <div className={styles.authContainer}>
+        <div className={styles.loadingCard}>
           <h2>Checking authentication...</h2>
+          <p>Just a moment while we verify your status.</p>
         </div>
       </div>
     );
@@ -503,8 +502,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
 
   if (userInfo) {
     return (
-      <div className={styles.container}>
-        <div className={styles.welcomeMessage}>
+      <div className={styles.authContainer}>
+        <div className={styles.welcomeCard}>
           <h2>Welcome, {userInfo.name}!</h2>
           <p>You are authenticated and ready to submit your blog.</p>
         </div>
@@ -512,33 +511,33 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     );
   }
 
-        // Supabase signup with error handling
+  // Mode selection screen
   if (authMode === 'selection') {
     return (
-      <div className={styles.container}>
-        <div className={styles.authCard}>
-          <h2>Welcome to Blogrolly</h2>
-          <p>Join our community of readers and bloggers</p>
+      <div className={styles.authContainer}>
+        <div className={styles.selectionCard}>
+          <h2 className={styles.selectionTitle}>Welcome to BlogRolly</h2>
+          <p className={styles.selectionDescription}>Join our community of readers and bloggers</p>
 
           <div className={styles.modeSelection}>
             <button 
               className={styles.modeButton}
               onClick={() => setAuthMode('signup')}
             >
-              <h3>Create Account</h3>
-              <p>New to Blogrolly? Sign up to start discovering amazing blogs or share your own.</p>
+              <h3 className={styles.modeTitle}>Create Account</h3>
+              <p className={styles.modeDescription}>New to BlogRolly? Sign up to start discovering amazing blogs or share your own.</p>
             </button>
 
             <button 
               className={styles.modeButton}
               onClick={() => setAuthMode('signin')}
             >
-              <h3>Sign In</h3>
-              <p>Already have an account? Sign in to access your dashboard and submissions.</p>
+              <h3 className={styles.modeTitle}>Sign In</h3>
+              <p className={styles.modeDescription}>Already have an account? Sign in to access your dashboard and submissions.</p>
             </button>
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <div className={styles.backButtonContainer}>
             <button 
               className={styles.linkButton}
               onClick={() => router.push('/')}
@@ -554,10 +553,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Sign in form
   if (authMode === 'signin') {
     return (
-      <div className={styles.container}>
+      <div className={styles.authContainer}>
         <div className={styles.authCard}>
-          <h2>Sign In</h2>
-          <p>Welcome back to Blogrolly</p>
+          <h2 className={styles.authTitle}>Sign In</h2>
+          <p className={styles.authDescription}>Welcome back to BlogRolly</p>
 
           <form onSubmit={handleSignIn} className={styles.form}>
             <div className={styles.formGroup}>
@@ -587,7 +586,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             </div>
 
             {errors.general && (
-              <div className={styles.formGroup}>
+              <div className={styles.errorMessage}>
                 <span className={styles.error}>{errors.general}</span>
               </div>
             )}
@@ -597,12 +596,21 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <div className={styles.linkContainer}>
             <button 
               className={styles.linkButton}
               onClick={() => setAuthMode('resetPassword')}
             >
               Forgot your password?
+            </button>
+          </div>
+
+          <div className={styles.authFooter}>
+            <button 
+              className={styles.linkButton}
+              onClick={() => setAuthMode('selection')}
+            >
+              ← Back to options
             </button>
           </div>
         </div>
@@ -613,10 +621,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
   // Reset password form
   if (authMode === 'resetPassword') {
     return (
-      <div className={styles.container}>
+      <div className={styles.authContainer}>
         <div className={styles.authCard}>
-          <h2>Reset Password</h2>
-          <p>Enter your email address and we'll send you a link to reset your password.</p>
+          <h2 className={styles.authTitle}>Reset Password</h2>
+          <p className={styles.authDescription}>Enter your email address and we'll send you a link to reset your password.</p>
+          
           <form onSubmit={handleResetPassword} className={styles.form}>
             <div className={styles.formGroup}>
               <label className={styles.label}>Email Address *</label>
@@ -628,15 +637,25 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                 required
               />
             </div>
-            {resetError && <span className={styles.error}>{resetError}</span>}
-            {resetStatus === 'success' && (
-              <span className={styles.success}>Password reset email sent! Please check your inbox.</span>
+            
+            {resetError && (
+              <div className={styles.errorMessage}>
+                <span className={styles.error}>{resetError}</span>
+              </div>
             )}
+            
+            {resetStatus === 'success' && (
+              <div className={styles.successMessage}>
+                <span className={styles.success}>Password reset email sent! Please check your inbox.</span>
+              </div>
+            )}
+            
             <button type="submit" className={styles.submitButton}>
               Send Reset Link
             </button>
           </form>
-          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+          
+          <div className={styles.authFooter}>
             <button
               className={styles.linkButton}
               onClick={() => setAuthMode('signin')}
@@ -649,196 +668,159 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
     );
   }
 
-  // Sign up forms (existing functionality)
+  // Sign up forms with tabs (when authMode === 'signup')
   return (
-    <div className={styles.container}>
+    <div className={styles.authContainer}>
       <div className={styles.tabContainer}>
         <button 
           className={`${styles.tab} ${activeTab === 'reader' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('reader')}
         >
-            I&apos;m a Reader
+          I'm a Reader
         </button>
         <button 
           className={`${styles.tab} ${activeTab === 'blogger' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('blogger')}
         >
-          I&apos;m a Blogger
+          I'm a Blogger
         </button>
       </div>
 
       {activeTab === 'reader' ? (
-        <div className={styles.authCard}>
-          <h2>Join as a Reader</h2>
-          <p>Discover amazing blogs tailored to your interests</p>
+        <div className={styles.formCard}>
+          <h2 className={styles.formTitle}>Join as a Reader</h2>
+          <p className={styles.formDescription}>Discover amazing blogs tailored to your interests</p>
 
           <form onSubmit={handleReaderSubmit} className={styles.form}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                First Name *
-              </label>
-              <input
-                type="text"
-                value={readerForm.firstName}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, firstName: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+            {/* Row 1: First Name and Surname */}
+            <div className={styles.formGridTwo}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>First Name *</label>
+                <input
+                  type="text"
+                  value={readerForm.firstName}
+                  onChange={(e) => setReaderForm(prev => ({ ...prev, firstName: e.target.value }))}
+                  className={styles.input}
+                  required
+                />
+                {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Surname *</label>
+                <input
+                  type="text"
+                  value={readerForm.surname}
+                  onChange={(e) => setReaderForm(prev => ({ ...prev, surname: e.target.value }))}
+                  className={styles.input}
+                  required
+                />
+                {errors.surname && <span className={styles.error}>{errors.surname}</span>}
+              </div>
             </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Surname *
-              </label>
-              <input
-                type="text"
-                value={readerForm.surname}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, surname: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.surname && <span className={styles.error}>{errors.surname}</span>}
-              <small className={styles.hint}>Your name helps us personalise your experience.</small>
+            {/* Row 2: Username and Date of Birth */}
+            <div className={styles.formGridTwo}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Username *</label>
+                <input
+                  type="text"
+                  value={readerForm.username}
+                  onChange={(e) => setReaderForm(prev => ({ ...prev, username: e.target.value }))}
+                  className={styles.input}
+                  required
+                />
+                {errors.username && <span className={styles.error}>{errors.username}</span>}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Date of Birth *</label>
+                <input
+                  type="date"
+                  value={readerForm.dateOfBirth}
+                  onChange={(e) => setReaderForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                  className={styles.input}
+                  required
+                />
+                {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
+              </div>
             </div>
 
+            {/* Row 3: Email (full width) */}
             <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Email Address *
-              </label>
+              <label className={styles.label}>Email Address *</label>
               <input
                 type="email"
                 value={readerForm.email}
                 onChange={(e) => setReaderForm(prev => ({ ...prev, email: e.target.value }))}
-                className={styles.textInput}
+                className={styles.input}
                 required
               />
               {errors.email && <span className={styles.error}>{errors.email}</span>}
-              <small className={styles.hint}>This will be your login email address.</small>
             </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Date of Birth *
-              </label>
-              <input
-                type="date"
-                value={readerForm.dateOfBirth}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
-              <small className={styles.hint}>We use your age to filter out mature content (must be 18+).</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Password *
-              </label>
-              <input
-                type="password"
-                value={readerForm.password}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, password: e.target.value }))}
-                className={styles.textInput}
-                minLength={8}
-                required
-              />
-              {errors.password && <span className={styles.error}>{errors.password}</span>}
-              <small className={styles.hint}>
-  Must be at least 12 characters with uppercase, numbers, and special characters. 
-  Avoid common words like "password" or "123456".
-</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Confirm Password *
-              </label>
-              <input
-                type="password"
-                value={readerForm.confirmPassword}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                className={styles.textInput}
-                required
-              />
-              {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
-              <small className={styles.hint}>Re-enter your password to confirm.</small>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Username *
-              </label>
-              <input
-                type="text"
-                value={readerForm.username}
-                onChange={(e) => setReaderForm(prev => ({ ...prev, username: e.target.value }))}
-                className={styles.textInput}
-                required
-                placeholder="Pick a name readers can see"
-              />
-              {errors.username && <span className={styles.error}>{errors.username}</span>}
-              <small className={styles.hint}>Pick a name readers can see. This will be your public username.</small>
-            </div>
-
-            {/* FIXED CATEGORIES SECTION */}
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Topics You&apos;re Into *</label>
-              <div className={styles.checkboxGrid}>
-                {MAIN_CATEGORIES && Array.isArray(MAIN_CATEGORIES) ? (
-                  MAIN_CATEGORIES.map((category, index) => {
-                    // Handle both object format {id, name, description} and string format
-                    const categoryName = typeof category === 'object' && category !== null 
-                      ? category.name 
-                      : category;
-                    const categoryKey = typeof category === 'object' && category !== null 
-                      ? category.id || index 
-                      : category;
-                    
-                    return (
-                      <label key={categoryKey} className={styles.checkboxLabel}>
-                        <input
-                          type="checkbox"
-                          checked={readerForm.topics.includes(categoryName)}
-                          onChange={(e) => handleReaderTopicChange(categoryName, e.target.checked)}
-                          className={styles.checkbox}
-                        />
-                        <span className={styles.checkboxText}>{categoryName}</span>
-                      </label>
-                    );
-                  })
-                ) : (
-                  // Fallback categories if MAIN_CATEGORIES is not available
-                  ['Lifestyle', 'Health & Wellness', 'Business & Finance', 'Tech & Digital Life', 
-                   'Creative & Arts', 'Education & Learning', 'Travel & Adventure', 
-                   'Food & Cooking', 'Entertainment', 'Other'].map(category => (
-                    <label key={category} className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        checked={readerForm.topics.includes(category)}
-                        onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
-                        className={styles.checkbox}
-                      />
-                      <span className={styles.checkboxText}>{category}</span>
-                    </label>
-                  ))
-                )}
+            {/* Row 4: Password and Confirm Password */}
+            <div className={styles.formGridTwo}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Password *</label>
+                <input
+                  type="password"
+                  value={readerForm.password}
+                  onChange={(e) => setReaderForm(prev => ({ ...prev, password: e.target.value }))}
+                  className={styles.input}
+                  minLength={8}
+                  required
+                />
+                {errors.password && <span className={styles.error}>{errors.password}</span>}
               </div>
 
-              <CustomCategoryInput
-                selectedCategories={readerForm.topics}
-                onCategoryChange={(categories) => 
-                  setReaderForm(prev => ({ ...prev, topics: categories }))
-                }
-                maxWords={3}
-                label="Add your custom topic (one word at a time, max 3 words)"
-              />
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Confirm Password *</label>
+                <input
+                  type="password"
+                  value={readerForm.confirmPassword}
+                  onChange={(e) => setReaderForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  className={styles.input}
+                  required
+                />
+                {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
+              </div>
+            </div>
 
+            {/* Topics Selection - 2 Column Layout with Multiple Rows */}
+            <div className={styles.topicsSection}>
+              <label className={styles.sectionLabel}>Topics You're Into *</label>
+              <div className={styles.topicsGridTwoColumn}>
+                {[
+                  'Lifestyle', 
+                  'Health & Wellness', 
+                  'Business & Finance', 
+                  'Tech & Digital Life', 
+                  'Creative & Arts', 
+                  'Education & Learning', 
+                  'Travel & Adventure', 
+                  'Food & Cooking', 
+                  'Entertainment', 
+                  'Sports & Fitness',
+                  'Personal Development',
+                  'Other'
+                ].map(category => (
+                  <label key={category} className={styles.topicLabel}>
+                    <input
+                      type="checkbox"
+                      checked={readerForm.topics.includes(category)}
+                      onChange={(e) => handleReaderTopicChange(category, e.target.checked)}
+                      className={styles.checkbox}
+                    />
+                    <span className={styles.topicText}>{category}</span>
+                  </label>
+                ))}
+              </div>
               {errors.topics && <span className={styles.error}>{errors.topics}</span>}
             </div>
 
-            <div className={styles.formGroup}>
+            {/* Agreement and Submit Row */}
+            <div className={styles.agreementSection}>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -848,13 +830,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   required
                 />
                 <span className={styles.checkboxText}>
-                  I agree to the <a href="/terms" target="_blank">Terms and Conditions</a> *
+                  I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a> *
                 </span>
               </label>
-              {errors.agreeToTerms && <span className={styles.error}>{errors.agreeToTerms}</span>}
-            </div>
 
-            <div className={styles.formGroup}>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -862,30 +841,37 @@ const AuthForm: React.FC<AuthFormProps> = ({ onAuthenticated }) => {
                   onChange={(e) => setReaderForm(prev => ({ ...prev, subscribeToUpdates: e.target.checked }))}
                   className={styles.checkbox}
                 />
-                <span className={styles.checkboxText}>
-                  Subscribe to occasional updates on new blog drops
-                </span>
+                <span className={styles.checkboxText}>Subscribe to weekly updates about new blogs</span>
               </label>
-              <small className={styles.hint}>No spam. Just brilliant blogs you might love.</small>
             </div>
 
-            <button type="submit" className={styles.submitButton}>
-              Start Exploring
-            </button>
+            {errors.general && (
+              <div className={styles.errorMessage}>
+                <span className={styles.error}>{errors.general}</span>
+              </div>
+            )}
+
+            <div className={styles.submitRow}>
+              <button type="submit" className={styles.submitButton}>
+                Create Reader Account
+              </button>
+            </div>
           </form>
+
+          <div className={styles.authFooter}>
+            <button 
+              className={styles.linkButton}
+              onClick={() => setAuthMode('selection')}
+            >
+              ← Back to options
+            </button>
+          </div>
         </div>
       ) : (
         <BloggerSignupForm onAuthenticated={onAuthenticated} />
       )}
 
-      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <button 
-          className={styles.linkButton}
-          onClick={() => setAuthMode('selection')}
-        >
-          ← Back to options
-        </button>
-        <span style={{ margin: '0 1rem', color: '#6b7280' }}>|</span>
+      <div className={styles.authFooter}>
         <button 
           className={styles.linkButton}
           onClick={() => setAuthMode('signin')}

@@ -362,8 +362,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
   };
 
   return (
-    <div className={styles.authCard}>
-      <h2>Join as a Blogger</h2>
+    <div className={styles.horizontalFormCard}>
+      <h3 className={styles.subFormTitle}>I'm a Blogger</h3>
       <p>Get your blog discovered by the right readers</p>
 
       {showProgressBar && (
@@ -381,38 +381,66 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
       <form onSubmit={handleBloggerSubmit} className={styles.form}>
         <div className={styles.sectionTitle}>Part 1: Account Setup</div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            First Name *
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.firstName}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, firstName: e.target.value }))}
-            className={styles.textInput}
-            required
-          />
-          {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+        {/* Row 1: First Name and Surname */}
+        <div className={styles.formGridTwo}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>First Name *</label>
+            <input
+              type="text"
+              value={bloggerForm.firstName}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, firstName: e.target.value }))}
+              className={styles.textInput}
+              required
+            />
+            {errors.firstName && <span className={styles.error}>{errors.firstName}</span>}
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Surname *</label>
+            <input
+              type="text"
+              value={bloggerForm.surname}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, surname: e.target.value }))}
+              className={styles.textInput}
+              required
+            />
+            {errors.surname && <span className={styles.error}>{errors.surname}</span>}
+          </div>
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Surname *
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.surname}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, surname: e.target.value }))}
-            className={styles.textInput}
-            required
-          />
-          {errors.surname && <span className={styles.error}>{errors.surname}</span>}
+        {/* Row 2: Username and Date of Birth */}
+        <div className={styles.formGridTwo}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Username *</label>
+            <input
+              type="text"
+              value={bloggerForm.username}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
+              className={styles.textInput}
+              required
+              placeholder=""
+            />
+            {errors.username && <span className={styles.error}>{errors.username}</span>}
+            <small className={styles.hint}>Your public username on the platform.</small>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Date of Birth *</label>
+            <input
+              type="date"
+              value={bloggerForm.dateOfBirth}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+              className={styles.textInput}
+              required
+            />
+            {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
+            <small className={styles.hint}>Must be 18+ to join.</small>
+          </div>
         </div>
 
+        {/* Row 3: Email (full width) */}
         <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Email Address *
-          </label>
+          <label className={styles.label}>Email Address *</label>
           <input
             type="email"
             value={bloggerForm.email}
@@ -424,66 +452,34 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <small className={styles.hint}>This will be your login email address.</small>
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Date of Birth *
-          </label>
-          <input
-            type="date"
-            value={bloggerForm.dateOfBirth}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-            className={styles.textInput}
-            required
-          />
-          {errors.dateOfBirth && <span className={styles.error}>{errors.dateOfBirth}</span>}
-          <small className={styles.hint}>We use your age to filter out mature content (must be 18+).</small>
-        </div>
+        {/* Row 4: Password and Confirm Password */}
+        <div className={styles.formGridTwo}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Password *</label>
+            <input
+              type="password"
+              value={bloggerForm.password}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, password: e.target.value }))}
+              className={styles.textInput}
+              minLength={8}
+              required
+            />
+            {errors.password && <span className={styles.error}>{errors.password}</span>}
+            <small className={styles.hint}>Must be at least 8 characters long.</small>
+          </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Username *
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.username}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, username: e.target.value }))}
-            className={styles.textInput}
-            required
-            placeholder="Choose your unique username"
-          />
-          {errors.username && <span className={styles.error}>{errors.username}</span>}
-          <small className={styles.hint}>Your unique identifier on the platform. This will be your public username.</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Password *
-          </label>
-          <input
-            type="password"
-            value={bloggerForm.password}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, password: e.target.value }))}
-            className={styles.textInput}
-            minLength={8}
-            required
-          />
-          {errors.password && <span className={styles.error}>{errors.password}</span>}
-          <small className={styles.hint}>Must be at least 8 characters long.</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Confirm Password *
-          </label>
-          <input
-            type="password"
-            value={bloggerForm.confirmPassword}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-            className={styles.textInput}
-            required
-          />
-          {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
-          <small className={styles.hint}>Re-enter your password to confirm.</small>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Confirm Password *</label>
+            <input
+              type="password"
+              value={bloggerForm.confirmPassword}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+              className={styles.textInput}
+              required
+            />
+            {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
+            <small className={styles.hint}>Re-enter your password to confirm.</small>
+          </div>
         </div>
 
         <div className={styles.sectionTitle}>
@@ -491,10 +487,43 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <span className={styles.optional}>(Optional)</span>
         </div>
 
+        {/* Row 5: Blog URL and Blog Name */}
+        <div className={styles.formGridTwo}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Blog URL <span className={styles.optional}>(Optional)</span>
+            </label>
+            <input
+              type="url"
+              value={bloggerForm.blogUrl}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
+              className={styles.textInput}
+              placeholder="https://yourblog.com"
+            />
+            {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
+            <small className={styles.hint}>Must start with https://</small>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              Blog Name <span className={styles.optional}>(Optional)</span>
+            </label>
+            <input
+              type="text"
+              value={bloggerForm.blogName}
+              onChange={(e) => setBloggerForm(prev => ({ ...prev, blogName: e.target.value }))}
+              className={styles.textInput}
+              placeholder="The name of your blog"
+            />
+            {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
+            <small className={styles.hint}>Shown in search & on your profile.</small>
+          </div>
+        </div>
+
+        {/* Profile Picture and Bio */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Profile Picture
-            <span className={styles.optional}>(Optional)</span>
+            Profile Picture <span className={styles.optional}>(Optional)</span>
           </label>
           <div style={{ marginBottom: '0.5rem' }}>
             {bloggerForm.profilePicture && (
@@ -529,15 +558,12 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             className={styles.fileInput}
           />
           {errors.profilePicture && <span className={styles.error}>{errors.profilePicture}</span>}
-          <small className={styles.hint}>Max size: 2MB. Formats: JPG, PNG, WebP. Can be added later.</small>
+          <small className={styles.hint}>Max size: 2MB. JPG, PNG, WebP accepted.</small>
         </div>
-
-        {/* Username field moved above, after date of birth */}
 
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Short Bio
-            <span className={styles.optional}>(Optional)</span>
+            Short Bio <span className={styles.optional}>(Optional)</span>
           </label>
           <textarea
             value={bloggerForm.bio}
@@ -551,50 +577,16 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           <small className={styles.hint}>{bloggerForm.bio.length}/280 characters.</small>
         </div>
 
+        {/* Topics Section - 2 Column Layout */}
         <div className={styles.formGroup}>
           <label className={styles.label}>
-            Blog URL
-            <span className={styles.optional}>(Optional)</span>
+            Primary Topics / Niche <span className={styles.optional}>(Optional)</span>
           </label>
-          <input
-            type="url"
-            value={bloggerForm.blogUrl}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, blogUrl: e.target.value }))}
-            className={styles.textInput}
-            placeholder="https://yourblog.com"
-          />
-          {errors.blogUrl && <span className={styles.error}>{errors.blogUrl}</span>}
-          <small className={styles.hint}>You must own your blog domain and it must start with https:// (no paths or slugs).</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Blog Name
-            <span className={styles.optional}></span>
-          </label>
-          <input
-            type="text"
-            value={bloggerForm.blogName}
-            onChange={(e) => setBloggerForm(prev => ({ ...prev, blogName: e.target.value }))}
-            className={styles.textInput}
-            placeholder="The name of your blog"
-          />
-          {errors.blogName && <span className={styles.error}>{errors.blogName}</span>}
-          <small className={styles.hint}>Shown in search & on your profile.</small>
-        </div>
-
-        <div className={styles.formGroup}>
-          <label className={styles.label}>
-            Primary Topics / Niche
-            <span className={styles.optional}></span>
-          </label>
-          <small className={styles.hint}>Select topics that best describe your blog content. Can be added later.</small>
+          <small className={styles.hint}>Select topics that best describe your blog content.</small>
           
-          {/* FIXED CATEGORIES SECTION */}
-          <div className={styles.checkboxGrid}>
+          <div className={styles.topicsGridTwoColumn}>
             {MAIN_CATEGORIES && Array.isArray(MAIN_CATEGORIES) ? (
               MAIN_CATEGORIES.map((category, index) => {
-                // Handle both object format {id, name, description} and string format
                 const categoryName = typeof category === 'object' && category !== null 
                   ? category.name 
                   : category;
@@ -615,10 +607,9 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
                 );
               })
             ) : (
-              // Fallback categories if MAIN_CATEGORIES is not available
               ['Lifestyle', 'Health & Wellness', 'Business & Finance', 'Tech & Digital Life', 
                'Creative & Arts', 'Education & Learning', 'Travel & Adventure', 
-               'Food & Cooking', 'Entertainment', 'Other'].map(category => (
+               'Food & Cooking', 'Entertainment', 'Sports & Fitness', 'Personal Development', 'Other'].map(category => (
                 <label key={category} className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
@@ -661,7 +652,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             Submit Your Best Blog Posts
             <span className={styles.optional}>(Optional)</span>
           </label>
-          <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile. You can also add these later from your dashboard.</small>
+          <small className={styles.hint}>Share up to 3 of your best blog posts that represent your work. These will be featured in your profile.</small>
 
           {!isPart1Complete ? (
             <div style={{
@@ -709,7 +700,8 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           )}
         </div>
 
-        <div className={styles.formGroup}>
+        {/* Agreement checkboxes */}
+        <div className={styles.agreementSection}>
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
@@ -723,9 +715,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             </span>
           </label>
           {errors.agreeToTerms && <span className={styles.error}>{errors.agreeToTerms}</span>}
-        </div>
 
-        <div className={styles.formGroup}>
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
@@ -739,9 +729,7 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
             </span>
           </label>
           {errors.confirmOwnership && <span className={styles.error}>{errors.confirmOwnership}</span>}
-        </div>
 
-        <div className={styles.formGroup}>
           <label className={styles.checkboxLabel}>
             <input
               type="checkbox"
@@ -772,6 +760,12 @@ const BloggerSignupForm: React.FC<BloggerSignupFormProps> = ({
           {errors.agreeToSurvey && <span className={styles.error}>{errors.agreeToSurvey}</span>}
           <small className={styles.hint}>This helps us improve our platform and better serve the blogging community.</small>
         </div>
+
+        {errors.general && (
+          <div className={styles.errorMessage}>
+            <span className={styles.error}>{errors.general}</span>
+          </div>
+        )}
 
         <button type="submit" className={styles.submitButton}>
           List My Blog

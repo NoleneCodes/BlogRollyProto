@@ -1,0 +1,768 @@
+/* Investors.module.css - Investors page with dark mode support, matching Submit page styling */
+
+/* Overall page wrapper */
+.pageWrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .pageWrapper {
+  background: #18191a;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #c42142 0%, #e63946 100%);
+  color: white;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: 0;
+}
+
+:global(.dark) .hero {
+  background: #621121;
+}
+
+.title {
+  margin: 0 0 1rem 0;
+  line-height: 1.15;
+  font-size: 3.5rem;
+  color: white;
+  font-weight: 700;
+}
+
+.description {
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Content Section */
+.contentSection {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 2rem;
+  margin: 3rem 0 2rem 0;
+  color: #c42142;
+  font-weight: 700;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .sectionTitle {
+  color: #ff6b6b;
+}
+
+.sectionDescription {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .sectionDescription {
+  color: #d1d5db;
+}
+
+/* Vision Section */
+.visionSection {
+  margin-bottom: 3rem;
+}
+
+.subsection {
+  margin-bottom: 2.5rem;
+}
+
+.subsectionTitle {
+  font-size: 1.4rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .subsectionTitle {
+  color: #ffffff;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.featureItem {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.featureItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .featureItem {
+  background-color: #242526;
+  border-color: #3e4042;
+}
+
+:global(.dark) .featureItem:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.featureHeading {
+  color: #c42142;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .featureHeading {
+  color: #ff6b6b;
+}
+
+.featureText {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  transition: color 0.2s;
+}
+
+:global(.dark) .featureText {
+  color: #d1d5db;
+}
+
+.summaryText {
+  font-size: 1.1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .summaryText {
+  color: #e4e4e7;
+}
+
+/* Opportunity Section */
+.opportunitySection {
+  margin-bottom: 3rem;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .opportunitySection {
+  background-color: #242526;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.statItem {
+  text-align: center;
+  padding: 1rem;
+}
+
+.statNumber {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #c42142;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .statNumber {
+  color: #ff6b6b;
+}
+
+.statText {
+  color: #6b7280;
+  line-height: 1.5;
+  transition: color 0.2s;
+}
+
+:global(.dark) .statText {
+  color: #d1d5db;
+}
+
+/* Strategy Section */
+.strategySection {
+  margin-bottom: 3rem;
+}
+
+.strategyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.strategyItem {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+  transition: all 0.2s;
+}
+
+.strategyItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .strategyItem {
+  background-color: #242526;
+  border-left-color: #ff6b6b;
+}
+
+:global(.dark) .strategyItem:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.strategyHeading {
+  color: #c42142;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .strategyHeading {
+  color: #ff6b6b;
+}
+
+.strategyText {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  transition: color 0.2s;
+}
+
+:global(.dark) .strategyText {
+  color: #d1d5db;
+}
+
+/* Investor Community Section */
+.investorCommunitySection {
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .investorCommunitySection {
+  background-color: #242526;
+  border-left-color: #ff6b6b;
+}
+
+/* Roadmap Section */
+.roadmapSection {
+  margin-bottom: 3rem;
+}
+
+.roadmapPhase {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .roadmapPhase {
+  background-color: #242526;
+  border-left-color: #ff6b6b;
+}
+
+.phaseTitle {
+  color: #c42142;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .phaseTitle {
+  color: #ff6b6b;
+}
+
+.phaseItems {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.phaseItem {
+  color: #6b7280;
+  line-height: 1.5;
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+}
+
+:global(.dark) .phaseItem {
+  color: #d1d5db;
+}
+
+/* Closing Section */
+.closingSection {
+  text-align: center;
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .closingSection {
+  background-color: #242526;
+}
+
+.closingText {
+  font-size: 1.1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .closingText {
+  color: #e4e4e7;
+}
+
+.ctaButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.ctaButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 1.1rem 2.5rem;
+  border-radius: 8px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.25);
+  min-width: 280px;
+}
+
+.ctaButton:hover {
+  background: #a01835;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(196, 33, 66, 0.35);
+}
+
+:global(.dark) .ctaButton {
+  background: #ff6b6b;
+  color: #18191a;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+}
+
+:global(.dark) .ctaButton:hover {
+  background: #ff5252;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.35);
+}
+
+/* Contact Section */
+.contactSection {
+  text-align: center;
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .contactSection {
+  background-color: #242526;
+}
+
+.contactDescription {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .contactDescription {
+  color: #d1d5db;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+  color: #374151;
+  transition: color 0.2s;
+}
+
+:global(.dark) .contactItem {
+  color: #e4e4e7;
+}
+
+.contactItem a {
+  color: #c42142;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.contactItem a:hover {
+  text-decoration: underline;
+}
+
+:global(.dark) .contactItem a {
+  color: #ff6b6b;
+}
+
+.socialLinks {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.contactFooter {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-top: 2rem;
+  line-height: 1.6;
+  transition: color 0.2s;
+}
+
+:global(.dark) .contactFooter {
+  color: #d1d5db;
+}
+
+/* Form Styles (inherited from original styles for JoinInvestorCommunity component) */
+.tabNavigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+:global(.dark) .tabNavigation {
+  border-bottom-color: #3e4042;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  color: #c42142;
+}
+
+:global(.dark) .tabButton {
+  color: #d1d5db;
+}
+
+:global(.dark) .tabButton:hover {
+  color: #ff6b6b;
+}
+
+.activeTab {
+  color: #c42142 !important;
+  border-bottom-color: #c42142 !important;
+}
+
+:global(.dark) .activeTab {
+  color: #ff6b6b !important;
+  border-bottom-color: #ff6b6b !important;
+}
+
+.investorForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .formGroup label {
+  color: #e4e4e7;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+:global(.dark) .formInput,
+:global(.dark) .formSelect,
+:global(.dark) .formTextarea {
+  background: #18191a;
+  border-color: #3e4042;
+  color: #e4e4e7;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #c42142;
+  box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
+}
+
+:global(.dark) .formInput:focus,
+:global(.dark) .formSelect:focus,
+:global(.dark) .formTextarea:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.investorSubmitButton {
+  background: #c42142;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: center;
+  min-width: 200px;
+}
+
+.investorSubmitButton:hover:not(:disabled) {
+  background: #a01835;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.3);
+}
+
+.investorSubmitButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+:global(.dark) .investorSubmitButton {
+  background: #ff6b6b;
+  color: #18191a;
+}
+
+:global(.dark) .investorSubmitButton:hover:not(:disabled) {
+  background: #ff5252;
+}
+
+.successMessage {
+  background: #d1fae5;
+  border: 2px solid #10b981;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.successMessage h3 {
+  color: #047857;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.successMessage p {
+  color: #065f46;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.errorMessage {
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.errorMessage h3 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.errorMessage p {
+  color: #991b1b;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+  }
+
+  .contentSection {
+    padding: 0 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+    margin: 2rem 0 1.5rem 0;
+  }
+
+  .featureGrid,
+  .statsGrid,
+  .strategyGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .featureItem,
+  .strategyItem {
+    padding: 1rem;
+  }
+
+  .opportunitySection,
+  .investorCommunitySection,
+  .closingSection,
+  .contactSection {
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+  }
+
+  .roadmapPhase {
+    padding: 1.5rem;
+  }
+
+  .ctaButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    min-width: 250px;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .contactInfo {
+    gap: 1rem;
+  }
+
+  .contactItem {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .contentSection {
+    padding: 0 0.75rem;
+  }
+
+  .opportunitySection,
+  .investorCommunitySection,
+  .closingSection,
+  .contactSection {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .ctaButton {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+
+  .subsectionTitle {
+    font-size: 1.2rem;
+  }
+}

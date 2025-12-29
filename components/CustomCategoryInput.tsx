@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { validateCustomInput } from '../lib/categories-tags';
-import styles from '../styles/CustomCategoryInput.module.css';
+import styles from '../styles/AuthForm.module.css';
 
 interface CustomCategoryInputProps {
   selectedCategories: string[];
@@ -48,17 +47,17 @@ export const CustomCategoryInput: React.FC<CustomCategoryInputProps> = ({
   if (!isOtherSelected) return null;
 
   return (
-    <div className={styles.customCategoryContainer}>
-      <label className={styles.customCategoryLabel}>
+    <div className={styles.customTopicContainer}>
+      <label className={styles.customTopicLabel}>
         {label}
       </label>
       
-      <div className={styles.customCategoryInputContainer}>
+      <div className={styles.customTopicInputContainer}>
         <input
           type="text"
           value={customInput}
           onChange={(e) => handleInputChange(e.target.value)}
-          className={styles.customCategoryInput}
+          className={styles.customTopicInput}
           placeholder="Enter one word"
           disabled={customCategories.length >= maxWords}
           maxLength={20}
@@ -74,9 +73,9 @@ export const CustomCategoryInput: React.FC<CustomCategoryInputProps> = ({
       </div>
       
       {customCategories.length > 0 && (
-        <div className={styles.customCategoryTags}>
+        <div className={styles.customTopicTags}>
           {customCategories.map((category, index) => (
-            <span key={index} className={styles.customCategoryTag}>
+            <span key={index} className={styles.customTopicTag}>
               {category.replace('custom:', '')}
               <button
                 type="button"
@@ -90,7 +89,7 @@ export const CustomCategoryInput: React.FC<CustomCategoryInputProps> = ({
         </div>
       )}
       
-      <small className={styles.customCategoryHint}>
+      <small className={styles.customTopicHint}>
         {customCategories.length}/{maxWords} words added
       </small>
     </div>

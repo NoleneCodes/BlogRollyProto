@@ -1,0 +1,590 @@
+/* Blog.module.css - Blog page with dark mode support, matching Submit page styling */
+
+/* Overall page wrapper */
+.pageWrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .pageWrapper {
+  background: #18191a;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #c42142 0%, #e63946 100%);
+  color: white;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: 0;
+}
+
+:global(.dark) .hero {
+  background: #621121;
+}
+
+.title {
+  margin: 0 0 1rem 0;
+  line-height: 1.15;
+  font-size: 3.5rem;
+  color: white;
+  font-weight: 700;
+}
+
+.description {
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.ctaButton {
+  background: #ffffff;
+  color: #c42142;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  text-align: center;
+}
+
+.ctaButton:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+:global(.dark) .ctaButton {
+  background: #ffffff;
+  color: #621121;
+}
+
+/* Content Section */
+.contentSection {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 2rem;
+  margin: 3rem 0 2rem 0;
+  color: #c42142;
+  font-weight: 700;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .sectionTitle {
+  color: #ff6b6b;
+}
+
+/* Welcome Section */
+.welcomeSection {
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .welcomeSection {
+  background-color: #242526;
+}
+
+.introText {
+  margin-bottom: 2rem;
+}
+
+.welcomeText {
+  font-size: 1.1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .welcomeText {
+  color: #e4e4e7;
+}
+
+.notebookSection {
+  margin: 2.5rem 0;
+}
+
+.notebookIntro {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+:global(.dark) .notebookIntro {
+  color: #e4e4e7;
+}
+
+.topicsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.topicItem {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.topicItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #c42142;
+}
+
+:global(.dark) .topicItem {
+  background-color: #18191a;
+  border-color: #3e4042;
+}
+
+:global(.dark) .topicItem:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  border-color: #ff6b6b;
+}
+
+.topicHeading {
+  color: #c42142;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .topicHeading {
+  color: #ff6b6b;
+}
+
+.topicText {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  transition: color 0.2s;
+}
+
+:global(.dark) .topicText {
+  color: #d1d5db;
+}
+
+.communityMessage {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .communityMessage {
+  background-color: #18191a;
+  border-left-color: #ff6b6b;
+}
+
+.messageText {
+  font-size: 1.1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  transition: color 0.2s;
+}
+
+.messageText:last-child {
+  margin-bottom: 0;
+}
+
+:global(.dark) .messageText {
+  color: #e4e4e7;
+}
+
+/* Loading Section */
+.loadingSection {
+  margin: 3rem 0;
+}
+
+.loadingContainer {
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .loadingContainer {
+  background-color: #242526;
+}
+
+.loadingTitle {
+  font-size: 1.5rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .loadingTitle {
+  color: #e4e4e7;
+}
+
+.loadingText {
+  font-size: 1.1rem;
+  color: #6b7280;
+  transition: color 0.2s;
+}
+
+:global(.dark) .loadingText {
+  color: #d1d5db;
+}
+
+/* Posts Section */
+.postsSection {
+  margin: 3rem 0;
+}
+
+.postsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.postWrapper {
+  transition: transform 0.2s ease;
+}
+
+.postWrapper:hover {
+  transform: translateY(-4px);
+}
+
+/* Empty Section */
+.emptySection {
+  margin: 3rem 0;
+}
+
+.emptyContainer {
+  text-align: center;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .emptyContainer {
+  background-color: #242526;
+}
+
+.emptyTitle {
+  font-size: 1.8rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+:global(.dark) .emptyTitle {
+  color: #e4e4e7;
+}
+
+.emptyText {
+  font-size: 1.1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: color 0.2s;
+}
+
+:global(.dark) .emptyText {
+  color: #d1d5db;
+}
+
+.emptyCtaContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.emptyCtaButton {
+  background: #c42142;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.25);
+  min-width: 200px;
+  text-align: center;
+}
+
+.emptyCtaButton:hover {
+  background: #a01835;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(196, 33, 66, 0.35);
+}
+
+:global(.dark) .emptyCtaButton {
+  background: #ff6b6b;
+  color: #18191a;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+}
+
+:global(.dark) .emptyCtaButton:hover {
+  background: #ff5252;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.35);
+}
+
+/* Join Section */
+.joinSection {
+  margin: 4rem 0 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .joinSection {
+  background-color: #242526;
+}
+
+.joinDescription {
+  font-size: 1.1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: color 0.2s;
+}
+
+:global(.dark) .joinDescription {
+  color: #d1d5db;
+}
+
+.joinButtonContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.joinButton {
+  background: #c42142;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.25);
+  min-width: 180px;
+  text-align: center;
+}
+
+.joinButton:hover {
+  background: #a01835;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(196, 33, 66, 0.35);
+}
+
+.joinButtonSecondary {
+  background: transparent;
+  color: #c42142;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  border: 2px solid #c42142;
+  min-width: 180px;
+  text-align: center;
+}
+
+.joinButtonSecondary:hover {
+  background: #c42142;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.25);
+}
+
+:global(.dark) .joinButton {
+  background: #ff6b6b;
+  color: #18191a;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+}
+
+:global(.dark) .joinButton:hover {
+  background: #ff5252;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.35);
+}
+
+:global(.dark) .joinButtonSecondary {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+:global(.dark) .joinButtonSecondary:hover {
+  background: #ff6b6b;
+  color: #18191a;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.25);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+  }
+
+  .contentSection {
+    padding: 0 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+    margin: 2rem 0 1.5rem 0;
+  }
+
+  .welcomeSection {
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+  }
+
+  .topicsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .topicItem {
+    padding: 1rem;
+  }
+
+  .communityMessage {
+    padding: 1.5rem;
+  }
+
+  .postsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .loadingContainer,
+  .emptyContainer {
+    padding: 2rem 1rem;
+  }
+
+  .joinSection {
+    padding: 2rem 1rem;
+    margin: 3rem 0 2rem 0;
+  }
+
+  .joinButtonContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .joinButton,
+  .joinButtonSecondary {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .ctaButton {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .contentSection {
+    padding: 0 0.75rem;
+  }
+
+  .welcomeSection,
+  .joinSection {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+
+  .emptyTitle {
+    font-size: 1.5rem;
+  }
+
+  .loadingTitle {
+    font-size: 1.3rem;
+  }
+}
+
+/* Integration with existing BlogCard styles */
+.postWrapper :global(.blogCard) {
+  background: white;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.postWrapper :global(.blogCard):hover {
+  border-color: #c42142;
+  transform: none; /* Prevent double transform */
+}
+
+:global(.dark) .postWrapper :global(.blogCard) {
+  background: #242526;
+  border-color: #3e4042;
+}
+
+:global(.dark) .postWrapper :global(.blogCard):hover {
+  border-color: #ff6b6b;
+}

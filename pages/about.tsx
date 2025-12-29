@@ -164,12 +164,6 @@ const About = () => {
                 <p className={styles.reasonText}>We're here to make sure your voice travels further.</p>
               </div>
             </div>
-
-            <div className={styles.signInButtonContainer}>
-              <Link href="/submit" className={styles.signInButton}>
-                Submit Your Blog
-              </Link>
-            </div>
           </div>
         </div>
       </div>

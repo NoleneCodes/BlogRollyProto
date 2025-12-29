@@ -1,3 +1,17 @@
+/* Home.module.css - Reusable styles for multiple pages with dark mode support */
+
+/* Overall page wrapper */
+.pageWrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .pageWrapper {
+  background: #18191a;
+}
+
+/* Hero Section */
 .hero {
   background: linear-gradient(135deg, #c42142 0%, #e63946 100%);
   color: white;
@@ -5,11 +19,9 @@
   padding: 2.5rem 2rem;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
-  background: #c42142;
   margin-top: 0;
 }
 
-/* Dark mode hero */
 :global(.dark) .hero {
   background: #621121;
 }
@@ -19,10 +31,11 @@
   line-height: 1.15;
   font-size: 3.5rem;
   color: white;
+  font-weight: 700;
 }
 
 .description {
-  margin: 0 0 3rem 0;
+  margin: 0 0 1rem 0;
   line-height: 1.6;
   font-size: 1.25rem;
   color: rgba(255, 255, 255, 0.9);
@@ -31,6 +44,370 @@
   margin-right: auto;
 }
 
+/* Content Section */
+.contentSection {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Section Titles */
+.sectionTitle {
+  font-size: 2rem;
+  margin: 3rem 0 2rem 0;
+  color: #c42142;
+  font-weight: 700;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .sectionTitle {
+  color: #ff6b6b;
+}
+
+.sectionDescription {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .sectionDescription {
+  color: #d1d5db;
+}
+
+/* Auth-specific Sections */
+.authSection {
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .authSection {
+  background-color: #242526;
+}
+
+.authDescription {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .authDescription {
+  color: #d1d5db;
+}
+
+.authFormContainer {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Benefits Section */
+.benefitsSection {
+  margin: 3rem 0;
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.benefitItem {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.benefitItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #c42142;
+}
+
+:global(.dark) .benefitItem {
+  background-color: #242526;
+  border-color: #3e4042;
+}
+
+:global(.dark) .benefitItem:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  border-color: #ff6b6b;
+}
+
+.benefitHeading {
+  color: #c42142;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+:global(.dark) .benefitHeading {
+  color: #ff6b6b;
+}
+
+.benefitText {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  transition: color 0.2s;
+}
+
+:global(.dark) .benefitText {
+  color: #d1d5db;
+}
+
+/* Roles Section */
+.rolesSection {
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .rolesSection {
+  background-color: #242526;
+}
+
+.rolesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.roleItem {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s;
+}
+
+.roleItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #c42142;
+}
+
+:global(.dark) .roleItem {
+  background-color: #18191a;
+  border-color: #3e4042;
+}
+
+:global(.dark) .roleItem:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  border-color: #ff6b6b;
+}
+
+.roleTitle {
+  color: #c42142;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+:global(.dark) .roleTitle {
+  color: #ff6b6b;
+}
+
+.roleFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.roleFeature {
+  color: #6b7280;
+  line-height: 1.5;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  transition: color 0.2s;
+}
+
+.roleFeature:last-child {
+  border-bottom: none;
+}
+
+:global(.dark) .roleFeature {
+  color: #d1d5db;
+  border-bottom-color: #3e4042;
+}
+
+/* Community Section */
+.communitySection {
+  margin: 3rem 0;
+  padding: 3rem 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border-left: 4px solid #c42142;
+  transition: background-color 0.2s;
+}
+
+:global(.dark) .communitySection {
+  background-color: #242526;
+  border-left-color: #ff6b6b;
+}
+
+.communityText {
+  font-size: 1.1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  transition: color 0.2s;
+}
+
+.communityText:last-child {
+  margin-bottom: 0;
+}
+
+:global(.dark) .communityText {
+  color: #e4e4e7;
+}
+
+/* CTA Buttons */
+.cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.primaryButton {
+  background: #0070f3;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  border: 2px solid #0070f3;
+  min-width: 180px;
+  text-align: center;
+}
+
+.primaryButton:hover {
+  background: #0051a2;
+  border-color: #0051a2;
+}
+
+.secondaryButton {
+  background: transparent;
+  color: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 2px solid #fdfeff;
+  min-width: 180px;
+  text-align: center;
+}
+
+.secondaryButton:hover {
+  background: #ffffff;
+  color: #c42142;
+}
+
+.brandButton {
+  background: #c42142;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease;
+  border: 2px solid #c42142;
+  min-width: 180px;
+  text-align: center;
+}
+
+.brandButton:hover {
+  background: #a01835;
+  border-color: #a01835;
+}
+
+:global(.dark) .brandButton {
+  background: #ff6b6b;
+  color: #18191a;
+  border-color: #ff6b6b;
+}
+
+:global(.dark) .brandButton:hover {
+  background: #ff5252;
+  border-color: #ff5252;
+}
+
+/* Features Grid (for homepage) */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 4rem;
+  padding: 2rem 0;
+}
+
+.feature {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .feature {
+  background: #242526;
+  border-color: #3e4042;
+}
+
+:global(.dark) .feature:hover {
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+}
+
+.feature h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  color: #333;
+  transition: color 0.2s;
+}
+
+:global(.dark) .feature h3 {
+  color: #e4e4e7;
+}
+
+.feature p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+  transition: color 0.2s;
+}
+
+:global(.dark) .feature p {
+  color: #d1d5db;
+}
+
+/* Search Section (for homepage) */
 .searchSection {
   margin: 3rem 0;
   width: 100%;
@@ -60,6 +437,16 @@
 
 .searchInput:focus {
   border-color: #0070f3;
+}
+
+:global(.dark) .searchInput {
+  background: #242526;
+  border-color: #3e4042;
+  color: #e4e4e7;
+}
+
+:global(.dark) .searchInput:focus {
+  border-color: #ff6b6b;
 }
 
 .searchButton {
@@ -98,381 +485,68 @@
   border-color: white;
 }
 
-.cta {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.primaryButton {
-  background: #0070f3;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.2s ease;
-  border: 2px solid #0070f3;
-}
-
-.primaryButton:hover {
-  background: #0051a2;
-  border-color: #0051a2;
-}
-
-.secondaryButton {
-  background: transparent;
-  color: #ffffff;
-  padding: 1rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  border: 2px solid #fdfeff;
-}
-
-.secondaryButton:hover {
-  background: #ffffff;
-  color: #c42142;
-}
-
-.brandButton {
-  background: #c42142;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.2s ease;
-  border: 2px solid #c42142;
-}
-
-.brandButton:hover {
-  background: #a01835;
-  border-color: #a01835;
-}
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 4rem;
-  padding: 2rem 0;
-}
-
-.feature {
+/* Loading States */
+.loadingContainer {
   text-align: center;
   padding: 2rem;
-  border-radius: 12px;
-  background: #f8f9fa;
-  border: 1px solid #e5e5e5;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.feature:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.feature h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.feature p {
-  margin: 0;
   color: #666;
-  line-height: 1.5;
+  transition: color 0.2s;
 }
 
-.pronunciationCard {
+:global(.dark) .loadingContainer {
+  color: #d1d5db;
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 2rem;
+  color: #c42142;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+:global(.dark) .errorContainer {
+  background: #2d1b1b;
+  border-color: #4a2626;
+  color: #ff6b6b;
+}
+
+/* Utility Classes */
+.retryButton {
   background: #c42142;
   color: white;
-  padding: 3rem;
-  border-radius: 20px;
-  text-align: center;
-  margin: 4rem auto;
-  max-width: 600px;
-  box-shadow: 0 8px 24px rgba(196, 33, 66, 0.2);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
 }
 
-.pronunciationCard h3 {
-  margin: 0 0 2rem 0;
-  font-size: 2rem;
-  font-weight: 600;
+.retryButton:hover {
+  background: #a91d3a;
 }
 
-.definition {
-  font-size: 1.25rem;
-  line-height: 1.6;
+:global(.dark) .retryButton {
+  background: #ff6b6b;
+  color: #18191a;
 }
 
-.definition strong {
-  font-size: 1.4rem;
-  display: block;
-  margin-bottom: 1rem;
+:global(.dark) .retryButton:hover {
+  background: #ff5252;
 }
 
+/* Legacy styles for existing components */
 .missionSection,
-.rootsSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.missionSection h2,
-.rootsSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.missionSection p,
-.rootsSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.trendsSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.trendsSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.trendsSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 2rem;
-}
-
-.trendsChart {
-  background: #f8f9fa;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-  min-height: 450px;
-}
-
-.trendsCaption {
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: #666;
-  font-style: italic;
-  text-align: center;
-}
-
-.rebuildSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.rebuildSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.featureList {
-  margin: 1.5rem 0;
-  padding-left: 1rem;
-  list-style: none;
-}
-
-.featureList li {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 0.8rem;
-  padding-left: 0.5rem;
-}
-
-.whySection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.whySection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.whySection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.submitCta {
-  text-align: center;
-  margin: 3rem 0;
-}
-
-.submitButton {
-  background: #c42142;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: background 0.2s ease;
-  display: inline-block;
-}
-
-.submitButton:hover {
-  background: #a01835;
-}
-
-.valuesSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.valuesSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.valueItem {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border-left: 4px solid #c42142;
-}
-
-/* Dark mode value item */
-:global(.dark) .valueItem {
-  background: #1f1f1f;
-  border: 1px solid #374151;
-}
-
-.valueItem h3 {
-  color: #c42142;
-  font-size: 1.3rem;
-  margin-bottom: 0.8rem;
-  font-weight: 600;
-}
-
-.valueItem p {
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0;
-}
-
-/* Dark mode value item text */
-:global(.dark) .valueItem h3 {
-  color: #ff4d6d;
-}
-
-:global(.dark) .valueItem p {
-  color: #A1A1AA;
-}
-
-.contactSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-  text-align: center;
-}
-
-.contactSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.contactSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
-.contactInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
-  margin-top: 2rem;
-}
-
-.contactItem {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 1.1rem;
-  color: #333;
-}
-
-.contactItem a {
-  color: #c42142;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.contactItem a:hover {
-  text-decoration: underline;
-}
-
-/* Dark mode contact items */
-:global(.dark) .contactItem {
-  color: #E4E4E7;
-}
-
-:global(.dark) .contactItem a {
-  color: #ff4d6d;
-}
-
-.brandHandle {
-  color: #c42142;
-  font-weight: 600;
-}
-
-.founderSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.founderSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.founderSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-}
-
+.rootsSection,
+.rebuildSection,
+.whySection,
+.valuesSection,
+.contactSection,
+.founderSection,
 .roadmapSection {
   max-width: 800px;
   margin: 4rem auto;
@@ -480,374 +554,54 @@
   line-height: 1.8;
 }
 
+.missionSection h2,
+.rootsSection h2,
+.rebuildSection h2,
+.whySection h2,
+.valuesSection h2,
+.contactSection h2,
+.founderSection h2,
 .roadmapSection h2 {
   color: #c42142;
   font-size: 2.2rem;
   margin-bottom: 2rem;
   font-weight: 700;
-  text-align: center;
+  transition: color 0.2s;
 }
 
-.roadmapPhase {
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 4px solid #c42142;
+:global(.dark) .missionSection h2,
+:global(.dark) .rootsSection h2,
+:global(.dark) .rebuildSection h2,
+:global(.dark) .whySection h2,
+:global(.dark) .valuesSection h2,
+:global(.dark) .contactSection h2,
+:global(.dark) .founderSection h2,
+:global(.dark) .roadmapSection h2 {
+  color: #ff6b6b;
 }
 
-.roadmapPhase h3 {
-  color: #c42142;
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.pitchDeckSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-  text-align: center;
-}
-
-.pitchDeckSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.pitchDeckCarousel {
-  background: #f8f9fa;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  padding: 3rem;
-  margin: 2rem 0;
-  min-height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carouselPlaceholder {
-  text-align: center;
-  color: #666;
-}
-
-.carouselPlaceholder p {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-}
-
-.learnMoreSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-  text-align: center;
-}
-
-.learnMoreSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-}
-
-.calendlySection {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-  border-left: 4px solid #c42142;
-}
-
-.calendlySection h3 {
-  color: #c42142;
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.calendlySection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.investorRelationsSection {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 4px solid #c42142;
-}
-
-.investorRelationsSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.investorRelationsSection a {
-  color: #c42142;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.investorRelationsSection a:hover {
-  text-decoration: underline;
-}
-
-.downloadablesSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 0 2rem;
-  line-height: 1.8;
-}
-
-.downloadablesSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.downloadItem {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem 0;
-  border-left: 4px solid #c42142;
-  text-align: center;
-}
-
-.downloadItem h3 {
-  color: #c42142;
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.downloadItem p {
+.missionSection p,
+.rootsSection p,
+.rebuildSection p,
+.whySection p,
+.contactSection p,
+.founderSection p {
   font-size: 1.1rem;
   color: #333;
   margin-bottom: 1.5rem;
+  transition: color 0.2s;
 }
 
-.downloadCta {
-  display: flex;
-  justify-content: center;
+:global(.dark) .missionSection p,
+:global(.dark) .rootsSection p,
+:global(.dark) .rebuildSection p,
+:global(.dark) .whySection p,
+:global(.dark) .contactSection p,
+:global(.dark) .founderSection p {
+  color: #e4e4e7;
 }
 
-.investorSignupSection {
-  max-width: 800px;
-  margin: 4rem auto;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  border-left: 4px solid #c42142;
-  line-height: 1.8;
-}
-
-.investorSignupSection h2 {
-  color: #c42142;
-  font-size: 2.2rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.investorSignupSection p {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.tabNavigation {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.tabButton {
-  background: none;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #6b7280;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tabButton:hover {
-  color: #c42142;
-}
-
-.activeTab {
-  color: #c42142 !important;
-  border-bottom-color: #c42142 !important;
-}
-
-.investorForm {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.formGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.formGroup label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #374151;
-  font-size: 0.95rem;
-}
-
-.formInput,
-.formSelect,
-.formTextarea {
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s ease;
-  background: white;
-}
-
-.formInput:focus,
-.formSelect:focus,
-.formTextarea:focus {
-  outline: none;
-  border-color: #c42142;
-  box-shadow: 0 0 0 3px rgba(196, 33, 66, 0.1);
-}
-
-.formTextarea {
-  resize: vertical;
-  min-height: 100px;
-  font-family: inherit;
-}
-
-.investorSubmitButton {
-  background: #c42142;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  align-self: center;
-  min-width: 200px;
-}
-
-.investorSubmitButton:hover:not(:disabled) {
-  background: #a01835;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(196, 33, 66, 0.3);
-}
-
-.investorSubmitButton:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.successMessage {
-  background: #d1fae5;
-  border: 2px solid #10b981;
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.successMessage h3 {
-  color: #047857;
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-}
-
-.successMessage p {
-  color: #065f46;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.errorMessage {
-  background: #fee2e2;
-  border: 2px solid #ef4444;
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.errorMessage h3 {
-  color: #dc2626;
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-}
-
-.errorMessage p {
-  color: #991b1b;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.downloadButton {
-  background: #c42142;
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.downloadButton:hover {
-  background: #a01835;
-}
-
-.downloadButton::after {
-  content: '→';
-  font-size: 1.2rem;
-}
-
-.comingSoonText {
-  background: #f3f4f6;
-  color: #6b7280;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 2px solid #e5e7eb;
-  display: inline-flex;
-  align-items: center;
-}
-
-/* Responsive layout for all screen sizes */
+/* Responsive Design */
 @media (max-width: 768px) {
   .searchContainer {
     flex-direction: column;
@@ -880,9 +634,64 @@
     min-width: auto;
     width: auto;
   }
+
+  .hero {
+    padding: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .description {
+    font-size: 1.1rem;
+  }
+
+  .contentSection {
+    padding: 0 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+    margin: 2rem 0 1.5rem 0;
+  }
+
+  .benefitsGrid,
+  .rolesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .benefitItem,
+  .roleItem {
+    padding: 1rem;
+  }
+
+  .authSection,
+  .rolesSection,
+  .communitySection {
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .feature {
+    padding: 1.5rem;
+  }
+
+  .primaryButton,
+  .secondaryButton,
+  .brandButton {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
 }
 
-/* Very small screens - adjust button size but keep side by side */
 @media (max-width: 480px) {
   .cta {
     gap: 0.5rem;
@@ -897,299 +706,30 @@
     flex: 1;
     max-width: 45%;
   }
-}
 
-@media (max-width: 768px) {
-  .trendsSection {
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-
-  .trendsSection h2 {
-    font-size: 1.8rem;
-  }
-
-  .trendsSection p {
-    font-size: 1rem;
-  }
-
-  .trendsChart {
-    padding: 1rem;
-    min-height: 300px;
-  }
-
-  .missionSection,
-  .rootsSection,
-  .rebuildSection,
-  .whySection,
-  .valuesSection,
-  .contactSection,
-  .founderSection,
-  .roadmapSection {
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-
-  .missionSection h2,
-  .rootsSection h2,
-  .whySection h2,
-  .valuesSection h2,
-  .contactSection h2,
-  .founderSection h2,
-  .roadmapSection h2 {
-    font-size: 1.8rem;
-  }
-
-  .missionSection p,
-  .rootsSection p,
-  .rebuildSection p,
-  .whySection p,
-  .contactSection p,
-  .founderSection p {
-    font-size: 1rem;
-  }
-
-  .featureList li {
-    font-size: 1rem;
-  }
-
-  .valueItem {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .valueItem h3 {
-    font-size: 1.1rem;
-  }
-
-  .valueItem p {
-    font-size: 0.95rem;
-  }
-
-  .contactInfo {
-    gap: 1rem;
-  }
-
-  .contactItem {
-    font-size: 1rem;
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem;
-  }
-
-  .roadmapPhase {
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .roadmapPhase h3 {
-    font-size: 1.2rem;
-  }
-
-  .pitchDeckSection,
-  .learnMoreSection {
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-
-  .pitchDeckSection h2,
-  .learnMoreSection h2 {
-    font-size: 1.8rem;
-  }
-
-  .pitchDeckCarousel {
-    padding: 2rem;
-    min-height: 250px;
-  }
-
-  .carouselPlaceholder p {
-    font-size: 1rem;
-  }
-
-  .calendlySection {
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-  }
-
-  .calendlySection h3 {
-    font-size: 1.2rem;
-  }
-
-  .calendlySection p {
-    font-size: 1rem;
-  }
-
-  .investorRelationsSection {
-    padding: 1rem;
-  }
-
-  .investorRelationsSection p {
-    font-size: 1rem;
-  }
-
-  .downloadablesSection {
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-
-  .downloadablesSection h2 {
-    font-size: 1.8rem;
-  }
-
-  .downloadItem {
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-  }
-
-  .downloadItem h3 {
-    font-size: 1.2rem;
-  }
-
-  .downloadItem p {
-    font-size: 1rem;
-  }
-
-  .downloadButton {
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
-  }
-
-  .investorSignupSection {
-    margin: 2rem auto;
-    padding: 1.5rem;
-  }
-
-  .investorSignupSection h2 {
-    font-size: 1.8rem;
-  }
-
-  .investorSignupSection p {
-    font-size: 1rem;
-  }
-
-  .formRow {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .investorForm {
-    gap: 1rem;
-  }
-
-  .formInput,
-  .formSelect,
-  .formTextarea {
-    padding: 0.6rem;
-    font-size: 0.95rem;
-  }
-
-  .investorSubmitButton {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    min-width: 180px;
-  }
-
-  .successMessage,
-  .errorMessage {
-    padding: 1.5rem;
-  }
-
-  .successMessage h3,
-  .errorMessage h3 {
-    font-size: 1.2rem;
-  }
-
-  .successMessage p,
-  .errorMessage p {
-    font-size: 1rem;
-  }
-  .pronunciationCard {
-    margin: 2rem 1rem;
-    padding: 2rem;
-  }
-
-  .pronunciationCard h3 {
-    font-size: 1.5rem;
-  }
-
-  .definition {
-    font-size: 1.1rem;
-  }
-
-  .definition strong {
-    font-size: 1.2rem;
+  .hero {
+    padding: 1.5rem 0.5rem;
   }
 
   .title {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 
-  .description {
+  .contentSection {
+    padding: 0 0.75rem;
+  }
+
+  .authSection,
+  .rolesSection,
+  .communitySection {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+
+  .roleTitle {
     font-size: 1.1rem;
   }
-
-  .primaryButton,
-  .secondaryButton {
-    width: 100%;
-    max-width: 300px;
-    text-align: center;
-  }
-
-  .features {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .feature {
-    padding: 1.5rem;
-  }
-}
-
-.card p {
-  margin: 0;
-  font-size: 1.25rem;
-  line-height: 1.5;
-}
-
-.logo {
-  height: 1em;
-  margin-left: 0.2rem;
-}
-
-@media (max-width: 600px) {
-  .grid {
-    width: 100%;
-    flex-direction: column;
-  }
-}
-
-.retryButton {
-  background: #c42142;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-}
-
-.retryButton:hover {
-  background: #a91d3a;
-}
-
-.loadingContainer {
-  text-align: center;
-  padding: 2rem;
-  color: #666;
-}
-
-.errorContainer {
-  text-align: center;
-  padding: 2rem;
-  color: #c42142;
-  background: #fee;
-  border: 1px solid #fcc;
-  border-radius: 8px;
-  margin: 1rem 0;
 }
